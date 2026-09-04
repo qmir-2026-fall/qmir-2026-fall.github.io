@@ -23,6 +23,7 @@ param(
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "_common.ps1")
 $root = Split-Path -Parent $PSScriptRoot
 $site = Join-Path $root $SiteDir
 
@@ -43,8 +44,7 @@ try {
 if (-not $DryRun) {
   Push-Location $root
   try {
-    git ls-remote --exit-code --heads origin gh-pages *> $null
-    if ($LASTEXITCODE -ne 0) {
+    if (-not (Test-NativeOk { git ls-remote --exit-code --heads origin gh-pages })) {
       Write-Host "No gh-pages branch on origin - creating it ..." -ForegroundColor Cyan
       $empty  = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
       $commit = (git commit-tree $empty -m "Initialize gh-pages").Trim()
@@ -55,13 +55,14 @@ if (-not $DryRun) {
     # GitHub auto-enables Pages on `main` when a repo is named <org>.github.io, which then
     # fails to build. Point it at gh-pages/root if it is not there already.
     $slug = "$($Org)/$($Repo)"
-    $branch = gh api "repos/$slug/pages" --jq '.source.branch' 2>$null
-    if ($LASTEXITCODE -ne 0 -or $branch -ne "gh-pages") {
+    $branch = Get-NativeOutput { gh api "repos/$slug/pages" --jq '.source.branch' }
+    if ($branch -ne "gh-pages") {
       Write-Host "Pointing GitHub Pages at gh-pages / ..." -ForegroundColor Cyan
       $body = '{"source":{"branch":"gh-pages","path":"/"}}'
       # PUT updates an existing Pages site; POST creates one that does not exist yet.
-      $body | gh api -X PUT "repos/$slug/pages" --input - *> $null
-      if ($LASTEXITCODE -ne 0) { $body | gh api -X POST "repos/$slug/pages" --input - *> $null }
+      if (-not (Test-NativeOk { $body | gh api -X PUT "repos/$slug/pages" --input - })) {
+        Invoke-NativeQuiet { $body | gh api -X POST "repos/$slug/pages" --input - }
+      }
     }
   } finally { Pop-Location }
 }

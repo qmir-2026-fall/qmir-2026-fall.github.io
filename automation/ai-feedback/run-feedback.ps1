@@ -23,6 +23,7 @@ param(
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "..\_common.ps1")
 $here = $PSScriptRoot
 $root = Split-Path -Parent (Split-Path -Parent $here)
 $slug = "hw-$Week"
@@ -50,8 +51,8 @@ foreach ($r in $repos) {
   # Opt-in signal = a license file at the repo root. The trigger is documented as `license.md`,
   # but the GitHub contents API is CASE-SENSITIVE, so match tolerantly (license / LICENSE, with
   # or without .md) - a student shouldn't miss out over a capitalization slip.
-  $names = gh api "repos/$Org/$r/contents" --jq '.[].name' 2>$null
-  if ($names -and ($names | Where-Object { $_ -match '(?i)^license(\.md)?$' })) { $optedIn += $r }
+  $names = Get-NativeOutput { gh api "repos/$Org/$r/contents" --jq '.[].name' }
+  if ($names -and (@($names -split "`n") | Where-Object { $_.Trim() -match '(?i)^license(\.md)?$' })) { $optedIn += $r }
 }
 
 Write-Host "$slug : $($optedIn.Count) opted-in / $($repos.Count) submissions." -ForegroundColor Cyan

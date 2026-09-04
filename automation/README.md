@@ -11,6 +11,7 @@ destructive happens without an explicit run). Run them from the repo root.
 | `tracking.ps1` | Enumerate `hw-NN-<username>` repos on the org via `gh`, derive submission status, write `tracking/hw_status.csv` (git-ignored). |
 | `ai-feedback/run-feedback.ps1 -Week NN` | For opted-in student repos (those containing `license.md`), invoke Claude to draft `FEEDBACK.qmd`, render to PDF, and push into the student repo. |
 | `hooks/install-hooks.ps1` | Point this clone's git hooks at `automation/hooks` (the public-repo leak guard). Run once after cloning. |
+| `_common.ps1` | Dot-sourced helpers (`Test-NativeOk`, `Invoke-NativeQuiet`, `Get-NativeOutput`) that make "does this exist?" probes against `gh`/`git` safe in PS 5.1. See gotcha 2. |
 
 Prereqs: `gh` (authenticated), `quarto`, R + TinyTeX, and (for feedback) the `claude` CLI.
 Defaults such as the org name mirror `course.yml`; override with `-Org` if they ever diverge.
@@ -34,14 +35,22 @@ $parsed = gh repo list $Org --json name,pushedAt | ConvertFrom-Json
 $repos  = @($parsed | Where-Object { $_.name -match "^hw-05-(.+)$" })
 ```
 
-**2. Redirecting a native command's stderr.** Under `$ErrorActionPreference = "Stop"`,
-`gh repo view x 2>$null` raises `NativeCommandError` even on success. Test the exit code
-instead:
+**2. Redirecting a native command's stderr.** Under `$ErrorActionPreference = "Stop"`, a native
+command that writes to stderr raises `NativeCommandError` — and **redirecting it does not help**:
+`2>$null` and `*>$null` both still abort the script. This bites every "does this repo exist?"
+probe, because `gh repo view` on a missing repo is *supposed* to fail. Use the helpers in
+`_common.ps1`:
 
 ```powershell
-gh repo view "$Org/$slug" *> $null
-$exists = ($LASTEXITCODE -eq 0)
+. (Join-Path $PSScriptRoot "_common.ps1")
+
+$exists = Test-NativeOk    { gh repo view "$Org/$slug" }              # -> $true / $false
+$branch = Get-NativeOutput { gh api "repos/$slug/pages" --jq '.source.branch' }  # -> string / $null
+Invoke-NativeQuiet         { git remote remove origin }               # failure is harmless
 ```
+
+Related: git's "LF will be replaced by CRLF" warnings go to stderr too, so scripts that run
+`git add` in a scratch dir pass `-c core.autocrlf=false` to keep them quiet.
 
 **3. YAML keys that are booleans.** `n:`, `y:`, `on:`, `off:` parse as booleans under YAML 1.1;
 R's `yaml` package then names the list element `FALSE`. `course.yml` uses `count:` for this

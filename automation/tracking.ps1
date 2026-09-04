@@ -6,25 +6,28 @@
   (github_username, week, submitted, on_time, last_push), which tracking/progress.qmd reads.
   With Classroom 50 not adopted, this is the PRIMARY homework tracking path.
 
-  HEURISTIC. A repo generated from the hw-NN template always has a commit, and its pushedAt
-  is always after the release date - so "pushed after release" marks EVERYONE as submitted.
-  What distinguishes a submission is work *after* the template import:
+  HOW A SUBMISSION IS DETECTED. A repo generated from the hw-NN template always has a
+  commit, and its pushedAt is always after the release date - so "pushed after release"
+  marks EVERYONE as submitted. What distinguishes a submission is work *after* the template
+  import:
 
-    default   pushedAt > createdAt (+2 min slack)   - free, no extra API calls
-    -Strict   commit count > 1                      - exact, costs 1 API call per repo
+    default  commit count > 1                     - exact; 1 API call per repo per week
+    -Fast    pushedAt > createdAt (+2 min slack)  - free, but MISSES a student who pushes
+             within 2 minutes of generating their repo (verified: it does happen)
 
   `on_time` additionally compares the last push against `due:` in homework/hw-NN/meta.yml.
 .EXAMPLE
   ./automation/tracking.ps1
-  ./automation/tracking.ps1 -Week 05 -Strict
+  ./automation/tracking.ps1 -Week 05 -Fast
 #>
 param(
   [string]$Org  = "qmir-2026-fall",
   [string]$Week,                       # optional: restrict to one week, e.g. 05
-  [switch]$Strict,                     # exact commit-count check (1 API call per repo)
+  [switch]$Fast,                       # skip the per-repo commit count (free, less accurate)
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "_common.ps1")
 $root = Split-Path -Parent $PSScriptRoot
 
 # which weeks to check = those with a homework/hw-NN folder
@@ -61,12 +64,12 @@ foreach ($d in $hwDirs) {
     $pushed  = [datetime]$r.pushedAt
     $created = [datetime]$r.createdAt
 
-    if ($Strict) {
-      $n = gh api "repos/$Org/$($r.name)/commits?per_page=100" --jq 'length'
-      $submitted = if ([int]$n -gt 1) { 1 } else { 0 }
-    } else {
+    if ($Fast) {
       # Work beyond the template import: a push at least 2 minutes after creation.
       $submitted = if ($pushed -gt $created.AddMinutes(2)) { 1 } else { 0 }
+    } else {
+      $n = Get-NativeOutput { gh api "repos/$Org/$($r.name)/commits?per_page=100" --jq 'length' }
+      $submitted = if ([int]$n -gt 1) { 1 } else { 0 }
     }
 
     $onTime = if ($submitted -eq 0) { 0 } elseif ($due) { if ($pushed -le $due.AddDays(1)) { 1 } else { 0 } } else { 1 }
@@ -81,7 +84,7 @@ foreach ($d in $hwDirs) {
   }
 }
 
-Write-Host "Homework status derived from $Org ($(if ($Strict) {'strict'} else {'fast'}) check):" -ForegroundColor Cyan
+Write-Host "Homework status derived from $Org ($(if ($Fast) {'fast'} else {'exact'}) check):" -ForegroundColor Cyan
 $rows | Group-Object week | Sort-Object Name | ForEach-Object {
   $sub = @($_.Group | Where-Object { $_.submitted -eq 1 }).Count
   $late = @($_.Group | Where-Object { $_.submitted -eq 1 -and $_.on_time -eq 0 }).Count

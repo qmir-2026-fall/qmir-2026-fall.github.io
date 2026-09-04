@@ -20,6 +20,7 @@ param(
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "_common.ps1")
 $root  = Split-Path -Parent $PSScriptRoot
 $slug  = "hw-$Week"
 $src   = Join-Path $root "homework\$slug"
@@ -72,21 +73,22 @@ if ($DryRun) {
 # --- publish to the org distribution repo ---
 Push-Location $work
 try {
-  git init -q -b main          # -b main: the push below targets main
-  git add -A
-  git -c user.name="QMIR" -c user.email="noreply@github.com" commit -q -m "Release $slug"
+  # -b main: the push below targets main. autocrlf=false keeps git from emitting CRLF
+  # warnings on stderr, which PS 5.1 turns into NativeCommandError records mid-script.
+  git init -q -b main
+  git -c core.autocrlf=false add -A
+  git -c core.autocrlf=false -c user.name="QMIR" -c user.email="noreply@github.com" commit -q -m "Release $slug"
 
   # NOTE: do NOT test `gh repo view` by capturing its output - redirecting a native
   # command's stderr under $ErrorActionPreference='Stop' raises NativeCommandError in
   # Windows PowerShell 5.1. Check the exit code instead.
-  gh repo view "$Org/$slug" *> $null
-  $exists = ($LASTEXITCODE -eq 0)
+  $exists = Test-NativeOk { gh repo view "$Org/$slug" }
 
   if (-not $exists) {
     gh repo create "$Org/$slug" --public --source . --push --disable-wiki `
       --description "QMIR $($slug.ToUpper()) - starter repo. Use this template to create your submission repo."
   } else {
-    git remote remove origin *> $null
+    Invoke-NativeQuiet { git remote remove origin }
     git remote add origin "https://github.com/$Org/$slug.git"
     git push -f origin HEAD:main
   }

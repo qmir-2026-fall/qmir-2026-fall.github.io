@@ -166,8 +166,10 @@ ID↔username map was hand-maintained. Fix both.
   `hw-NN-<username>` repos on the org and writes `tracking/hw_status.csv` (git-ignored: it lists
   usernames). **The submission test is work *after* the template import**, not "pushed after
   release" — every generated repo is pushed after release, so that older heuristic marked
-  everyone as submitted. Default check: `pushedAt > createdAt + 2 min` (free). `-Strict`: commit
-  count > 1 (one API call per repo). `on_time` compares the last push against `due:`.
+  everyone as submitted. Default check: **commit count > 1** (exact; one API call per repo per
+  week). `-Fast` uses `pushedAt > createdAt + 2 min` instead — free, but it misses a student who
+  pushes within two minutes of generating their repo, which was observed in testing, so it is
+  opt-in only. `on_time` compares the last push against `due:`.
 - **Attendance** cannot come from GitHub → keep exactly **one** small hand-kept file,
   `tracking/attendance.csv`, in **long** format (`github_username, week, present`), one row per
   student per session attended. Real data goes in `attendance.local.csv`. This is the *only*
