@@ -44,3 +44,5 @@ Thumbs.db
 # _freeze/ is committed (it caches expensive model renders), but its site_libs/ subdir is
 # 5+ MB of vendored JS that Quarto regenerates from its own install on every render.
 /website/_freeze/site_libs/
+
+notes.md
