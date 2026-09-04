@@ -1,5 +1,5 @@
 ---
-title: "QMIR — Progress"
+title: "QMIR: Progress"
 format:
   html:
     embed-resources: true
@@ -10,54 +10,53 @@ execute:
 ---
 
 <!--
-INSTRUCTOR-ONLY. Renders to progress.html, which is GIT-IGNORED — it lists students.
-Data-driven; replaces last term's hand-typed tracker.
+INSTRUCTOR-ONLY. Renders to progress.html, which is GIT-IGNORED because it lists students.
+Data-driven, replacing last term's hand-typed tracker.
 
 Inputs:
-  - course.yml               (thresholds, session/homework counts — the single source)
+  - course.yml               (thresholds, session/homework counts, the single source)
   - tracking/students.csv    (roster; keep the real one as students.local.csv, git-ignored)
-  - tracking/attendance.csv  (the only manual datum; long format: github_username, week, present)
+  - tracking/attendance.csv  (the only manual datum; long: github_username, week, present)
   - tracking/hw_status.csv   (AUTO-derived from the org by automation/tracking.ps1)
 Render:  quarto render tracking/progress.qmd
 -->
 
-```{r config}
-library(tidyverse)
-library(yaml)
+```{r}
+#| label: config
 
-find_root <- function(start = ".") {
-  d <- normalizePath(start, mustWork = FALSE)
-  while (!file.exists(file.path(d, "course.yml"))) {
-    parent <- dirname(d)
-    if (parent == d) stop("course.yml not found above ", start)
-    d <- parent
-  }
-  d
-}
-root <- find_root()
-cfg  <- yaml::read_yaml(file.path(root, "course.yml"))
+library(tidyverse) # wrangling
+library(here) # project-root-relative paths
+library(yaml) # read course.yml
+
+# Anchor here() to the repo root explicitly: a bare here() stops at the nearest
+# project marker, and website/_quarto.yml is one. See STYLE.md section 4.
+here::i_am("tracking/progress.qmd")
+
+cfg <- yaml::read_yaml(here("course.yml"))
 
 # --- thresholds come from course.yml, never from this file ---
-N_SESSIONS     <- cfg$sessions$count
-N_HOMEWORKS    <- cfg$homework$count
+N_SESSIONS <- cfg$sessions$count
+N_HOMEWORKS <- cfg$homework$count
 MIN_ATTENDANCE <- ceiling(cfg$thresholds$attendance * N_SESSIONS)
-MIN_HOMEWORK   <- ceiling(cfg$thresholds$homework  * N_HOMEWORKS)
+MIN_HOMEWORK <- ceiling(cfg$thresholds$homework * N_HOMEWORKS)
 
 read_local <- function(base) {
   # prefer the git-ignored *.local.csv (real data) if present, else the committed template
-  local <- file.path(root, "tracking", paste0(base, ".local.csv"))
-  path  <- if (file.exists(local)) local else file.path(root, "tracking", paste0(base, ".csv"))
+  local <- here("tracking", paste0(base, ".local.csv"))
+  path <- if (file.exists(local)) local else here("tracking", paste0(base, ".csv"))
   readr::read_csv(path, comment = "#", show_col_types = FALSE)
 }
-lc <- function(x) tolower(trimws(x))   # GitHub usernames are case-insensitive
+lc <- function(x) tolower(trimws(x)) # GitHub usernames are case-insensitive
 ```
 
-```{r load}
-students   <- read_local("students")   |> mutate(github_username = lc(github_username))
+```{r}
+#| label: load
+
+students <- read_local("students") |> mutate(github_username = lc(github_username))
 attendance <- read_local("attendance") |> mutate(github_username = lc(github_username))
 
 # Homework status produced by: ./automation/tracking.ps1  (writes tracking/hw_status.csv)
-hw_path <- file.path(root, "tracking", "hw_status.csv")
+hw_path <- here("tracking", "hw_status.csv")
 hw <- if (file.exists(hw_path)) {
   readr::read_csv(hw_path, comment = "#", show_col_types = FALSE) |>
     mutate(github_username = lc(github_username))
@@ -66,7 +65,9 @@ hw <- if (file.exists(hw_path)) {
 }
 ```
 
-```{r summarise}
+```{r}
+#| label: summarise
+
 att_by_student <- attendance |>
   filter(present == 1) |>
   distinct(github_username, week) |>
@@ -80,40 +81,50 @@ hw_by_student <- hw |>
 progress <- students |>
   select(github_username, section) |>
   left_join(att_by_student, by = "github_username") |>
-  left_join(hw_by_student,  by = "github_username") |>
+  left_join(hw_by_student, by = "github_username") |>
   mutate(
-    attended  = coalesce(attended, 0L),
+    attended = coalesce(attended, 0L),
     homeworks = coalesce(homeworks, 0L),
-    pass_att  = attended  >= MIN_ATTENDANCE,
-    pass_hw   = homeworks >= MIN_HOMEWORK,
-    on_track  = pass_att & pass_hw
+    pass_att = attended >= MIN_ATTENDANCE,
+    pass_hw = homeworks >= MIN_HOMEWORK,
+    on_track = pass_att & pass_hw
   )
 ```
 
-```{r table}
+```{r}
+#| label: tbl-progress
+#| tbl-cap: "Per-student progress against the two Studienleistung thresholds. Attendance is
+#|   hand-kept, homework completion is derived from the submission repos on the org."
 #| results: asis
+
 if (nrow(progress) == 0) {
-  cat("_No students on the roster yet — fill `tracking/students.local.csv`._")
+  cat("_No students on the roster yet. Fill `tracking/students.local.csv`._")
 } else {
   progress |>
     arrange(desc(on_track), github_username) |>
     knitr::kable(
       col.names = c("GitHub", "Section", "Attended", "Homeworks", "Att ok", "HW ok", "On track"),
-      caption = sprintf("Thresholds: attendance >= %d/%d, homework >= %d/%d.",
-                        MIN_ATTENDANCE, N_SESSIONS, MIN_HOMEWORK, N_HOMEWORKS)
+      caption = sprintf(
+        "Thresholds: attendance >= %d/%d, homework >= %d/%d.",
+        MIN_ATTENDANCE, N_SESSIONS, MIN_HOMEWORK, N_HOMEWORKS
+      )
     )
 }
 ```
 
-```{r unmatched}
+```{r}
+#| label: unmatched
 #| results: asis
-# Submission repos whose username is not on the roster — usually a typo'd repo name.
+
+# Submission repos whose username is not on the roster, usually a typo'd repo name.
 unmatched <- setdiff(unique(hw$github_username), students$github_username)
 if (length(unmatched)) {
-  cat("\n**Submission repos not on the roster** (check the repo name or add to the roster): ",
-      paste0("`", unmatched, "`", collapse = ", "), "\n")
+  cat(
+    "\n**Submission repos not on the roster** (check the repo name or add to the roster): ",
+    paste0("`", unmatched, "`", collapse = ", "), "\n"
+  )
 }
 ```
 
-Homework completion is derived automatically from submission repos on the org — nothing is
-typed by hand except attendance.
+Homework completion is derived automatically from the submission repos on the org.
+Attendance is the only datum typed by hand.

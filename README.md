@@ -1,12 +1,14 @@
 # QMIR 2026-fall
 
-Source of the QMIR course (Quantitative Methods in International Relations — Bayesian, in
+Source of the QMIR course (Quantitative Methods in International Relations, Bayesian, in
 R/Quarto). **Public**: the site, the slides, the homework starters, and the automation that
 runs the term are all here, openly licensed.
 
 - **Live site:** <https://qmir-2026-fall.github.io/>
-- Read **`CLAUDE.md`** first — it is the full operating manual (pipeline, feedback policy,
-  tracking, distribution, conventions).
+- Read **`CLAUDE.md`** first. It is the full operating manual (pipeline, feedback policy,
+  tracking, distribution).
+- Read **`STYLE.md`** before writing any `.qmd`. It is the authoring and coding style, and
+  `automation/check-authoring.ps1` enforces it.
 - Licences: course content **CC BY-SA 4.0**, code **MIT**. See [`LICENSE`](LICENSE).
 
 ## What is *not* here
@@ -25,8 +27,9 @@ git submodule update --init          # private solutions/ (instructor access onl
 ./automation/hooks/install-hooks.ps1 # leak guard for this public repo
 ```
 
-Requirements: `quarto`, R (+ TinyTeX for PDF), `git`, `gh` (authenticated), and the `claude`
-CLI for the opt-in feedback job.
+Requirements: `quarto`, R (plus TinyTeX for PDF), `git`, `gh` (authenticated), and the `claude`
+CLI for the opt-in feedback job. The slide-fit check additionally wants the R package `chromote`
+and a Chrome or Edge install, and skips cleanly without them.
 
 ## Quick start (per week)
 
@@ -35,6 +38,10 @@ CLI for the opt-in feedback job.
 cp -r homework/_template homework/hw-05      # edit hw-05.qmd, README.md, meta.yml, data/
 #                                             ... and write solutions/hw-05/solution.qmd
 ./automation/release-homework.ps1 -Week 05   # publish the hw-05 template repo
+
+# new deck
+cp website/slides/_deck-template.qmd website/slides/week05.qmd
+./automation/check-authoring.ps1 -Week 05 -Fit   # style gate + real slide-fit measurement
 
 # after the due date
 ./automation/release-solution.ps1 -Week 05   # publish the sample-solution PDF
@@ -46,5 +53,5 @@ cp -r homework/_template homework/hw-05      # edit hw-05.qmd, README.md, meta.y
 ```
 
 Every script accepts `-DryRun` and does nothing destructive without an explicit run.
-Term-level constants (org, dates, thresholds) live in **`course.yml`** — change them there,
+Term-level constants (org, dates, thresholds) live in **`course.yml`**. Change them there,
 never in the consumers.

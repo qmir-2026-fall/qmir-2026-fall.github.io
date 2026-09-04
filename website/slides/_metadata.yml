@@ -1,0 +1,35 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Shared options for EVERY deck in this directory (STYLE.md §5.4).
+#
+# The 2026 spring iteration duplicated this block in all 13 decks and they drifted
+# apart (code-fold: true vs show, cache on some weeks only). Set it once, here.
+# A deck's own YAML carries its `title:` and nothing else. The checker enforces
+# that (E041).
+# ─────────────────────────────────────────────────────────────────────────────
+
+author: Tristan Muno
+date: last-modified
+date-format: MMMM D, YYYY
+
+format:
+  revealjs:
+    theme: theme.scss
+    # Decks are downloaded and shown offline, so inline everything.
+    embed-resources: true
+    preview-links: false
+    slide-number: true
+    incremental: true
+    code-fold: true
+    code-summary: "View source"
+    # Keep a fragmented slide on ONE printed page. The fit check (STYLE.md §6)
+    # measures print-pdf layout, so this also keeps the check honest.
+    pdfSeparateFragments: false
+    footer: "QMIR -- {{< meta date >}}"
+    # Canvas is reveal's 1050x700 default, stated in STYLE.md §5.1 and asserted
+    # by automation/check-slide-fit.R. Do not override width/height per deck.
+
+execute:
+  echo: true
+  message: false
+  warning: false
+  freeze: auto

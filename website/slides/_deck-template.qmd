@@ -1,37 +1,128 @@
 ---
-title: "Week NN — <topic>"
-subtitle: "QMIR"
-format:
-  revealjs:
-    theme: theme.scss
-    embed-resources: true
-    incremental: true
-    code-fold: true
+title: "Week NN: <topic>"
 ---
 
-<!-- Copy this file to weekNN.qmd. The YAML `title` above is what schedule.qmd prints as the
-     week's topic, so keep the "Week NN — <topic>" shape. -->
+<!--
+CANONICAL DECK TEMPLATE. Copy to weekNN.qmd (zero-padded) and replace the content.
 
-## Where we are
+This file is also the worked example of every slide convention in STYLE.md §5, so
+read it as documentation, not just as a skeleton. Before publishing a deck run:
+
+    .\automation\check-authoring.ps1 -Week NN -Fit
+
+Two things this YAML deliberately does NOT contain: the format block (it lives in
+_metadata.yml, shared by every deck) and the topic prefix in any other shape. The
+title must read "Week NN: <topic>" because schedule.qmd strips that prefix to build
+the Topic column.
+-->
+
+## Where we are {#sec-where-we-are}
 
 - Last week: <one line>
 - Today: <one line>
-- Steps of the workflow in focus: <n, n>
-
-## <content slide>
+- Workflow steps in focus: <n, n>
 
 ::: notes
-Speaker notes live in `::: notes` blocks.
+Terse instructor-facing imperatives go here, not prose.
+Delivery cues and lines to say aloud belong in this block.
 :::
 
-## The 8-step workflow — where today fits
+# Part 1: <section> {#sec-part1}
+
+## A content slide {#sec-content-slide .smaller}
+
+::: notes
+`{.smaller}` is step 1 of the ladder and the default for a content slide.
+:::
+
+Prose is one sentence per line.
+A revealed beat is three to six short lines, and `. . .` separates the beats.
+
+. . .
+
+The second beat lands here.
+
+. . .
+
+::: {.callout-note}
+**A note carries background or further detail.**
+The four callout types and their jobs are fixed in STYLE.md §3.
+:::
+
+## A dense block {#sec-dense-block .smaller}
+
+Step 2 of the ladder: wrap the one dense block in `.small`, not the whole slide.
+
+::: {.small}
+| Step | What you produce |
+|--:|---|
+| 1 | The estimand, stated as a target quantity. |
+| 2 | The data described: measurement, coverage, obvious issues. |
+:::
+
+::: {.callout-warning}
+**Never write an inline `style="font-size: ..."`.**
+The ladder is `{.smaller}`, then `.small`, then `.xsmall`, then split the slide.
+:::
+
+## Two columns {#sec-columns .smaller}
+
+:::: {.columns}
+
+::: {.column width="55%"}
+The wider column carries the argument.
+Permitted widths are 50/50, 55/45, 45/55, 60/40, 40/60 and 33/33/33.
+:::
+
+::: {.column width="45%"}
+The narrower column carries the figure or the aside.
+:::
+
+::::
+
+## An equation and a figure {#sec-crossrefs .smaller}
+
+Every equation gets a label, and @eq-bayes-core is how you refer back to it.
+
+$$
+p(\theta \mid Y) \propto L(Y \mid \theta) \times p(\theta)
+$$ {#eq-bayes-core}
+
+```{r}
+#| label: fig-template-example
+#| fig-cap: "Replace this with a real figure. A caption is self-sufficient when a reader
+#|   who sees only the plot and this sentence knows what is shown and why it matters."
+#| fig-height: 3.5
+#| dpi: 500
+#| echo: false
+
+library(tidyverse) # wrangling and visualization
+library(ggpubr) # theme_pubr()
+
+col_1 <- "steelblue"
+
+set.seed(2026)
+tibble(x = rnorm(200)) |>
+  ggplot(aes(x = x)) +
+  geom_histogram(bins = 25, fill = col_1, colour = "white", linewidth = 0.3) +
+  theme_pubr() +
+  labs(x = "Value", y = "Count", title = "Placeholder figure")
+```
+
+## The 8-step workflow: where today fits {#sec-workflow .smaller}
 
 {{< include _workflow-8step.qmd >}}
 
-<!-- Never paste the workflow table into a deck; always include the partial. -->
+::: notes
+Always include the partial. Never paste the table into a deck (E042).
+:::
 
-## Homework
+## Homework {#sec-homework}
 
-- `hw-NN` — <one line>, due <date>. Linked from the Schedule.
-- Sample solution published after the due date. Individual feedback only via the opt-in
-  `license.md` path.
+- `hw-NN`: <one line>, due <date>. Linked from the Schedule.
+- A sample solution is published after the due date.
+
+::: {.callout-important}
+**Individual feedback is only available through the opt-in path.**
+Add an open-source `license.md` to your submission repo to opt in.
+:::

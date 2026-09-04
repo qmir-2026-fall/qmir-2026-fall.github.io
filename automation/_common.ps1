@@ -65,3 +65,40 @@ function Get-NativeOutput {
     $ErrorActionPreference = $prev
   }
 }
+
+<#
+.SYNOPSIS
+  Absolute path to the newest installed Rscript.exe, or $null when R is not installed.
+.DESCRIPTION
+  R is routinely installed on Windows WITHOUT being added to PATH, and several major
+  versions coexist under C:\Program Files\R\. Every script that shells out to R goes
+  through here rather than assuming `Rscript` resolves.
+.EXAMPLE
+  $rscript = Get-RscriptPath
+  if ($rscript) { & $rscript "automation/check-slide-fit.R" $html }
+#>
+function Get-RscriptPath {
+  $onPath = Get-Command Rscript -ErrorAction SilentlyContinue
+  if ($onPath) { return $onPath.Source }
+
+  $roots = @(
+    "$env:ProgramFiles\R",
+    "${env:ProgramFiles(x86)}\R",
+    "$env:LOCALAPPDATA\Programs\R"
+  ) | Where-Object { $_ -and (Test-Path $_) }
+
+  $candidates = foreach ($root in $roots) {
+    Get-ChildItem $root -Directory -ErrorAction SilentlyContinue |
+      ForEach-Object { Join-Path $_.FullName "bin\Rscript.exe" } |
+      Where-Object { Test-Path $_ }
+  }
+  if (-not $candidates) { return $null }
+
+  # Newest first, by the R-x.y.z directory name parsed as a version.
+  $candidates |
+    Sort-Object { 
+      $name = Split-Path (Split-Path $_ -Parent) -Parent | Split-Path -Leaf
+      try { [version]($name -replace '^R-', '') } catch { [version]'0.0.0' }
+    } -Descending |
+    Select-Object -First 1
+}

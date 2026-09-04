@@ -1,34 +1,95 @@
 ---
-title: "Homework NN — <topic>"
+title: "Homework NN: <topic>"
 author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
 format:
   pdf:
-    toc: false
+    toc: true
+    toc-depth: 3
     number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
 ---
 
-<!-- STUDENT-FACING STARTER. No solution content here — files named solution.* are stripped
-     on release, but this file ships as-is, so keep it clean. -->
+<!-- STUDENT-FACING STARTER. No solution content here. Files named solution.* are stripped on
+     release, but this file ships as-is, so keep it clean.
 
-```{r setup}
-#| include: false
-library(tidyverse)
-library(brms)
+     The structure below follows the 8-step workflow and the house style in STYLE.md: every
+     heading is labelled, every figure and table is labelled and captioned, and paths go
+     through here(). Students inherit the conventions by filling in this skeleton. -->
+
+# Setup {#sec-setup}
+
+```{r}
+#| label: setup
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(brms) # Bayesian regression via Stan
+library(ggpubr) # theme_pubr()
+
+# Shared course palette. Keep these names, the slides use the same ones.
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+
+set.seed(2026)
 ```
 
-# Task
+# Task {#sec-task}
 
-<Restate the question. Point students at the relevant step(s) of the 8-step workflow.>
+<Restate the question. Point students at the relevant steps of the 8-step workflow.>
 
-# Your analysis
+# Your analysis {#sec-analysis}
 
-<Scaffold the expected structure with empty sections that match the steps this HW exercises,
-e.g.:>
+<Scaffold the expected structure with empty sections matching the steps this homework
+exercises. Add sections as the term introduces more steps.>
 
-## Estimand & DAG
+## Estimand and DAG {#sec-estimand}
 
-## Data summary
+## Data summary {#sec-data}
 
-## Model
+```{r}
+#| label: fig-data-overview
+#| fig-cap: "<Replace with a caption a reader can understand without the body text: what is
+#|   plotted, on what scale, and what it shows.>"
+#| fig-height: 3.5
+#| dpi: 500
+#| eval: false
 
-<!-- Add sections as the term introduces more steps. -->
+read_csv(here("data", "<file>.csv")) |>
+  ggplot(aes(x = x)) +
+  geom_histogram(bins = 25, fill = col_1, colour = "white", linewidth = 0.3) +
+  theme_pubr() +
+  labs(x = "<x>", y = "Count", title = "<title>")
+```
+
+## Model {#sec-model}
+
+# Session info and execution time {#sec-session}
+
+```{r}
+#| label: session-info
+#| eval: true
+
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+#| eval: true
+
+end_time <- Sys.time()
+cat(
+  "Total execution time:",
+  round(difftime(end_time, start_time, units = "mins"), 1),
+  "minutes\n"
+)
+```

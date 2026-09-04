@@ -1,4 +1,4 @@
-# Homework NN — <topic>
+# Homework NN: <topic>
 
 <!-- This README ships to students in the distribution repo. Keep the policy banner verbatim. -->
 
