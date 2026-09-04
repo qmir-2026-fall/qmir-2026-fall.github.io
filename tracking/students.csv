@@ -1,6 +1,7 @@
 student_id,github_username,section,name,email
-# Single roster / ID<->username source of truth. Seed from Classroom 50:
-#   gh teacher roster list <org> <classroom>  ->  export to this file.
-# One row per student. `section` is a free label (single session this term, but kept for filtering).
-# Keep the REAL filled roster as students.local.csv (git-ignored) if it contains PII;
-# commit only this header template. Downstream: automation/tracking.ps1 and progress.qmd read it.
+# Single roster / ID<->username source of truth.
+# THIS REPO IS PUBLIC: commit only this header. Keep the real roster as students.local.csv
+# (git-ignored); progress.qmd prefers the .local.csv automatically when it exists.
+# One row per student. `section` is a free label (single session this term, kept for filtering).
+# Seeded by hand from the university participant list + the GitHub usernames students report.
+# Downstream: automation/tracking.ps1 and tracking/progress.qmd read it.
