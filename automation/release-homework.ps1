@@ -1,18 +1,22 @@
 <#
 .SYNOPSIS
-  Create/refresh the public distribution repo hw-NN from homework/hw-NN, stripping solutions.
+  Create/refresh the public distribution repo hw-NN from homework/hw-NN.
 .DESCRIPTION
-  Copies homework/hw-NN/ into a scratch dir MINUS anything named solution.* (so a solution
-  physically cannot leak), then pushes it to org repo `hw-NN`, marks it a template, and
-  (optionally) registers it as a Classroom 50 assignment. Idempotent: re-running refreshes.
+  Copies homework/hw-NN/ into a scratch dir (minus instructor-only files), pushes it to the
+  org repo `hw-NN`, and marks it a template repo. Students then "Use this template" to get
+  hw-NN-<username>. Idempotent: re-running refreshes the distribution repo.
+
+  Sample solutions live in the PRIVATE solutions/ submodule, not under homework/, so there
+  is nothing to strip. The solution.* exclusion and the post-copy leak assertion are kept
+  anyway as defense in depth — they cost nothing and they are the last line before publish.
 .EXAMPLE
-  ./automation/release-homework.ps1 -Week 05
   ./automation/release-homework.ps1 -Week 05 -DryRun
+  ./automation/release-homework.ps1 -Week 05
 #>
 param(
   [Parameter(Mandatory)][string]$Week,          # e.g. 05
   [string]$Org = "qmir-2026-fall",
-  [switch]$Classroom,                            # also register as a Classroom 50 assignment
+  [switch]$Classroom,                            # INACTIVE: Classroom 50 is not adopted (CLAUDE.md §6)
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
@@ -21,7 +25,7 @@ $slug  = "hw-$Week"
 $src   = Join-Path $root "homework\$slug"
 if (-not (Test-Path $src)) { throw "No such homework: $src" }
 
-# --- build the student-facing payload (strip solutions) ---
+# --- build the student-facing payload ---
 $work = Join-Path $env:TEMP "qmir-release\$slug"
 if (Test-Path $work) { Remove-Item $work -Recurse -Force }
 New-Item -ItemType Directory -Path $work -Force | Out-Null
@@ -39,31 +43,62 @@ Get-ChildItem $src -Recurse -File | ForEach-Object {
   $copied += $rel
 }
 
-Write-Host "Distribution payload for $slug (solution stripped):" -ForegroundColor Cyan
+# --- add the files every distribution repo gets, from the template ---
+$tpl = Join-Path $root "homework\_template"
+foreach ($extra in @(".github\workflows\hw-check.yml", ".gitignore")) {
+  $from = Join-Path $tpl $extra
+  $to   = Join-Path $work $extra
+  if ((Test-Path $from) -and (-not (Test-Path $to))) {
+    New-Item -ItemType Directory -Path (Split-Path $to) -Force | Out-Null
+    Copy-Item $from $to
+    $copied += $extra
+  }
+}
+
+Write-Host "Distribution payload for $slug :" -ForegroundColor Cyan
 $copied | ForEach-Object { Write-Host "  $_" }
+
+# Last line of defense: nothing named *solution* may ever reach a public distribution repo.
 $leaked = $copied | Where-Object { $_ -like "*solution*" }
 if ($leaked) { throw "ABORT: solution file in payload: $($leaked -join ', ')" }
 
+$templateUrl = "https://github.com/$Org/$slug/generate"
 if ($DryRun) {
-  Write-Host "[DryRun] Would push above to $Org/$slug (template) and NOT publish solution." -ForegroundColor Yellow
-  if ($Classroom) { Write-Host "[DryRun] Would register Classroom 50 assignment $slug." -ForegroundColor Yellow }
+  Write-Host "[DryRun] Would push the above to $Org/$slug and mark it a template." -ForegroundColor Yellow
+  Write-Host "[DryRun] Accept link for schedule.qmd: $templateUrl" -ForegroundColor Yellow
   return
 }
 
 # --- publish to the org distribution repo ---
 Push-Location $work
 try {
-  git init -q; git add -A; git commit -q -m "Release $slug"
-  if (-not (gh repo view "$Org/$slug" 2>$null)) {
-    gh repo create "$Org/$slug" --public --source . --push --disable-wiki
+  git init -q -b main          # -b main: the push below targets main
+  git add -A
+  git -c user.name="QMIR" -c user.email="noreply@github.com" commit -q -m "Release $slug"
+
+  # NOTE: do NOT test `gh repo view` by capturing its output — redirecting a native
+  # command's stderr under $ErrorActionPreference='Stop' raises NativeCommandError in
+  # Windows PowerShell 5.1. Check the exit code instead.
+  gh repo view "$Org/$slug" *> $null
+  $exists = ($LASTEXITCODE -eq 0)
+
+  if (-not $exists) {
+    gh repo create "$Org/$slug" --public --source . --push --disable-wiki `
+      --description "QMIR $($slug.ToUpper()) — starter repo. Use this template to create your submission repo."
   } else {
-    git remote add origin "https://github.com/$Org/$slug.git" 2>$null
+    git remote remove origin *> $null
+    git remote add origin "https://github.com/$Org/$slug.git"
     git push -f origin HEAD:main
   }
   gh repo edit "$Org/$slug" --template   # mark as a template repo
 } finally { Pop-Location }
 
 if ($Classroom) {
-  gh teacher assignment add $Org qmir $slug --name "Homework $Week" --template "$Org/$slug"
+  # Classroom 50 was evaluated and deferred (CLAUDE.md §6). Left here so the path is one
+  # uncomment away if it is ever adopted mid-term.
+  Write-Host "-Classroom is inactive: Classroom 50 is not in use this term." -ForegroundColor Yellow
+  # gh teacher assignment add $Org qmir $slug --name "Homework $Week" --template "$Org/$slug"
 }
+
 Write-Host "Released $Org/$slug." -ForegroundColor Green
+Write-Host "Accept link for schedule.qmd:  $templateUrl" -ForegroundColor Green

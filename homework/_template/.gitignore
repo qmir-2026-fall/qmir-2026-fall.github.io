@@ -1,0 +1,12 @@
+# Ships to students in the distribution repo. Keeps submissions free of build artifacts.
+/.quarto/
+/_site/
+*_cache/
+*_files/
+*.aux
+*.log
+*.out
+*.tex
+.Rproj.user/
+.Rhistory
+.RData

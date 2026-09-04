@@ -22,14 +22,14 @@ github:
 
 # One session per week (CLAUDE.md §1 — no more Mon/Thu doubling).
 sessions:
-  n: 13
+  count: 13
   weekday: Thursday
   # First session; week N = first_session + (N-1) weeks. Used to build the schedule.
   # PLACEHOLDER — set the real HWS 2026 start date before publishing the schedule.
   first_session: 2026-09-10
 
 homework:
-  n: 10
+  count: 10
   # Default offset from the session for a homework's due date, in days.
   due_offset_days: 7
 

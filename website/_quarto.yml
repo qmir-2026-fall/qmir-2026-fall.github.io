@@ -6,12 +6,17 @@ project:
     - "slides/*.qmd"
     - "resources/*.qmd"
 
-# Keep expensive renders cached; publish only rendered output to the public Pages repo.
+# Keep expensive renders cached. _freeze/ IS COMMITTED (see CLAUDE.md §7) so a fresh clone
+# and any machine reproduce the same site without re-running every model.
 freeze: auto
 
 website:
   title: "QMIR — Quantitative Methods"
   description: "Bayesian quantitative methods in R/Quarto."
+  # Sources are public: let students read and file issues against the course itself.
+  repo-url: "https://github.com/qmir-2026-fall/qmir-2026-fall.github.io"
+  repo-actions: [source, issue]
+  reader-mode: false
   navbar:
     left:
       - text: "About"
@@ -22,11 +27,24 @@ website:
         href: schedule.qmd
       - text: "Installation"
         href: installation.qmd
+  page-footer:
+    left: |
+      © 2026 Tristan Muno  
+      Content [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) ·
+      code [MIT](https://github.com/qmir-2026-fall/qmir-2026-fall.github.io/blob/main/LICENSE)
+    right: |
+      Made with [Quarto](https://quarto.org/)
 
 format:
   html:
-    theme: flatly
+    theme:
+      light: flatly
+      dark: darkly
+    css: styles.css
     toc: true
-    # Site is deliberately non-indexed (see robots.txt / noindex in prior iteration).
+    # The site is public but deliberately NOT search-indexed (see also robots.txt).
+    include-in-header:
+      text: |
+        <meta name="robots" content="noindex">
 
 bibliography: references.bib

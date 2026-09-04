@@ -1,0 +1,37 @@
+---
+title: "Week NN — <topic>"
+subtitle: "QMIR"
+format:
+  revealjs:
+    theme: theme.scss
+    embed-resources: true
+    incremental: true
+    code-fold: true
+---
+
+<!-- Copy this file to weekNN.qmd. The YAML `title` above is what schedule.qmd prints as the
+     week's topic, so keep the "Week NN — <topic>" shape. -->
+
+## Where we are
+
+- Last week: <one line>
+- Today: <one line>
+- Steps of the workflow in focus: <n, n>
+
+## <content slide>
+
+::: notes
+Speaker notes live in `::: notes` blocks.
+:::
+
+## The 8-step workflow — where today fits
+
+{{< include _workflow-8step.qmd >}}
+
+<!-- Never paste the workflow table into a deck; always include the partial. -->
+
+## Homework
+
+- `hw-NN` — <one line>, due <date>. Linked from the Schedule.
+- Sample solution published after the due date. Individual feedback only via the opt-in
+  `license.md` path.

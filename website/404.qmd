@@ -1,0 +1,9 @@
+---
+title: "Not found"
+---
+
+That page does not exist — links move as the term goes on.
+
+- [Schedule](schedule.qmd) — slides, homeworks, and sample solutions, week by week.
+- [Syllabus](syllabus.qmd) — how the course works and the feedback policy.
+- [Installation](installation.qmd) — the toolchain you need.

@@ -1,0 +1,15 @@
+{
+  "hash": "eb7400b01c6b04728c9042eb33e72e92",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Schedule\"\n---\n\nThe spine of the course. One session per week. Each row links the slides, the homework\nstarter repo, and — after the due date — the sample solution.\n\n::: callout-note\n## Take-home exam\nThe exam is a complete **8-step Bayesian analysis**. You see the target in week 1; every week\nbuilds toward it. Released at the end of term via the `exam` repo on the course org.\n:::\n\n\n::: {.cell}\n::: {.cell-output-display}\n\n\n| Week|Date   |Topic                        |Slides              |Homework            |Solution            |\n|----:|:------|:----------------------------|:-------------------|:-------------------|:-------------------|\n|   01|10 Sep |The whole workflow, up front |[slides](slides/week01.html)|[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   02|17 Sep |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   03|24 Sep |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   04|01 Oct |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   05|08 Oct |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   06|15 Oct |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   07|22 Oct |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   08|29 Oct |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   09|05 Nov |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   10|12 Nov |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   11|19 Nov |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   12|26 Nov |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n|   13|03 Dec |[]{.schedule-tbd}--          |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |[]{.schedule-tbd}-- |\n\n\n:::\n:::\n\n\n**Homework** links open GitHub's \"create from template\" page: it makes your own\n`hw-NN-<username>` repo. Name it exactly that — the tracker looks for it by name.\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

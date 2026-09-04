@@ -4,27 +4,34 @@
 .DESCRIPTION
   For each student repo hw-NN-<username> that contains a `license.md` (the opt-in signal):
     1. clone it into a scratch dir (git-ignored, never committed to this monorepo);
-    2. assemble Claude's inputs — the student's submission, the sample solution, the prompt,
-       and the 8-step rubric — plus the FEEDBACK.qmd template;
-    3. run Claude (headless) with automation/ai-feedback/FEEDBACK-PROMPT.md;
-    4. render FEEDBACK.qmd -> FEEDBACK.pdf;
-    5. commit + push FEEDBACK.qmd and FEEDBACK.pdf back to the student's repo.
-  No Anthropic key ever leaves this machine; nothing runs in student repos.
+    2. assemble Claude's inputs — the student's submission, the sample solution (from the
+       PRIVATE solutions/ submodule), the homework prompt, and the 8-step rubric;
+    3. run Claude headless with automation/ai-feedback/FEEDBACK-PROMPT.md;
+    4. verify Claude touched NOTHING but FEEDBACK.qmd;
+    5. render FEEDBACK.qmd -> FEEDBACK.pdf and push both to the student's repo.
+  No Anthropic key ever leaves this machine; nothing runs inside student repos.
 .EXAMPLE
-  ./automation/ai-feedback/run-feedback.ps1 -Week 05 -DryRun   # just list who opted in
+  ./automation/ai-feedback/run-feedback.ps1 -Week 05 -DryRun          # just list who opted in
+  ./automation/ai-feedback/run-feedback.ps1 -Week 05 -Student someone # one student
   ./automation/ai-feedback/run-feedback.ps1 -Week 05
 #>
 param(
   [Parameter(Mandatory)][string]$Week,
   [string]$Org = "qmir-2026-fall",
+  [string]$Student,                     # optional: run for a single github username
+  [int]$MaxTurns = 40,
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
 $here = $PSScriptRoot
 $root = Split-Path -Parent (Split-Path -Parent $here)
 $slug = "hw-$Week"
-$hwDir = Join-Path $root "homework\$slug"
-if (-not (Test-Path $hwDir)) { throw "No such homework: $hwDir" }
+$hwDir  = Join-Path $root "homework\$slug"
+$solDir = Join-Path $root "solutions\$slug"
+if (-not (Test-Path $hwDir))  { throw "No such homework: $hwDir" }
+if (-not (Test-Path (Join-Path $solDir "solution.qmd"))) {
+  throw "No solution at $solDir. Is the private solutions/ submodule checked out? (git submodule update --init)"
+}
 
 $work = Join-Path $here "_work\$slug"
 if (Test-Path $work) { Remove-Item $work -Recurse -Force }
@@ -36,6 +43,7 @@ New-Item -ItemType Directory -Path $work -Force | Out-Null
 $parsed = gh repo list $Org --limit 1000 --json name | ConvertFrom-Json
 $repos  = @($parsed | Where-Object { $_.name -match "^$slug-(.+)$" }) |
           Select-Object -ExpandProperty name
+if ($Student) { $repos = @($repos | Where-Object { $_ -eq "$slug-$Student" }) }
 
 $optedIn = @()
 foreach ($r in $repos) {
@@ -62,28 +70,39 @@ foreach ($r in $optedIn) {
   gh repo clone "$Org/$r" (Join-Path $case "submission") -- -q
 
   # 2. assemble Claude's inputs alongside the submission
-  Copy-Item (Join-Path $hwDir "solution.qmd") (Join-Path $case "solution.qmd")
-  Copy-Item (Join-Path $hwDir "README.md")    (Join-Path $case "prompt.md")
+  Copy-Item (Join-Path $solDir "solution.qmd")  (Join-Path $case "solution.qmd")
+  Copy-Item (Join-Path $hwDir  "README.md")     (Join-Path $case "prompt.md")
   Copy-Item (Join-Path $root "website\slides\_workflow-8step.qmd") (Join-Path $case "rubric.md")
   Copy-Item (Join-Path $here "feedback-template.qmd") (Join-Path $case "FEEDBACK.qmd")
 
-  # 3. run Claude headless, working in the case dir; it writes only FEEDBACK.qmd
   Push-Location $case
   try {
-    claude -p $prompt --allowedTools "Read,Edit,Write" 2>&1 | Write-Host
+    # 3. run Claude headless in the case dir; the prompt says FEEDBACK.qmd is the only writable file
+    claude -p $prompt --allowedTools "Read,Edit,Write" --permission-mode acceptEdits `
+           --max-turns $MaxTurns 2>&1 | Write-Host
 
-    # 4. render to PDF
+    # 4. ENFORCE the "only FEEDBACK.qmd" rule. Student repo content is untrusted input to a
+    #    model; never push back anything the model changed in the student's own files.
+    Push-Location "submission"
+    $touched = @(git status --porcelain)
+    Pop-Location
+    if ($touched) {
+      Write-Host "Claude modified files inside the submission:" -ForegroundColor Red
+      $touched | ForEach-Object { Write-Host "  $_" }
+      throw "ABORT for $r - refusing to push. Inspect $case, then re-run for this student."
+    }
+
+    # 5. render to PDF and push FEEDBACK.qmd + FEEDBACK.pdf into the student's repo
     quarto render "FEEDBACK.qmd" --to pdf
-
-    # 5. push FEEDBACK.qmd + FEEDBACK.pdf into the student's repo
     Copy-Item "FEEDBACK.qmd" "submission\FEEDBACK.qmd" -Force
     Copy-Item "FEEDBACK.pdf" "submission\FEEDBACK.pdf" -Force
     Push-Location "submission"
-    git add FEEDBACK.qmd FEEDBACK.pdf
-    git commit -q -m "Add automated feedback (opt-in)"
-    git push -q
-    Pop-Location
-    Write-Host "  pushed FEEDBACK to $Org/$r" -ForegroundColor Green
+    try {
+      git add FEEDBACK.qmd FEEDBACK.pdf
+      git commit -q -m "Add automated feedback (opt-in)"
+      git push -q
+      Write-Host "  pushed FEEDBACK to $Org/$r" -ForegroundColor Green
+    } finally { Pop-Location }
   } finally { Pop-Location }
 }
 

@@ -1,6 +1,9 @@
-# Mechanical homework check (the plain-GitHub fallback autograder — CLAUDE.md §6).
-# Ships INSIDE each distribution repo (release-homework can add it). Runs on the student's push.
-# It checks only that the submission is healthy — NOT whether the analysis is correct.
+# Mechanical homework check. This file SHIPS INSIDE each distribution repo (hw-NN) and runs
+# in the student's own repo on every push. It lives under homework/_template/ rather than at
+# the root of the course repo on purpose: at the root it would fire on every course commit
+# and fail, since there is no hw-*.qmd here.
+#
+# It checks only that the submission is HEALTHY — not whether the analysis is correct.
 # Substantive assessment is always the sample solution + opt-in AI feedback.
 name: hw-check
 
@@ -17,14 +20,10 @@ jobs:
       - uses: quarto-dev/quarto-actions/setup@v2
       - uses: r-lib/actions/setup-r@v2
         with: { use-public-rspm: true }
-      # If the repo uses renv, restore it (proves the environment is reproducible).
-      - name: Restore renv (if present)
-        run: if [ -f renv.lock ]; then Rscript -e 'install.packages("renv"); renv::restore()'; fi
-        shell: bash
       # Render the homework — the single most useful mechanical check.
       - name: Render submission
         run: quarto render hw-*.qmd
-      # Emit a tiny status artifact (green = rendered). Extend with light testthat checks if wanted.
+      # Emit a tiny status artifact (green = rendered).
       - name: Mark rendered
         run: echo '{"rendered": true}' > check-result.json
       - uses: actions/upload-artifact@v4

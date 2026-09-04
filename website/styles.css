@@ -1,0 +1,11 @@
+/* Site-wide tweaks. Slide decks are themed separately in slides/theme.scss. */
+
+/* Schedule table: keep it readable on narrow screens. */
+table { font-size: 0.95rem; }
+.schedule-tbd { color: var(--bs-secondary-color, #6c757d); }
+
+/* Make the standing feedback-policy banner visually distinct wherever it appears. */
+blockquote {
+  border-left: 4px solid #2a6f97;
+  padding-left: 1rem;
+}

@@ -2,27 +2,95 @@
 title: "Schedule"
 ---
 
-The spine of the course. One session per week. Each row links the slides, the homework accept
-link (course GitHub org), and — after the due date — the sample solution.
+The spine of the course. One session per week. Each row links the slides, the homework
+starter repo, and — after the due date — the sample solution.
 
 ::: callout-note
 ## Take-home exam
 The exam is a complete **8-step Bayesian analysis**. You see the target in week 1; every week
-builds toward it. Released at the end of term via the `exam` repo on the org.
+builds toward it. Released at the end of term via the `exam` repo on the course org.
 :::
 
-<!--
-CONVENTIONS (see CLAUDE.md §7):
-  Slides   → link the RENDERED deck, e.g. slides/week05.html  (not the .qmd)
-  Homework → link the Classroom 50 accept flow for repo  hw-NN
-  Solution → link the published sample-solution PDF, only AFTER the due date
-Keep gray/placeholder links for unreleased items; swap to live links on release.
--->
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
 
-| Week | Topic | Slides | Homework | Solution |
-|-----:|-------|--------|----------|----------|
-| 01 | Course + the 8-step workflow (whole skeleton) | [slides](slides/week01.html) | — | — |
-| 02 | R & Quarto foundations | _tbd_ | `hw-02` _(accept link)_ | _after due date_ |
-| … | … | … | … | … |
+# ─────────────────────────────────────────────────────────────────────────────
+# This table is BUILT, not typed. Sources of truth:
+#   course.yml               -> term dates, org, number of sessions
+#   website/slides/weekNN.qmd-> the week's topic (its YAML title)
+#   homework/hw-NN/meta.yml  -> homework title + due date
+#   website/resources/hw-NN-solution.pdf -> published sample solution
+# A link appears as soon as its file exists; the solution link appears only once the due
+# date has passed. Nothing to remember to swap on release.
+# ─────────────────────────────────────────────────────────────────────────────
+library(yaml)
 
-<!-- Add rows week by week. `meta.yml` in each homework/hw-NN records week + due date + 8-step stages. -->
+find_root <- function(start = ".") {
+  d <- normalizePath(start, mustWork = FALSE)
+  while (!file.exists(file.path(d, "course.yml"))) {
+    parent <- dirname(d)
+    if (parent == d) stop("course.yml not found above ", start)
+    d <- parent
+  }
+  d
+}
+root   <- find_root()
+cfg    <- yaml::read_yaml(file.path(root, "course.yml"))
+n_wk   <- cfg$sessions$count
+first  <- as.Date(cfg$sessions$first_session)
+org    <- cfg$github$org
+
+pad  <- function(i) sprintf("%02d", i)
+tbd  <- "[]{.schedule-tbd}--"
+
+# --- topic: the deck's own YAML title, minus the "Week N — " prefix ---
+topic_of <- function(i) {
+  f <- file.path(root, "website", "slides", paste0("week", pad(i), ".qmd"))
+  if (!file.exists(f)) return(tbd)
+  ttl <- tryCatch(rmarkdown::yaml_front_matter(f)$title, error = function(e) NULL)
+  if (is.null(ttl)) return(tbd)
+  trimws(sub("^[^—-]*[—-]", "", ttl))
+}
+slides_of <- function(i) {
+  f <- file.path(root, "website", "slides", paste0("week", pad(i), ".qmd"))
+  if (file.exists(f)) sprintf("[slides](slides/week%s.html)", pad(i)) else tbd
+}
+
+# --- homework: exists on disk => link the template repo; due passed => link the solution ---
+hw_meta <- function(i) {
+  f <- file.path(root, "homework", paste0("hw-", pad(i)), "meta.yml")
+  if (!file.exists(f)) return(NULL)
+  tryCatch(yaml::read_yaml(f), error = function(e) NULL)
+}
+hw_of <- function(i) {
+  m <- hw_meta(i)
+  if (is.null(m)) return(tbd)
+  due <- if (!is.null(m$due)) format(as.Date(m$due), " (due %d %b)") else ""
+  sprintf("[hw-%s](https://github.com/%s/hw-%s/generate)%s", pad(i), org, pad(i), due)
+}
+sol_of <- function(i) {
+  m <- hw_meta(i)
+  if (is.null(m) || is.null(m$due)) return(tbd)
+  pdf <- file.path(root, "website", "resources", sprintf("hw-%s-solution.pdf", pad(i)))
+  if (as.Date(m$due) >= Sys.Date()) return("[]{.schedule-tbd}after due date")
+  if (!file.exists(pdf)) return("[]{.schedule-tbd}soon")
+  sprintf("[solution](resources/hw-%s-solution.pdf)", pad(i))
+}
+
+weeks <- seq_len(n_wk)
+tab <- data.frame(
+  Week     = pad(weeks),
+  Date     = format(first + (weeks - 1) * 7, "%d %b"),
+  Topic    = vapply(weeks, topic_of,  character(1)),
+  Slides   = vapply(weeks, slides_of, character(1)),
+  Homework = vapply(weeks, hw_of,     character(1)),
+  Solution = vapply(weeks, sol_of,    character(1)),
+  check.names = FALSE, stringsAsFactors = FALSE
+)
+knitr::kable(tab, align = c("r", "l", "l", "l", "l", "l"))
+```
+
+**Homework** links open GitHub's "create from template" page: it makes your own
+`hw-NN-<username>` repo. Name it exactly that — the tracker looks for it by name.

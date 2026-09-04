@@ -1,10 +1,23 @@
 # classroom50/
 
-Notes + config mirror for the **`classroom50`** config repo that lives in the course GitHub org.
-Classroom 50 (Fifty Foundation, GPL-3.0) is the primary distribution + tracking backbone,
-replacing GitHub Classroom (retiring 2026-08-28). See `CLAUDE.md` §6.
+Notes on **Classroom 50** (Fifty Foundation, GPL-3.0) — the GitHub-native replacement for the
+retired GitHub Classroom.
 
-## One-time setup
+## Status: evaluated and deferred (2026-09-04)
+
+**Not in use this term.** Distribution is plain GitHub template repos and tracking is
+`automation/tracking.ps1` + `tracking/progress.qmd` (see `CLAUDE.md` §6).
+
+Why deferred: as of 2026-09-04 `foundation50/gh-teacher` is days old with almost no adoption,
+and it additionally requires the org to be on the **Team plan** (free via GitHub Education).
+A live course should not depend on that. What it would add over the current setup is an accept
+flow that names the student's repo and adds them as a collaborator automatically, plus a scores
+dashboard — convenience, not capability.
+
+## If it is ever adopted
+
+Classroom 50 is a thin wrapper over template repos + Actions + `gh`, which is exactly what the
+pipeline already does, so switching is cheap:
 
 ```bash
 # teacher machine
@@ -13,29 +26,29 @@ gh teacher login                          # requests admin:org + workflow scopes
 
 gh teacher classroom add <org> qmir --name "QMIR 2026-fall" --term "Fall 2026"
 gh teacher roster add <org> qmir <user> --first-name ... --email ... --section main
-# roster writes students.csv on the org -> export to ../tracking/students.csv
 
 # students, one time:
 gh extension install foundation50/gh-student
 gh student login
 ```
 
-Requirements: org on the **Team plan** (free via GitHub Education). Autograding (if used) runs in
-GitHub Actions and burns org Actions minutes — keep it to **mechanical checks only** (renders? files
-present?); substantive assessment is the sample solution + opt-in AI feedback.
-
-## Per assignment
+Per assignment (`release-homework.ps1` creates the `hw-NN` template repo first):
 
 ```bash
 gh teacher assignment add <org> qmir hw-NN --name "Homework NN" --template <org>/hw-NN
 ```
 
-(`automation/release-homework.ps1` creates the `hw-NN` template repo first, then registers it here.)
+Then re-enable the commented `gh teacher assignment add` line in the `-Classroom` branch of
+`automation/release-homework.ps1`.
 
-## Fallback
+Autograding, if it is ever used, runs in GitHub Actions and burns org Actions minutes — keep it
+to **mechanical checks only** (renders? files present?); substantive assessment is the sample
+solution + opt-in AI feedback.
 
-If Classroom 50 proves too young to rely on, the plain-GitHub path is documented in `CLAUDE.md` §6
-and implemented by `automation/tracking.ps1` (enumerate `hw-NN-<username>` repos via `gh`). Because
-Classroom 50 is a thin layer over template repos + Actions + `gh`, switching directions is cheap.
+## Historical note
 
-Keep any real roster/config exports here **git-ignored** if they contain student PII.
+GitHub Classroom's management site went down **2026-08-28** and its metadata was deleted
+**2026-09-04**; the export window has closed. Last term's roster survives only as the local
+`qmir-2026/exam-registrations/*.xlsx` files and the repos still sitting in the `qmir-2026` org.
+
+**Never** put a real roster or any student PII in this folder — the repository is public.

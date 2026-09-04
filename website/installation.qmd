@@ -16,8 +16,11 @@ What you need to do the homeworks and the exam.
 
 ## Submitting
 
-- Accept a homework from the link on the [Schedule](schedule.qmd) — this creates your
-  `hw-NN-<username>` repo on the org.
+- Open the homework link on the [Schedule](schedule.qmd). It opens GitHub's *create from
+  template* page — make your own copy of the starter repo.
+- **Name it exactly `hw-NN-<username>`** (e.g. `hw-03-jdoe`, with your own GitHub username) and
+  create it **in the course organisation**. The tracker finds submissions by that name; a repo
+  named anything else is invisible to it.
 - Do your work in that repo, commit, and push. **Rendering the PDF and pushing is your submission.**
 - **Opt-in feedback:** add an open-source `license.md` to the repo to receive automated feedback
   (see [Syllabus](syllabus.qmd)).
