@@ -17,6 +17,8 @@
 #>
 param(
   [string]$SiteDir = "website",
+  [string]$Org     = "qmir-2026-fall",
+  [string]$Repo    = "qmir-2026-fall.github.io",
   [string]$SiteUrl = "https://qmir-2026-fall.github.io/",
   [switch]$DryRun
 )
@@ -48,6 +50,18 @@ if (-not $DryRun) {
       $commit = (git commit-tree $empty -m "Initialize gh-pages").Trim()
       git push origin "${commit}:refs/heads/gh-pages"
       if ($LASTEXITCODE -ne 0) { throw "Could not create the gh-pages branch on origin." }
+    }
+
+    # GitHub auto-enables Pages on `main` when a repo is named <org>.github.io, which then
+    # fails to build. Point it at gh-pages/root if it is not there already.
+    $slug = "$($Org)/$($Repo)"
+    $branch = gh api "repos/$slug/pages" --jq '.source.branch' 2>$null
+    if ($LASTEXITCODE -ne 0 -or $branch -ne "gh-pages") {
+      Write-Host "Pointing GitHub Pages at gh-pages / ..." -ForegroundColor Cyan
+      $body = '{"source":{"branch":"gh-pages","path":"/"}}'
+      # PUT updates an existing Pages site; POST creates one that does not exist yet.
+      $body | gh api -X PUT "repos/$slug/pages" --input - *> $null
+      if ($LASTEXITCODE -ne 0) { $body | gh api -X POST "repos/$slug/pages" --input - *> $null }
     }
   } finally { Pop-Location }
 }
