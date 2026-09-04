@@ -1,0 +1,28 @@
+---
+title: "QMIR — Feedback on your homework"
+format:
+  pdf:
+    toc: false
+    number-sections: false
+    geometry: margin=1in
+---
+
+<!-- Claude fills this in. One block per step this homework exercised. Delete unused blocks.
+     Keep it to ~1 page. No grade/score — this is formative feedback only. -->
+
+*Automated feedback. You opted in via `license.md`. It compares your submission to the sample
+solution and is organized by the 8-step Bayesian workflow. It is not a grade or a regrade channel.*
+
+**Overall:** <one or two encouraging, specific sentences>
+
+### <step name, e.g. 3. Formal model>
+
+- **Well done:** <specific>
+- **To fix:** <specific>
+- **Try this:** <one concrete improvement>
+
+<!-- repeat per relevant step -->
+
+---
+
+Keep going — every homework is practice for the same 8-step workflow you'll run on the exam.

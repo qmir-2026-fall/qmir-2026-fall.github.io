@@ -1,0 +1,21 @@
+---
+title: "QMIR — Quantitative Methods"
+---
+
+Welcome to QMIR. This site is the **single source of truth** for the course: slides,
+schedule, homeworks, and the exam are all linked from here.
+
+## How this course works
+
+- **Weekly slides** — linked from the [Schedule](schedule.qmd).
+- **Weekly homeworks** — distributed through the course GitHub org; each ships with a
+  **sample solution** published after the due date.
+- **A final take-home exam** — a complete 8-step Bayesian analysis. You see the target from
+  week 1; every week builds toward it.
+
+## Feedback policy — please read
+
+> **A sample solution is published for every homework. Individual feedback is NOT provided by
+> default.** The only individual feedback available is the **optional AI feedback** you can opt
+> into by adding an open-source `license.md` to your submission repo. See the
+> [Syllabus](syllabus.qmd) for details.

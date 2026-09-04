@@ -1,0 +1,10 @@
+# Homework metadata — read by automation (release, tracking, feedback).
+slug: hw-NN            # distribution repo name, e.g. hw-05
+week: NN               # course week number
+title: "Homework NN — <topic>"
+released: 2026-09-01   # date the distribution repo goes live (YYYY-MM-DD)
+due: 2026-09-08        # due date; a commit after `released` and by `due` counts as submitted
+# Which of the 8 workflow steps this homework exercises (cumulative across the term):
+steps: [1, 2]         # e.g. [1,2,3] as the term progresses
+data:                  # datasets shipped to students (files under data/)
+  - example.csv

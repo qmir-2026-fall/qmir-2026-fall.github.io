@@ -1,0 +1,5 @@
+github_username,week,present
+# The ONLY hand-kept datum (attendance can't come from GitHub). Long format: one row per
+# student per session attended, present=1. Join key = github_username (matches students.csv).
+# Homework status is NOT recorded here — it is auto-derived from the org (see tracking.ps1).
+# Keep the real filled file as attendance.local.csv (git-ignored) if it identifies students.

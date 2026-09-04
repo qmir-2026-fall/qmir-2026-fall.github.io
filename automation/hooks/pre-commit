@@ -1,0 +1,39 @@
+#!/bin/sh
+# Leak guard for a PUBLIC course repo.
+#
+# Blocks a commit that stages material students must not see, or student data.
+# Install:  ./automation/hooks/install-hooks.ps1     (or: git config core.hooksPath automation/hooks)
+# Bypass (deliberately, after reading what it flagged):  git commit --no-verify
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$staged" ] && exit 0
+
+bad=""
+for f in $staged; do
+  case "$f" in
+    # Sample solutions and the exam belong in the private `solutions/` submodule.
+    solution.*|*/solution.*|*/solution-*|exam/*|*/exam.qmd)
+      bad="$bad\n  $f  (solution/exam content -> private solutions/ submodule)" ;;
+    # Student data: rosters, attendance, derived submission status.
+    *.local.csv|tracking/hw_status.csv|tracking/students.csv.bak)
+      bad="$bad\n  $f  (student data -> keep local, never publish)" ;;
+    # Cloned student repos / grading scratch.
+    scratch/*|*/_work/*)
+      bad="$bad\n  $f  (grading scratch -> not for this repo)" ;;
+  esac
+done
+
+# A filled roster: the committed students.csv must stay header-only (comments allowed).
+if echo "$staged" | grep -qx "tracking/students.csv"; then
+  if git show ":tracking/students.csv" | grep -vE '^\s*($|#|student_id,)' | grep -q .; then
+    bad="$bad\n  tracking/students.csv  (contains rows -> commit the header only, keep the real roster as students.local.csv)"
+  fi
+fi
+
+if [ -n "$bad" ]; then
+  printf 'BLOCKED: this is a PUBLIC repository and the commit stages private material:\n'
+  printf "$bad\n\n"
+  printf 'Unstage those paths, or use --no-verify if you are certain.\n'
+  exit 1
+fi
+exit 0

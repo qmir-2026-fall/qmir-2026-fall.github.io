@@ -1,0 +1,32 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "slides/*.qmd"
+    - "resources/*.qmd"
+
+# Keep expensive renders cached; publish only rendered output to the public Pages repo.
+freeze: auto
+
+website:
+  title: "QMIR — Quantitative Methods"
+  description: "Bayesian quantitative methods in R/Quarto."
+  navbar:
+    left:
+      - text: "About"
+        href: index.qmd
+      - text: "Syllabus"
+        href: syllabus.qmd
+      - text: "Schedule"
+        href: schedule.qmd
+      - text: "Installation"
+        href: installation.qmd
+
+format:
+  html:
+    theme: flatly
+    toc: true
+    # Site is deliberately non-indexed (see robots.txt / noindex in prior iteration).
+
+bibliography: references.bib

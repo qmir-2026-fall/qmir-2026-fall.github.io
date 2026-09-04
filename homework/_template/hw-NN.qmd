@@ -1,0 +1,34 @@
+---
+title: "Homework NN — <topic>"
+author: "Your name"
+format:
+  pdf:
+    toc: false
+    number-sections: true
+---
+
+<!-- STUDENT-FACING STARTER. No solution content here — files named solution.* are stripped
+     on release, but this file ships as-is, so keep it clean. -->
+
+```{r setup}
+#| include: false
+library(tidyverse)
+library(brms)
+```
+
+# Task
+
+<Restate the question. Point students at the relevant step(s) of the 8-step workflow.>
+
+# Your analysis
+
+<Scaffold the expected structure with empty sections that match the steps this HW exercises,
+e.g.:>
+
+## Estimand & DAG
+
+## Data summary
+
+## Model
+
+<!-- Add sections as the term introduces more steps. -->

@@ -1,0 +1,28 @@
+---
+title: "Schedule"
+---
+
+The spine of the course. One session per week. Each row links the slides, the homework accept
+link (course GitHub org), and — after the due date — the sample solution.
+
+::: callout-note
+## Take-home exam
+The exam is a complete **8-step Bayesian analysis**. You see the target in week 1; every week
+builds toward it. Released at the end of term via the `exam` repo on the org.
+:::
+
+<!--
+CONVENTIONS (see CLAUDE.md §7):
+  Slides   → link the RENDERED deck, e.g. slides/week05.html  (not the .qmd)
+  Homework → link the Classroom 50 accept flow for repo  hw-NN
+  Solution → link the published sample-solution PDF, only AFTER the due date
+Keep gray/placeholder links for unreleased items; swap to live links on release.
+-->
+
+| Week | Topic | Slides | Homework | Solution |
+|-----:|-------|--------|----------|----------|
+| 01 | Course + the 8-step workflow (whole skeleton) | [slides](slides/week01.html) | — | — |
+| 02 | R & Quarto foundations | _tbd_ | `hw-02` _(accept link)_ | _after due date_ |
+| … | … | … | … | … |
+
+<!-- Add rows week by week. `meta.yml` in each homework/hw-NN records week + due date + 8-step stages. -->

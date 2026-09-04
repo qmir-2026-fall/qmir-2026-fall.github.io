@@ -1,0 +1,33 @@
+---
+title: "Week 1 — The whole workflow, up front"
+subtitle: "QMIR"
+format:
+  revealjs:
+    theme: theme.scss
+    embed-resources: true
+    incremental: true
+    code-fold: true
+---
+
+## What this course is
+
+- A Bayesian analysis, done properly, end to end.
+- **This is the exam.** Not a surprise at the end — the target, from day one.
+
+## The 8-step workflow
+
+{{< include _workflow-8step.qmd >}}
+
+::: notes
+Speaker notes live in `::: notes` blocks. Show the whole skeleton now; reassure students that
+each week deepens one or two steps. Point at the exam.
+:::
+
+## Where things live
+
+- **Website** = everything (slides, schedule, homeworks, exam).
+- Homeworks distributed via the GitHub org; **sample solution every week**; individual feedback
+  only via the opt-in `license.md` path.
+
+<!-- Duplicate this file to week02.qmd, week03.qmd, ... Always `include` the 8-step partial;
+     never paste the table. -->

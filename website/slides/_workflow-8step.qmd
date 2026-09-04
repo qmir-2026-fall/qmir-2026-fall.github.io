@@ -1,0 +1,24 @@
+<!--
+CANONICAL 8-STEP BAYESIAN WORKFLOW — single source of truth.
+`include` this partial wherever the workflow is shown:
+    {{< include _workflow-8step.qmd >}}          (from within slides/)
+    {{< include slides/_workflow-8step.qmd >}}   (from the site root, e.g. syllabus.qmd)
+Do NOT copy this table into individual decks. Edit it here only.
+This is the rubric the exam is graded against and the structure the AI feedback follows.
+-->
+
+### The 8-step Bayesian workflow
+
+| # | Step | What you produce |
+|--:|------|------------------|
+| 1 | **DAG + estimand** | The causal/associational question stated as a target quantity; a DAG. |
+| 2 | **Data summary** | The data described: measurement, coverage, obvious issues. |
+| 3 | **Formal model** | Likelihood + priors written down (the generative model). |
+| 4 | **Prior predictive check** | Simulate from priors; confirm they imply plausible data. |
+| 5 | **Fit** | Estimate with `brms`; weakly-informative priors by default. |
+| 6a | **MCMC diagnostics** | R-hat, ESS, divergences, trace plots — did sampling work? |
+| 6b | **Posterior predictive check** | Does the fitted model reproduce key features of the data? |
+| 7 | **Interpretation** | Answer the estimand on the outcome scale, with uncertainty. |
+| 8 | **Limitations** | What the analysis can and cannot support; threats and next steps. |
+
+*This is the exam.* Every homework exercises the steps introduced so far, cumulatively.

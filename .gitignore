@@ -1,0 +1,49 @@
+# ─── PUBLIC REPO ─────────────────────────────────────────────────────────────
+# This repo is PUBLIC. Anything ignored here is ignored because it must NOT be
+# world-readable (solutions, the exam, student data) or because it is a build
+# artifact. Solutions/exam live in the PRIVATE submodule `solutions/`.
+
+# Quarto / render artifacts  (NOTE: _freeze/ is COMMITTED on purpose — see CLAUDE.md)
+/_site/
+_site/
+.quarto/
+*_cache/
+*_files/
+
+# LaTeX byproducts left next to .qmd
+*.tex
+*.log
+*.aux
+*.out
+
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Rapp.history
+renv/library/
+
+# Grading / feedback scratch (never commit student clones or PII)
+/scratch/
+/automation/ai-feedback/_work/
+/automation/tracking/_work/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ─── Student data — must never reach a public repo ───────────────────────────
+# Commit only the header-only templates; keep filled copies as *.local.csv.
+/tracking/students.local.csv
+/tracking/attendance.local.csv
+# Derived homework status lists student usernames — regenerate it, don't publish it.
+/tracking/hw_status.csv
+/tracking/progress.html
+/tracking/progress_files/
+
+# ─── TEMPORARY (remove when the private submodule is wired) ──────────────────
+# `solutions/` holds the sample solutions and the exam. It becomes a PRIVATE git
+# submodule (qmir-2026-fall/solutions). Until that repo exists it is a plain local
+# folder, and it MUST stay ignored so its contents never enter this public history.
+# When wiring the submodule: delete these two lines FIRST, then `git submodule add`.
+/solutions/

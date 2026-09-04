@@ -1,0 +1,23 @@
+---
+title: "Installation Guide"
+---
+
+What you need to do the homeworks and the exam.
+
+## Toolchain
+
+1. **R** (recent release) and **RStudio** (or your editor of choice).
+2. **Quarto** — <https://quarto.org/docs/get-started/>.
+3. A **LaTeX** engine for PDF output: `quarto install tinytex`.
+4. **Git** and a **GitHub account** — all homeworks and the exam are distributed and submitted
+   through the course GitHub org.
+5. Key R packages: `tidyverse`, `brms` (and its Stan backend), `posterior`, `bayesplot`,
+   `marginaleffects`. Follow the in-class setup for the Stan toolchain.
+
+## Submitting
+
+- Accept a homework from the link on the [Schedule](schedule.qmd) — this creates your
+  `hw-NN-<username>` repo on the org.
+- Do your work in that repo, commit, and push. **Rendering the PDF and pushing is your submission.**
+- **Opt-in feedback:** add an open-source `license.md` to the repo to receive automated feedback
+  (see [Syllabus](syllabus.qmd)).

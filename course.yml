@@ -1,0 +1,39 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# QMIR 2026-fall — the single source of truth for term-level constants.
+#
+# Read by:  website/schedule.qmd  ·  tracking/progress.qmd  ·  the automation scripts
+# (-Org / -SiteUrl defaults). Change a value HERE, never in the consumers.
+# ─────────────────────────────────────────────────────────────────────────────
+
+course:
+  title: "QMIR — Quantitative Methods"
+  term: "Fall 2026"
+  instructor: "Tristan Muno"
+
+github:
+  org: qmir-2026-fall
+  # The monorepo is PUBLIC and is itself the Pages repo: Pages serves the gh-pages
+  # branch of <org>/<org>.github.io at the apex URL below.
+  repo: qmir-2026-fall.github.io
+  site_url: "https://qmir-2026-fall.github.io/"
+  # Distribution repos: hw-NN (template) -> student repos hw-NN-<username>.
+  hw_repo_pattern: "hw-{week}"
+  student_repo_pattern: "hw-{week}-{username}"
+
+# One session per week (CLAUDE.md §1 — no more Mon/Thu doubling).
+sessions:
+  n: 13
+  weekday: Thursday
+  # First session; week N = first_session + (N-1) weeks. Used to build the schedule.
+  # PLACEHOLDER — set the real HWS 2026 start date before publishing the schedule.
+  first_session: 2026-09-10
+
+homework:
+  n: 10
+  # Default offset from the session for a homework's due date, in days.
+  due_offset_days: 7
+
+# Pass thresholds (fractions of the totals above).
+thresholds:
+  attendance: 0.80
+  homework: 0.80

@@ -1,0 +1,31 @@
+---
+title: "Syllabus"
+---
+
+## The through-line: an 8-step Bayesian workflow
+
+Everything in this course builds toward one skill — running a complete Bayesian analysis
+end to end. The **take-home exam is exactly that**, on a dataset you'll meet at the end. You
+see the whole workflow in week 1 and deepen it each week.
+
+{{< include slides/_workflow-8step.qmd >}}
+
+## Homework & feedback policy
+
+> **A sample solution is published for every homework.** Individual feedback is **not** provided
+> by default — with one exception.
+>
+> **Opt-in AI feedback.** If you add an open-source `license.md` to your submission repo, you opt
+> in to automated, individualized feedback: an AI reads your submission alongside the sample
+> solution and writes a `FEEDBACK.qmd` / `FEEDBACK.pdf` back into your repo. No `license.md`, no
+> processing. This is entirely optional.
+
+## Passing requirements
+
+- Attendance and homework completion thresholds are published on the [Schedule](schedule.qmd).
+- Homework completion is tracked automatically from your submission repos — submit on the org.
+
+## Assessment
+
+- **Take-home exam** — a full 8-step Bayesian analysis (the terminal deliverable).
+- Homeworks are formative practice for the exam.

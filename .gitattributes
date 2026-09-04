@@ -1,0 +1,10 @@
+# Authored on Windows, rendered on Windows and Linux — normalise line endings.
+* text=auto eol=lf
+
+# Binary assets: never touch.
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.rds  binary
+*.dta  binary
+*.xlsx binary
