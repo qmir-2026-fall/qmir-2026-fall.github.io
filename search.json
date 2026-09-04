@@ -1,0 +1,107 @@
+[
+  {
+    "objectID": "syllabus.html",
+    "href": "syllabus.html",
+    "title": "Syllabus",
+    "section": "",
+    "text": "Everything in this course builds toward one skill — running a complete Bayesian analysis end to end. The take-home exam is exactly that, on a dataset you’ll meet at the end. You see the whole workflow in week 1 and deepen it each week.\n\n\n\n\n\n\n\n\n\n\n\n#\nStep\nWhat you produce\n\n\n\n\n1\nDAG + estimand\nThe causal/associational question stated as a target quantity; a DAG.\n\n\n2\nData summary\nThe data described: measurement, coverage, obvious issues.\n\n\n3\nFormal model\nLikelihood + priors written down (the generative model).\n\n\n4\nPrior predictive check\nSimulate from priors; confirm they imply plausible data.\n\n\n5\nFit\nEstimate with brms; weakly-informative priors by default.\n\n\n6a\nMCMC diagnostics\nR-hat, ESS, divergences, trace plots — did sampling work?\n\n\n6b\nPosterior predictive check\nDoes the fitted model reproduce key features of the data?\n\n\n7\nInterpretation\nAnswer the estimand on the outcome scale, with uncertainty.\n\n\n8\nLimitations\nWhat the analysis can and cannot support; threats and next steps.\n\n\n\nThis is the exam. Every homework exercises the steps introduced so far, cumulatively."
+  },
+  {
+    "objectID": "syllabus.html#the-through-line-an-8-step-bayesian-workflow",
+    "href": "syllabus.html#the-through-line-an-8-step-bayesian-workflow",
+    "title": "Syllabus",
+    "section": "",
+    "text": "Everything in this course builds toward one skill — running a complete Bayesian analysis end to end. The take-home exam is exactly that, on a dataset you’ll meet at the end. You see the whole workflow in week 1 and deepen it each week.\n\n\n\n\n\n\n\n\n\n\n\n#\nStep\nWhat you produce\n\n\n\n\n1\nDAG + estimand\nThe causal/associational question stated as a target quantity; a DAG.\n\n\n2\nData summary\nThe data described: measurement, coverage, obvious issues.\n\n\n3\nFormal model\nLikelihood + priors written down (the generative model).\n\n\n4\nPrior predictive check\nSimulate from priors; confirm they imply plausible data.\n\n\n5\nFit\nEstimate with brms; weakly-informative priors by default.\n\n\n6a\nMCMC diagnostics\nR-hat, ESS, divergences, trace plots — did sampling work?\n\n\n6b\nPosterior predictive check\nDoes the fitted model reproduce key features of the data?\n\n\n7\nInterpretation\nAnswer the estimand on the outcome scale, with uncertainty.\n\n\n8\nLimitations\nWhat the analysis can and cannot support; threats and next steps.\n\n\n\nThis is the exam. Every homework exercises the steps introduced so far, cumulatively."
+  },
+  {
+    "objectID": "syllabus.html#homework-feedback-policy",
+    "href": "syllabus.html#homework-feedback-policy",
+    "title": "Syllabus",
+    "section": "Homework & feedback policy",
+    "text": "Homework & feedback policy\n\nA sample solution is published for every homework. Individual feedback is not provided by default — with one exception.\nOpt-in AI feedback. If you add an open-source license.md to your submission repo, you opt in to automated, individualized feedback: an AI reads your submission alongside the sample solution and writes a FEEDBACK.qmd / FEEDBACK.pdf back into your repo. No license.md, no processing. This is entirely optional."
+  },
+  {
+    "objectID": "syllabus.html#passing-requirements",
+    "href": "syllabus.html#passing-requirements",
+    "title": "Syllabus",
+    "section": "Passing requirements",
+    "text": "Passing requirements\n\nAttendance and homework completion thresholds are published on the Schedule.\nHomework completion is tracked automatically from your submission repos — submit on the org."
+  },
+  {
+    "objectID": "syllabus.html#assessment",
+    "href": "syllabus.html#assessment",
+    "title": "Syllabus",
+    "section": "Assessment",
+    "text": "Assessment\n\nTake-home exam — a full 8-step Bayesian analysis (the terminal deliverable).\nHomeworks are formative practice for the exam."
+  },
+  {
+    "objectID": "schedule.html",
+    "href": "schedule.html",
+    "title": "Schedule",
+    "section": "",
+    "text": "The spine of the course. One session per week. Each row links the slides, the homework starter repo, and — after the due date — the sample solution.\n\n\n\n\n\n\nNoteTake-home exam\n\n\n\nThe exam is a complete 8-step Bayesian analysis. You see the target in week 1; every week builds toward it. Released at the end of term via the exam repo on the course org.\n\n\n\n\n\n\n\nWeek\nDate\nTopic\nSlides\nHomework\nSolution\n\n\n\n\n01\n10 Sep\nThe whole workflow, up front\nslides\n–\n–\n\n\n02\n17 Sep\n–\n–\n–\n–\n\n\n03\n24 Sep\n–\n–\n–\n–\n\n\n04\n01 Oct\n–\n–\n–\n–\n\n\n05\n08 Oct\n–\n–\n–\n–\n\n\n06\n15 Oct\n–\n–\n–\n–\n\n\n07\n22 Oct\n–\n–\n–\n–\n\n\n08\n29 Oct\n–\n–\n–\n–\n\n\n09\n05 Nov\n–\n–\n–\n–\n\n\n10\n12 Nov\n–\n–\n–\n–\n\n\n11\n19 Nov\n–\n–\n–\n–\n\n\n12\n26 Nov\n–\n–\n–\n–\n\n\n13\n03 Dec\n–\n–\n–\n–\n\n\n\n\n\nHomework links open GitHub’s “create from template” page: it makes your own hw-NN-&lt;username&gt; repo. Name it exactly that — the tracker looks for it by name."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "QMIR — Quantitative Methods",
+    "section": "",
+    "text": "Welcome to QMIR. This site is the single source of truth for the course: slides, schedule, homeworks, and the exam are all linked from here."
+  },
+  {
+    "objectID": "index.html#how-this-course-works",
+    "href": "index.html#how-this-course-works",
+    "title": "QMIR — Quantitative Methods",
+    "section": "How this course works",
+    "text": "How this course works\n\nWeekly slides — linked from the Schedule.\nWeekly homeworks — distributed through the course GitHub org; each ships with a sample solution published after the due date.\nA final take-home exam — a complete 8-step Bayesian analysis. You see the target from week 1; every week builds toward it."
+  },
+  {
+    "objectID": "index.html#feedback-policy-please-read",
+    "href": "index.html#feedback-policy-please-read",
+    "title": "QMIR — Quantitative Methods",
+    "section": "Feedback policy — please read",
+    "text": "Feedback policy — please read\n\nA sample solution is published for every homework. Individual feedback is NOT provided by default. The only individual feedback available is the optional AI feedback you can opt into by adding an open-source license.md to your submission repo. See the Syllabus for details."
+  },
+  {
+    "objectID": "installation.html",
+    "href": "installation.html",
+    "title": "Installation Guide",
+    "section": "",
+    "text": "What you need to do the homeworks and the exam."
+  },
+  {
+    "objectID": "installation.html#toolchain",
+    "href": "installation.html#toolchain",
+    "title": "Installation Guide",
+    "section": "Toolchain",
+    "text": "Toolchain\n\nR (recent release) and RStudio (or your editor of choice).\nQuarto — https://quarto.org/docs/get-started/.\nA LaTeX engine for PDF output: quarto install tinytex.\nGit and a GitHub account — all homeworks and the exam are distributed and submitted through the course GitHub org.\nKey R packages: tidyverse, brms (and its Stan backend), posterior, bayesplot, marginaleffects. Follow the in-class setup for the Stan toolchain."
+  },
+  {
+    "objectID": "installation.html#submitting",
+    "href": "installation.html#submitting",
+    "title": "Installation Guide",
+    "section": "Submitting",
+    "text": "Submitting\n\nOpen the homework link on the Schedule. It opens GitHub’s create from template page — make your own copy of the starter repo.\nName it exactly hw-NN-&lt;username&gt; (e.g. hw-03-jdoe, with your own GitHub username) and create it in the course organisation. The tracker finds submissions by that name; a repo named anything else is invisible to it.\nDo your work in that repo, commit, and push. Rendering the PDF and pushing is your submission.\nOpt-in feedback: add an open-source license.md to the repo to receive automated feedback (see Syllabus)."
+  },
+  {
+    "objectID": "slides/week01.html#what-this-course-is",
+    "href": "slides/week01.html#what-this-course-is",
+    "title": "Week 1 — The whole workflow, up front",
+    "section": "What this course is",
+    "text": "What this course is\n\nA Bayesian analysis, done properly, end to end.\nThis is the exam. Not a surprise at the end — the target, from day one."
+  },
+  {
+    "objectID": "slides/week01.html#the-8-step-workflow",
+    "href": "slides/week01.html#the-8-step-workflow",
+    "title": "Week 1 — The whole workflow, up front",
+    "section": "The 8-step workflow",
+    "text": "The 8-step workflow\n\nThe 8-step Bayesian workflow\n\n\n\n\n\n\n\n\n#\nStep\nWhat you produce\n\n\n\n\n1\nDAG + estimand\nThe causal/associational question stated as a target quantity; a DAG.\n\n\n2\nData summary\nThe data described: measurement, coverage, obvious issues.\n\n\n3\nFormal model\nLikelihood + priors written down (the generative model).\n\n\n4\nPrior predictive check\nSimulate from priors; confirm they imply plausible data.\n\n\n5\nFit\nEstimate with brms; weakly-informative priors by default.\n\n\n6a\nMCMC diagnostics\nR-hat, ESS, divergences, trace plots — did sampling work?\n\n\n6b\nPosterior predictive check\nDoes the fitted model reproduce key features of the data?\n\n\n7\nInterpretation\nAnswer the estimand on the outcome scale, with uncertainty.\n\n\n8\nLimitations\nWhat the analysis can and cannot support; threats and next steps.\n\n\n\nThis is the exam. Every homework exercises the steps introduced so far, cumulatively.\n\nSpeaker notes live in ::: notes blocks. Show the whole skeleton now; reassure students that each week deepens one or two steps. Point at the exam."
+  },
+  {
+    "objectID": "slides/week01.html#where-things-live",
+    "href": "slides/week01.html#where-things-live",
+    "title": "Week 1 — The whole workflow, up front",
+    "section": "Where things live",
+    "text": "Where things live\n\nWebsite = everything (slides, schedule, homeworks, exam).\nHomeworks distributed via the GitHub org; sample solution every week; individual feedback only via the opt-in license.md path."
+  }
+]
