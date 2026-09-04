@@ -15,6 +15,9 @@ website:
   description: "Bayesian quantitative methods in R/Quarto."
   # Sources are public: let students read and file issues against the course itself.
   repo-url: "https://github.com/qmir-2026-fall/qmir-2026-fall.github.io"
+  # The Quarto project root is website/, but the repo root is one level up, so without
+  # this the "View source" action links to /blob/main/<page>.qmd and 404s.
+  repo-subdir: website
   repo-actions: [source, issue]
   reader-mode: false
   navbar:
@@ -25,6 +28,8 @@ website:
         href: syllabus.qmd
       - text: "Schedule"
         href: schedule.qmd
+      - text: "Glossary"
+        href: glossary.qmd
       - text: "Installation"
         href: installation.qmd
   page-footer:
@@ -47,4 +52,27 @@ format:
       text: |
         <meta name="robots" content="noindex">
 
+# Cross-references are mandatory on every figure, table and equation (STYLE.md §2).
+# Numbering stays Quarto's default. Only the prefixes are pinned, so wording is stable.
+crossref:
+  fig-title: "Figure"
+  tbl-title: "Table"
+  fig-prefix: "Figure"
+  tbl-prefix: "Table"
+  eq-prefix: "Equation"
+  sec-prefix: "Section"
+
+# Project-wide execution defaults. slides/_metadata.yml repeats these for the
+# revealjs directory, which needs its own block because it also sets the format.
+execute:
+  echo: true
+  message: false
+  warning: false
+
 bibliography: references.bib
+biblio-style: apsr
+
+# The fontawesome extension is VENDORED at website/_extensions/quarto-ext/fontawesome,
+# so there is no install step on a fresh clone. It contributes shortcodes rather than a
+# filter, so Quarto discovers it automatically and it needs no `filters:` entry here.
+# Used by index.qmd (course details grid) and schedule.qmd (the legend).

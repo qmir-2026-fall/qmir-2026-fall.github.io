@@ -1,33 +1,40 @@
 ---
-title: "Week 1 — The whole workflow, up front"
-subtitle: "QMIR"
-format:
-  revealjs:
-    theme: theme.scss
-    embed-resources: true
-    incremental: true
-    code-fold: true
+title: "Week 1: The whole workflow, up front"
 ---
 
-## What this course is
+<!-- Copy _deck-template.qmd to start week02.qmd. Shared format options live in
+     _metadata.yml, so this deck's YAML carries only the title. -->
+
+## What this course is {#sec-what-this-is}
 
 - A Bayesian analysis, done properly, end to end.
-- **This is the exam.** Not a surprise at the end — the target, from day one.
+- **This is the exam.** Not a surprise at the end, but the target, from day one.
 
-## The 8-step workflow
+::: notes
+Say the second bullet out loud. It reframes everything that follows.
+:::
+
+## The 8-step workflow {#sec-workflow .smaller}
 
 {{< include _workflow-8step.qmd >}}
 
 ::: notes
-Speaker notes live in `::: notes` blocks. Show the whole skeleton now; reassure students that
-each week deepens one or two steps. Point at the exam.
+Show the whole skeleton now.
+Reassure students that each week deepens one or two steps.
+Point at the exam.
 :::
 
-## Where things live
+## Where things live {#sec-where-things-live}
 
-- **Website** = everything (slides, schedule, homeworks, exam).
-- Homeworks distributed via the GitHub org; **sample solution every week**; individual feedback
-  only via the opt-in `license.md` path.
+- The **website** is everything: slides, schedule, homeworks, exam.
+- Homeworks are distributed through the GitHub org, one starter repo per week.
 
-<!-- Duplicate this file to week02.qmd, week03.qmd, ... Always `include` the 8-step partial;
-     never paste the table. -->
+. . .
+
+<!-- The feedback-policy banner is reproduced VERBATIM wherever it appears
+     (CLAUDE.md section 2, STYLE.md section 7). Do not reword it here. -->
+::: {.callout-important}
+**A sample solution is published for every homework. Individual feedback is NOT provided by
+default.** The only individual feedback available is the **optional AI feedback** you can opt
+into by adding an open-source `license.md` to your submission repo.
+:::

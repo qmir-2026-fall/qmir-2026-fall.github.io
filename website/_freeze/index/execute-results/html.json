@@ -1,0 +1,15 @@
+{
+  "hash": "41990e810ecb10bc1d4b332b335a9261",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Quantitative Methods in International Relations\"\nsubtitle: \"Learn to investigate global and European politics with real data, and build the skills to produce transparent, reproducible research.\"\n---\n\n\n::: {.cell}\n\n:::\n\n\nFall 2026<br>\nDepartment of Political Science<br>\nSchool of Social Sciences<br>\nUniversity of Mannheim\n\n::: {.home}\n\n:::: {.grid .course-details}\n\n::: {.g-col-12 .g-col-md-4}\n\n### Instructor {#sec-instructor}\n\n- {{< fa user >}} Tristan Muno\n- {{< fa university >}} A 5, 6 — Room A 351\n- {{< fa envelope >}} [tristan.muno@uni-mannheim.de](mailto:tristan.muno@uni-mannheim.de)\n\n:::\n\n::: {.g-col-12 .g-col-md-4}\n\n### Course details {#sec-course-details}\n\n- {{< fa calendar >}} Thursday\n- {{< fa clock >}} to be announced\n- {{< fa location-dot >}} to be announced\n- {{< fa list-ol >}} 13 sessions, one per week\n\n:::\n\n::: {.g-col-12 .g-col-md-4}\n\n### Contacting me {#sec-contact}\n\n- {{< fa calendar-check >}} to be announced: open consultation, no appointment\n  needed.\n- For any other time, email me to arrange an appointment, in person or online.\n  I aim to reply within 24 hours.\n\n:::\n\n::::\n\n:::\n\n## How this course works {#sec-how-it-works}\n\n- **Weekly slides**, linked from the [Schedule](schedule.qmd).\n- **Weekly homeworks**, distributed through the course GitHub org. Each one ships with a\n  **sample solution** published after the due date.\n- **A final take-home exam**: a complete 8-step Bayesian analysis. You see the target from\n  week 1, and every week builds toward it.\n\nNew terminology arrives quickly in a course like this.\nThe [Glossary](glossary.qmd) collects it in one place, grouped by the block where each term first\ncomes up.\n\nBefore the first session, work through the [Installation guide](installation.qmd).\nIt sets up R, Positron, Quarto, Git and the packages we rely on, and doing it early leaves time\nto fix problems that are much easier to solve together.\n\n## Feedback policy, please read {#sec-feedback-policy}\n\n> **A sample solution is published for every homework. Individual feedback is NOT provided by\n> default.** The only individual feedback available is the **optional AI feedback** you can opt\n> into by adding an open-source `license.md` to your submission repo. See the\n> [Syllabus](syllabus.qmd) for details.\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

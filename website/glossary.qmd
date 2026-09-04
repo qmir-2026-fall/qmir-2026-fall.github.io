@@ -1,0 +1,336 @@
+---
+title: "Glossary"
+toc: true
+toc-depth: 2
+---
+
+The vocabulary of the course, collected in one place.
+Terms are grouped by the block in which you first meet them, so this page reads in the same order
+as the [Schedule](schedule.qmd).
+
+Nothing here replaces the slides.
+A glossary entry is the short version you can check quickly, not the explanation.
+
+::: {.callout-tip}
+**Use this page as a lookup.**
+If a term on a slide or in a homework is unfamiliar, search this page first.
+If it is missing, say so in class, because the gap is probably not only yours.
+:::
+
+## Scientific programming fundamentals {#sec-glossary-programming}
+
+Reproducible research
+:   Research whose results can be regenerated from the raw data and the code alone, by someone
+    else, on another machine.
+    The practical test is whether one command rebuilds every number and figure in the output.
+
+Literate programming
+:   Writing code and the prose that explains it in a single document, so the reasoning and the
+    computation cannot drift apart.
+    Quarto is the tool we use for it.
+
+Quarto
+:   The publishing system that turns a `.qmd` file into HTML, PDF or slides, running the embedded
+    code as it goes.
+    Everything in this course, including this page, is a Quarto document.
+
+Render
+:   The act of turning a source `.qmd` into its output document.
+    A submission that does not render is not a submission, because nobody else can reproduce it.
+
+Code chunk
+:   A block of executable code inside a `.qmd`.
+    Every chunk in this course carries a label, so it can be referred to and so an error points
+    somewhere specific.
+
+YAML front matter
+:   The block between the two `---` lines at the top of a `.qmd`, which sets the document title,
+    output format and options.
+    It is configuration, not content.
+
+Project root
+:   The top directory of a project, the fixed point every other path is expressed relative to.
+    Anchoring paths to it is what makes a project work on a machine other than yours.
+
+`here()`
+:   The function from the `here` package that builds a path from the project root rather than from
+    whatever the current working directory happens to be.
+    Use it for every path, always.
+
+Working directory
+:   The directory R currently treats as "here" when it resolves a relative path.
+    It changes depending on how code is run, which is exactly why we do not rely on it.
+
+Git
+:   A version control system that records the history of a project as a series of snapshots.
+    It answers what changed, when, and why, and it lets you go back.
+
+Repository
+:   A project under version control, together with its full history.
+    Usually shortened to "repo".
+
+Commit
+:   One recorded snapshot of the project, with a message saying what changed.
+    A commit is the unit of history, so its message is written for the next reader.
+
+Branch
+:   A named line of development inside a repository, so work in progress does not disturb the main
+    version.
+    This course uses `main` for sources and `gh-pages` for the rendered website.
+
+Remote
+:   A copy of the repository hosted elsewhere, normally on GitHub, that you push to and pull from.
+    The remote is what makes the work shared rather than local.
+
+Clone
+:   Making a local copy of a remote repository, including its history.
+
+Push and pull
+:   Sending your local commits to the remote (push), and fetching other people's commits from it
+    (pull).
+
+Template repository
+:   A repository GitHub can copy to make a fresh, independent repository with no shared history.
+    Every homework starter is distributed this way, which is why your submission repo is yours
+    alone.
+
+GitHub
+:   The platform that hosts repositories and adds collaboration features such as issues and
+    automated checks.
+    Course materials are distributed and homework submitted through it.
+
+Tidy data
+:   Data arranged so that each variable is a column, each observation is a row, and each cell holds
+    one value.
+    Most of the work in an analysis is getting data into this shape, and most tools assume it.
+
+Data frame and tibble
+:   A rectangular table of data in R, with one column per variable.
+    A tibble is the tidyverse version of a data frame, with friendlier printing and fewer
+    surprises.
+
+Native pipe
+:   The `|>` operator, which passes the result on its left into the first argument of the function
+    on its right, so a sequence of steps reads left to right.
+    This course uses `|>` throughout and not the older `%>%`.
+
+Function and argument
+:   A function is a named, reusable piece of code, and its arguments are the inputs you give it.
+    Naming arguments explicitly makes code readable a month later.
+
+Package
+:   A bundle of functions, data and documentation that extends R.
+    Installed once with `install.packages()`, loaded per session with `library()`.
+
+`set.seed()`
+:   Fixes the starting point of R's random number generator, so anything involving randomness
+    gives the same result on every run.
+    Required wherever this course simulates or samples.
+
+Freeze
+:   Quarto's cache of already-computed results, stored in `_freeze/`, so a rebuild does not re-run
+    expensive code.
+    It is committed deliberately, so the site rebuilds identically anywhere.
+
+## The logic of Bayesian inference {#sec-glossary-inference}
+
+Probability distribution
+:   A description of how plausible each possible value of a quantity is.
+    Here, distributions describe both data and parameters, which is the central move of the
+    Bayesian approach.
+
+Parameter
+:   An unknown quantity in a model that we want to learn about, such as a slope or an average.
+    Bayesian inference gives a parameter a distribution rather than one fixed number.
+
+Prior
+:   The distribution expressing what is plausible about a parameter before seeing the data.
+    A prior is a philosophical commitment, so it is defended on principled grounds rather than
+    chosen for convenience.
+
+Likelihood
+:   How probable the observed data would be, for each candidate value of the parameters.
+    It is the part of the model that lets the data speak.
+
+Posterior
+:   The distribution of the parameters after conditioning on the data.
+    This is what Bayes' theorem returns, and every quantity of interest is computed from it.
+
+Bayes' theorem
+:   The rule that combines prior and likelihood into a posterior.
+    Read as a proportionality, the posterior is the likelihood times the prior, up to a constant.
+
+Normalising constant
+:   The quantity that rescales the posterior so it integrates to one.
+    It does not depend on the parameters, which is why we can usually ignore it and work with the
+    unnormalised posterior.
+
+Estimand
+:   The quantity you actually want to know, stated precisely, before any model is fitted.
+    Naming it first is step 1 of the workflow, and it is what keeps a model answerable to a
+    question.
+
+Directed acyclic graph
+:   A diagram of assumed causal relationships, drawn as arrows between variables with no cycles.
+    Usually called a DAG, it makes explicit which variables must be adjusted for and which must
+    not.
+
+Confounder
+:   A variable that influences both the presumed cause and the outcome, so leaving it out distorts
+    the relationship you are trying to measure.
+    Whether a variable is a confounder is a claim about the DAG, not something the data can tell
+    you.
+
+Generative model
+:   A model complete enough to simulate fake data that looks like the real thing.
+    If you can simulate from it, you can check it before it ever touches your data.
+
+Prior predictive check
+:   Simulating data from the priors alone, before fitting, to see what outcomes the model considers
+    plausible.
+    It catches priors that imply impossible values, such as a turnout rate above 100 percent.
+
+Posterior predictive check
+:   Simulating data from the fitted model and comparing it against the observed data.
+    It asks whether the model can reproduce the features of the data you care about.
+
+Markov chain Monte Carlo
+:   A family of algorithms, usually shortened to MCMC, that explore the posterior by taking a long,
+    dependent random walk through it.
+    We need it because most interesting posteriors cannot be written down in closed form.
+
+Chain
+:   One run of the sampler, producing a sequence of draws.
+    Several chains are run from different starting points so their agreement can be checked.
+
+Warmup
+:   The initial draws a chain uses to adapt and find the posterior, discarded before inference.
+    They describe the sampler getting started, not the posterior.
+
+Draw
+:   A single sample from the posterior.
+    A posterior is represented in practice as a large collection of draws, and every summary is
+    computed from them.
+
+Divergent transition
+:   A warning that the sampler failed to explore part of the posterior faithfully.
+    Divergences are not cosmetic, so they are understood rather than silenced.
+
+R-hat
+:   A convergence diagnostic comparing variation between chains against variation within them.
+    Values near 1 are consistent with convergence, and clearly larger values mean the chains do
+    not agree.
+
+Effective sample size
+:   How many independent draws the correlated MCMC draws are worth.
+    A low value means a summary rests on less information than the raw number of draws suggests.
+
+Trace plot
+:   A plot of drawn values against iteration, one line per chain.
+    Well-mixed chains overlap and look stationary, like noise around a stable level.
+
+Credible interval
+:   A range containing a stated share of the posterior probability, for example 90 percent.
+    It is a direct statement about the parameter given the data and the model, which is what makes
+    it straightforward to interpret.
+    A frequentist confidence interval is a different object, describing the long-run behaviour of
+    the procedure rather than the parameter.
+
+## Applied modelling {#sec-glossary-modelling}
+
+Linear regression
+:   A model in which the expected outcome is a straight-line function of the predictors.
+    The foundation the later models extend rather than replace.
+
+Coefficient
+:   A parameter multiplying a predictor, describing how the expected outcome changes as that
+    predictor changes.
+    In a Bayesian model a coefficient has a full posterior, not a single value.
+
+Intercept
+:   The expected outcome when every predictor is zero.
+    It is only interpretable when zero is a meaningful value, which is one reason predictors are
+    often centred.
+
+Link function
+:   The transformation connecting a linear predictor to the scale of the outcome.
+    It lets a linear model describe outcomes that are bounded, such as probabilities.
+
+Logistic regression
+:   A model for a binary outcome, using the logit link to keep predicted probabilities between zero
+    and one.
+
+Log-odds
+:   The scale a logistic regression's coefficients live on, the logarithm of the odds.
+    Coefficients are additive here but not on the probability scale, which is why results are
+    converted before interpretation.
+
+Interaction
+:   A term letting the effect of one predictor depend on the value of another.
+    An interaction is a claim that an effect is conditional, so it is interpreted jointly and not
+    term by term.
+
+Multilevel model
+:   A model with parameters that vary by group, where the group-level variation is itself
+    estimated.
+    Also called a hierarchical model.
+
+Partial pooling
+:   The compromise a multilevel model strikes between one estimate for all groups and a separate,
+    independent estimate per group.
+    Groups with little data are pulled towards the overall pattern, and groups with plenty are left
+    largely alone.
+
+Shrinkage
+:   The pull of a group's estimate towards the overall mean under partial pooling.
+    It is a feature, because it stops small groups producing extreme estimates on thin evidence.
+
+Population-level and group-level effects
+:   Population-level effects apply across all observations, and group-level effects vary by group.
+    `brms` uses these names for what are elsewhere called fixed and random effects.
+
+Marginal effect
+:   How the expected outcome changes with a predictor, after averaging over the others.
+    It is often the form in which a result becomes reportable.
+
+Quantity of interest
+:   The specific, interpretable number a reader should take away, computed from the posterior.
+    Deciding it in advance is what stops an analysis becoming a table of coefficients with no
+    conclusion.
+
+Counterfactual prediction
+:   A model-based prediction of the outcome under a specified, possibly unobserved, setting of the
+    predictors.
+    It is how a fitted model answers a substantive question.
+
+Posterior predictive distribution
+:   The distribution of new outcomes implied by the fitted model, accounting for both parameter
+    uncertainty and outcome variability.
+    Predictions come from it rather than from point estimates alone.
+
+`brms`
+:   The R package used throughout this course to fit Bayesian regression models with familiar
+    formula syntax.
+    Every model call here sets its priors explicitly.
+
+Stan
+:   The probabilistic programming language and sampler that `brms` compiles models down to and
+    runs.
+    You will rarely write Stan code directly, but its diagnostics are the ones you read.
+
+<!--
+Adding a term.
+
+Entries are pandoc definition lists: the term on its own line, then one or more lines
+each opened with a colon and three spaces. Keep an entry to one or two sentences, one
+sentence per line, and put package and function names in backticks.
+
+Place a term in the block where students FIRST meet it, not where it is most advanced.
+The three block headings mirror the `blocks:` list in course.yml and the Block column of
+schedule.qmd, so if a block is renamed, rename it in course.yml first.
+
+STYLE.md applies here as everywhere: no em dashes, no en dashes, no semicolons, sentence
+case headings. No frequentist framing (CLAUDE.md section 3). Where a contrast genuinely
+teaches something, as with credible versus confidence intervals, explain the contrast
+rather than substituting one framework for the other.
+-->

@@ -1,7 +1,8 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # QMIR 2026-fall — the single source of truth for term-level constants.
 #
-# Read by:  website/schedule.qmd  ·  tracking/progress.qmd  ·  the automation scripts
+# Read by:  website/schedule.qmd  ·  website/index.qmd  ·  website/syllabus.qmd
+#           website/glossary.qmd  ·  tracking/progress.qmd  ·  the automation scripts
 # (-Org / -SiteUrl defaults). Change a value HERE, never in the consumers.
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -9,6 +10,12 @@ course:
   title: "QMIR — Quantitative Methods"
   term: "Fall 2026"
   instructor: "Tristan Muno"
+  # Shown on the about page. Purely descriptive.
+  department: "Department of Political Science"
+  school: "School of Social Sciences"
+  university: "University of Mannheim"
+  email: "tristan.muno@uni-mannheim.de"
+  office: "A 5, 6 — Room A 351"
 
 github:
   org: qmir-2026-fall
@@ -26,14 +33,75 @@ sessions:
   weekday: Thursday
   # First session; week N = first_session + (N-1) weeks. Used to build the schedule.
   # PLACEHOLDER — set the real HWS 2026 start date before publishing the schedule.
-  first_session: 2026-09-10
+  # NOTE: 2026-09-09 is a Wednesday. Once the real calendar is known, this date and
+  # `weekday` above must agree.
+  first_session: 2026-09-09
+  # PLACEHOLDER — the room and the time slot, shown on the about page.
+  time: "PLACEHOLDER"
+  room: "PLACEHOLDER"
+  # PLACEHOLDER — open consultation slot, shown on the about page.
+  office_hours: "PLACEHOLDER"
 
 homework:
   count: 10
   # Default offset from the session for a homework's due date, in days.
   due_offset_days: 7
 
+# The take-home exam window. The 2026 spring iteration kept THREE conflicting exam
+# dates across syllabus.qmd, schedule.qmd and CLAUDE.md. One source, here.
+# These are strings, not dates: the pages print them verbatim and do no arithmetic.
+# PLACEHOLDER — set both before publishing the syllabus.
+exam:
+  opens: "PLACEHOLDER"
+  closes: "PLACEHOLDER"
+
 # Pass thresholds (fractions of the totals above).
 thresholds:
   attendance: 0.80
   homework: 0.80
+
+# The three teaching blocks, carried over from the 2026 spring schedule. Week 1 sits
+# outside them (orientation: the whole workflow shown up front).
+# Consumed by website/schedule.qmd AND website/glossary.qmd, so the block names are
+# written once and cannot drift apart.
+blocks:
+  - name: "Scientific programming fundamentals"
+    from: 2
+    to: 5
+  - name: "The logic of Bayesian inference"
+    from: 6
+    to: 7
+  - name: "Applied modelling"
+    from: 8
+    to: 13
+
+# Planned topic per week. The deck's OWN YAML title wins once website/slides/weekNN.qmd
+# exists -- that is the E040 contract in STYLE.md §5.4. This list is the forward plan
+# shown on the schedule until the deck is written.
+weeks:
+  - week: 1
+    topic: "The whole workflow, up front"
+  - week: 2
+    topic: "Reproducible research with R, Quarto and Git"
+  - week: 3
+    topic: "R fundamentals: data types and structures"
+  - week: 4
+    topic: "Tidy data: wrangling and visualisation"
+  - week: 5
+    topic: "Reshaping, merging and visualisation"
+  - week: 6
+    topic: "Probability, simulation and Bayes' theorem"
+  - week: 7
+    topic: "Markov chain Monte Carlo"
+  - week: 8
+    topic: "Bivariate linear regression"
+  - week: 9
+    topic: "Multivariate regression"
+  - week: 10
+    topic: "Interactions"
+  - week: 11
+    topic: "Modelling binary outcomes"
+  - week: 12
+    topic: "Multilevel models and partial pooling"
+  - week: 13
+    topic: "Beyond the course: applying what you have learned"

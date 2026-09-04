@@ -1,31 +1,263 @@
 ---
 title: "Syllabus"
+toc: true
+toc-depth: 3
 ---
 
-## The through-line: an 8-step Bayesian workflow
+```{r}
+#| label: setup-syllabus
+#| echo: false
+#| message: false
+#| warning: false
 
-Everything in this course builds toward one skill — running a complete Bayesian analysis
-end to end. The **take-home exam is exactly that**, on a dataset you'll meet at the end. You
-see the whole workflow in week 1 and deepen it each week.
+library(here) # project-root-relative paths
+library(yaml) # read course.yml
+
+# website/_quarto.yml is itself a project-root marker, so a bare here() would stop at
+# website/ rather than the repo root. i_am() anchors it explicitly. See STYLE.md section 4.
+here::i_am("website/syllabus.qmd")
+
+cfg <- yaml::read_yaml(here("course.yml"))
+
+# Every threshold below is DERIVED from course.yml, never typed. The 2026 spring
+# syllabus stated 11 homeworks in prose and then patched itself to 10 in a callout,
+# because the numbers lived in the text. They live in one file now.
+n_sessions <- cfg$sessions$count
+att_frac <- cfg$thresholds$attendance
+att_min <- ceiling(att_frac * n_sessions)
+# The lower tier of the attendance policy: the case-by-case band runs down to 60%.
+att_lo_frac <- 0.60
+att_lo <- ceiling(att_lo_frac * n_sessions)
+
+n_hw <- cfg$homework$count
+hw_frac <- cfg$thresholds$homework
+hw_min <- ceiling(hw_frac * n_hw)
+
+pct <- function(x) paste0(round(100 * x), "%")
+
+shown <- function(x, fallback = "to be announced") {
+  if (is.null(x) || !nzchar(x) || identical(x, "PLACEHOLDER")) fallback else x
+}
+exam_window <- if (identical(shown(cfg$exam$opens), "to be announced") ||
+  identical(shown(cfg$exam$closes), "to be announced")) {
+  "to be announced"
+} else {
+  paste(cfg$exam$opens, "to", cfg$exam$closes)
+}
+```
+
+## Course description {#sec-course-description}
+
+This course introduces quantitative research methods in international relations and European
+integration, using modern tools for scientific programming and reproducible research.
+You will learn to analyse and visualise data in R, document your work in Quarto, and manage your
+projects with Git and GitHub.
+Together these tools support state-of-the-art workflows for transparent, collaborative and
+well-organised empirical research.
+All work is done in Positron, an integrated development environment for data science.
+
+The course teaches the Bayesian framework as its primary approach to inference.
+That is a deliberate choice, not an incidental one, and it shapes how models are built,
+criticised and reported throughout.
+
+## Course objectives {#sec-course-objectives}
+
+The overall goal is to give you the practical skills and the methodological confidence to write
+an empirical bachelor thesis in political science.
+You will learn to preprocess data, choose and implement appropriate models for continuous and
+binary outcomes, compute quantities of interest, and interpret results accurately.
+
+Beyond technical proficiency, the course emphasises sound statistical reasoning, effective data
+visualisation, and communicating empirical findings clearly to a non-technical audience.
+Through weekly assignments and a cumulative take-home exam, you will develop the ability to
+evaluate statistical claims critically, in academic research and in public debate alike.
+
+## The through-line: an 8-step Bayesian workflow {#sec-through-line}
+
+Everything in this course builds toward one skill: running a complete Bayesian analysis end to
+end.
+The **take-home exam is exactly that**, on a dataset you will meet at the end.
+You see the whole workflow in week 1, shown in @tbl-workflow, and deepen it each week.
 
 {{< include slides/_workflow-8step.qmd >}}
 
-## Homework & feedback policy
+## Course logistics {#sec-logistics}
 
-> **A sample solution is published for every homework.** Individual feedback is **not** provided
-> by default — with one exception.
->
-> **Opt-in AI feedback.** If you add an open-source `license.md` to your submission repo, you opt
-> in to automated, individualized feedback: an AI reads your submission alongside the sample
-> solution and writes a `FEEDBACK.qmd` / `FEEDBACK.pdf` back into your repo. No `license.md`, no
-> processing. This is entirely optional.
+### General information {#sec-general-information}
 
-## Passing requirements
+Each session consists of an instructor-led part on concepts and theory, followed by hands-on
+exercises.
+Homework is assigned at the end of class and is due `r cfg$homework$due_offset_days` days later,
+before the next session.
+Readings provide background, theory and context, and are linked per week from the
+[Schedule](schedule.qmd).
 
-- Attendance and homework completion thresholds are published on the [Schedule](schedule.qmd).
-- Homework completion is tracked automatically from your submission repos — submit on the org.
+There is **one session per week**, so there is no parallel group to switch into.
+If you have to miss a session, the slides and the sample solution for that week are published on
+the site, and the [Glossary](glossary.qmd) covers the terminology introduced.
 
-## Assessment
+### Attendance policy {#sec-attendance}
 
-- **Take-home exam** — a full 8-step Bayesian analysis (the terminal deliverable).
-- Homeworks are formative practice for the exam.
+Active participation (*Mitarbeit*) is a required component of the coursework
+(*Studienleistung*).
+This course consists of `r n_sessions` sessions.
+Successful participation is presumed if you attend at least
+**`r pct(att_frac)` of sessions, that is at least `r att_min` out of `r n_sessions`**.
+
+If attendance falls below `r pct(att_frac)` but stays at or above `r pct(att_lo_frac)`
+(**`r att_lo` to `r att_min - 1` out of `r n_sessions`**), successful participation is not
+presumed.
+In that case the possibility of fulfilling the participation requirement is assessed case by
+case.
+
+If attendance falls below `r pct(att_lo_frac)` (**fewer than `r att_lo` out of
+`r n_sessions`**), successful participation is normally considered impossible under the
+examination regulations.
+
+If sessions are cancelled during the semester, the absolute number of required sessions is
+adjusted accordingly, while the percentage thresholds stay unchanged.
+
+### Grading policy {#sec-grading}
+
+Under the examination regulations, assessment consists of **coursework (*Studienleistung*,
+pass or fail)** and a **final examination (*Prüfungsleistung*, graded)**.
+
+Successful completion of all coursework requirements is a prerequisite for admission to the final
+take-home exam.
+
+#### Coursework (*Studienleistung*, pass or fail)
+
+Coursework has two components, and both must be passed.
+
+**1. Weekly homework assignments.**
+There are **`r n_hw` homework assignments** over the term.
+They are distributed through GitHub and assessed pass or fail.
+To fulfil this requirement you must pass at least **`r pct(hw_frac)` of them, that is `r hw_min`
+out of `r n_hw`**.
+Homework must show a serious and complete attempt at the tasks.
+A submission that is empty or clearly insufficient does not count as passed.
+
+**2. Active participation (*Mitarbeit*).**
+Active participation, as described in @sec-attendance, is a required coursework component and is
+assessed pass or fail.
+
+#### Final examination (*Prüfungsleistung*, graded)
+
+The final examination is a **take-home exam**.
+
+**Window:** `r exam_window`.
+
+The exam is distributed through the `exam` repository on the course GitHub organisation, the same
+template flow as the weekly homework.
+You receive a dataset and a problem description for a cumulative data analysis project.
+
+You submit a complete project repository, which must include:
+
+- fully documented and reproducible code,
+- a rendered PDF presenting your results, structured like the data, methods and analysis sections
+  of a research paper,
+- a statutory declaration following the
+  [university's guidelines](https://www.sowi.uni-mannheim.de/media/Fakultaeten/sowi/Dokumente/Studiengangsmanagement/Eigenstaendigkeitserklaerung_Statutory_Declaration.pdf).
+
+The state of the repository on GitHub at the moment the deadline passes is what gets evaluated.
+
+The take-home exam is graded on the university scale, 1.0 (very good) to 5.0 (insufficient), and
+it determines the overall course grade.
+Every tool and workflow needed to complete it is taught during the course.
+
+### Language and software policy {#sec-language-software}
+
+The course is taught entirely in English and is built around R, Quarto and Git or GitHub for data
+analysis, reproducible research and project management.
+Work with these tools, because the exercises and workflows are designed around them.
+
+For the take-home exam you may use another script-based language such as Python or Stata, but this
+is not recommended and no guidance is provided for non-R workflows.
+The emphasis is on understanding the tools, practising them, and learning to find solutions
+independently.
+
+### Hardware {#sec-hardware}
+
+You need a computer available during class.
+A standard laptop is sufficient, and there are no particular requirements for RAM, an external
+GPU, or other advanced components.
+
+If you do not own a suitable device, the University of Mannheim IT department offers a
+[laptop rental service](https://www.uni-mannheim.de/en/it/students/borrowing-laptops/).
+Please make use of it if you need it.
+
+### Software {#sec-software}
+
+Install all required software before the first session, following the separate
+[installation guide](installation.qmd).
+Doing it early means we can sort out any problems on day one and start the programming work
+properly in the following session.
+
+### Optional practice materials {#sec-practice-materials}
+
+I strongly recommend making use of the DataCamp access provided with this course.
+DataCamp is an online learning platform with useful opportunities to practise the material covered
+here and well beyond it.
+The introduction to R tutorial is a good starting point.
+DataCamp courses are voluntary and are not part of the requirements to pass.
+
+## Homework and feedback policy {#sec-feedback-policy}
+
+> **A sample solution is published for every homework. Individual feedback is NOT provided by
+> default.** The only individual feedback available is the **optional AI feedback** you can opt
+> into by adding an open-source `license.md` to your submission repo.
+
+**What that means in practice.**
+A sample solution is published for every homework after its due date, and it is the standard
+against which you should read your own work.
+Individual comments on individual submissions are not part of this course by default.
+
+**Opting in to AI feedback.**
+If you add an open-source `license.md` to your submission repository, you opt in to automated,
+individualised feedback.
+An AI reads your submission alongside the sample solution and writes a `FEEDBACK.qmd` and
+`FEEDBACK.pdf` back into your repository, organised by the eight workflow steps.
+No `license.md` means no processing at all.
+This is entirely optional, and opting out costs you nothing beyond the individual feedback
+itself.
+
+### Late work policy {#sec-late-work}
+
+Late submissions are not accepted.
+If you anticipate any difficulty in meeting a deadline, discuss it with me **before** the
+deadline, not after.
+
+### AI policy {#sec-ai-policy}
+
+All submissions are checked for plagiarism, and violations of the code of conduct may result in
+failing the course or in expulsion.
+
+Generative AI tools such as ChatGPT or Gemini are permitted for the final examination, but any
+AI-generated content or code must be clearly marked, thoroughly commented, and accompanied by the
+chat history, so that your understanding is demonstrable.
+I will give occasional guidance on using AI responsibly.
+Relying on it from the start does hinder learning:
+[research suggests AI helps most those who already understand the topic](https://arxiv.org/abs/2306.03102).
+For a fuller explanation of why AI can undermine learning, see
+[this piece by Andrew Heiss](https://governancef25.classes.andrewheiss.com/syllabus.html#ai-large-language-models-and-bullshit).
+
+::: {.callout-note}
+**Two different things, both involving AI.**
+The policy above is about AI *you* use while doing your own work, which must be disclosed and
+commented.
+The opt-in feedback described in @sec-feedback-policy is different: it is run by me, on an
+explicit `license.md` opt-in, and it comments on work you have already submitted.
+Using the feedback pipeline is never something you need to declare.
+:::
+
+### Mental health support {#sec-mental-health}
+
+Life and study at the University of Mannheim can sometimes feel complicated, challenging, or
+overwhelming.
+That is completely normal.
+You are not expected to understand or memorise course content on the first attempt.
+
+If you ever feel mentally or emotionally strained, you may find useful advice on the university's
+[good mental health and studying page](https://www.uni-mannheim.de/en/academics/studying-the-healthy-way/good-mental-health/).
+The [help in times of crisis page](https://www.uni-mannheim.de/en/academics/studying-the-healthy-way/help-in-times-of-crisis/)
+gives an overview of the counselling and support services available at the university.

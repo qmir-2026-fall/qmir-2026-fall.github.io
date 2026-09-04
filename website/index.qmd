@@ -1,19 +1,92 @@
 ---
-title: "QMIR — Quantitative Methods"
+title: "Quantitative Methods in International Relations"
+subtitle: "Learn to investigate global and European politics with real data, and build the skills to produce transparent, reproducible research."
 ---
 
-Welcome to QMIR. This site is the **single source of truth** for the course: slides,
-schedule, homeworks, and the exam are all linked from here.
+```{r}
+#| label: setup-index
+#| echo: false
+#| message: false
+#| warning: false
 
-## How this course works
+library(here) # project-root-relative paths
+library(yaml) # read course.yml
 
-- **Weekly slides** — linked from the [Schedule](schedule.qmd).
-- **Weekly homeworks** — distributed through the course GitHub org; each ships with a
+# website/_quarto.yml is itself a project-root marker, so a bare here() would stop at
+# website/ rather than the repo root. i_am() anchors it explicitly. See STYLE.md section 4.
+here::i_am("website/index.qmd")
+
+cfg <- yaml::read_yaml(here("course.yml"))
+
+# Room, time and office hours are still PLACEHOLDER in course.yml. Print an honest
+# "to be announced" rather than the literal word, and fill them in in ONE place.
+shown <- function(x, fallback = "to be announced") {
+  if (is.null(x) || !nzchar(x) || identical(x, "PLACEHOLDER")) fallback else x
+}
+```
+
+`r cfg$course$term`<br>
+`r cfg$course$department`<br>
+`r cfg$course$school`<br>
+`r cfg$course$university`
+
+::: {.home}
+
+:::: {.grid .course-details}
+
+::: {.g-col-12 .g-col-md-4}
+
+### Instructor {#sec-instructor}
+
+- {{< fa user >}} `r cfg$course$instructor`
+- {{< fa university >}} `r cfg$course$office`
+- {{< fa envelope >}} [`r cfg$course$email`](mailto:`r cfg$course$email`)
+
+:::
+
+::: {.g-col-12 .g-col-md-4}
+
+### Course details {#sec-course-details}
+
+- {{< fa calendar >}} `r cfg$sessions$weekday`
+- {{< fa clock >}} `r shown(cfg$sessions$time)`
+- {{< fa location-dot >}} `r shown(cfg$sessions$room)`
+- {{< fa list-ol >}} `r cfg$sessions$count` sessions, one per week
+
+:::
+
+::: {.g-col-12 .g-col-md-4}
+
+### Contacting me {#sec-contact}
+
+- {{< fa calendar-check >}} `r shown(cfg$sessions$office_hours)`: open consultation, no appointment
+  needed.
+- For any other time, email me to arrange an appointment, in person or online.
+  I aim to reply within 24 hours.
+
+:::
+
+::::
+
+:::
+
+## How this course works {#sec-how-it-works}
+
+- **Weekly slides**, linked from the [Schedule](schedule.qmd).
+- **Weekly homeworks**, distributed through the course GitHub org. Each one ships with a
   **sample solution** published after the due date.
-- **A final take-home exam** — a complete 8-step Bayesian analysis. You see the target from
-  week 1; every week builds toward it.
+- **A final take-home exam**: a complete 8-step Bayesian analysis. You see the target from
+  week 1, and every week builds toward it.
 
-## Feedback policy — please read
+New terminology arrives quickly in a course like this.
+The [Glossary](glossary.qmd) collects it in one place, grouped by the block where each term first
+comes up.
+
+Before the first session, work through the [Installation guide](installation.qmd).
+It sets up R, Positron, Quarto, Git and the packages we rely on, and doing it early leaves time
+to fix problems that are much easier to solve together.
+
+## Feedback policy, please read {#sec-feedback-policy}
 
 > **A sample solution is published for every homework. Individual feedback is NOT provided by
 > default.** The only individual feedback available is the **optional AI feedback** you can opt

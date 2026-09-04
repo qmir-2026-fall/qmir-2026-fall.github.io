@@ -9,3 +9,35 @@ blockquote {
   border-left: 4px solid #2a6f97;
   padding-left: 1rem;
 }
+
+/* About-page course-details grid. The previous iteration used .home and
+   .course-details as class hooks but never defined them, so the three columns sat
+   flush against each other. These are the missing rules. */
+.home {
+  margin-top: 1.5rem;
+}
+.course-details {
+  row-gap: 1.5rem;
+}
+.course-details h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+  padding-bottom: 0.4rem;
+}
+.course-details ul {
+  padding-left: 1.1rem;
+}
+/* The icons read as labels, so give them a fixed gutter and mute them slightly. */
+.course-details li > .fa-solid,
+.course-details li > .fa-regular {
+  width: 1.2em;
+  margin-right: 0.35rem;
+  opacity: 0.75;
+}
+
+/* The size-ladder classes from slides/theme.scss, so a partial that is included on
+   both a slide and an HTML page (notably _workflow-8step.qmd) renders sensibly in
+   both. See STYLE.md section 5.1. */
+.small  { font-size: 0.90rem; }
+.xsmall { font-size: 0.82rem; }
