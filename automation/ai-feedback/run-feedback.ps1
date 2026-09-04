@@ -4,7 +4,7 @@
 .DESCRIPTION
   For each student repo hw-NN-<username> that contains a `license.md` (the opt-in signal):
     1. clone it into a scratch dir (git-ignored, never committed to this monorepo);
-    2. assemble Claude's inputs — the student's submission, the sample solution (from the
+    2. assemble Claude's inputs - the student's submission, the sample solution (from the
        PRIVATE solutions/ submodule), the homework prompt, and the 8-step rubric;
     3. run Claude headless with automation/ai-feedback/FEEDBACK-PROMPT.md;
     4. verify Claude touched NOTHING but FEEDBACK.qmd;
@@ -49,7 +49,7 @@ $optedIn = @()
 foreach ($r in $repos) {
   # Opt-in signal = a license file at the repo root. The trigger is documented as `license.md`,
   # but the GitHub contents API is CASE-SENSITIVE, so match tolerantly (license / LICENSE, with
-  # or without .md) — a student shouldn't miss out over a capitalization slip.
+  # or without .md) - a student shouldn't miss out over a capitalization slip.
   $names = gh api "repos/$Org/$r/contents" --jq '.[].name' 2>$null
   if ($names -and ($names | Where-Object { $_ -match '(?i)^license(\.md)?$' })) { $optedIn += $r }
 }

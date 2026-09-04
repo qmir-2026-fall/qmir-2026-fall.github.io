@@ -8,7 +8,7 @@
 
   Sample solutions live in the PRIVATE solutions/ submodule, not under homework/, so there
   is nothing to strip. The solution.* exclusion and the post-copy leak assertion are kept
-  anyway as defense in depth — they cost nothing and they are the last line before publish.
+  anyway as defense in depth - they cost nothing and they are the last line before publish.
 .EXAMPLE
   ./automation/release-homework.ps1 -Week 05 -DryRun
   ./automation/release-homework.ps1 -Week 05
@@ -16,7 +16,7 @@
 param(
   [Parameter(Mandatory)][string]$Week,          # e.g. 05
   [string]$Org = "qmir-2026-fall",
-  [switch]$Classroom,                            # INACTIVE: Classroom 50 is not adopted (CLAUDE.md §6)
+  [switch]$Classroom,                            # INACTIVE: Classroom 50 is not adopted (CLAUDE.md section 6)
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
@@ -76,7 +76,7 @@ try {
   git add -A
   git -c user.name="QMIR" -c user.email="noreply@github.com" commit -q -m "Release $slug"
 
-  # NOTE: do NOT test `gh repo view` by capturing its output — redirecting a native
+  # NOTE: do NOT test `gh repo view` by capturing its output - redirecting a native
   # command's stderr under $ErrorActionPreference='Stop' raises NativeCommandError in
   # Windows PowerShell 5.1. Check the exit code instead.
   gh repo view "$Org/$slug" *> $null
@@ -84,7 +84,7 @@ try {
 
   if (-not $exists) {
     gh repo create "$Org/$slug" --public --source . --push --disable-wiki `
-      --description "QMIR $($slug.ToUpper()) — starter repo. Use this template to create your submission repo."
+      --description "QMIR $($slug.ToUpper()) - starter repo. Use this template to create your submission repo."
   } else {
     git remote remove origin *> $null
     git remote add origin "https://github.com/$Org/$slug.git"
@@ -94,7 +94,7 @@ try {
 } finally { Pop-Location }
 
 if ($Classroom) {
-  # Classroom 50 was evaluated and deferred (CLAUDE.md §6). Left here so the path is one
+  # Classroom 50 was evaluated and deferred (CLAUDE.md section 6). Left here so the path is one
   # uncomment away if it is ever adopted mid-term.
   Write-Host "-Classroom is inactive: Classroom 50 is not in use this term." -ForegroundColor Yellow
   # gh teacher assignment add $Org qmir $slug --name "Homework $Week" --template "$Org/$slug"

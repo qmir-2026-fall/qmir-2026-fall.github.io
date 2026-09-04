@@ -1,17 +1,17 @@
 <#
 .SYNOPSIS
-  Derive homework submission status from the org — no hand entry.
+  Derive homework submission status from the org - no hand entry.
 .DESCRIPTION
   Enumerates hw-NN-<username> repos on the org via `gh` and writes tracking/hw_status.csv
   (github_username, week, submitted, on_time, last_push), which tracking/progress.qmd reads.
   With Classroom 50 not adopted, this is the PRIMARY homework tracking path.
 
   HEURISTIC. A repo generated from the hw-NN template always has a commit, and its pushedAt
-  is always after the release date — so "pushed after release" marks EVERYONE as submitted.
+  is always after the release date - so "pushed after release" marks EVERYONE as submitted.
   What distinguishes a submission is work *after* the template import:
 
-    default   pushedAt > createdAt (+2 min slack)   — free, no extra API calls
-    -Strict   commit count > 1                      — exact, costs 1 API call per repo
+    default   pushedAt > createdAt (+2 min slack)   - free, no extra API calls
+    -Strict   commit count > 1                      - exact, costs 1 API call per repo
 
   `on_time` additionally compares the last push against `due:` in homework/hw-NN/meta.yml.
 .EXAMPLE

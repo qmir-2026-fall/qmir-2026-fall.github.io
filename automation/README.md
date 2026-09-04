@@ -46,3 +46,9 @@ $exists = ($LASTEXITCODE -eq 0)
 **3. YAML keys that are booleans.** `n:`, `y:`, `on:`, `off:` parse as booleans under YAML 1.1;
 R's `yaml` package then names the list element `FALSE`. `course.yml` uses `count:` for this
 reason.
+
+**4. Keep `.ps1` files ASCII-only.** Windows PowerShell 5.1 reads scripts in the system ANSI
+codepage unless they carry a UTF-8 BOM, so a stray em dash or curly quote inside a
+double-quoted string decodes into bytes that can terminate the string early and produce a
+baffling "Missing closing '}'" parse error far from the real line. Use `-` and `"` in scripts;
+put the typography in the Markdown and Quarto files, which are read as UTF-8.

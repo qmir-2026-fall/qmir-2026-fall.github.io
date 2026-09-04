@@ -4,7 +4,7 @@
 .DESCRIPTION
   Renders solutions/hw-NN/solution.qmd (PRIVATE submodule) to PDF and copies the PDF into
   website/resources/, from where schedule.qmd links it automatically once the due date has
-  passed. Only the rendered PDF becomes public — the solution source stays in the private
+  passed. Only the rendered PDF becomes public - the solution source stays in the private
   submodule. Refuses to run before the due date unless -Force.
 .EXAMPLE
   ./automation/release-solution.ps1 -Week 05 -DryRun
