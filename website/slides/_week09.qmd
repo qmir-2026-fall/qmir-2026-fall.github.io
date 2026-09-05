@@ -1,0 +1,1015 @@
+---
+title: "Week 9: Multivariate linear regression"
+---
+
+<!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
+
+     This file is staged: the leading underscore keeps it out of the Quarto render, off
+     the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
+     below is the spring deck verbatim, so it does NOT yet follow STYLE.md.
+
+     To put this week live:
+       1. Convert the body to STYLE.md (em dashes, inline font-size, {#sec-} labels,
+          chunk labels and captions, the size ladder).
+       2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
+       3. ./automation/check-authoring.ps1 -Week NN -Fit
+     Nothing else moves: images/, data/ and theme.scss are already at the paths this
+     body expects, and the shared format block lives in _metadata.yml.
+-->
+
+
+```{r,  message = NA}
+#| label: setup
+#| include: false
+#| eval: true
+library(tidyverse)
+library(brms)
+library(bayesplot)
+library(patchwork)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED COLOURS
+# ─────────────────────────────────────────────────────────────────────────────
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# HELPER: Draw a simple DAG with ggplot2
+# nodes: tibble(x, y, label)
+# edges: tibble(x, y, xend, yend)  [pre-offset from node centres]
+# ─────────────────────────────────────────────────────────────────────────────
+draw_dag <- function(
+  nodes,
+  edges,
+  title = NULL,
+  xlim = c(0, 4),
+  ylim = c(0.4, 3.2)
+) {
+  p <- ggplot() +
+    geom_segment(
+      data = edges,
+      aes(x = x, y = y, xend = xend, yend = yend),
+      arrow = arrow(length = unit(0.22, "cm"), type = "closed"),
+      linewidth = 0.9,
+      colour = "gray25",
+      lineend = "butt"
+    ) +
+    geom_label(
+      data = nodes,
+      aes(x = x, y = y, label = label),
+      size = 3.6,
+      fill = "white",
+      colour = "gray10",
+      fontface = "bold",
+      label.padding = unit(0.45, "lines"),
+      label.r = unit(0.25, "lines")
+    ) +
+    coord_cartesian(xlim = xlim, ylim = ylim) +
+    theme_void() +
+    theme(
+      plot.title = element_text(
+        size = 11,
+        hjust = 0.5,
+        face = "bold",
+        colour = "gray25",
+        margin = margin(b = 6)
+      )
+    )
+  if (!is.null(title)) {
+    p <- p + labs(title = title)
+  }
+  p
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# UNIFIED DATASET: Women in Parliament → Health Spending (moderated by regime type)
+#
+# Research question: Is the share of female legislators associated with higher
+# public health expenditure — and does this association differ between
+# presidential and parliamentary systems?
+#
+# True DGP:
+#   gdp_pc       ~ Normal(18, 7)           [thousands USD, PPP]
+#   women_parl   = 15 + 0.9*gdp_pc + N(0, 5)
+#   reg_type     ~ Bernoulli(0.55)         [1 = parliamentary, 0 = presidential]
+#   health_spend = 2 +
+#     0.2  * gdp_pc       +   [GDP per capita effect]
+#     0.08 * women_parl   +   [baseline women effect, presidential systems]
+#     1.5  * reg_type     +   [parliamentary intercept shift]
+#     0.10 * women_parl * reg_type +   [stronger women slope in parliamentary]
+#     N(0, 1.5)
+#
+# Women in parliament slope:
+#   Presidential (reg_type = 0): β_women = 0.08
+#   Parliamentary (reg_type = 1): β_women = 0.08 + 0.10 = 0.18
+# ─────────────────────────────────────────────────────────────────────────────
+set.seed(2026)
+n <- 120
+
+gdp_pc <- rnorm(n, mean = 18, sd = 7)
+women_parl <- 15 + 0.9 * gdp_pc + rnorm(n, 0, 5)
+reg_type <- rbinom(n, 1, prob = 0.55) # 1 = parliamentary, 0 = presidential
+health_spend <- 2 +
+  0.2 * gdp_pc +
+  0.08 * women_parl +
+  1.5 * reg_type +
+  0.10 * women_parl * reg_type +
+  rnorm(n, 0, 1.5)
+
+df <- tibble(gdp_pc, women_parl, reg_type, health_spend) |>
+  mutate(system = if_else(reg_type == 1, "Parliamentary", "Presidential"))
+
+# Pre-fit bivariate model — used in Part II OVB comparison
+fit_biv <- brm(
+  health_spend ~ women_parl,
+  data = df,
+  prior = c(
+    prior(normal(10, 5), class = "Intercept"), # baseline ~10% GDP
+    prior(normal(0, 2), class = "b"), # weakly informative slope
+    prior(exponential(1), class = "sigma") # residual SD < 5 almost certainly
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 2026
+)
+
+# Pre-fit additive multivariate model — used in Parts II and IV (LOO comparison baseline)
+fit_multi <- brm(
+  health_spend ~ women_parl + gdp_pc + reg_type,
+  data = df,
+  prior = c(
+    prior(normal(10, 5), class = "Intercept"),
+    prior(normal(0, 2), class = "b", coef = "women_parl"), # weakly informative
+    prior(normal(0, 2), class = "b", coef = "gdp_pc"), # weakly informative
+    prior(normal(0, 2), class = "b", coef = "reg_type"), # parliamentary intercept shift
+    prior(exponential(1), class = "sigma")
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 2026
+)
+
+```
+
+## QMIR 2026 {#sec-title}
+
+::: notes
+- Opening. Take-home exam details have just been covered (separate 10-minute block). Now: the main session.
+- Arc: formal overview of control variables → live application → canonical workflow recap.
+- The research question runs as a single substantive story throughout both parts: we start with a simple bivariate question and add controls (GDP and regime type). Week 10 extends this to ask whether regime type moderates the legislative-representation association.
+- The data are synthetic and the DGP is known. Emphasize that this is pedagogically deliberate: we know the truth and check whether our models recover it.
+- The unified story will recur in the homework and take-home exam.
+:::
+
+### Week 9: Multivariate Regression
+
+![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
+
+---
+
+## Take Home Exam -- What to Expect {#sec-exam .smaller}
+
+- You will receive a dataset with some contextual background and a research question. Your task is to answer that research question using the data and methods you have learned throughout the course.  
+- Think of your submission as the *methods/research design* and *results/analysis* sections of an empirical paper.  
+- You are expected to conduct a **full analysis** on your own, covering:  
+  - Describing and exploring the data  
+  - Formulating and justifying a model  
+  - Estimating the model  
+  - Interpreting and discussing your results  
+
+---
+
+## Take Home Exam -- What to Expect {#sec-exam-2 .smaller}
+
+- Your submission will be graded along **four dimensions**:  
+  1. Argumentation — Are your methodological choices well reasoned and justified?  
+  2. Interpretation — Are your results interpreted correctly and communicated clearly?  
+  3. Formalities — Does your rendered PDF look and read like a section of a published paper?  
+  4. Code — Does your code run? Is your repository well-structured and your code readable and well-documented?  
+- The exam will be distributed via GitHub, just like the homework assignments.  
+- The detailed grading scheme will be provided together with the exam. The total is **100 points**. Grades are assigned according to the percentage thresholds set out in the *Prüfungsordnung*.  
+
+---
+
+## Take Home Exam -- What to Expect {#sec-exam-3 .smaller}
+
+- **Submission timeline and late policy:**  
+  - You have **two weeks (14 days)** to complete the exam from the time of release.  
+  - Submissions after the deadline are accepted for **up to one additional week (7 days)**.  
+  - A penalty of **5 points per started day** of delay will be applied to late submissions.  
+  - Submissions received more than **7 days after the deadline will not be accepted** and will be graded as **failed**.  
+  - In cases of **illness or other valid reasons (Härtefälle)**, the general provisions of the *Prüfungsordnung* apply. Appropriate documentation (e.g., a medical certificate) must be submitted without delay.  
+
+
+---
+
+## Week 9 Learning Goals {#sec-goals .smaller}
+
+::: notes
+- Read aloud. Four goals map onto two parts + summary.
+- Goals 1–3 → Parts I–II (control variables); Goal 4 → Part II application (LOO-IC).
+- The take-home exam will directly assess all goals: students will need a DAG, a formal model statement, at least one control variable, and model comparison.
+- Week 10 adds interactions and moderation to this foundation.
+:::
+
+By the end of today, you should be able to:
+
+1. Explain **omitted variable bias (OVB)** formally and use a **DAG** to classify control variables as confounders, mediators, or colliders
+2. Extend the Bayesian regression model to **multiple predictors** and interpret each coefficient as a partial effect
+3. Handle **categorical predictors** using dummy (indicator) variables
+4. Compare competing models using **Bayesian leave-one-out cross-validation** (LOO-IC)
+
+# Part I: Control Variables {#sec-part1}
+
+## A Question Worth Fighting Over {#sec-part1-question .smaller}
+
+::: notes
+- Frame the substantive debate before introducing any methods. Students should care about the answer before they learn how to find it.
+- This is a real empirical debate in comparative politics (Bolzendahl & Brooks 2007, Bratton & Ray 2002, Swers 2002). The synthetic data mimics its structure.
+- Key tension: wealthier countries simultaneously have more women in parliament AND spend more on health. Without controlling for wealth, we cannot isolate the legislative representation effect.
+- Second layer: parliamentary systems concentrate budget authority in the legislature, so the composition of parliament may matter more for spending outcomes there than in presidential systems (which divide power across branches).
+- Transition: "We start with the simpler question in Parts I–II, then ask whether regime type moderates the relationship in Parts III–IV."
+:::
+
+> **Is the share of women in parliament associated with higher public health expenditure — and does this association differ between presidential and parliamentary systems?**
+
+. . .
+
+**The legislative representation theory**: Women legislators bring different policy priorities to parliament — specifically, greater support for social spending, preventive care, and public health infrastructure.
+
+. . .
+
+:::::: columns
+::: {.column width="55%" style="font-size: 0.8em"}
+
+**Two empirical complications**:
+
+1. Wealthier democracies simultaneously have more women in parliament *and* higher health spending — **confounding** by GDP.
+2. Parliamentary systems concentrate budget authority in the legislature; presidential systems divide power across branches. The legislative composition may matter *more* in parliamentary systems.
+
+:::
+
+::: {.column width="45%"}
+
+::: {.callout-note style="font-size: 0.75em"}
+**Synthetic dataset**: $n = 120$ country-years, calibrated to realistic OECD/emerging-economy magnitudes.
+
+- $X$ = Women in parliament (%)
+- $Z$ = GDP per capita (thousands USD, PPP) — the **confounder**
+- $D$ = Regime type (1 = parliamentary, 0 = presidential)
+- $Y$ = Public health expenditure (% GDP)
+
+True DGP slope (presidential): $\beta_X = 0.08$; (parliamentary): $0.18$
+:::
+
+:::
+::::::
+
+---
+
+## What is a DAG? {#sec-dag-intro .smaller}
+
+::: notes
+- Introduce the vocabulary before showing the diagram. Students need "node" and "arrow" as shared language.
+- Stress the asymmetry: arrows encode our *theoretical* prior about direction. The data cannot tell us which way the arrow points — that is a substantive judgment.
+- Key point: you draw the DAG *before* looking at the data or fitting any model. It is a commitment, not a discovery.
+- Transition: "Let's draw one for our specific research question."
+:::
+
+A **Directed Acyclic Graph (DAG)** is a graphical representation of our *theoretical* assumptions about how variables are related.
+
+. . .
+
+:::::: columns
+::: {.column width="50%"}
+
+**Anatomy**
+
+- **Nodes** (boxes) = variables
+- **Directed arrows** ($\rightarrow$) = theoretical claims about the **direction** of influence
+- **Acyclic** = no variable can cause itself (no feedback loops)
+
+:::
+
+::: {.column width="50%"}
+
+**What a DAG does**
+
+- Translates a verbal theory into a precise graphical structure
+- Makes our assumptions explicit and contestable
+- Tells us *which* variables to include, exclude, or never condition on
+
+:::
+::::::
+
+. . .
+
+::: {.callout-note style="font-size: 0.73em"}
+**You draw the DAG before fitting anything.**
+It encodes your prior theoretical beliefs — not what the model estimated.
+The arrows are *your* theoretical commitments, not statistical output.
+:::
+
+---
+
+## DAGs in Quarto: MermaidJS {#sec-dag-mermaid .smaller}
+
+::: notes
+- Model recovers associations (correlations), not causation
+- In DAG metaphor: models can detect connections/edges, but not the direction of the arrow
+- You need theory (or research design based approach) for that 
+:::
+
+One quick way to draw a DAG directly in a Quarto document — no R code needed:
+
+```{mermaid}
+graph LR
+  GDP["GDP per Capita"] --> WP["Women in Parliament (%)"]
+  GDP --> HS["Health Spending (% GDP)"]
+  WP --> HS
+  RT["Regime Type"] --> HS
+```
+
+::: {style="font-size: 0.82em"}
+Use a fenced `{mermaid}` block with `graph LR` (left-to-right) or `graph TD` (top-down).
+Node labels go in `["quoted text"]`; arrows are `-->`.
+**Note**: MermaidJS draws direct effects only — the moderation arrow (regime type moderates the WP → HS slope) cannot be represented as a standard edge here.
+The polished ggplot DAGs in these slides use the `draw_dag()` helper defined in the setup chunk, where a dashed annotation marks the moderation.
+
+[Quarto Diagrams Documentation](https://quarto.org/docs/authoring/diagrams.html#overview)
+:::
+
+---
+
+## Our Research Question as a DAG {#sec-dag-our-rq .smaller}
+
+::: notes
+- Walk through each arrow explicitly: "GDP drives women's representation, GDP drives health spending, women's representation drives health spending."
+- The confounding path: Women in Parliament <- GDP -> Health Spending. This is the back-door path we need to close.
+- "We draw this before we open R. The DAG is our theoretical model. The brms call is just fitting it numerically."
+- Note: the arrow from Women in Parliament to Health Spending is what we care about — the partial association we want to estimate.
+:::
+
+```{r}
+#| label: fig-dag-our-rq
+#| echo: false
+#| fig-height: 3.6
+#| dpi: 500
+#| fig-cap: "DAG for our research question. GDP per capita is a confounder (back-door path). Regime type shifts the baseline level of health spending and moderates the Women in Parliament → Health Spending association (dashed annotation)."
+nodes_main <- tibble(
+  x = c(1.1, 3.2, 2.15, 2.15),
+  y = c(1.5, 1.5, 2.8, 0.4),
+  label = c(
+    "Women\nin Parl. (%)",
+    "Health\nSpending",
+    "GDP\nper Capita",
+    "Regime\nType"
+  )
+)
+edges_main <- tibble(
+  x = c(1.95, 2.35, 1.60, 2.48),
+  y = c(2.52, 2.52, 1.5, 0.63),
+  xend = c(1.28, 3.02, 2.70, 3.02),
+  yend = c(1.75, 1.75, 1.5, 1.32)
+)
+
+draw_dag(nodes_main, edges_main, xlim = c(0.3, 3.9), ylim = c(0.1, 3.2)) +
+  # dashed segment: Regime Type ↑ to WP→HS midpoint — indicates moderation
+  geom_segment(
+    aes(x = 2.15, y = 0.63, xend = 2.15, yend = 1.42),
+    linetype = "dashed",
+    colour = col_3,
+    linewidth = 0.7,
+    arrow = arrow(length = unit(0.15, "cm"), type = "open")
+  ) +
+  annotate(
+    "text",
+    x = 2.52,
+    y = 1.0,
+    size = 3.0,
+    colour = col_3,
+    label = "moderates",
+    fontface = "italic"
+  ) +
+  annotate(
+    "text",
+    x = 2.15,
+    y = 0.07,
+    size = 3.2,
+    colour = col_2,
+    label = "Back-door path (GDP): closed by controlling for GDP per capita",
+    fontface = "italic"
+  )
+```
+
+. . .
+
+::: {style="font-size: 0.85em"}
+**Reading the DAG**: GDP per capita is a **confounder** — it influences both $X$ (Women in Parliament) and $Y$ (Health Spending).
+Regime type has a **direct effect** on health spending (intercept shift) and **moderates** the $X \rightarrow Y$ slope (dashed annotation).
+We close the GDP back-door path by conditioning on it; regime type enters both as a control and as a moderator.
+:::
+
+---
+
+## DAGs: Three Types of Relationships {#sec-dags .smaller}
+
+::: notes
+- This taxonomy determines what to control for. Spend time on each type.
+- **Confounders**: Z is associated with both X and Y through a common cause. Omitting Z biases the X -> Y estimate. MUST control.
+- **Mediators**: X -> M -> Y. M is on the path from X to Y. If we control for M, we block the indirect path — "post-treatment bias." Usually don't control (unless estimating *direct* effect only).
+- **Colliders**: X and Y both have paths into C. Controlling for C opens a spurious association between X and Y even when they are unrelated. NEVER control.
+- Mnemonic: "Fork = control | Pipe = careful | Inverted fork = never."
+:::
+
+```{r}
+#| label: fig-dag-types
+#| echo: false
+#| fig-height: 3.6
+#| fig-cap: "Three structural types in a DAG. The rule: control for confounders (forks), be cautious with mediators (pipes), never condition on colliders (inverted forks)."
+# ── Confounder (fork) ──────────────────────────────────────
+nodes_conf <- tibble(
+  x = c(1, 3, 2),
+  y = c(1, 1, 2.6),
+  label = c("X", "Y", "Z")
+)
+edges_conf <- tibble(
+  x = c(1.85, 2.15, 1.35),
+  y = c(2.35, 2.35, 1.0),
+  xend = c(1.15, 2.85, 2.65),
+  yend = c(1.25, 1.25, 1.0)
+)
+p_conf <- draw_dag(
+  nodes_conf,
+  edges_conf,
+  title = "Confounder (Fork)\nZ -> X,  Z -> Y",
+  xlim = c(0.3, 3.7),
+  ylim = c(0.5, 3.1)
+) +
+  annotate(
+    "text",
+    x = 2,
+    y = 0.55,
+    size = 3,
+    label = "Control for Z: yes",
+    colour = col_1,
+    fontface = "bold"
+  )
+
+# ── Mediator (pipe) ────────────────────────────────────────
+nodes_med <- tibble(
+  x = c(0.8, 2, 3.2),
+  y = c(1.5, 1.5, 1.5),
+  label = c("X", "M", "Y")
+)
+edges_med <- tibble(
+  x = c(1.2, 2.42),
+  y = c(1.5, 1.5),
+  xend = c(1.58, 2.78),
+  yend = c(1.5, 1.5)
+)
+p_med <- draw_dag(
+  nodes_med,
+  edges_med,
+  title = "Mediator (Pipe)\nX -> M -> Y",
+  xlim = c(0.3, 3.7),
+  ylim = c(0.8, 2.3)
+) +
+  annotate(
+    "text",
+    x = 2,
+    y = 0.95,
+    size = 3,
+    label = "Controlling blocks path: caution",
+    colour = col_4,
+    fontface = "bold"
+  )
+
+# ── Collider (inverted fork) ───────────────────────────────
+nodes_coll <- tibble(
+  x = c(0.8, 3.2, 2),
+  y = c(2.2, 2.2, 0.9),
+  label = c("X", "Y", "C")
+)
+edges_coll <- tibble(
+  x = c(1.15, 2.85),
+  y = c(2.0, 2.0),
+  xend = c(1.72, 2.28),
+  yend = c(1.1, 1.1)
+)
+p_coll <- draw_dag(
+  nodes_coll,
+  edges_coll,
+  title = "Collider (Inverted Fork)\nX -> C <- Y",
+  xlim = c(0.3, 3.7),
+  ylim = c(0.5, 2.8)
+) +
+  annotate(
+    "text",
+    x = 2,
+    y = 0.55,
+    size = 3,
+    label = "Control for C: no",
+    colour = col_2,
+    fontface = "bold"
+  )
+
+p_conf | p_med | p_coll
+```
+
+::: {style="font-size: 0.78em"}
+**Rule**: Identify the **minimal sufficient adjustment set** — the smallest set of variables that, when controlled, blocks all non-causal (back-door) paths from $X$ to $Y$.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.72em"}
+**More controls are not always better.** A confounder that is not controlled for biases the estimate — but a mediator or collider that is controlled for *introduces* a different bias. The minimal sufficient adjustment set (the smallest set that closes all back-door paths) is the principled target, not the largest possible set of covariates. Appropriateness depends on the estimand and the substantive research context.
+:::
+
+---
+
+## A Note on Causal Inference {#sec-causal-disclaimer .smaller}
+
+::: notes
+- This is a crucial epistemic boundary. Students sometimes assume that drawing a DAG means we are doing causal inference. We are not.
+- "The regression machinery is blind to arrow direction. It can only tell you the sign and magnitude of associations. The arrows are your theoretical input, not statistical output."
+- Emphasise: DAGs are useful precisely because they force us to be explicit about what we assume. But the machinery only recovers associations — the causal interpretation requires the additional (untestable) assumption that the adjustment set is sufficient.
+- Transition: "With that caveat in mind, let's now formalise what happens when we omit a confounder."
+:::
+
+::: {.callout-important style="font-size: 0.82em"}
+**We are not doing causal inference.**
+
+Our regression models recover **associations**, not causal effects.
+The statistical machinery is **blind to the direction of arrows** — it cannot discover them from data alone.
+Including GDP per capita in the model closes the back-door path *if our DAG is correct* — but that correctness is a **substantive theoretical assumption**, not something the data can verify.
+:::
+
+. . .
+
+So what are DAGs for?
+
+- They make our theoretical **assumptions explicit** and **contestable**
+- They tell us **which variables to condition on** (and which never to touch)
+- They are the bridge between *substantive theory* and *model specification*
+
+. . .
+
+The regression tells us **how strong** the association is, once we have decided what to condition on.
+The DAG tells us **what to condition on**.
+Neither step substitutes for the other.
+
+---
+
+## Omitted Variable Bias: The Formal Result {#sec-ovb .smaller}
+
+::: notes
+- OVB formula: the bivariate slope is equal to the true DGP slope PLUS the product of (a) the association of the omitted variable with Y and (b) the slope from regressing the omitted variable on X.
+- "Both terms are positive here: GDP is associated with health spending (β_gdp > 0), and GDP is associated with women's parliament share (Cov(X,Z)/Var(X) > 0). So we over-estimate the partial association of X with Y."
+- Key lesson: OVB is a design/measurement problem. Adding GDP to the model removes the bias — but only if GDP is the *only* omitted confounder.
+:::
+
+::: {style="font-size: 0.72em"}
+
+Suppose the **true model** has two predictors, $X$ (women in parliament) and $Z$ (GDP per capita):
+
+$$
+Y_i = \alpha + \beta_X X_i + \beta_Z Z_i + \epsilon_i
+$$ {#eq-ovb-true}
+
+But we fit only the **bivariate model**, omitting $Z$. The bivariate OLS estimator converges to:
+
+$$
+\hat{\beta}_X^{\text{biv}} \xrightarrow{p} \beta_X + \beta_Z \cdot \underbrace{\frac{\text{Cov}(X, Z)}{\text{Var}(X)}}_{\text{auxiliary slope: } X \text{ on } Z}
+$$ {#eq-ovb-formula}
+:::
+
+. . .
+
+**Omitted Variable Bias (OVB)** = $\beta_Z \cdot \frac{\text{Cov}(X, Z)}{\text{Var}(X)}$
+
+. . .
+
+::: {style="font-size: 0.72em"}
+In our case: $\beta_Z > 0$ (wealth is associated with health spending) **and** $\text{Cov}(X, Z) > 0$ (wealth is associated with higher representation) $\Rightarrow$ **OVB is positive** — we systematically over-estimate $\beta_X$.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.72em"}
+**Bayesian regression cannot fix OVB**. Including $Z$ in the model removes the bias, but only if $Z$ is correctly measured and included. Priors regularize coefficients — they do not discover missing variables. OVB is a *design* problem, not a *computation* problem. (This is Gauss-Markov A2, from last week.)
+:::
+
+---
+
+## Multiple Regression: The Formal Model {#sec-multi-formal .smaller}
+
+::: notes
+- The crucial insight: adding more predictors does NOT change the likelihood family or the MCMC machinery. Same model structure, more parameters.
+- Partial derivative: "β_X is the expected change in Y for a 1-unit increase in X, HOLDING Z CONSTANT. This is what 'controlling for Z' means mathematically."
+- Formally writing out the model (likelihood + priors for every parameter) is the key discipline. Priors for control variables are subject to the same scientific scrutiny as priors for the main predictor.
+:::
+
+::: {style="font-size: 0.72em"}
+Everything from Week 8 carries over. We simply extend the linear predictor:
+
+$$
+Y_i \sim \text{Normal}(\mu_i, \sigma)
+$$ {#eq-multi-likelihood}
+
+$$
+\mu_i = \alpha + \beta_X X_i + \beta_Z Z_i + \cdots + \beta_k X_{ki}
+$$ {#eq-multi-linpred}
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+**Interpreting coefficients as partial effects**:
+
+$$
+\frac{\partial \mu}{\partial X} = \beta_X \qquad \text{(holding all other predictors constant)}
+$$ {#eq-partial-x}
+
+$$
+\frac{\partial \mu}{\partial Z} = \beta_Z \qquad \text{(holding all other predictors constant)}
+$$ {#eq-partial-z}
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.72em"}
+**Nothing structurally changes**: we now have $k + 2$ estimands ($\alpha$, $\beta_1, \ldots, \beta_k$, $\sigma$). The likelihood is still Gaussian. MCMC still samples from the joint posterior. We just need **one prior per coefficient** — applied with the same principled care as before.
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+Posterior:
+
+$$
+p(\alpha, \beta_X, \beta_Z, \sigma \mid \mathbf{Y}, \mathbf{X}, \mathbf{Z}) \propto \mathcal{L}(\alpha, \beta_X, \beta_Z, \sigma) \cdot p(\alpha)\, p(\beta_X)\, p(\beta_Z)\, p(\sigma)
+$$ {#eq-multi-posterior}
+:::
+
+---
+
+## Dummy Variables: Categorical Predictors {#sec-dummies .smaller}
+
+::: notes
+- A dummy variable is a 0/1 indicator. Its coefficient is the expected difference in Y between the two groups, holding all other predictors constant.
+- K-1 rule: for K categories, we need K-1 dummies. The omitted category is the "reference baseline" — its effect is absorbed into the intercept.
+- Why K-1 and not K? Perfect multicollinearity. If we included a dummy for every category, their values would sum to 1 (a constant), creating perfect collinearity with the intercept. The design matrix would be singular.
+- brms handles dummies automatically: include the character/factor variable, and brms creates the K-1 dummies internally, choosing the first alphabetical level as the reference.
+- Preview: "We'll use a binary dummy (parliamentary vs. presidential) here as an intercept control in Part II. In Week 10 it becomes the moderator in an interaction model. It generalizes directly to 3+ categories."
+:::
+
+::: {style="font-size: 0.72em"}
+When a predictor is **categorical** (nominal), we encode it as $K - 1$ binary indicator variables:
+
+$$
+\mu_i = \alpha + \beta_X X_i + \beta_Z Z_i + \beta_D D_i
+$$ {#eq-dummy-model}
+
+where $D_i \in \{0, 1\}$ is an indicator for one of $K = 2$ groups.
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+**Interpretation**:
+
+- $\alpha$: expected $Y$ when $D = 0$ (reference category) and other predictors = 0
+- $\beta_D$: expected *difference* in $Y$ between $D = 1$ and $D = 0$, holding $X$ and $Z$ constant
+
+$D = 0$ (reference group): $\mu_i = \alpha + \beta_X X_i + \beta_Z Z_i$
+
+$D = 1$ (indicator group): $\mu_i = (\alpha + \beta_D) + \beta_X X_i + \beta_Z Z_i$
+:::
+. . .
+
+::: {style="font-size: 0.72em"}
+The dummy shifts the **intercept** — it gives the $D = 1$ group a different baseline level while holding the slopes constant.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.72em"}
+**For $K > 2$ categories** (e.g., regime type: democracy, hybrid, autocracy): include $K - 1 = 2$ dummies. The omitted category is the baseline. In `brms`, passing a `factor()` variable does this automatically. The **prior on each dummy coefficient** is the same as any $\beta$: typically $\text{Normal}(0, \sigma_\beta)$, expressing prior uncertainty about group differences.
+:::
+
+---
+
+## Dummy Variables: The Shifting Intercept {#sec-dummies-visual .smaller}
+
+::: notes
+- This is the key visual intuition. Both lines have the same slope (women-in-parliament effect on health spending is the same for both systems), but the parliamentary line sits higher — that vertical gap is β_D.
+- Ask students: "Where is β_D in this plot? Can you estimate it visually?"
+- Deliberately use the same `df` dataset students will work with throughout — so the visual is immediately connected to the full application.
+- True DGP: intercept shift for parliamentary = 1.5, slope difference = 0.10 (but that is the interaction, covered in Week 10). Here we show only the intercept-shift logic.
+:::
+
+```{r}
+#| label: fig-dummy-intercepts
+#| echo: false
+#| fig-height: 3.8
+#| dpi: 500
+#| fig-cap: "Dummy variable as a shifting intercept. Both regression lines share the same slope (women-in-parliament effect on health spending), but parliamentary systems start from a higher baseline. The vertical gap between the lines is β_D — the regime-type dummy coefficient."
+# Additive model (no interaction) to illustrate the intercept-shift
+fit_dummy_demo <- lm(
+  health_spend ~ women_parl + reg_type,
+  data = df
+)
+
+# Predicted lines for each regime type across the range of women_parl
+x_grid <- seq(
+  min(df$women_parl),
+  max(df$women_parl),
+  length.out = 80
+)
+
+pred_lines <- tibble(
+  women_parl = rep(x_grid, 2),
+  system = rep(c("Presidential", "Parliamentary"), each = 80),
+  reg_type = rep(c(0, 1), each = 80)
+) |>
+  mutate(
+    health_spend = predict(
+      fit_dummy_demo,
+      newdata = tibble(women_parl = women_parl, reg_type = reg_type)
+    )
+  )
+
+# Annotate the β_D gap at a fixed x position
+x_ann <- median(x_grid)
+y_pres <- predict(
+  fit_dummy_demo,
+  newdata = tibble(women_parl = x_ann, reg_type = 0)
+)
+y_parl <- predict(
+  fit_dummy_demo,
+  newdata = tibble(women_parl = x_ann, reg_type = 1)
+)
+
+df |>
+  ggplot(aes(x = women_parl, y = health_spend, colour = system)) +
+  geom_point(alpha = 0.45, size = 1.8) +
+  geom_line(
+    data = pred_lines,
+    aes(x = women_parl, y = health_spend, colour = system),
+    linewidth = 1.2,
+    inherit.aes = FALSE
+  ) +
+  annotate(
+    "segment",
+    x = x_ann,
+    xend = x_ann,
+    y = y_pres,
+    yend = y_parl,
+    colour = "gray30",
+    linewidth = 0.9,
+    arrow = arrow(ends = "both", length = unit(0.18, "cm"), type = "closed")
+  ) +
+  annotate(
+    "text",
+    x = x_ann + 1.2,
+    y = (y_pres + y_parl) / 2,
+    label = expression(beta[D]),
+    size = 5,
+    colour = "gray20",
+    fontface = "bold"
+  ) +
+  scale_colour_manual(
+    values = c("Parliamentary" = col_1, "Presidential" = col_2)
+  ) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank()) +
+  labs(
+    x = "Women in Parliament (%)",
+    y = "Health Spending (% GDP)",
+    colour = "Regime Type",
+    title = "Dummy Variable = Intercept Shift"
+  )
+```
+
+---
+
+## Marginal Effects {#sec-marginal-effects .smaller}
+
+::: notes
+- The key conceptual bridge: in a purely additive model the partial derivative is constant, so the AME equals the coefficient. But students need to understand the AME concept *now* so they can grasp why it diverges from the coefficient in interaction models (Week 10) and non-linear models (Week 11).
+- "In the linear additive model, β_X is already the average effect — there is nothing to average over, because the slope doesn't change across observations. But the moment we add an interaction, the slope depends on the value of the other variable. Then we need to average."
+- Foreshadow: "When we get to logistic regression in Week 11, the derivative ∂μ/∂X depends on the value of X itself. We will always average over the data to get a single interpretable number."
+:::
+
+::: {style="font-size: 0.72em"}
+In a multivariate model, the **effect of $X$ on $Y$** depends on what we hold constant.
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+The **Average Marginal Effect (AME)** of $X$ is:
+
+$$
+\text{AME}(X) = \frac{1}{n} \sum_{i=1}^{n} \frac{\partial \hat{\mu}_i}{\partial X_i}
+$$ {#eq-ame}
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+**In the additive linear model**, $\partial \hat{\mu}_i / \partial X_i = \beta_X$ for every observation — so the AME collapses to the coefficient itself:
+
+$$
+\text{AME}(X) = \beta_X \qquad \text{(additive linear model only)}
+$$ {#eq-ame-linear}
+:::
+
+. . .
+
+:::::: columns
+::: {.column width="55%"}
+
+::: {style="font-size: 0.72em"}
+**Why bother defining it?**
+
+The AME concept generalises. As soon as the model has:
+
+- an **interaction term** (Week 10), or
+- a **non-linear link function** (logistic regression, Week 11)
+
+... the partial derivative $\partial \hat{\mu}_i / \partial X_i$ varies across observations, and we *must* average to get a single interpretable number.
+:::
+
+:::
+
+::: {.column width="45%"}
+
+::: {.callout-note style="font-size: 0.71em"}
+**Posterior AME**
+
+In the Bayesian workflow, we compute the AME for *each posterior draw* and report the resulting distribution — mean, credible interval, and full density.
+This is the `posterior_epred` averaging workflow used in Parts II and IV.
+:::
+
+:::
+::::::
+
+---
+
+## Prior Specification {#sec-priors-multi .smaller}
+
+::: notes
+- The key message: adding more predictors does not change the prior philosophy. Each coefficient needs its own prior, sized to reflect plausible effect magnitudes.
+- "A prior on β_women says: 'Before seeing the data, I expect that each additional percentage point of women in parliament is associated with a change in health spending of between -4 and +4 pp (Normal(0, 2) covers 99.7% of values in that range).'"
+- Standardizing predictors: an alternative approach is to standardize all predictors (z-score), which makes priors easier to set uniformly (all slopes roughly Normal(0, 1)). We won't do that here, but it's worth knowing.
+- σ prior: Exponential(1) implies P(σ < 5) ≈ 0.99 — very likely the residual SD is under 5pp of GDP. Substantively justified.
+:::
+::: {style="font-size: 0.72em"}
+For our health spending model, we need priors for **five** parameters:
+:::
+. . .
+
+:::::: columns
+::: {.column width="50%" style="font-size: 0.72em"}
+$$
+\alpha \sim \text{Normal}(10, 5)
+$$ {#eq-prior-alpha-health}
+*"Baseline spending ~10% GDP when $X = Z = D = 0$; very uncertain"*
+$$
+\beta_X \sim \text{Normal}(0, 2)
+$$ {#eq-prior-bx-health}
+*"Per % women in parliament, zero change in spending is most plausible a priori; effects larger than $\pm 6$ pp would be surprising"*
+$$
+\beta_Z \sim \text{Normal}(0, 2)
+$$ {#eq-prior-bz-health}
+*"Per \$1k of GDP per capita, zero change in spending is most plausible a priori; effects larger than $\pm 6$ pp would be surprising"*
+:::
+
+::: {.column width="50%" style="font-size: 0.72em"}
+$$
+\beta_D \sim \text{Normal}(0, 2)
+$$ {#eq-prior-bd-health}
+*"Parliamentary and presidential systems are assumed equally likely to spend more on health a priori; differences larger than $\pm 6$ pp would be surprising"*
+
+$$
+\sigma \sim \text{Exponential}(1)
+$$ {#eq-prior-sigma-health}
+*"Residual SD almost certainly below 5pp of GDP"*
+:::
+
+::::::
+
+. . .
+
+::: {.callout-important style="font-size: 0.72em"}
+**Priors must be calibrated to the scale of the outcome and predictors**. A prior of $\beta \sim \text{Normal}(0, 100)$ on a percentage-point outcome is nearly flat (uninformative and implausible). A prior of $\text{Normal}(0, 2)$ for the women-in-parliament and regime-type coefficients is a defensible weakly informative choice: it says effects larger than $\pm 6$ pp are unlikely a priori, while leaving the data free to update across a wide and substantively plausible range. Priors are philosophical commitments, not computational defaults — $\beta_D \sim \text{Normal}(0, 2)$ says we have no strong prior belief about which system type spends more.
+:::
+
+# Part II: Application I — Multivariate `brms` Model {#sec-part2}
+
+## Part II: Applied — Live Coding {#sec-part2-live}
+
+*→ Switch to Positron. Follow along in `lab/week9_lab.qmd`.*
+
+In this application we fit the multivariate model `health_spend ~ women_parl + gdp_pc + reg_type` on `df`, compare it against the bivariate model via LOO-IC, and visualise omitted variable bias. Week 10 extends this by asking whether `reg_type` moderates the `women_parl` slope.
+
+---
+
+
+# Summary {#sec-summary}
+
+## The Canonical Workflow {#sec-workflow .smaller}
+
+::: notes
+- Read through the eight steps. This is the explicit workflow students will execute in the take-home exam.
+- "Every analysis you submit must have these eight elements. Not all in equal depth — but all present."
+- The workflow applies regardless of model complexity: bivariate, multivariate, interaction (Week 10), logistic (Week 11), multilevel (Week 12). The likelihood changes; the workflow does not.
+- Spend a few minutes on Q&A. Ask students: "Which step felt least familiar today?" and plan accordingly.
+:::
+
+The same eight-step workflow applies to **every** model, regardless of complexity:
+
+. . .
+
+::: {style="font-size: 0.7em"}
+| Step | What you do | Why |
+|------|-----------------|-----------------|
+| 1. DAG + Estimand | Draw the causal graph; state the quantity of interest | Clarifies what you're estimating and what to control for |
+| 2. Data Summary | Visualise and numerically describe your variables | Check for patterns, outliers, and whether an interaction is plausible |
+| 3. Formal Model | Write out $\mathcal{L}$ and all priors before coding | Forces precision; makes assumptions explicit |
+| 4. Prior Predictive | Simulate $Y$ from priors; check plausibility | Catches implausible priors before MCMC |
+| 5. Fit with `brms` | Run `brm()` with explicit priors | Obtains posterior draws |
+| 6a. MCMC Diagnostics | Check $\hat{R}$, ESS, traceplots | Confirms convergence before interpreting |
+| 6b. PPC | Run `pp_check()` | Checks model adequacy |
+| 7. Interpretation | Posterior summaries, credible intervals, marginal effects | Answers the research question |
+| 8. Limitations | State what could still bias results | Scientific honesty |
+:::
+
+---
+
+## Learning Goals: Check {#sec-goals-check .smaller}
+
+::: notes
+- Read through quickly. Connect each goal to the part of today's session where it was covered.
+- Homework: students will apply the full workflow to a real dataset with multiple predictors and a categorical control variable.
+- Week 10 preview: we extend the same dataset and workflow to interaction terms — does the women-in-parliament slope differ by regime type?
+:::
+
+::: {style="font-size: 0.82em"}
+By the end of today, you should be able to:
+
+1. ✓ Explain **omitted variable bias** formally ($\hat{\beta}^{\text{biv}} = \beta + \text{bias}$) and use a **DAG** to classify variables as confounders, mediators, or colliders (Part I)
+2. ✓ Extend the Bayesian regression model to **multiple predictors** and interpret partial effects as $\partial \mu / \partial X_j$ (Parts I–II)
+3. ✓ Handle **categorical predictors** as $K - 1$ dummy variables with an intercept-shift interpretation (Part I)
+4. ✓ Compare competing models using **LOO-IC** and interpret `elpd_diff` relative to `se_diff` (Part II)
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.78em"}
+**Homework (due before next session)**: Apply the full 8-step workflow to a new dataset with multiple predictors and a categorical control variable. Instructions and GitHub Classroom link on the course website. The take-home exam will expect the same workflow.
+:::
+
+---
+
+## Bonus: Caching Model Calls in Quarto {.smaller}
+
+**The problem:** Every time you render your Quarto document, all code chunks re-execute — including expensive model calls. This gets annoying fast.
+
+**The solution:** Caching!
+
+**Global caching** (in your YAML header):
+
+````yaml
+execute:
+  cache: true
+````
+
+**Local caching** (per chunk):
+
+````r
+#| cache: true
+fit <- lm(y ~ x, data = df)
+````
+
+Quarto stores results in a `_cache/` folder and only reruns chunks when their code or dependencies change.
+
+
+**⚠️ Don't forget:** Add `_cache/` to your `.gitignore`!
+
+````
+# .gitignore
+_cache/
+````
+
+Cache folders can be large and are machine-specific — no need to commit them.
+
+## References {#sec-references}

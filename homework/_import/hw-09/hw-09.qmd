@@ -1,0 +1,128 @@
+---
+title: |
+  Week 09 Homework
+subtitle: |
+  Multivariate Bayesian Linear Regression
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    include-in-header:
+      text: |
+        \usepackage{setspace}
+        \setlength{\parindent}{15pt}
+execute:
+  echo: true
+  warning: false
+  message: false
+number-sections: true
+papersize: a4
+fontsize: 12pt
+linestretch: 1.5
+geometry:
+  - top = 2cm
+  - bottom = 2cm
+  - left = 2.5cm
+  - right = 2.5cm
+  - footskip = 20pt
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(brms)
+library(bayesplot)
+library(patchwork)
+library(ggpubr)
+library(here)
+```
+
+This homework applies the **multivariate Bayesian regression workflow** from Week 9 to a new substantive question.
+
+**The research question**: *Is education associated with higher income, after accounting for gender?*
+
+**The dataset**: `data/income_education.csv` contains 250 synthetic individual observations.
+The variables are:
+
+| Variable | Description |
+|---|---|
+| `person_id` | Unique person identifier (P001–P250) |
+| `gender` | Gender (0 = man, 1 = woman) |
+| `education` | Years of schooling |
+| `income` | Annual income in thousands of EUR — the **outcome variable** |
+
+Work through the sections in order.
+Your rendered PDF should contain all code, plots, and written answers.
+
+# Pre-Model {#sec-pre}
+
+## Data Exploration {#sec-explore}
+
+Compute numerical summaries and produce exploratory plots for all variables in the dataset.
+
+## DAG {#sec-dag}
+
+Draw a directed acyclic graph (DAG) representing your assumed data-generating process for this research question.
+
+## Estimand {#sec-estimand}
+
+State in plain language the quantity you want to learn from the data, and explain whether this estimand is descriptive or causal.
+
+# Model {#sec-model}
+
+## Formal Model Specification {#sec-model-spec}
+
+Write the full statistical model in mathematical notation, specifying the likelihood and the linear predictor.
+
+## Prior Specification {#sec-priors}
+
+Choose priors for all model parameters and justify each choice on principled grounds.
+
+## Prior Predictive Check {#sec-prior-check}
+
+Simulate predicted outcomes from the prior distribution alone and assess whether the implied outcomes fall in a plausible range.
+
+## Model Fitting {#sec-fit}
+
+Fit the model using `brms` with four chains and explicit `prior =` arguments.
+
+# Post-Model {#sec-post}
+
+## Convergence Assessment {#sec-convergence}
+
+Check that the sampler converged by examining $\hat{R}$, effective sample size, and traceplots for all parameters.
+
+## Posterior Predictive Check {#sec-ppc}
+
+Assess whether the fitted model reproduces the observed income distribution.
+
+## Interpretation {#sec-interpretation}
+
+Summarize the posterior distributions of the key parameters and visualize the partial effect of education on income.
+
+## Discussion {#sec-discussion}
+
+Write 2–3 sentences reporting the substantive finding in plain, non-technical language.
+
+---
+
+# Submission Checklist
+
+Before submitting, verify that your rendered PDF:
+
+- [ ] Contains your name in the YAML header above
+- [ ] Includes numerical summaries and exploratory plots for all variables (Section 1.1)
+- [ ] Draws and explains a DAG for the assumed data-generating process (Section 1.2)
+- [ ] States the estimand in plain language and notes its descriptive status (Section 1.3)
+- [ ] Writes the full statistical model in mathematical notation (Section 2.1)
+- [ ] Chooses and justifies priors for all parameters on principled grounds (Section 2.2)
+- [ ] Includes a prior predictive check assessing the plausibility of implied outcomes (Section 2.3)
+- [ ] Fits the model with `brms` using explicit `prior =` arguments (Section 2.4)
+- [ ] Checks convergence using $\hat{R}$, ESS, and traceplots (Section 3.1)
+- [ ] Includes a posterior predictive check (Section 3.2)
+- [ ] Summarizes and visualizes the posterior distributions of key parameters (Section 3.3)
+- [ ] Writes a 2–3 sentence substantive conclusion in plain language (Section 3.4)
+- [ ] Was produced by rendering this `.qmd` file without errors

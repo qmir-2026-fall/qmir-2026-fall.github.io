@@ -250,8 +250,11 @@ repo) `qmir-2026-fall.github.io`, the private solutions repo `solutions`.
 | `website/slides/theme.scss` | Deck theme and the `.small` / `.xsmall` size ladder. |
 | `website/slides/_workflow-8step.qmd` | The one canonical 8-step workflow partial, included everywhere. |
 | `website/slides/_deck-template.qmd` | Copy this to start a week's deck. It is also the worked example of every slide convention. |
+| `website/slides/_weekNN.qmd` | **Staging.** The 2026 spring deck for that week, ported verbatim, not yet converted to `STYLE.md`. See below. |
+| `website/slides/images/`, `website/slides/data/` | Deck assets, carried over from the spring course. The paths a `_weekNN.qmd` body already expects. |
 | `website/_freeze/` | **Committed on purpose.** Frozen renders so the site rebuilds identically anywhere without re-running models. |
 | `homework/_template/` | Skeleton copied to start each `hw-NN`, including the `.github/workflows/hw-check.yml` that ships to students. |
+| `homework/_import/hw-NN/` | **Staging.** Ported spring homework in `hw-NN` shape. Provenance and known gaps are in `homework/_import/README.md`. |
 | `homework/hw-NN/` | Per-week **student-facing** sources (starter, README, meta.yml, data). No solutions here. |
 | `solutions/` | **Private submodule**: `hw-NN/solution.qmd` and the whole `exam/`. |
 | `automation/` | The scripts that run the pipeline (publish, release, track, feedback, check). |
@@ -262,6 +265,22 @@ repo) `qmir-2026-fall.github.io`, the private solutions repo `solutions`.
 **Solution safety (three layers):** solutions are not in this repo at all (private submodule),
 the pre-commit hook refuses to stage them, and `release-homework.ps1` excludes `solution.*` and
 asserts the payload is clean before pushing.
+
+**Staging, and how a week goes live.** Every 2026 spring deck and homework is in this repo
+already, ported verbatim and parked one rename away from its real home. Staged material is
+outside the style gate (`check-authoring.ps1` skips both paths), is not rendered by Quarto, and
+is invisible to `schedule.qmd`, so a half-converted week cannot reach a student. Converting a
+week means moving it back into scope, which is what makes the conversion checkable:
+
+- **A deck.** Convert the body to `STYLE.md`, then
+  `git mv website/slides/_week07.qmd website/slides/week07.qmd` and run
+  `./automation/check-authoring.ps1 -Week 07 -Fit`. Nothing else moves: `images/`, `data/`,
+  `theme.scss` and the bibliography are already at the paths the body expects, and the YAML is
+  already reduced to the `title:` that E040 and E041 require. **The moment the file is named
+  `weekNN.qmd`, the schedule links it**, so rename last.
+- **A homework.** `cp -r homework/_import/hw-07 homework/hw-07`, convert it, then
+  `./automation/release-homework.ps1 -Week 07`. The homework link is gated on `released:` in
+  `meta.yml` as well, so the folder can land before the session.
 
 **YAML gotcha:** in `course.yml`, never use `n:`, `y:`, `on:`, or `off:` as keys. YAML 1.1
 parses them as booleans and R's `yaml` package turns the key into `FALSE`. Hence `count:`.

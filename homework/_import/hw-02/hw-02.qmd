@@ -1,0 +1,140 @@
+---
+title: "Homework 03: Practicing the Reproducible Workflow"
+author: "Your Name"
+date: today
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+---
+
+# Introduction to Key Tools
+
+**Quarto** is an open-source scientific and technical publishing system. It lets you combine
+*prose*, code, and output (like tables and figures) in a single document -- and render it
+to PDF, HTML, or Word. Think of it as a notebook where your analysis and writing live together.
+
+**R** is a programming language designed for statistical computing and data analysis. It is
+widely used in political science, economics, and other social sciences for tasks ranging from
+basic summary statistics to complex modelling and visualisation.
+
+**Git** is a version control system that tracks changes to files over time. It lets you record
+a history of edits, revert mistakes, and collaborate with others without overwriting each
+other's work.
+
+**GitHub** is a web platform that hosts Git repositories online. It makes it easy to share
+code, collaborate on projects, and submit assignments -- your instructor can simply look at
+your repository to see your work and its full history.
+
+
+
+# Exercise 4 -- Practicing R: Data Types, Structures, and Subsetting
+
+## 4.1 -- Vectors and Data Types
+
+Below I create three vectors related to European Parliament election results. Each vector
+holds a different data type: country names (character), vote share percentages (numeric),
+and whether a party is part of the ruling coalition (logical).
+
+```{r}
+# Character vector: country names
+countries <- c("Germany", "France", "Italy", "Spain", "Poland")
+print(countries)
+class(countries)
+
+# Numeric vector: largest party vote share (%) in each country
+vote_share <- c(28.9, 22.4, 26.0, 33.1, 36.8)
+print(vote_share)
+class(vote_share)
+
+# Logical vector: whether the country's government is centre-right led
+centre_right <- c(FALSE, FALSE, TRUE, FALSE, TRUE)
+print(centre_right)
+class(centre_right)
+```
+
+Each `class()` call confirms the expected type: `"character"`, `"numeric"`, and `"logical"`
+respectively.
+
+Now let's see what happens when we mix types in a single vector:
+
+```{r}
+# Mixing types forces "coercion"
+mixed <- c("Germany", 28.9, TRUE)
+print(mixed)
+class(mixed)
+```
+
+When R encounters different types in one vector it **coerces** everything to the most
+flexible type -- here, `character`. The number `28.9` becomes the string `"28.9"` and
+`TRUE` becomes `"TRUE"`. This is called *implicit coercion* and is worth watching out for,
+because arithmetic on such a vector will no longer work.
+
+
+
+## 4.2 -- Building a Data Frame
+
+Using the three vectors above (plus a fourth column for EU membership), I build a small
+data frame with 5 rows and 4 columns.
+
+```{r}
+eu_elections <- data.frame(
+  country = countries,
+  vote_share = vote_share,
+  centre_right = centre_right,
+  eu_member = c(TRUE, TRUE, TRUE, TRUE, TRUE),
+  stringsAsFactors = FALSE
+)
+
+# Dimensions
+nrow(eu_elections)
+ncol(eu_elections)
+
+# Structure
+str(eu_elections)
+
+# First few rows
+head(eu_elections)
+```
+
+`nrow()` returns 5 and `ncol()` returns 4, confirming the shape of the data frame.
+`str()` shows the column names, their types, and a preview of values -- a quick sanity
+check before any analysis. `head()` prints the first six rows (or fewer if the data frame
+is smaller), which is useful for visually confirming everything looks right.
+
+
+
+## 4.3 -- Accessing and Subsetting Data
+
+```{r}
+# 1. Extract the vote_share column using $
+eu_elections$vote_share
+
+# 2. Access a single cell: row 3 (Italy), column 2 (vote_share)
+eu_elections[3, 2]
+
+# 3. Filter rows where vote share exceeds 30 %
+high_share <- eu_elections[eu_elections$vote_share > 30, ]
+high_share
+```
+
+The `$` operator pulls out a column as a plain vector, which is handy for quick
+calculations. The `[row, column]` notation pinpoints any individual value -- here the
+vote share for Italy (26.0). The logical filter `eu_elections$vote_share > 30` creates a
+`TRUE`/`FALSE` vector of the same length as the data frame; passing it inside `[ , ]`
+keeps only the rows where the condition is `TRUE`, returning Spain and Poland as the two
+countries where the largest party won more than 30 % of the vote.
+
+
+
+# Reflection
+
+The most confusing part of this workflow was keeping the **render–commit loop** in mind
+continuously rather than writing everything first and only then checking. It is tempting
+to treat rendering as a final step, but catching errors early (especially in code chunks)
+saves a lot of time. On the R side, implicit type coercion -- where mixing types silently
+converts values -- was a subtle surprise. The fact that R gives no warning when it turns a
+number into a string means you can end up with broken calculations if you are not careful
+to check `class()` on vectors you have modified. Building the habit of calling `str()` on
+a data frame before doing anything else helps catch these issues early.

@@ -1,0 +1,11 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 12 and the +7 day offset from course.yml.
+slug: hw-12
+week: "12"
+title: "Homework 12: Course reflection"
+released: 2026-12-02
+due: 2026-12-09
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: [3, 5, 7]
+data: []

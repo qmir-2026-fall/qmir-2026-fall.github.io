@@ -1,0 +1,85 @@
+---
+title: |
+  Week 07 Homework
+subtitle: |
+  Markov Chain Monte Carlo
+# abstract: |
+  # Place abstract here
+author: "Your name"
+# thanks: "Thanks here".
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    include-in-header:
+      text: |
+        \usepackage{setspace}
+        \setlength{\parindent}{15pt}
+execute:
+  echo: false
+  warning: false
+  eval: true
+  include: true
+link-citations: true
+number-sections: false
+papersize: a4
+fontsize: 12pt
+linestretch: 2
+geometry:
+  - top = 2cm
+  - bottom = 2cm
+  - left = 2.5cm
+  - right = 2.5cm
+  - footskip = 20pt
+---
+
+## Why grid approximation fails
+
+*A student argues: "If we just use a very powerful computer, grid approximation would work fine for any model." How would you respond?*
+
+**Your answer:**
+
+## The Monte Carlo idea
+
+*The π approximation gets more accurate as you add more random points, but it never becomes exact. Why not? And why does this not matter for our purposes in Bayesian inference?*
+
+**Your answer:**
+
+## Markov Chains and stationarity
+
+*Explain in plain language what it means for a Markov Chain to have reached its stationary distribution. Why does the chain need a warm-up phase before we can trust its samples?*
+
+**Your answer:**
+
+## Why $P(data)$ cancels
+
+*Without doing any algebra, explain in one or two sentences why the Metropolis algorithm never needs to compute P(data). Use the Island King story if it helps.*
+
+**Your answer:**
+
+*A fellow student claims: "The Metropolis algorithm cannot work without knowing the total population of all islands." Convince them they are wrong.*
+
+**Your answer:**
+
+## HMC vs. random-walk Metropolis
+
+*Both random-walk Metropolis and HMC use the Metropolis acceptance rule. What is the fundamental difference between them, and why does that difference matter for a posterior with correlated parameters?*
+
+**Your answer:**
+
+## Interpreting `brms` output
+
+*You run a brms model and get R-hat = 1.00 and Bulk-ESS = 2400 for all parameters. Your colleague says the model has definitely converged. Do you agree? What would you say?*
+
+**Your answer:**
+
+*Looking at a trace plot, what specific visual features tell you the chains are mixing well? What would a problematic trace plot look like?*
+
+**Your answer:**
+
+## Convergence cannot be proven
+
+*You run 4 chains, all starting from different points, and after warm-up they all look identical. Does this prove convergence? What failure mode could still be hiding that this check would not catch?*
+
+**Your answer:**

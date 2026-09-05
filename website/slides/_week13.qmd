@@ -1,0 +1,1128 @@
+---
+title: "Week 13: Beyond the course: applying what you have learned"
+---
+
+<!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
+
+     This file is staged: the leading underscore keeps it out of the Quarto render, off
+     the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
+     below is the spring deck verbatim, so it does NOT yet follow STYLE.md.
+
+     To put this week live:
+       1. Convert the body to STYLE.md (em dashes, inline font-size, {#sec-} labels,
+          chunk labels and captions, the size ladder).
+       2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
+       3. ./automation/check-authoring.ps1 -Week NN -Fit
+     Nothing else moves: images/, data/ and theme.scss are already at the paths this
+     body expects, and the shared format block lives in _metadata.yml.
+-->
+
+
+```{r, message = NA}
+#| label: setup
+#| include: false
+#| eval: true
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(ggpubr) # nice theme
+
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+```
+
+## QMIR 2026 {#sec-title}
+
+::: notes
+- Welcome students back for the wrap-up session.
+- Today is synthesis and outlook, not new methods. Say it clearly and early.
+- Tone: generous, low pressure. They have done the work.
+:::
+
+### Week 13: Beyond the Course
+
+![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
+
+---
+
+## Today's Agenda {#sec-agenda .smaller}
+
+::: notes
+- Preview the four blocks plus the closing slot.
+- Equal weight on each block. Even pacing.
+- Q&A and exam logistics close the session.
+:::
+
+Four blocks of roughly equal weight, plus a buffer for questions and exam logistics:
+
+. . .
+
+::: {style="font-size: 0.88em"}
+| Block | Topic |
+|---|---|
+| 1 | Recap of the course |
+| 2 | Reading classical (frequentist) regression tables |
+| 3 | Tooling that makes the code-and-repo grade easy |
+| 4 | AI usage policy for the take-home exam |
+| Close | Exam logistics, thank-you, questions |
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.82em"}
+**No new statistical content today.**
+The job of this session is to consolidate what you already have and hand you a clean runway into the exam.
+:::
+
+---
+
+## What This Session Is (and Is Not) {#sec-framing .smaller}
+
+::: notes
+- Set expectations. Some students will arrive expecting another methods slide deck.
+- Say it: today is synthesis, outlook, tooling, and exam logistics.
+- Nothing new on the exam. Everything on the exam was already covered.
+:::
+
+::: {style="font-size: 0.86em"}
+**This session is:**
+
+- A recap that names what you learned and why we taught it this way
+- A literacy slide on reading frequentist regression tables
+- A tooling pitch that lowers exam anxiety
+- A clear policy on AI use during the exam
+:::
+
+. . .
+
+::: {style="font-size: 0.86em"}
+**This session is not:**
+
+- A new method or model
+- Additional material that you need to study for the exam
+- A test of your endurance
+:::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.80em"}
+You have done the work across twelve weeks.
+Today removes friction so you can write a strong take-home exam.
+:::
+
+# Block 1: Recap {#sec-block1}
+
+## The Arc of the Course {#sec-arc .smaller}
+
+::: notes
+- Walk through the three blocks of the course in plain language.
+- Emphasize the cumulative nature: each block built on the previous one.
+- Make sure students can articulate this arc to a peer who did not take the course.
+:::
+
+The course had three blocks. Each one built on the previous one:
+
+. . .
+
+::: {style="font-size: 0.84em"}
+| Block | Weeks | What you learned |
+|---|---|---|
+| **I. Scientific programming** | 2 to 5 | R, the tidyverse, `ggplot2`, Quarto, Git. Reproducible workflows. |
+| **II. The logic of Bayesian inference** | 6 to 7 | Probability, Bayes' theorem, MCMC, posterior predictive checks. |
+| **III. Applied data analysis** | 8 to 12 | Regression, multivariate, interactions, binary outcomes, multilevel models. |
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.80em"}
+You can now sit down with a dataset, formulate a research question, fit a Bayesian model, check it, and report it.
+That is a real skill.
+You did not have it twelve weeks ago.
+:::
+
+---
+
+## The Constant Red Line {#sec-constant-line .smaller}
+
+::: notes
+- This is the through-line of the entire course. Say it once, point at it, let it sit.
+- Same updating logic across every model. Only the likelihood family changes.
+- Encouragement message: keep thinking in distributions, not in points.
+:::
+
+Across every model you fit, one relationship was constant:
+
+. . .
+
+$$
+\text{posterior} \propto \text{likelihood} \times \text{prior}
+$$ {#eq-bayes-line}
+
+. . .
+
+::: {style="font-size: 0.86em"}
+This is not a coincidence of notation.
+It is the operational core of Bayesian inference.
+You start with a prior belief about parameters.
+You observe data.
+You update your belief in proportion to how well each parameter value explains what you saw.
+:::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.82em"}
+**Keep thinking in distributions.**
+A parameter is not a single number to be guessed at.
+It is a distribution of plausible values, narrowed by data.
+That habit transfers to every quantitative paper you will read.
+:::
+
+---
+
+## What Changed Across the Models {#sec-likelihood-table .smaller}
+
+::: notes
+- The workflow stays constant. The likelihood is what swaps in and out.
+- Walk through the rows: Gaussian for continuous outcomes, Bernoulli for binary, hierarchical prior for grouped data.
+- Same brm() call. Same prior arguments. Same MCMC diagnostics. Same PPC. Same LOO.
+:::
+
+The same workflow applied to every model you fit.
+Only the likelihood family changed:
+
+. . .
+
+::: {style="font-size: 0.82em"}
+| Week | Likelihood | What changed |
+|---|---|---|
+| 8 to 10 | Gaussian | Linear predictor, multiple X, interaction terms |
+| 11 | Bernoulli | Link function for the probability scale. $\sigma$ drops out. |
+| 12 | Gaussian or Bernoulli with a hierarchical prior | Group-level structure. Partial pooling. |
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+The `brm()` call, the prior arguments, the convergence diagnostics, the posterior predictive check, and the leave-one-out comparison were the same across the three rows.
+Only the `family =` argument and the formula syntax changed.
+:::
+
+---
+
+## Why Bayesian First {#sec-why-bayes .smaller}
+
+::: notes
+- Pull these seven reasons from the course philosophy. Read them slowly.
+- Not a polemic against frequentist statistics. A statement of why this framework is the right starting point.
+- Closing line: you are equipped to handle uncertainty. Land that line.
+:::
+
+::: {style="font-size: 0.82em"}
+We taught Bayesian methods first, deliberately, for seven reasons:
+
+1. **Intuitive updating logic.** Posterior is proportional to likelihood times prior. That is how scientists actually reason when new evidence arrives.
+2. **Full uncertainty quantification.** Results are distributions, not point estimates. Credible intervals have a direct probability interpretation.
+3. **Unified workflow.** The same `brms` pattern applies from a Gaussian linear model to a multilevel Bernoulli model.
+4. **Epistemic humility.** You update beliefs rather than reject or fail to reject. No binary true-or-false dichotomy.
+5. **Transparent assumptions.** Priors force you to state your prior beliefs. Researcher degrees of freedom shrink.
+6. **Regularization through weakly informative priors.** Implausible parameter values are constrained. Overfitting drops.
+7. **Natural fit for hierarchical models.** Partial pooling falls out of the prior structure for free.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.80em"}
+**You are well equipped to handle uncertainty.**
+Whatever you do next, you have the conceptual machinery to reason about evidence carefully.
+:::
+
+---
+
+## The 8-Step Workflow Is the Durable Takeaway {#sec-workflow-recap .smaller}
+
+::: notes
+- This is the operational skill that survives any package or framework change.
+- The workflow does not depend on brms. It does not depend on R. It generalises.
+- The appendix note: when you write a paper, the substantive story leads. The full workflow goes in a methods appendix. Readers want narrative first.
+:::
+
+The eight-step workflow applies to every model you will ever fit:
+
+. . .
+
+::: {style="font-size: 0.6em"}
+| Step | What you do | Why |
+|----|------------|--------------|
+| 1. DAG + Estimand | Draw the causal graph. State the quantity of interest. | Clarifies what to estimate and what to control for |
+| 2. Data Summary | Visualise and describe your variables | Check for patterns, outliers, and model plausibility |
+| 3. Formal Model | Write out $L$ and all priors before coding | Forces precision. Makes assumptions explicit. |
+| 4. Prior Predictive | Simulate $Y$ from priors. Check plausibility. | Catches implausible priors before MCMC |
+| 5. Fit with `brms` | Run `brm()` with explicit priors | Obtains posterior draws |
+| 6a. MCMC Diagnostics | Check $\hat{R}$, ESS, trace plots | Confirms convergence before interpreting |
+| 6b. PPC | Run `pp_check()` | Checks model adequacy |
+| 7. Interpretation | Posterior summaries, predicted probabilities, LOO | Answers the research question |
+| 8. Limitations | State what could still bias results | Scientific honesty |
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.76em"}
+**In a real write-up, the substantive story lives in the main text.**
+The full workflow detail belongs in an appendix.
+Readers want the narrative first. They want to know what you found and why it matters.
+The methods appendix is for the reader who wants to reproduce or critique your analysis.
+:::
+
+# Block 2: Reading Classical Tables {#sec-block2}
+
+```{r}
+#| label: setup-block2
+#| include: false
+#| eval: true
+library(knitr) # tables
+library(kableExtra) # nicer table styling
+
+bayes_tbl <- tibble(
+  Predictor = c("Intercept", "Income (std.)", "Education (std.)", "$\\sigma$"),
+  `Posterior median` = c(5.21, 0.34, 0.27, 1.02),
+  `95% CrI` = c("[4.78, 5.65]", "[0.18, 0.50]", "[0.10, 0.44]", "[0.96, 1.09]")
+)
+
+freq_tbl <- tibble(
+  Predictor = c("Intercept", "Income (std.)", "Education (std.)"),
+  Estimate = c("5.20***", "0.34***", "0.27**"),
+  `(SE)` = c("(0.22)", "(0.08)", "(0.09)"),
+  `t-value` = c(23.64, 4.25, 3.00),
+  `p-value` = c("<0.001", "<0.001", "0.003")
+)
+```
+
+## The Same Problem in Both Frameworks {#sec-core-message .smaller}
+
+::: notes
+- Frame the block. Bayesian and frequentist statistics try to solve the same problem.
+- Estimating the line through a cloud of points is easy.
+- Estimating the uncertainty around that line is the hard part. That is where the two frameworks differ.
+- MCMC is one of the most sophisticated approaches to the uncertainty problem.
+:::
+
+Both frameworks try to do the same thing: separate **noise** from **signal**.
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- Getting a point estimate (the line through the cloud of points) is easy.
+- Getting the **uncertainty** around that estimate right is the hard part.
+- MCMC, which you used all semester, is among the most sophisticated approaches to that problem.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.82em"}
+The choice of framework is mostly a choice of how to represent and report uncertainty.
+The substantive story (sign, magnitude, direction) usually survives the translation.
+The fine print does not.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.84em"}
+**The frameworks differ fundamentally in one thing: which conditionality they compute.**
+
+$$
+\underbrace{P(\theta \mid \text{data})}_{\text{Bayesian}}
+\quad \text{vs.} \quad
+\underbrace{P(\text{data} \mid \theta)}_{\text{Frequentist}}
+$$ {#eq-conditionality}
+:::
+
+---
+
+## Side by Side: Same Data, Two Frameworks {#sec-side-by-side .smaller}
+
+::: notes
+- Walk through both tables column by column.
+- The point estimates are essentially identical. The uncertainty representations differ.
+- Reveal the credible interval column first, then the SE-and-stars column.
+- The contrast is the lesson. Bayesian: a posterior distribution summarised by quantiles. Frequentist: a sampling-distribution SE plus a test statistic.
+:::
+
+A bivariate model of survey support, fit two ways:
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**Bayesian (this course)**
+
+```{r}
+#| label: tbl-bayes-demo
+#| echo: false
+bayes_tbl |>
+  kable(align = "lrl", escape = FALSE) |>
+  kable_styling(font_size = 16, full_width = TRUE)
+```
+
+::: {.fragment style="font-size: 0.72em"}
+Posterior median plus 95% credible interval.
+Probability statement about the parameter.
+:::
+
+:::
+
+::: {.column width="50%"}
+
+**Frequentist (typical poli-sci table)**
+
+```{r}
+#| label: tbl-freq-demo
+#| echo: false
+freq_tbl |>
+  kable(align = "lrrrr", escape = FALSE) |>
+  kable_styling(font_size = 16, full_width = TRUE) |>
+  footnote(general = "*** p<0.001, ** p<0.01, * p<0.05", general_title = "")
+```
+
+::: {.fragment style="font-size: 0.72em"}
+Point estimate, standard error of the sampling distribution, test statistic, and significance stars.
+A statement about the procedure, not the parameter.
+:::
+
+:::
+
+::::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.78em"}
+**Notice:** the point estimates are essentially the same in both tables.
+The substantive story (income matters, education matters, both in the expected direction) is identical.
+The frameworks differ in how they communicate what we do **not** know.
+:::
+
+---
+
+## Coefficient Plots: Same Intuitions {#sec-coef-plots .smaller}
+
+::: notes
+- Tables are one display format. Coefficient plots (and marginal-effects plots) are the other common one in modern papers.
+- The reading habits are the same as for tables.
+- Walk through the heuristics: zero crossing, direction, magnitude, interval width.
+- Same Bayesian-vs-frequentist caveat as for tables. The picture looks the same. The interpretation is not.
+- Marginal-effects plots are read the same way once the y-axis is the marginal effect rather than the coefficient.
+:::
+
+Modern papers do not always present a table.
+Many use a **coefficient plot** or a **marginal-effects plot** instead.
+The reading habits transfer.
+
+. . .
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+::: {style="font-size: 0.78em"}
+- **Does the interval cross zero?** The visual analogue of "excludes zero" in a table.
+- **Direction.** Which side of zero the point sits on tells you the sign.
+- **Magnitude.** Distance of the point from zero is the effect size.
+- **Precision.** Interval width tells you how much the data have pinned the parameter down.
+:::
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| label: fig-coef-demo
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| dpi: 500
+#| fig-cap: "Posterior medians with 95% credible intervals."
+coef_demo <- bayes_tbl |>
+  filter(Predictor %in% c("Income (std.)", "Education (std.)")) |>
+  mutate(
+    estimate = `Posterior median`,
+    lower = c(0.18, 0.10),
+    upper = c(0.50, 0.44)
+  )
+
+ggplot(coef_demo, aes(x = estimate, y = Predictor)) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_pointrange(
+    aes(xmin = lower, xmax = upper),
+    colour = col_1,
+    linewidth = 0.8,
+    size = 0.7
+  ) +
+  labs(
+    title = "Coefficient plot of the bivariate survey-support model",
+    x = "Coefficient (standardized predictors)",
+    y = NULL
+  ) +
+  theme_pubr()
+```
+
+:::
+
+::::
+
+. . .
+
+::: {.callout-note style="font-size: 0.80em"}
+Same picture, different interpretation.
+A credible interval on a coefficient plot is a probability statement about the parameter.
+A frequentist confidence interval on the same-looking plot is not.
+:::
+
+---
+
+## What Translates {#sec-translates .smaller}
+
+::: notes
+- These are the intuitions that work in both frameworks. Use them freely.
+- Sign and rough magnitude of the coefficient. Always safe.
+- Interval width: a wide interval means the data are not pinning the parameter down.
+- Model fit and diagnostics: the spirit transfers even when the specific tools differ.
+:::
+
+Your Bayesian intuition reads cleanly across to a frequentist table for:
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **Sign of the coefficient.** Positive means a positive association, negative means a negative association. Same in both frameworks.
+- **Rough magnitude of the point estimate.** The Bayesian posterior median and the frequentist point estimate are usually very close.
+- **Broadly there vs. tightly null.** A confidence interval that excludes zero by a comfortable margin and a credible interval that excludes zero by a comfortable margin tell roughly the same story.
+- **Model fit and diagnostics in spirit.** $R^2$, residual plots, goodness-of-fit checks. The specific tools differ but the question they answer is similar.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.80em"}
+For getting the substantive gist of a published paper, your Bayesian reading habits will serve you well.
+:::
+
+---
+
+## What Does Not Translate {#sec-does-not-translate .smaller}
+
+::: notes
+- These are the four common misreadings that even trained researchers make.
+- The 95% confidence interval is not a probability statement about the parameter. Repeat that.
+- The standard error is not a posterior SD. Different object, different interpretation.
+- The p-value is not "the probability the null is true".
+- Significance stars compress everything into a binary signal and throw away information.
+:::
+
+Do **not** import the following Bayesian intuitions into a frequentist table:
+
+. . .
+
+::: {style="font-size: 0.82em"}
+- A **95% confidence interval** is *not* "95% probability the parameter lies in this range". It is a long-run frequency property of the procedure: across many repeated samples, 95% of such intervals would contain the true value.
+- A **standard error** is *not* a posterior standard deviation. It is the standard deviation of the sampling distribution of the estimator.
+- A **p-value** is *not* "the probability that the null hypothesis is true".  It is the probability, *if the null were true*, of observing a test statistic at least as extreme as the one computed from your data
+- **Significance stars** compress all of this into a binary signal. The information loss is real.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.78em"}
+A confidence interval is a statement about the *procedure*, not the *parameter*.
+A credible interval is a statement about the *parameter*, given the data and prior.
+Different objects. Do not swap them.
+:::
+
+---
+
+## Practical Reading Habits {#sec-practical-reading .smaller}
+
+::: notes
+- Be honest. Most readers, including trained researchers, read frequentist tables Bayesianly.
+- That is mostly fine for the gist of a paper.
+- Be precise when it matters: replication, policy claims, your own thesis.
+- This block is about literacy in the broader literature, not advocacy. Stay non-crusading.
+:::
+
+::: {style="font-size: 0.86em"}
+- Most readers, including trained researchers, casually read frequentist results Bayesianly.
+- For getting the gist of a paper, that habit is mostly harmless.
+- For **replication claims, policy recommendations, or your own thesis**, be precise about which framework's interval you are reporting and what it actually says.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.82em"}
+The course is Bayesian.
+This block is **not** advocacy for Bayes over frequentism.
+It is literacy: you can read any quantitative paper, and you know which intuitions transfer cleanly and which ones do not.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+The right tool depends on the research question, the data, the audience, and the convention in your subfield.
+You now have the conceptual machinery to choose, not just to follow defaults.
+:::
+
+---
+
+## Table Packages in R {#sec-table-packages .smaller}
+
+::: notes
+- One slide on tooling for regression tables. Quick tour.
+- modelsummary is the modern workhorse. stargazer is the old standby for LaTeX. gt is the showpiece option.
+- My recommendation for this course: broom.mixed::tidy() piped into kable(). Clean, minimal, works for brms.
+:::
+
+When you need to put a regression table in a paper, you have options:
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **`modelsummary`**: modern, multi-model, supports `brms` directly, sensible defaults.
+- **`stargazer`**: long-standing standard for LaTeX output in econ and poli-sci.
+- **`gt`**: full table-grammar package, beautiful output, more setup.
+:::
+
+. . .
+
+**My recommendation for the take-home exam:**
+
+```r
+library(broom.mixed) # tidy() method for brms
+
+broom.mixed::tidy(brms_fit, conf.int = TRUE) |>
+  knitr::kable(digits = 2)
+```
+
+. . .
+
+::: {.callout-tip style="font-size: 0.80em"}
+Clean, minimal, reproducible.
+Pulls posterior summaries straight out of a `brms` fit and renders them in a single line.
+:::
+
+# Block 3: Tooling {#sec-block3}
+
+## The Pitch {#sec-tooling-pitch .smaller}
+
+::: notes
+- Say this explicitly and openly. Three tools, and the repo grade is a 1.0 by default.
+- The substantive analysis is the hard part. Do not also burn time engineering folder structure.
+- Frame as anxiety-reducing, not as a flex.
+:::
+
+::: {.callout-important style="font-size: 0.92em"}
+**If you use these three things together,**
+**the code-and-repository portion of your exam grade is at 1.0 level by default,**
+**without engineering effort on your part.**
+:::
+
+. . .
+
+::: {style="font-size: 0.88em"}
+The three things:
+
+1. **`qqs()`** for project scaffolding
+2. **Git** habits already covered in Block I
+3. **Air**, the R formatter built into Positron
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.82em"}
+The substantive analysis is the hard part of the take-home exam.
+Do not also burn time engineering your folder structure.
+That is what these tools are for.
+:::
+
+---
+
+## QuickQuartoSetup (`qqs`) {#sec-qqs .smaller}
+
+::: notes
+- I will run a live demo in the session. These slides are the written reference.
+- The package is stable. Default `qqs()` call works out of the box.
+- Useful overrides (author, title, statutory declaration, title page) are documented in the README.
+- The point is the logic: one command, sane defaults, clean separation of code and writing in one repo.
+- Source: github.com/dertristan/qqs. Pull the README at exam time.
+:::
+
+A small R package, `qqs`, that bootstraps a Quarto project with one command.
+
+. . .
+
+```r
+qqs()
+```
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **One command** to create a fully populated project skeleton
+- **Sane defaults**: YAML, bibliography, code template, folder structure all preset
+- **One repo, two clear roles**: code lives in `code/`, writing lives at the root
+- **No ambiguity**: every file has an obvious place
+:::
+
+. . .
+
+::: {style="font-size: 0.82em"}
+**Source:** [`github.com/dertristan/qqs`](https://github.com/dertristan/qqs)
+
+I will run a quick **live demo** in the session.
+These slides are your written reference for after class.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+The README documents optional further setup for anyone who wants to explore.
+Not exam-relevant. The default `qqs()` call is enough to get started.
+:::
+
+---
+
+## The Project Structure {#sec-qqs-structure .smaller}
+
+::: notes
+- Walk through the tree. Code in code/. Writing at the root. Data flows raw to processed to final.
+- The README documents optional power-user features for interested students.
+- This is what graders want to see when they open your repo.
+:::
+
+```
+project/
+  _quarto.yml
+  code/
+    00_code_template.qmd
+  data/
+    01_raw/              # never edit
+    02_processed/        # intermediate stuff 
+    03_final/            # results
+  manuscript.qmd
+  presentation.qmd
+  references.bib
+  .gitignore
+```
+
+. . .
+
+::: {style="font-size: 0.84em"}
+- **Code lives in `code/`**, writing lives at the root.
+- **Data flows** raw to processed to final. The raw folder is never edited.
+- **The README documents** optional further setup for advanced students who want to explore. Not required for the exam.
+:::
+
+---
+
+## Git Habits {#sec-git-habits .smaller}
+
+::: notes
+- Brief recap. Most of this was drilled in Block I.
+- Meaningful commit messages: future you and the grader will thank you.
+- Push regularly. Local-only work is not safe.
+- Never commit credentials. Never commit large data dumps.
+- Reinforce: the grader sees your git history, not just the final state.
+- Reality check: real data is rarely analysis-ready. Expect to spend time on wrangling.
+:::
+
+You already know these. Quick reinforcement:
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **Meaningful commit messages.** "Add intercept prior justification" beats "update".
+- **Push regularly.** A laptop in a backpack is not a backup strategy.
+- **Never commit credentials.** API keys, passwords, anything sensitive stays out of the repo.
+- **Never commit large data dumps.** Use `.gitignore`. Keep the raw data referenced, not bundled.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.80em"}
+**The grader sees the git history, not just the final repo state.**
+A clean, well-paced trail of commits tells me how you worked and what you understood at each step.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+**Reality check.**
+Do not expect perfectly tidy, analysis-ready data.
+Real data needs wrangling, cleaning, and documentation.
+That work is part of the exam and shows up in your `code/` folder.
+:::
+
+---
+
+## The Air Formatter {#sec-air .smaller}
+
+::: notes
+- Air is an R code formatter. Clean, idiomatic style.
+- It is built into Positron. No separate install. Same Format Document action you already use for other languages.
+- Run it before every commit. Readable code, zero effort, consistent style.
+:::
+
+**Air** is an R code formatter that produces clean, idiomatic R style.
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **Built into Positron.** No separate install. No setup.
+- **Invocation:** the standard `Format Document` action in Positron.
+- **What it does:** consistent spacing, line breaks, indentation. Idiomatic R style.
+- **Cost to you:** one shortcut before each commit.
+:::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.82em"}
+Run Air on every file before you commit.
+Your code becomes readable to the grader (and to future-you) with zero conscious effort.
+That is a free win on the code-and-repo dimension of your grade.
+:::
+
+---
+
+## The Combined Pitch {#sec-combined-pitch .smaller}
+
+::: notes
+- Tie it together. Three habits that compound.
+- `qqs()` gives you the structure. Git gives you the trail. Air gives you the style.
+- The repo dimension of the exam is then a freebie.
+:::
+
+These three habits compound:
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **``qqs()``** gives you the **structure**. Files in the right places. Nothing to invent.
+- **Git** gives you the **trail**. Commits show how the analysis evolved.
+- **Air** gives you the **style**. Code reads cleanly without conscious effort.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.86em"}
+The repo and code dimensions of your exam grade become a **freebie**.
+Your conscious effort goes where it should: the substantive analysis and the written interpretation.
+:::
+
+# Block 4: AI Usage Policy {#sec-block4}
+
+## The Headline {#sec-ai-headline .smaller}
+
+::: notes
+- Decisive, non-defensive tone. Not "AI is dangerous" and not "AI is magic".
+- AI is encouraged for understanding, code, formatting, writing.
+- The student takes final responsibility for the submission.
+- The only requirement: honesty and transparency.
+- AI as tutor framing lowers the threshold for asking basic questions.
+:::
+
+::: {.callout-tip style="font-size: 0.92em"}
+**AI is encouraged.**
+Use it to enhance understanding, improve code, polish formatting, and refine writing.
+You take final responsibility for what you submit.
+The only thing I require is **honesty and transparency**.
+:::
+
+. . .
+
+::: {style="font-size: 0.86em"}
+You will use AI tools during the exam.
+That is a realistic prediction, not a guess.
+The question is not "whether" but "how to make AI use visible and trustworthy".
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+**Think of it as a personal tutor.**
+Always available. No question is too basic.
+Lean on it when you are stuck.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+The next slide is the one rule that lets both sides trust the result.
+:::
+
+---
+
+## The Operational Rule {#sec-ai-rule .smaller}
+
+::: notes
+- This is the core of the block. Slow down here.
+- Two steps. Your draft first. AI improvement second. Two separate commits.
+- The commit message on the second commit names the AI involvement explicitly.
+- Examples: "AI spell check", "AI wording improvement", "AI code formatting".
+- The git commit message is the audit trail. There is no other AI audit trail in this course.
+:::
+
+The **git commit message is the audit trail**. The required workflow:
+
+. . .
+
+::: {style="font-size: 0.88em"}
+1. **Write your own draft** (paragraph, code, analysis). Commit it. Commit message describes **your** work.
+2. If you then use AI to improve it (spell check, wording, code style, structure), **commit the improved version separately**. Commit message names the AI involvement explicitly.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+**Example commit messages for the AI step:**
+
+```
+AI spell check
+AI wording improvement
+AI code formatting
+AI suggested restructuring of Section 3
+```
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.80em"}
+Two commits. One yours. One AI-assisted, labelled as such.
+That is the whole policy.
+:::
+
+---
+
+## Why This Rule {#sec-ai-why .smaller}
+
+::: notes
+- The reasoning matters. Students who understand why will follow the rule even in edge cases.
+- It separates your work from AI-assisted work in the git history.
+- The grader can see the trajectory and judge accordingly.
+- Without the convention, AI use is invisible.
+- Scientific standards rest on voluntary integrity. This is its operational form for AI.
+:::
+
+::: {style="font-size: 0.86em"}
+- It **separates your work from AI-assisted work** in the git history. Two distinct commits, two distinct authors of the improvement.
+- The grader can **see the trajectory** and judge accordingly. The before-and-after is visible.
+- Without this convention, **AI use is invisible**. The grader has to guess. The student has to self-report after the fact. Neither is robust.
+- Scientific standards rest on **voluntary integrity**. This is the operational form that integrity takes for AI in this course.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.80em"}
+The rule is generous on what AI can be used for.
+It is strict on one thing only: be honest about when you used it.
+:::
+
+---
+
+## Acceptable Use {#sec-ai-ok .smaller}
+
+::: notes
+- Concrete examples. These are not edge cases. They are the normal modes of AI use in this course.
+- Asking AI to explain a concept when stuck.
+- Pasting a draft into AI for proofreading.
+- Asking AI to clean up your code.
+- Asking AI to help debug an error message.
+- Calibrate trust by domain: stronger on formal logic and code, weaker on narrow IR substance.
+:::
+
+::: {style="font-size: 0.88em"}
+**All of these are acceptable, encouraged, and easy to attribute:**
+
+- Asking AI to **explain a concept** when you are stuck.
+- Pasting your **draft into AI for proofreading**.
+- Asking AI to **clean up code you wrote**.
+- Asking AI for **help debugging an error message**.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+**Calibrate trust by domain.**
+AI is more reliable on formal logic, programming, and general well-covered topics.
+On narrow substantive IR questions it is less reliable.
+Treat narrow factual claims with scepticism and check the source.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.82em"}
+In each case: do the work yourself first, commit it, then commit the AI-assisted improvement with a transparent commit message.
+:::
+
+---
+
+## Unacceptable Use {#sec-ai-not-ok .smaller}
+
+::: notes
+- Two clear violations. Both are about hiding AI involvement.
+- Generating an analysis from scratch via AI and submitting it as your own.
+- Editing AI output before committing so that the AI step is hidden.
+- The pattern is the same: the git history misrepresents who did the work.
+:::
+
+::: {style="font-size: 0.86em"}
+**These are not acceptable, and the git history will reveal them:**
+
+- **Generating an analysis from scratch via AI** and submitting it as your own work, with no acknowledgement.
+- **Hiding AI involvement** by editing AI output before committing, without naming the AI step in a commit message.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.80em"}
+The common thread: the git history misrepresents who did the work.
+That is the line.
+Cross it and the work is no longer yours.
+:::
+
+---
+
+## Using AI Well {#sec-ai-effective .smaller}
+
+::: notes
+- Policy is settled. This slide is about doing it well.
+- Two habits drive most of the difference between useful and useless output.
+- Context management: state what you want and what you do not want.
+- Window hygiene: short, focused chats. Start fresh when the task changes.
+- These habits apply to coding assistants, writing assistants, and explanation prompts equally.
+:::
+
+Policy aside, two habits drive most of the difference between useful and useless AI output.
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **Context management is the core skill.** State what you want and what you do **not** want. The vaguer the prompt, the more the model fills the gaps by imputing things you never specified. That is where hallucination comes from.
+- **A fuller context window degrades performance.** Be deliberate about what each prompt actually needs. Avoid bloated, long-running chats where noise accumulates across many turns. Start a fresh chat when the task changes.
+:::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.80em"}
+Clear ask. Clear non-ask. Fresh chat per task.
+Three habits, one outcome.
+:::
+
+---
+
+## Grading Scheme {#sec-grading-scheme .smaller}
+
+::: notes
+- Be open: the detailed grading scheme is distributed with the exam, not yet.
+- Four announced dimensions. State them clearly.
+- Two of the four (formalities and code-and-repo) are largely covered by `qqs()` and Air.
+- That is the connection back to Block 3.
+:::
+
+The **detailed grading scheme will be distributed together with the exam itself.**
+
+. . .
+
+The **four announced dimensions** are:
+
+::: {style="font-size: 0.82em"}
+1. **Argumentation.** What you are doing and why. Assessed from the written PDF.
+2. **Interpretation.** Are results interpreted correctly, with limitations and blind spots acknowledged. Assessed from the written PDF.
+3. **Formalities.** Does the PDF look like a typical research article. **`qqs()` is half the deal here.**
+4. **Code and repo.** Can a human trace what you did, where, and why. Informative commit messages. AI usage transparently noted in commit history. **`qqs()` and the Air formatter are half the deal here.**
+:::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.80em"}
+Two of the four dimensions are mostly solved by good tooling and good habits.
+That is on purpose.
+Your conscious effort belongs in dimensions 1 and 2: argumentation and interpretation.
+:::
+
+# Closing {#sec-closing}
+
+## Exam Logistics {#sec-exam-logistics .smaller}
+
+::: notes
+- Exam window dates: insert the placeholder. Do not invent dates.
+- Distribution via GitHub Classroom, like every weekly homework.
+- The repo at the deadline is what gets graded. There is no separate submission upload.
+- Deliverables: reproducible repo, rendered PDF (data/methods/analysis sections, about 10 pages of main text), statutory declaration.
+- No chat histories. That is intentional. The commit-message convention replaces them.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+**Distribution and submission:**
+
+- Distributed via **GitHub Classroom**, the same way as the weekly homework.
+- The **version of the repo at the deadline is what gets graded.** There is no separate upload.
+:::
+
+. . .
+
+::: {style="font-size: 0.82em"}
+**What to submit (inside the repo):**
+
+- A **reproducible repository** that renders end to end.
+- A **rendered PDF** structured like the data, methods, and analysis sections of a research article. Roughly **10 pages of main text**.
+- A **signed statutory declaration** of authorship.
+
+**No chat histories.** The git commit-message convention is the AI audit trail.
+:::
+
+---
+
+## Thank You {#sec-thanks .smaller}
+
+::: notes
+- One warm sentence. Mean it.
+- Make sure students know I am available for questions during the exam window.
+- Open the floor for questions after this slide.
+:::
+
+::: {style="font-size: 0.92em"}
+Thank you for showing up, for asking good questions, for the late-night Git struggles, and for taking the leap into Bayesian inference.
+:::
+
+. . .
+
+::: {style="font-size: 0.86em"}
+Good luck on the exam.
+You are ready.
+:::
+
+---
+
+## {#sec-final}
+
+::: notes
+- Final slide. Pause. Smile. End the course on a warm note.
+- "Keep your priors wide" doubles as a methods joke and a life motto.
+:::
+
+::: {style="text-align: center; font-size: 2.4em; margin-top: 2em;"}
+**Keep your priors wide!**
+:::
+
+```{r}
+#| label: session-info
+#| eval: true
+#| include: false
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+#| eval: true
+#| include: false
+Sys.time() - start_time
+```

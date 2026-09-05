@@ -1,0 +1,321 @@
+---
+title: |
+  Week 08 Homework
+subtitle: |
+  Bivariate Bayesian Linear Regression
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    include-in-header:
+      text: |
+        \usepackage{setspace}
+        \setlength{\parindent}{15pt}
+execute:
+  echo: true
+  warning: false
+  message: false
+number-sections: true
+papersize: a4
+fontsize: 12pt
+linestretch: 1.5
+geometry:
+  - top = 2cm
+  - bottom = 2cm
+  - left = 2.5cm
+  - right = 2.5cm
+  - footskip = 20pt
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(brms)
+library(bayesplot)
+library(patchwork)
+```
+
+This homework walks you through the **complete bivariate Bayesian regression workflow** from Week 8, applied to a new substantive question.
+
+**The research question**: *Does institutional quality predict how much foreign direct investment a country attracts?*
+
+**The dataset**: `data/fdi_governance.csv` contains 180 synthetic country observations. The variables are:
+
+| Variable | Description |
+|---|---|
+| `country_id` | Unique country identifier (C001–C180) |
+| `region` | World region (World Bank classification) |
+| `gov_effectiveness` | Government effectiveness index, standardized (mean 0, SD 1; higher = better governance) |
+| `fdi_pct_gdp` | Net FDI inflows as a percentage of GDP — the **outcome variable** |
+
+Work through the sections in order. Your rendered PDF should contain all code, plots, and written answers.
+
+# Data Exploration
+
+## Load and inspect
+
+Load the dataset from `data/fdi_governance.csv`. Use `glimpse()` to confirm the variable types and number of observations.
+
+```{r}
+#| label: load-data
+
+# Your code here
+
+```
+
+## Descriptive statistics
+
+Compute the mean, standard deviation, minimum, and maximum for both `gov_effectiveness` and `fdi_pct_gdp`. You may use `summarise()` with `across()` or simply call `summary()`.
+
+In **one sentence**, interpret the mean of `fdi_pct_gdp`.
+
+```{r}
+#| label: desc-stats
+
+# Your code here
+
+```
+
+*Your interpretation:*
+
+## Marginal distribution of the outcome
+
+Produce a histogram of `fdi_pct_gdp`. Include informative axis labels and a title.
+
+Does the distribution appear approximately Normal? Answer in one sentence.
+
+```{r}
+#| label: fig-hist-outcome
+#| fig-cap: "Marginal distribution of FDI inflows (% of GDP)."
+#| fig-height: 3.5
+
+# Your code here
+
+```
+
+*Your answer:*
+
+## Bivariate scatter plot
+
+Produce a scatter plot of `fdi_pct_gdp` (y-axis) against `gov_effectiveness` (x-axis). Label the axes clearly and give the plot an informative title.
+
+Describe the relationship in **2–3 sentences**: direction, approximate linearity, and the spread of points around the trend.
+
+```{r}
+#| label: fig-scatter
+#| fig-cap: "Scatter plot of FDI inflows against government effectiveness."
+#| fig-height: 4
+
+# Your code here
+
+```
+
+*Your description:*
+
+# Estimand
+
+## Plain language
+
+In **1–2 sentences**, state in plain language what quantity you are trying to estimate in this analysis.
+
+*Your answer:*
+
+## Formal statement
+
+Write the estimand formally. Let $\beta$ denote the population slope, $X_i$ = `gov_effectiveness`, $Y_i$ = `fdi_pct_gdp` for country $i$.
+
+*Your answer:*
+
+## Causal vs. descriptive
+
+Is $\beta$ a causal or a descriptive quantity in this cross-sectional observational dataset? What would be required to interpret it causally? Answer in **2–3 sentences**.
+
+*Your answer:*
+
+# Statistical Model
+
+## Formal model specification
+
+Write out the full statistical model. Your model has three unknown parameters: $\alpha$ (intercept), $\beta$ (slope), and $\sigma$ (error standard deviation).
+
+Use the following priors for this assignment:
+
+$$\alpha \;\sim\; \text{Normal}(3,\; 5) \qquad \beta \;\sim\; \text{Normal}(0,\; 3) \qquad \sigma \;\sim\; \text{Exponential}(0.5)$$
+
+*Write the full likelihood and priors here using the notation from class:*
+
+## Likelihood justification
+
+In **2–3 sentences**, justify the choice of a Gaussian (Normal) likelihood for `fdi_pct_gdp`. What property of the outcome supports this family? How does this connect to Assumption A6 from the Gauss-Markov theorem?
+
+*Your justification:*
+
+## Prior defense
+
+In **2–3 sentences**, explain why these priors are "weakly informative" rather than flat. What does each prior encode about the plausible range of FDI and governance effects? Why is $\beta \sim \text{Normal}(0, 3)$ more scientifically defensible than $\beta \sim \text{Uniform}(-\infty, +\infty)$?
+
+*Your defense:*
+
+# Gauss-Markov Assumptions
+
+## Listing the assumptions
+
+List all six Gauss-Markov assumptions (A1–A6). For each, write:
+
+- one sentence stating what the assumption requires, and
+- one sentence describing what a violation would look like in this specific dataset.
+
+*Your answer:*
+
+## Diagnostic plot: linearity and spread
+
+Reproduce your scatter plot from Section 1.4. Does the visual evidence suggest a non-linear relationship (A1) or non-constant spread across the range of `gov_effectiveness` (A3)? Answer briefly.
+
+```{r}
+#| label: fig-diagnostic
+#| fig-cap: "Scatter plot for Gauss-Markov diagnostic assessment."
+#| fig-height: 4
+
+# Copy your scatter code from Section 1 here
+
+```
+
+*Your assessment:*
+
+## The hardest assumption to defend
+
+Which of the six assumptions is most difficult to defend in a cross-sectional observational dataset like this one? In **2–3 sentences**, identify the assumption, explain why it is threatened here, and name at least one specific omitted variable that could pose a problem.
+
+*Your answer:*
+
+# Implementation in brms
+
+## Fitting the model
+
+Fit the Bayesian model from Section 3 using `brm()`. Use 4 chains, 2000 iterations (1000 warmup), and `seed = 2026`. Refer to the `brm()` syntax from the Week 8 slides for the full argument structure. Set `family = gaussian()` explicitly.
+
+```{r}
+#| label: fit-model
+#| cache: true
+#| output: false
+
+# Your code here
+# Hint: brm(outcome ~ predictor, data = ..., family = gaussian(),
+#           prior = c(...), chains = 4, iter = 2000, warmup = 1000, seed = 2026)
+
+```
+
+## Convergence check
+
+Run `summary()` on your fitted model. Are all $\hat{R}$ values below 1.01? Are all bulk ESS values above 1,000? Briefly comment on what you observe.
+
+```{r}
+#| label: model-summary
+
+# summary(your_model_object)
+
+```
+
+*Your convergence assessment:*
+
+## Posterior predictive check
+
+Produce a posterior predictive check using `pp_check()`. In **one sentence**, describe what this plot is showing and whether the model fits the data well.
+
+```{r}
+#| label: fig-ppcheck
+#| fig-cap: "Posterior predictive check."
+#| fig-height: 4
+
+# pp_check(your_model_object, ndraws = 50)
+
+```
+
+*Your interpretation:*
+
+# Model Output
+
+## Posterior summary
+
+Fill in the table below using the values from your `summary()` output.
+
+| Parameter | Posterior Mean | 95% CI Lower | 95% CI Upper |
+|---|---|---|---|
+| $\alpha$ (Intercept) | | | |
+| $\beta$ (`gov_effectiveness`) | | | |
+
+## Interpret the intercept
+
+Interpret $\alpha$ in plain language. What does the model's intercept represent in the context of this study?
+
+*Your interpretation:*
+
+## Interpret the slope
+
+Interpret $\beta$ in plain language. How many additional percentage points of FDI inflows are associated with a one-unit increase in `gov_effectiveness`? Is this effect substantively meaningful given the scale of the outcome?
+
+*Your interpretation:*
+
+## Credible interval interpretation
+
+Write **one sentence** interpreting the 95% credible interval for $\beta$ as a direct probability statement.
+
+*Your answer:*
+
+# Visualization and Substantive Interpretation
+
+## Cloud of posterior regression lines
+
+Extract 200 samples from the posterior using `as_draws_df()`. Plot these as semi-transparent regression lines over the scatter plot of the data. Add the posterior mean regression line in a distinct colour.
+
+::: {.callout-note}
+After `as_draws_df(your_model_object)`, the posterior intercept column is named `b_Intercept` and the slope column is `b_gov_effectiveness`.
+:::
+
+```{r}
+#| label: fig-posterior-lines
+#| fig-cap: "200 posterior draws as plausible regression lines over the data. Each grey line is one plausible regression consistent with the data and priors."
+#| fig-height: 4
+
+# Hint: use geom_abline() with data = post_draws for the grey lines,
+#       then geom_abline() again for the posterior mean, then geom_point() for the data.
+
+```
+
+## Marginal posterior of the slope
+
+Plot the marginal posterior distribution of `b_gov_effectiveness` as a density curve. Mark the posterior mean with a solid vertical line, the 95% CI boundaries with dashed vertical lines, and zero with a dotted vertical line for reference.
+
+```{r}
+#| label: fig-slope-posterior
+#| fig-cap: "Marginal posterior distribution of the slope coefficient."
+#| fig-height: 3.5
+
+# Your code here
+
+```
+
+## Substantive paragraph
+
+In **2–3 sentences**, write a substantive interpretation of your results for a policy analyst who has never seen a posterior distribution. What does the analysis tell us about the relationship between governance and FDI? Include **one important caveat**.
+
+*Your paragraph:*
+
+---
+
+# Submission Checklist
+
+Before submitting, verify that your rendered PDF:
+
+- [ ] Contains your name in the YAML header above
+- [ ] Includes descriptive statistics and both exploratory plots (Section 1)
+- [ ] States the estimand formally and discusses its causal vs. descriptive nature (Section 2)
+- [ ] Writes the full likelihood and three prior distributions (Section 3)
+- [ ] Lists all six Gauss-Markov assumptions with explanations and a diagnostic scatter plot (Section 4)
+- [ ] Fits the `brms` model and reports convergence diagnostics and a `pp_check()` (Section 5)
+- [ ] Reports and interprets posterior mean and 95% CI for $\alpha$ and $\beta$ (Section 6)
+- [ ] Includes the cloud-of-lines plot, slope posterior plot, and substantive paragraph (Section 7)
+- [ ] Was produced by rendering this `.qmd` file without errors

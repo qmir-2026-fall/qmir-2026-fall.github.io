@@ -162,7 +162,10 @@ This is the model the module catalogue provides for rather than a local inventio
 *Mitarbeit* and *Hausaufgaben* among the Studienleistungen for this course.
 
 **1. Weekly homework assignments.**
-There are **`r n_hw` homework assignments** over the term.
+There are **`r n_hw` homework assignments** over the term, one in every session except the first
+and the last.
+The first session is orientation and the last is synthesis and the exam briefing, so neither sets
+work, which leaves weeks `r cfg$homework$first_week` to `r cfg$homework$last_week`.
 They are distributed through GitHub and assessed pass or fail.
 To fulfil this requirement you must pass at least **`r pct(hw_frac)` of them, that is `r hw_min`
 out of `r n_hw`**.

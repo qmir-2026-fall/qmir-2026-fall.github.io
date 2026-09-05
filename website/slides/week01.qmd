@@ -27,7 +27,8 @@ Point at the exam.
 ## Where things live {#sec-where-things-live}
 
 - The **website** is everything: slides, schedule, homeworks, exam.
-- Homeworks are distributed through the GitHub org, one starter repo per week.
+- Homeworks are distributed through the GitHub org, one starter repo each.
+- There are 11, one per session, in every session except this one and the last.
 
 . . .
 

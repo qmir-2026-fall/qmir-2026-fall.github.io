@@ -1,0 +1,13 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 05 and the +7 day offset from course.yml.
+slug: hw-05
+week: "05"
+title: "Homework 05: Wrangling and visualising EU emissions and wealth"
+released: 2026-10-07
+due: 2026-10-14
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: [2]
+data:
+  - Eurostat_GDPpc.xlsx
+  - Eurostat_GHGpc.xlsx

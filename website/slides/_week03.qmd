@@ -1,0 +1,702 @@
+---
+title: "Week 3: R fundamentals: data structures, objects and functions"
+---
+
+<!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
+
+     This file is staged: the leading underscore keeps it out of the Quarto render, off
+     the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
+     below is the spring deck verbatim, so it does NOT yet follow STYLE.md.
+
+     To put this week live:
+       1. Convert the body to STYLE.md (em dashes, inline font-size, {#sec-} labels,
+          chunk labels and captions, the size ladder).
+       2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
+       3. ./automation/check-authoring.ps1 -Week NN -Fit
+     Nothing else moves: images/, data/ and theme.scss are already at the paths this
+     body expects, and the shared format block lives in _metadata.yml.
+-->
+
+
+## QMIR 2026
+
+### Week 3: R Fundamentals -- Data Types & Structures
+
+![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
+
+## Week 3 Goals
+
+By the end of today, you should:
+
+1.  Understand the core concepts: objects, functions, and pipes
+2.  Know the main data types R uses to store information
+3.  Know the main data structures R uses to organize information
+4.  Be able to access and explore data using `[]` and `$`
+
+## Agenda
+
+1.  Leftovers from Last Week
+2.  Objects, Functions & Pipes
+3.  Data Types
+4.  Data Structures
+5.  Accessing & Exploring Data
+6.  Walkthrough & Exercises
+
+# Leftovers from Last Week
+
+------------------------------------------------------------------------
+
+## Leftovers from Last Week
+
+-   Cloning from GitHub
+    -   This is how you access and submit the homeworks and take home exam
+-   Creating and linking your private projects with GitHub
+- Habits for effective and efficient coding:
+  - learn to use shortcuts (e.g. opening and closing Positron panels)
+  - learn to use your keyboard (e.g. highlighting text, adding code cells)
+  - set theme and font that makes you feel good
+
+::: notes
+Budget \~10 minutes
+:::
+
+# Part I: Objects, Functions & Pipes
+
+## R as a Language for Storing and Transforming Information {.smaller}
+
+> To understand \[...\] R, two slogans are helpful:
+>
+> Everything that exists is an **object**
+>
+> Everything that happens is a **function** call
+>
+> -- John Chambers
+
+-   You give R **objects** -- named containers holding information
+-   You apply **functions** -- operations that transform objects
+-   You chain steps together using **pipes**
+
+::: notes
+This quote is a good anchor. The point is that R has a very consistent grammar once you understand these three ideas.
+:::
+
+------------------------------------------------------------------------
+
+## Objects -- Storing Information
+
+::::: columns
+::: {.column .nonincremental width="50%"}
+An object has:
+
+-   a **name** (how you refer to it)
+-   a **value** (the information stored)
+-   a **type** (what kind of information)
+:::
+
+::: {.column width="50%"}
+An R example:
+
+```{r}
+#| echo: true
+#| eval: true
+
+# Assign a value to a name with <-
+country <- "Germany"
+
+gdp_per_capita <- 54300
+
+is_eu_member <- TRUE
+```
+
+:::
+:::::
+
+::: notes
+The arrow \<- is read as "gets". country gets the value "Germany". Emphasize that nothing is printed when you assign — you have to call the name to see it.
+:::
+
+------------------------------------------------------------------------
+
+## Objects -- Storing Information
+
+```{r}
+#| echo: true
+#| eval: true
+#| code-fold: show
+
+# print by typing the name
+country
+gdp_per_capita
+is_eu_member
+```
+
+------------------------------------------------------------------------
+
+## Functions -- Doing Things with Objects {.smaller}
+
+::::: columns
+::: {.column width="50%" .nonincremental}
+A function:
+
+-   takes one or more **inputs** (arguments)
+-   does something
+-   returns an **output**
+
+`function_name(argument1, argument2, ...)`
+
+![](https://mathspace-production-media.mathspace.co/media/upload/images/001_Chapter_Entries/Logs_Polynomials_Functions/function-machine.png){width="300"}
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: true
+#| eval: true
+
+gdp_values <- c(54300, 43800, 33200)
+
+# Functions transform objects
+mean(gdp_values)
+sqrt(gdp_per_capita)
+nchar(country)
+```
+
+:::
+:::::
+
+---
+
+## Functions -- Doing Things with Objects {.smaller}
+
+::::: columns
+::: {.column width="50%" .nonincremental}
+
+You can write your own functions.
+
+Functions can be anything from simple one-liners to complex software components. Among other things, they can be:
+
+- small personal helpers  
+- reusable analysis tools
+- shared with others  
+
+Collections of useful, published functions form **packages**. We will expore some next week.
+
+Packages are what make R -- like Python and many other programming languages -- a powerful ecosystem.
+
+:::
+
+::: {.column width="50%"}
+
+![](https://mathspace-production-media.mathspace.co/media/upload/images/001_Chapter_Entries/Logs_Polynomials_Functions/function-machine.png){width="300"}
+
+```{r}
+# A small custom helper
+add_tax <- function(price) {
+  price * 1.19
+}
+
+add_tax(10)
+```
+
+
+:::
+:::::
+
+---
+
+## Recap
+
+![](images/tidyverse-meme.png)
+
+---
+
+## Getting help
+
+To open the documentation page of a function,
+
+```r
+help(function)
+?function()
+```
+
+for example:
+
+```{r}
+#| eval: false
+
+help(mean)
+?mean()
+```
+
+---
+
+## Control Structures in R {.smaller}
+
+| Structure | Syntax Example | Description |
+|-----------|----------------|-------------|
+| if        | `if (x > 0) { ... }` | Executes code if condition is TRUE |
+| if-else   | `if (x > 0) { ... } else { ... }` | Chooses between two branches |
+| ifelse    | `ifelse(x > 0, "pos", "neg")` | Vectorized conditional |
+| for       | `for (i in 1:5) { print(i) }` | Loop over a sequence |
+| while     | `while (x < 10) { x <- x + 1 }` | Repeat while condition TRUE |
+| repeat    | `repeat { ...; if (x>10) break }` | Infinite loop until `break` |
+| break     | `break` | Exit a loop immediately |
+| next      | `next` | Skip current iteration in a loop |
+
+---
+
+## The Pipe -- Chaining Operations
+
+Without the pipe, nested calls become hard to read:
+
+```{r}
+round(mean(sqrt(gdp_values)), digits = 2)
+```
+
+
+
+With the pipe `|>`, read left to right -- "and then":
+
+```{r}
+
+gdp_values |> sqrt() |> mean() |> round(digits = 2)
+```
+
+. . .
+
+> The pipe says: *take this, and then do that.*
+
+::: notes
+The native pipe |> was introduced in R 4.1. Students may also encounter %>% from the magrittr package — functionally very similar. For this course, |> is preferred.
+:::
+
+
+---
+
+## Comments -- Code as Communication {.smaller}
+
+```{r}
+#| eval: false
+
+# BAD: comments that just repeat the code
+x <- x + 1 # add 1 to x
+
+# GOOD: comments that explain WHY
+x <- x + 1 # index starts at 0, shift to 1-based for plotting
+
+# Use comments to:
+# - explain decisions ("why log-transform? right skew in raw data")
+# - mark sections of your script
+# - temporarily disable code during testing
+```
+
+. . .
+
+> Your most important collaborator is your future self — six months from now, you will not remember why you did what you did.
+> Thanks to our **Quarto literate programming workflow**, you are living in the golden age of commenting -- you can literally write full prose between code cells instead of apologizing in hashtags later.
+
+
+# Part II: Data Types
+
+## What Kind of Information Does R Store? {.smaller}
+
+
+| Type | Description | Example |
+|---|---|---|
+| `double` | Decimal numbers | `3.14`, `54300.5` |
+| `integer` | Whole numbers | `42`, `2026` |
+| `character` | Text / strings | `"Germany"`, `"hello"` |
+| `logical` | True or false | `TRUE`, `FALSE` |
+| `factor` | Categories | `"low"`, `"medium"`, `"high"` |
+| `Date` | Calendar dates | `2026-02-23` |
+
+---
+
+## Numeric: Double & Integer
+
+```{r}
+gdp <- 54300.5 # double (default for numbers)
+seats <- 736L # integer (the L suffix makes it explicit)
+
+class(gdp)
+class(seats)
+```
+
+<div style="font-size: 0.85em;">
+- For most purposes in this course, the integer/double distinction doesn't matter -- R handles it behind the scenes. But it's good to know it exists. 
+- It is **important** that you know how to find out if objects are *numeric*.
+</div>
+
+---
+
+## Character / String
+
+```{r}
+capital <- 'Berlin' # single or double quotes both work
+country <- "Germany" # but double quotes are sometimes easier to see
+
+nchar(country) # how many characters?
+toupper(country) # string manipulation
+paste(country, "is in the EU")
+```
+
+--- 
+
+## Character / String
+
+Numbers stored as characters are **not** numbers -- R won't do math with them:
+
+```{r}
+#| error: true
+
+"42" + 1 # this does not work
+
+as.numeric("42") + 1 # transforming the string to numeric makes it work
+```
+
+---
+
+## Logical / Boolean {.smaller}
+
+```{r}
+is_eu_member <- TRUE
+
+is_eu_member
+
+population <- 84000000
+
+# Comparisons produce logical values
+population > 50000000
+population == 84000000
+!is_eu_member # NOT
+```
+
+
+Logicals are the backbone of **filtering** -- you'll use them constantly when subsetting data.
+
+---
+
+## Logical Operators {.smaller}
+
+| Operator | Meaning | Example |
+|---|---|---|
+| `<` | Less than | `3 < 5` |
+| `<=` | Less than or equal | `3 <= 3` |
+| `>` | Greater than | `5 > 3` |
+| `>=` | Greater than or equal | `5 >= 5` |
+| `==` | Equal to | `3 == 3` |
+| `!=` | Not equal to | `3 != 5` |
+| `&` | AND (vectorised) | `(3 > 1) & (5 > 2)` |
+| `\|` | OR (vectorised) | `(3 > 5) \| (5 > 2)` |
+| `!` | NOT | `!(3 > 5)` |
+| `%in%` | Is element contained in vector | `"Germany" %in% c("France", "Germany")` |
+
+---
+
+## Specialized Types: Factors & Dates {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+**Factors** -- categorical variables with fixed levels
+
+```{r}
+regime <- factor(
+  c("democracy", "autocracy", "democracy", "hybrid"),
+  levels = c("autocracy", "hybrid", "democracy")
+)
+
+regime
+levels(regime)
+```
+
+:::
+
+::: {.column width="50%"}
+
+**Dates**
+
+```{r}
+#| echo: true
+#| eval: true
+
+today <- Sys.Date()
+today
+treaty <- as.Date("1957-03-25") # Treaty of Rome
+treaty
+today - treaty # date arithmetic!
+```
+
+:::
+::::::
+
+
+> You'll encounter these often in real data. The key insight: R treats them differently from plain text so it can do useful things like ordering, arithmetic, and plotting.
+
+::: notes
+Don't go too deep here. Factors will come up naturally in visualization (Week 4). lubridate for dates can be mentioned as an optional depth topic.
+:::
+
+
+# Part III: Data Structures
+
+## How Is Information Organized? {.smaller}
+
+| Structure | Dimensions | Types allowed | Formal notation | Other names (across fields) |
+|---|---|---|---|----------------|
+| Vector | 1 | One | $\mathbf{x}_i$ | feature vector, embedding, signal, series |
+| Matrix | 2 | One | $\mathbf{X}_{i_1, i_2}$ | design matrix, adjacency matrix, image, tensor (order 2) |
+| **Data frame** | 2 | **Multiple** | | dataset, table, rectangular data, tibble |
+| Array | N | One | $\mathcal{X}_{i_1 i_2 \dots i_N}$ | tensor, cube, multidimensional array |
+| List | Any | **Multiple** |  | container, object, record, nested data |
+
+---
+
+## Vectors -- The Building Block
+
+```{r}
+# c() combines values into a vector
+countries <- c("Germany", "France", "Italy", "Spain", "Turkey")
+population <- c(84, 68, 60, 47, 88) # millions
+eu_member <- c(TRUE, TRUE, TRUE, TRUE, FALSE)
+
+length(countries) # number of elements in vector
+class(countries) # check type
+class(eu_member) # check type
+```
+
+--- 
+
+## Vectors -- The Building Block
+
+A vector can only hold **one type**. If you mix types, R silently converts:
+
+```{r}
+
+mixed <- c(1, 2, "three") # all become character!
+mixed
+```
+
+---
+
+## Matrices & Arrays -- Briefly {.smaller}
+
+```{r}
+
+matrix(1:6, nrow = 2, ncol = 3)
+matrix(c("A", "B", "C", "D"), nrow = 2, ncol = 2)
+```
+
+- 2D structures storing elements of the same type  
+- Fundamental for linear algebra and numerical computations  
+- Data frames are more flexible for tabular data, but matrices remain crucial in statistical modeling
+
+::: notes
+Keep this brief — 2 minutes max. It's here for conceptual completeness.
+:::
+
+---
+
+![](images/matrix.png)
+
+---
+
+## Data Frames -- The Workhorse {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+- Rectangular (rows × columns)
+- Each column is a **vector** (one type)
+- Columns can be **different types** from each other
+- Each row is an **observation**
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+eu_data <- data.frame(
+  country = c("Germany", "France", "Italy", "Spain", "Turkey"),
+  population = c(84, 68, 60, 47, 88),
+  eu_member = c(TRUE, TRUE, TRUE, TRUE, FALSE),
+  regime = c("democracy", "democracy", "democracy", "democracy", "hybrid")
+)
+
+eu_data
+```
+
+:::
+::::::
+
+---
+
+## Data Frames -- The Workhorse {.smaller}
+
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+nrow(eu_data) # number of rows (observations)
+ncol(eu_data) # number of columns (variables)
+head(eu_data) # first 5 rows of df
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+str(eu_data)
+summary(eu_data)
+```
+
+:::
+::::::
+
+---
+
+## Lists -- The Flexible Container {.smaller}
+
+```{r}
+
+country_info <- list(
+  name = "Germany",
+  population = 84000000,
+  eu_member = TRUE,
+  parties = c("SPD", "CDU", "Greens", "FDP")
+)
+
+country_info
+```
+
+Lists can hold **anything** -- including other lists. They're less intuitive than data frames, but you'll encounter them constantly as outputs of statistical models.
+
+# Part IV: Accessing & Exploring Data
+
+## Reaching Inside Structures
+
+Two main tools:
+
+- `[ ]` -- index by **position** or **condition**
+- `$` -- index by **name** (for data frames and lists)
+
+---
+
+## Indexing Vectors with `[ ]`
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+countries <- c("Germany", "France", "Italy", "Spain", "Poland")
+
+countries[1] # first element
+countries[c(1, 3)] # first and third
+countries[-2] # everything except second
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+population <- c(84, 68, 60, 47, 38)
+
+# Logical indexing -- filter by condition
+countries[population > 50]
+```
+
+:::
+::::::
+
+---
+
+## Indexing DFs with `[ ]` and `$` {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# [row, column] -- leave blank to mean "all"
+eu_data[1, ] # first row, all columns
+eu_data[, 2] # all rows, second column
+eu_data[1, 2] # specific cell
+```
+
+```{r}
+# $ accesses a column by name -- returns a vector
+eu_data$country
+eu_data$population
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Combine: filter rows by condition
+eu_data[eu_data$population > 65, ]
+```
+
+:::
+::::::
+
+---
+
+### Exploring Data -- Your First Questions
+
+```{r}
+str(eu_data) # structure: types, dimensions, preview
+```
+
+---
+
+### Exploring Data -- Your First Questions
+
+```{r}
+summary(eu_data) # summary statistics per column
+```
+
+---
+
+### Exploring Data -- Your First Questions
+
+```{r}
+head(eu_data, 2) # first n rows
+class(eu_data) # what kind of object is this?
+class(eu_data$population) # what class/type is this variable?
+```
+
+These are some of the first things you should run whenever you encounter a new dataset.
+
+# Time to Practice!
+
+---
+
+## Walkthrough Overview
+
+- Clone the Week 3 exercise repo from GitHub (same workflow as last week)
+- Open `exercise_week03.qmd` in Positron
+- Work through the tasks in order
+- **Fast finishers:** optional depth exercises at the bottom of the document
+
+::: notes
+Live-code the clone step briefly to warm students up. Then let them work. Circulate and help. Reserve ~10 min at the end for questions before previewing homework.
+:::
+
+---
+
+## Homework
+
+- Distributed via GitHub (same workflow as Week 2)
+- Submit a rendered Quarto document (`.qmd` + rendered PDF)
+- **Due:** one week from today
+
+
+The homework follows the same arc as today -- you'll work with a small political dataset to practice types, structures, and subsetting. Read the task descriptions carefully and write comments explaining your reasoning.
+
+
+# Thank you for your attention and see you next week!
+
+<a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a>

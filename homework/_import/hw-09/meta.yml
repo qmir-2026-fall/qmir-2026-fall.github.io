@@ -1,0 +1,12 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 09 and the +7 day offset from course.yml.
+slug: hw-09
+week: "09"
+title: "Homework 09: Multivariate Bayesian linear regression"
+released: 2026-11-11
+due: 2026-11-18
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: [1, 7]
+data:
+  - income_education.csv

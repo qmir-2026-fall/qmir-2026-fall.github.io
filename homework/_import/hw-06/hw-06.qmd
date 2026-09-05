@@ -1,0 +1,289 @@
+---
+title: "Homework Week 6: The Logic of Bayesian Inference"
+subtitle: "QMIR 2026 -- Due one week from today"
+author: "Your Name"
+date: today
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: false
+    number-sections: false
+    echo: true
+    code-fold: false
+execute:
+  message: false
+  warning: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+```
+
+# Setting: Alien Democracy Detectors
+
+An alien civilisation is trying to answer a scientific question about Earth: **what proportion of land area belongs to democratic countries?**
+
+Their method is simple but clever. They dispatch probe ships at random. Each probe avoids the oceans (there is nothing to land on) and touches down at a uniformly random location on land. Upon landing, the probe's instruments identify the country, cross-reference it with the V-Dem dataset, and record a binary outcome:
+
+- $D = 1$ -- the country is classified as a **democracy**
+- $D = 0$ -- the country is classified as a **non-democracy**
+
+The aliens treat each landing as an independent observation. After $N$ landings, they have recorded $W$ democratic touchdowns. Their goal is to estimate $\theta$, the true proportion of land area belonging to democracies.
+
+You have been assigned to help them reason carefully about this.
+
+# Part I: Conceptual Questions
+
+Answer each question in **2–4 sentences** in your own words. You do not need any code for this part.
+
+## What is the parameter of interest?
+
+Describe in plain language what $\theta$ represents in this scenario. Is it the same as "what fraction of countries are democracies"? Why or why not?
+
+*Your answer here.*
+
+## Choosing a prior
+
+The alien scientists have three competing prior beliefs about $\theta$ before any probes land:
+
+- **Flat prior:** complete agnosticism -- every value of $\theta$ between 0 and 1 is equally plausible.
+- **Weakly informative prior:** the scientists have read some Earth political science and believe democracies are somewhat more common than non-democracies, but are uncertain. They give modestly more prior weight to values of $\theta > 0.5$.
+- **Supercertain prior:** one senior alien scientist is convinced -- based on intercepted radio signals -- that exactly half of Earth's land belongs to democracies. She concentrates nearly all prior mass at $\theta = 0.5$.
+
+For each prior, write one sentence: is this a scientifically defensible prior for this research question? What assumption does it encode?
+
+*Your answer here.*
+
+## The likelihood family
+
+The aliens model each probe landing as a Bernoulli trial: with probability $\theta$, the probe lands in a democratic country; with probability $1 - \theta$, it does not. With $N$ landings, the count of democratic landings $W$ follows a Binomial distribution.
+
+In your own words: what does the likelihood $P(W, N \mid \theta)$ tell us? Why is it not a probability distribution over $\theta$?
+
+*Your answer here.*
+
+## Interpreting the posterior
+
+After the probes return their data, the alien scientists compute a posterior distribution over $\theta$.
+
+A junior scientist summarises the result: *"The 90% credible interval for $\theta$ is [0.42, 0.71]. This means there is a 90% probability that the true proportion of democratic land lies between 0.42 and 0.71."*
+
+Is this interpretation correct under the Bayesian framework? Would this interpretation be valid for a frequentist 90% confidence interval? Explain the difference briefly.
+
+*Your answer here.*
+
+
+# Part II: Bayesian Updating in R
+
+## The playground
+
+The code block below implements the full Bayesian grid approximation for the alien probe scenario. The parameters at the top are labelled clearly -- **your job is to change them and observe what happens**.
+
+```{r}
+#| label: alien-playground
+
+# ── Change these to explore ───────────────────────────────────────────────────
+W <- 4 # democratic landings observed
+N <- 6 # total probe landings
+prior_type <- "flat" # "flat", "weak", or "supercertain"
+
+# ── Grid over all possible θ values ──────────────────────────────────────────
+theta_grid <- seq(0, 1, length.out = 1000)
+
+# ── Prior ─────────────────────────────────────────────────────────────────────
+prior <- switch(
+  prior_type,
+  flat = rep(1, 1000),
+  weak = ifelse(theta_grid > 0.5, 2, 1),
+  supercertain = dnorm(theta_grid, mean = 0.5, sd = 0.02)
+)
+prior <- prior / sum(prior)
+
+# ── Likelihood: Binomial ──────────────────────────────────────────────────────
+likelihood <- dbinom(W, size = N, prob = theta_grid)
+
+# ── Bayes' theorem ────────────────────────────────────────────────────────────
+numerator <- likelihood * prior
+normalizing_const <- sum(numerator) # P(data)
+posterior <- numerator / normalizing_const
+
+# To see that P(data) is just a number
+cat("P(data) =", round(normalizing_const, 5), "\n")
+
+# To see the posterior sums to 1 (i.e. is a valid probability distribution)
+sum(posterior)
+
+# ── Plot ──────────────────────────────────────────────────────────────────────
+tibble(
+  theta = theta_grid,
+  Prior = prior / max(prior),
+  Likelihood = likelihood / max(likelihood),
+  Posterior = posterior / max(posterior)
+) |>
+  pivot_longer(-theta, names_to = "dist", values_to = "val") |>
+  mutate(dist = factor(dist, levels = c("Prior", "Likelihood", "Posterior"))) |>
+  ggplot(aes(x = theta, y = val, color = dist, linetype = dist)) +
+  geom_line(linewidth = 0.9) +
+  scale_color_manual(
+    values = c("steelblue", "goldenrod3", "firebrick"),
+    name = NULL
+  ) +
+  scale_linetype_manual(values = c("solid", "dashed", "twodash"), name = NULL) +
+  theme_bw() +
+  theme(
+    legend.position = "bottom",
+    aspect.ratio = 0.42,
+    panel.grid.minor = element_blank()
+  ) +
+  labs(
+    x = expression(theta ~ "(proportion of democratic land)"),
+    y = "Scaled density (max = 1)",
+    caption = paste0("prior = ", prior_type, "  |  W = ", W, "  |  N = ", N)
+  )
+```
+
+## Exploring: flat prior
+
+Run the code with `prior_type = "flat"` and `W = 4, N = 6`.
+
+In 2–3 sentences: what shape does the posterior have, and why does it look the way it does? What is the relationship between the posterior and the likelihood under a flat prior?
+
+*Your answer here.*
+
+## Exploring: the effect of sample size
+
+Keep `prior_type = "flat"` and the proportion of democratic landings constant at $W/N = 2/3$. Run the code for three sample sizes: `W = 4, N = 6`; `W = 40, N = 60`; `W = 400, N = 600`. Include all three plots in your submission.
+
+In 3–4 sentences: describe what changes across the three plots and what stays the same. What does this tell you about the relationship between data and uncertainty?
+
+```{r}
+#| label: sample-size-small
+# W = 4, N = 6 (already run above -- copy or re-run here)
+
+```
+
+```{r}
+#| label: sample-size-medium
+# W = 40, N = 60
+
+```
+
+```{r}
+#| label: sample-size-large
+# W = 400, N = 600
+
+```
+
+*Your answer here.*
+
+## Exploring: the effect of the prior
+
+Use `W = 4, N = 6` and run the code separately for all three priors. Include all three plots.
+
+In 3–4 sentences: how does the supercertain prior change the posterior compared to the flat prior? Does the weak prior make a visible difference? Which prior would you defend as the most scientifically appropriate starting point for this alien research question, and why?
+
+```{r}
+#| label: prior-flat
+# prior_type = "flat"
+
+```
+
+```{r}
+#| label: prior-weak
+# prior_type = "weak"
+
+```
+
+```{r}
+#| label: prior-supercertain
+# prior_type = "supercertain"
+
+```
+
+*Your answer here.*
+
+## Posterior summary
+
+Using any one of your posteriors from the previous section (state which one), you draw 10,000 samples from it and compute summary statistics using the `sample` function in the code below.
+
+```{r}
+#| label: posterior-summary
+
+# ── Re-run your chosen setup here first ──────────────────────────────────────
+W <- 4
+N <- 6
+prior_type <- "flat" # <- change if desired
+
+theta_grid <- seq(0, 1, length.out = 1000)
+prior <- switch(
+  prior_type,
+  flat = rep(1, 1000),
+  weak = ifelse(theta_grid > 0.5, 2, 1),
+  supercertain = dnorm(theta_grid, mean = 0.5, sd = 0.02)
+)
+prior <- prior / sum(prior)
+likelihood <- dbinom(W, size = N, prob = theta_grid)
+posterior <- (likelihood * prior) / sum(likelihood * prior)
+
+# ── Draw samples from the posterior ──────────────────────────────────────────
+set.seed(42)
+samples <- sample(theta_grid, size = 1e4, replace = TRUE, prob = posterior)
+
+# ── Summarise ─────────────────────────────────────────────────────────────────
+cat("Posterior mean:  ", round(mean(samples), 3), "\n")
+cat("Posterior median:", round(median(samples), 3), "\n")
+cat(
+  "90% credible interval:",
+  round(quantile(samples, 0.05), 3),
+  "--",
+  round(quantile(samples, 0.95), 3),
+  "\n"
+)
+
+# ── Plot ──────────────────────────────────────────────────────────────────────
+tibble(theta = samples) |>
+  ggplot(aes(x = theta)) +
+  geom_histogram(
+    bins = 50,
+    fill = "steelblue",
+    color = "white",
+    linewidth = 0.2
+  ) +
+  geom_vline(
+    xintercept = quantile(samples, c(0.05, 0.95)),
+    linetype = "dashed",
+    color = "firebrick"
+  ) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank()) +
+  labs(
+    x = expression(theta ~ "(proportion of democratic land)"),
+    y = "Count",
+    caption = paste0(
+      "10,000 posterior samples | prior = ",
+      prior_type,
+      " | W = ",
+      W,
+      " | N = ",
+      N
+    )
+  )
+```
+
+Write **one sentence** interpreting the 90% credible interval printed above in plain, non-technical language -- as you would explain it to the alien scientists.
+
+*Your answer here.*
+
+
+
+# Submission checklist
+
+Before submitting, make sure your rendered PDF:
+
+- [ ] Answers all four conceptual questions in Part I
+- [ ] Contains six plots from Part II (three sample sizes + three priors)
+- [ ] Contains the posterior summary plot with a written interpretation
+- [ ] Was produced by rendering this `.qmd` file (not copy-pasted output)
+- [ ] Includes your name in the YAML header above

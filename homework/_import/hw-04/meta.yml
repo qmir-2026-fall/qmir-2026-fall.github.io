@@ -1,0 +1,12 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 04 and the +7 day offset from course.yml.
+slug: hw-04
+week: "04"
+title: "Homework 04: Wrangling real data, the ParlGov dataset"
+released: 2026-09-30
+due: 2026-10-07
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: [2]
+data:
+  - parlgov.xlsx

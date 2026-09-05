@@ -1,0 +1,330 @@
+---
+title: ""
+subtitle: "QMIR 2026 -- Homework 04"
+author: ""
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    papersize: a4
+    fontsize: 12pt
+execute:
+  echo: true
+  eval: true
+  warning: false
+  message: false
+  error: false
+---
+
+# Setup
+
+Load the packages you need and import the data. The ParlGov dataset is an Excel file with multiple sheets. Use `read_excel()` from the `readxl` package and specify the sheet with the `sheet` argument.
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+# Import the election sheet
+parlgov_election <- read_excel("data/parlgov.xlsx", sheet = "election")
+
+# Import the party sheet -- you will need it later
+parlgov_party <- read_excel("data/parlgov.xlsx", sheet = "party")
+```
+
+Add `library()` calls for any additional packages you use.
+
+# Exercise 1 -- Import and Explore
+
+## Inspect the Data
+
+Use `glimpse()`, `head()`, and `summary()` to get an overview of `parlgov_election`. Then answer the questions below in prose.
+
+```{r}
+# Your exploration code here
+
+```
+
+**Questions -- answer in prose beneath this line:**
+
+- How many rows and columns does the election sheet have? What does one row represent?
+- What data types are the columns? Are there any that surprise you?
+- How many distinct countries are in the dataset? Use `distinct()`.
+- Use `count()` to find out how many observations belong to parliamentary elections vs. European Parliament elections. Which type is more common?
+
+*Your answers here.*
+
+## Subset to Parliament Elections
+
+For the rest of the homework (unless noted otherwise), work only with **national parliament elections**. Filter `parlgov_election` to keep only rows where `election_type == "parliament"` and assign the result to a new object called `parl`.
+
+```{r}
+parl <- parlgov_election |>
+  filter(___)
+```
+
+How many rows remain?
+
+```{r}
+# Your check here
+
+```
+
+*Your answer here.*
+
+
+# Exercise 2 -- Filter and Select
+
+## German Elections
+
+Create an object called `germany` containing all parliamentary election results for Germany. Use `distinct()` on `election_date` to find out how many elections are covered.
+
+```{r}
+germany <- parl |>
+  filter(___)
+
+# How many elections?
+
+```
+
+*Your answer here: how many elections for Germany are in the data?*
+
+## Recent Western Europe
+
+From `parl`, filter to keep only observations from **France, Germany, the Netherlands, and Sweden** from the year **2000 onwards**.
+
+You will need to extract the year from `election_date`. Because the date is stored as a character string (or date object), you can use `year(as.Date(election_date))` inside `mutate()` to create a numeric year column first -- or use `stringr::str_sub(election_date, 1, 4)` to extract the first four characters as a string and wrap it in `as.numeric()`.
+
+Then keep only the columns `country_name`, `election_date`, `party_name_english`, `vote_share`, `seats`, `seats_total`, and `left_right`.
+
+```{r}
+recent_we <- parl |>
+  mutate(year = ___) |> # extract year
+  filter(
+    country_name %in% c(___),
+    year >= ___
+  ) |>
+  select(___)
+
+recent_we
+```
+
+Write one sentence confirming the result looks as expected.
+
+*Your answer here.*
+
+
+# Exercise 3 -- Mutate and Compute New Variables
+
+## Seat Share
+
+In `parl`, create a new variable `seat_share` that expresses the share of seats won by each party as a percentage (i.e., `seats / seats_total * 100`). Assign the result back to `parl`.
+
+```{r}
+parl <- parl |>
+  mutate(seat_share = ___)
+```
+
+Now use `filter()` and `arrange()` to find the five parties with the highest single-election seat share in the entire dataset. What do they have in common?
+
+```{r}
+parl |>
+  filter(!is.na(seat_share)) |>
+  arrange(___) |>
+  select(country_name, election_date, party_name_english, seat_share) |>
+  slice_head(n = 5)
+```
+
+*Your answer here.*
+
+## Vote--Seat Disproportionality
+
+A classic question in electoral systems research is whether parties receive seat shares that are proportional to their vote shares, or whether the electoral system distorts the translation of votes into seats.
+
+Create a variable `disproportionality` defined as `seat_share - vote_share`. Positive values mean a party received more seats than its vote share would proportionally warrant; negative values mean fewer.
+
+Then compute the mean disproportionality **by country**, keeping only countries with at least 50 observations (use `filter(n() >= 50)` inside a `group_by()` chain). Sort by mean disproportionality descending.
+
+```{r}
+parl |>
+  mutate(disproportionality = ___) |>
+  filter(!is.na(disproportionality)) |>
+  group_by(country_name) |>
+  filter(n() >= 50) |>
+  summarise(
+    mean_disprop = round(mean(disproportionality), 2),
+    n = n(),
+    .groups = "drop"
+  ) |>
+  arrange(desc(mean_disprop))
+```
+
+Which countries show the largest average disproportionality? Can you explain why based on what you know about their electoral systems? Write two to three sentences.
+
+*Your answer here.*
+
+# Exercise 4 -- Summarise and Group
+
+## Mean Vote Share by Party Family
+
+The `party` sheet contains a `family_name` variable that classifies parties into ideological families (e.g., Social democracy, Conservative, Green/Ecologist).
+
+The `parl` (election) object also contains a `left_right` variable at the party-election level. Use it to compute the mean and standard deviation of `left_right` **by country**, for national parliament elections only. Remove missing values with `na.rm = TRUE`. Sort by mean left-right score ascending (most left-leaning countries first) and keep only countries with at least 30 non-missing observations.
+
+```{r}
+parl |>
+  filter(!is.na(left_right)) |>
+  group_by(___) |>
+  summarise(
+    mean_lr = round(mean(left_right, na.rm = TRUE), 2),
+    sd_lr = round(sd(left_right, na.rm = TRUE), 2),
+    n = n(),
+    .groups = "drop"
+  ) |>
+  filter(n >= 30) |>
+  arrange(___)
+```
+
+Write one sentence interpreting the variation in mean left-right scores across countries. Is the pattern what you expected?
+
+*Your answer here.*
+
+## Electoral Volatility Over Time
+
+Compute the mean vote share of the **largest party** (maximum `vote_share`) per election, grouped by decade. To do this:
+
+1. Create a `decade` variable using `mutate()`: `(year %/% 10) * 10` where `year` is the numeric year you extracted earlier (or extract it again here).
+2. For each election (identified by `election_date` and `country_name`), find the maximum vote share.
+3. Then group by decade and compute the mean of those election-level maxima.
+
+This tells you whether dominant parties have become stronger or weaker over time.
+
+```{r}
+parl |>
+  mutate(
+    year = as.numeric(str_sub(election_date, 1, 4)),
+    decade = ___
+  ) |>
+  group_by(country_name, election_date, decade) |>
+  summarise(max_vote = max(vote_share, na.rm = TRUE), .groups = "drop") |>
+  group_by(___) |>
+  summarise(
+    mean_max_vote = round(mean(max_vote, na.rm = TRUE), 1),
+    n_elections = n(),
+    .groups = "drop"
+  ) |>
+  filter(n_elections >= 5) |>
+  arrange(decade)
+```
+
+Write two sentences describing the trend. Is there evidence of increasing or decreasing party system fragmentation over time?
+
+*Your answer here.*
+
+# Exercise 5 -- A Full Pipeline
+
+Write a **single piped chain** (no intermediate objects) that answers the following question:
+
+> **Which party family won the most total seats across all national parliamentary elections in Western European countries (France, Germany, Italy, Spain, the Netherlands, Belgium, Austria, Sweden, Denmark, Norway, Finland, Portugal) since 1990?**
+
+Your pipeline should:
+
+1. Filter to the relevant countries and years
+2. Filter out missing seat values
+3. Group by `family_name` (use the `left_right`-adjacent `party_name_english` — actually, the `parl` table has no `family_name` column directly; you will need to **join** the party family information from `parlgov_party`)
+
+Wait — this is a good moment to introduce joining. The `parl` table does not have `family_name`; that lives in `parlgov_party`. You can bring it in with a left join:
+
+```{r}
+# This join adds family_name to parl from parlgov_party
+parl_with_family <- parl |>
+  left_join(
+    parlgov_party |> select(party_id, family_name),
+    by = "party_id"
+  )
+```
+
+Now use `parl_with_family` to complete the pipeline:
+
+```{r}
+parl_with_family |>
+  mutate(year = as.numeric(str_sub(election_date, 1, 4))) |>
+  filter(
+    country_name %in%
+      c(
+        "France",
+        "Germany",
+        "Italy",
+        "Spain",
+        "Netherlands",
+        "Belgium",
+        "Austria",
+        "Sweden",
+        "Denmark",
+        "Norway",
+        "Finland",
+        "Portugal"
+      ),
+    year >= 1990,
+    !is.na(seats),
+    !is.na(family_name)
+  ) |>
+  group_by(___) |>
+  summarise(
+    total_seats = sum(seats, na.rm = TRUE),
+    n_parties = n_distinct(party_name_english),
+    .groups = "drop"
+  ) |>
+  arrange(desc(total_seats))
+```
+
+Write two to three sentences interpreting the result. Does the ranking reflect your expectations about Western European politics since 1990?
+
+*Your answer here.*
+
+
+# Exercise 6 -- A Labelled Figure
+
+Produce a figure that visualises something substantively interesting from the ParlGov data. You have freedom here -- choose a question that genuinely interests you.
+
+**Requirements:**
+
+- The figure must be produced with `ggplot2`
+- The code cell must have a `label` starting with `fig-` and a `fig-cap` with a descriptive caption
+- You must reference the figure in your prose using `@fig-yourlabel`
+- Use `theme_bw()` or another clean theme
+- Add informative axis labels with `labs()`
+
+Below are three suggested starting points if you need inspiration. You are not required to use them -- they are just prompts.
+
+**Option A -- Ideological polarisation over time:** For a country of your choice, compute the standard deviation of `left_right` across parties per election year and plot it as a line over time. A rising line suggests increasing ideological spread between parties.
+
+**Option B -- Green party performance:** Filter to parties in the Green/Ecologist family. Plot their mean vote share by country (using `geom_col()`) for elections since 2000, sorted from highest to lowest.
+
+**Option C -- Left-right distribution by party family:** Use `geom_boxplot()` or `geom_violin()` to show the distribution of `left_right` scores across party families. This gives a visual summary of how well the family labels capture ideological position.
+
+```{r}
+#| label: fig-
+#| fig-cap: ""
+
+# Your ggplot code here
+
+```
+
+Write a paragraph beneath the figure (at least three sentences) interpreting what it shows. Reference the figure using `@fig-yourlabel`. Explain the pattern, note anything surprising, and consider one possible limitation of the visualisation.
+
+*Your interpretation here.*
+
+
+# Exercise 7 -- Reflection
+
+Add a short reflection at the end of your document. Answer the following in three to five sentences:
+
+- Which part of the wrangling workflow was most difficult for you this week?
+- Is there anything about the ParlGov data structure that confused you at first?
+- What is one thing you now understand about the tidyverse that you did not before this homework?
+
+Be honest -- this helps improve the course.
+
+*Your reflection here.*

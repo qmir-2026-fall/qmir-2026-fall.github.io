@@ -420,7 +420,15 @@ if ($Week) {
   $targets = Get-ChildItem $RepoRoot -Recurse -Include *.qmd, *.md -File
 }
 
-# Never lint build output, caches, the private submodule, or vendored files.
+# Never lint build output, caches, the private submodule, vendored files, or staged
+# material ported from the 2026 spring course.
+#
+# The two staging paths are deliberate holes, not oversights (CLAUDE.md section 7). A ported
+# deck sits at website/slides/_weekNN.qmd and a ported homework at homework/_import/hw-NN/
+# until it has been converted to STYLE.md. Neither is rendered by Quarto and neither is
+# visible to schedule.qmd, so they cannot reach a student. Promoting one (rename the deck to
+# weekNN.qmd, copy the homework folder to homework/hw-NN/) moves it back INTO scope, which is
+# what makes the conversion checkable.
 $targets = $targets | Where-Object {
   $p = $_.FullName -replace '\\', '/'
   ($p -notmatch '/_site/') -and
@@ -429,7 +437,9 @@ $targets = $targets | Where-Object {
   ($p -notmatch '/\.git/') -and
   ($p -notmatch '_cache/') -and
   ($p -notmatch '_files/') -and
-  ($p -notmatch '/solutions/')
+  ($p -notmatch '/solutions/') -and
+  ($p -notmatch '/homework/_import/') -and
+  ($p -notmatch '/website/slides/_week\d+\.qmd$')
 }
 
 foreach ($t in $targets) { Test-File -File $t.FullName }

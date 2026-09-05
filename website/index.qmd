@@ -49,6 +49,7 @@ cfg <- read_course()
 - {{< fa clock >}} `r shown(cfg$sessions$time)`
 - {{< fa location-dot >}} `r shown(cfg$sessions$room)`
 - {{< fa list-ol >}} `r cfg$sessions$count` sessions, one per week
+- {{< fa laptop-code >}} `r cfg$homework$count` homeworks, one per session bar the first and last
 - {{< fa award >}} `r cfg$course$ects` ECTS
 
 :::

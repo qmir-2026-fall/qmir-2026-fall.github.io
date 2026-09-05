@@ -1,0 +1,838 @@
+---
+title: "Week 12: Introduction to multilevel models"
+---
+
+<!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
+
+     This file is staged: the leading underscore keeps it out of the Quarto render, off
+     the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
+     below is the spring deck verbatim, so it does NOT yet follow STYLE.md.
+
+     To put this week live:
+       1. Convert the body to STYLE.md (em dashes, inline font-size, {#sec-} labels,
+          chunk labels and captions, the size ladder).
+       2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
+       3. ./automation/check-authoring.ps1 -Week NN -Fit
+     Nothing else moves: images/, data/ and theme.scss are already at the paths this
+     body expects, and the shared format block lives in _metadata.yml.
+-->
+
+
+```{r, message = NA}
+#| label: setup
+#| include: false
+#| eval: true
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(brms) # Bayesian multilevel models via Stan
+library(bayesplot) # MCMC diagnostics
+library(patchwork) # combine ggplot panels
+library(modelsummary) # regression tables
+library(ggpubr) # ggpubr theme
+
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+
+# ─── Synthetic cross-national survey ───────────────────────────────────────
+# 20 countries, n = 837. Outcome: EU support (0–10). Predictor: income (std).
+# Unequal group sizes (15–75) ensure shrinkage is visible for small groups.
+# True DGP: α_g ~ N(5, 1.5), β_income = 0.3, σ = 1.0
+set.seed(2026)
+n_countries <- 20
+group_sizes <- c(
+  15,
+  18,
+  20,
+  22,
+  25,
+  28,
+  30,
+  32,
+  35,
+  38,
+  40,
+  45,
+  50,
+  52,
+  55,
+  60,
+  62,
+  65,
+  70,
+  75
+)
+n <- sum(group_sizes)
+country_id <- rep(seq_len(n_countries), times = group_sizes)
+country_lab <- paste0("C", str_pad(seq_len(n_countries), 2, pad = "0"))
+alpha_true <- rnorm(n_countries, mean = 5, sd = 1.5)
+income <- rnorm(n)
+eu_support <- alpha_true[country_id] + 0.3 * income + rnorm(n, 0, 1.0)
+eu_support <- pmin(pmax(eu_support, 0), 10)
+df <- tibble(eu_support, income, country_id, country = country_lab[country_id])
+rm(alpha_true)
+
+# ─── Pre-fit models ────────────────────────────────────────────────────────
+
+# Complete pooling: ignore country structure
+fit_pooled <- brm(
+  eu_support ~ income,
+  data = df,
+  family = gaussian(),
+  prior = c(
+    prior(normal(5, 2), class = "Intercept"),
+    prior(normal(0, 1), class = "b"),
+    prior(exponential(1), class = "sigma")
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 2026
+)
+
+# Partial pooling: varying intercepts by country
+fit_partial <- brm(
+  eu_support ~ income + (1 | country),
+  data = df,
+  family = gaussian(),
+  prior = c(
+    prior(normal(5, 2), class = "Intercept"),
+    prior(normal(0, 1), class = "b"),
+    prior(exponential(1), class = "sigma"),
+    prior(exponential(1), class = "sd")
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 2026
+)
+
+# No pooling: lm with country dummies (fast, illustrative)
+fit_no_pool <- lm(eu_support ~ income + factor(country), data = df)
+```
+
+## QMIR 2026 {#sec-title}
+
+::: notes
+- Opening.
+- Arc: conceptual primer on hierarchical data and partial pooling (~60 min), then brms peek and literature vocabulary connection (~30 min).
+- Core message: this is a departure point, not a destination. Not on the exam.
+- The shrinkage plot is the click moment of the session — pace toward it.
+:::
+
+### Week 12: Multilevel Models & Partial Pooling
+
+![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
+
+---
+
+## Week 12 Learning Goals {#sec-goals .smaller}
+
+::: notes
+- Read aloud. Three goals map onto the conceptual arc.
+- Goal 1: hierarchical data and the independence assumption.
+- Goal 2: the three-point spectrum — the core content.
+- Goal 3: brms syntax and output reading.
+- State the no-exam status explicitly and early.
+:::
+
+::: {.callout-important style="font-size: 0.80em"}
+**This session is not on the take-home exam.**
+It is a primer — your departure point for using multilevel models in future work.
+:::
+
+. . .
+
+By the end of today, you should be able to:
+
+1. **Identify hierarchical (nested) data** in IR and EU research and explain why treating grouped observations as independent understates uncertainty
+2. **Describe the three-point spectrum** — complete pooling, no pooling, partial pooling — and articulate when each is the right choice
+3. **Read the `(1 | group)` formula** in `brms` and interpret the key output quantities ($\hat{\tau}$, $\hat{\sigma}$, group-level intercepts)
+
+---
+
+## What This Session Is (and Is Not) {#sec-framing .smaller}
+
+::: notes
+- Say this explicitly and early. Students coming off Week 11 need to know the register has shifted.
+- "We are not running the 8-step workflow today. No prior-predictive check, no PPC, no LOO comparison."
+- "Think of today as a conceptual map. You are at the edge of what we have covered. The territory ahead is larger."
+:::
+
+**This session deliberately breaks the Week 8–11 pattern:**
+
+. . .
+
+::: {style="font-size: 0.85em"}
+| What we do today | What we skip today |
+|---|---|
+| Hierarchical data intuition | Full 8-step workflow |
+| The three-point spectrum | Prior predictive check |
+| The shrinkage plot | Posterior predictive check |
+| `brms` syntax peek | LOO model comparison |
+| FE vocabulary connection | Varying slopes |
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.80em"}
+Multilevel models are **not on the take-home exam**.
+This is your departure point, not your destination — the tools and concepts introduced today are ones you will build on in a follow-up methods seminar, thesis work, or applied research.
+:::
+
+# Part 1: Hierarchical Data {#sec-part1}
+
+## Hierarchical Data Is the Rule, Not the Exception {#sec-nested-examples .smaller}
+
+*1.1 What Is Hierarchical Data*
+
+::: notes
+- "Before we can talk about models, we need to see the data structure. Almost every dataset you will touch in IR or EU politics has nested structure."
+- Go through each row with a concrete example. ESS: 30+ countries, respondents per country are not exchangeable with each other nor with respondents from other countries.
+- Emphasize: this is not a niche statistical problem. It is the default shape of comparative politics data.
+:::
+
+Almost every dataset in IR and EU politics has individuals nested within groups:
+
+. . .
+
+::: {style="font-size: 0.80em"}
+| Structure | Individual unit | Group | Example dataset |
+|---|---|---|---|
+| Cross-national surveys | Respondents | Countries | European Social Survey (ESS) |
+| Panel data | Country-years | Countries | V-Dem, World Development Indicators |
+| Parliamentary data | Votes / speeches | Parties | ParlGov, Comparative Manifesto Project |
+| Conflict data | Dyads | Alliances / regions | UCDP, COW |
+| Electoral data | Voters | Districts | CSES |
+:::
+
+. . .
+
+::: {style="font-size: 0.80em"}
+**The pattern is always the same**: lower-level units (respondents, country-years, votes) are nested inside higher-level containers (countries, parties, regions).
+Observations within the same container tend to be **more similar to each other** than to observations in a different container.
+:::
+
+---
+
+## What "Nested" Looks Like {#sec-nesting-diagram .smaller}
+
+::: notes
+- Show the figure. "This is our running example for today: 20 synthetic countries, 837 survey respondents. The outcome is EU support on a 0–10 scale."
+- "Notice two things. First, the orange diamonds show that countries genuinely differ in their average EU support. Second, the strips have very different widths — some countries have 15 respondents, others 75."
+- "These two features — between-group variation and unequal sample sizes — are exactly what make the pooling question interesting."
+:::
+
+```{r}
+#| label: fig-nesting
+#| fig-cap: "EU support by country (synthetic cross-national survey, n = 837, 20 countries). Orange diamond = country mean. Dashed line = global mean. Group sizes range from 15 to 75."
+#| fig-height: 4.5
+#| dpi: 500
+df |>
+  mutate(country = fct_reorder(country, eu_support, mean)) |>
+  ggplot(aes(x = country, y = eu_support)) +
+  geom_jitter(width = 0.18, alpha = 0.22, size = 0.8, colour = col_1) +
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 18,
+    size = 3.2,
+    colour = col_2
+  ) +
+  geom_hline(
+    yintercept = mean(df$eu_support),
+    linetype = "dashed",
+    colour = "gray50"
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7.5)) +
+  labs(
+    title = "EU Support by Country: Hierarchical Structure",
+    subtitle = "Orange diamond = country mean. Countries differ; within-country observations cluster.",
+    x = NULL,
+    y = "EU Support (0–10)"
+  )
+```
+
+---
+
+## The Independence Assumption Breaks {#sec-independence-breaks .smaller}
+
+*1.2 Why It Matters*
+
+::: notes
+- Callback to Week 8. "We listed four Gauss-Markov assumptions. A4 was independence: the error for observation i tells us nothing about the error for observation j."
+- "With nested data, A4 breaks mechanically. Two respondents from Germany share a common country context — their errors are correlated."
+- "The consequence: if we ignore this and treat all 837 observations as independent, credible intervals will be too narrow. We understate uncertainty."
+- "Intuition: 75 German respondents who share a country context carry less new information than 75 independent draws would. Treating them as independent pretends we have more information than we do."
+- No formal derivation. The intuition is enough.
+:::
+
+**Week 8 — Gauss-Markov Assumption 4 (Independence):**
+
+$$
+\text{Cov}(\varepsilon_i, \varepsilon_j) = 0 \quad \text{for all } i \neq j
+$$ {#eq-a4}
+
+. . .
+
+With nested data, A4 breaks **mechanically**:
+
+::: {style="font-size: 0.82em"}
+- Two ESS respondents from the same country share a common context — their errors are correlated
+- 75 same-country respondents carry **less** new information than 75 independent draws
+:::
+
+. . .
+
+**If we ignore the nesting:**
+
+::: {style="font-size: 0.82em"}
+- Credible intervals (and standard errors) are too narrow — we understate uncertainty
+- Estimates of cross-level associations (e.g., does country-level income predict EU support?) can be severely biased
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+This is not a Bayesian vs. frequentist problem.
+OLS on pooled cross-national data and a Bayesian Gaussian model both face the same issue — the likelihood incorrectly treats within-group observations as independent.
+:::
+
+# Part 2: The Three-Point Spectrum {#sec-part2}
+
+## Three Strategies for Grouped Data {#sec-spectrum-overview .smaller}
+
+*2.1 The Three-Point Spectrum*
+
+::: notes
+- "When you have grouped data, you have three choices for how to handle the grouping. Think of them as three points on a dial."
+- "Each is valid. Each has principled uses. We are not declaring a winner today."
+- Introduce the names now; each gets its own slide.
+:::
+
+When your data have nested structure, you face a fundamental choice about **how much information to share across groups**:
+
+. . .
+
+::: {style="font-size: 0.82em"}
+| Strategy | Information sharing | Group intercepts | Name in applied papers |
+|---|---|---|---|
+| **Complete pooling** | Maximum — share everything | One for all | Pooled OLS / baseline model |
+| **No pooling** | Zero — each group independent | Fully separate | Fixed effects (FE) |
+| **Partial pooling** | Partial — share, but not completely | Drawn from a common distribution | Random effects / multilevel model |
+:::
+
+. . .
+
+::: {style="font-size: 0.80em"}
+**The key question**: how similar are the groups to each other?
+Complete pooling assumes identical groups; no pooling assumes fully independent groups; partial pooling lets the data decide.
+:::
+
+---
+
+## Strategy 1: Complete Pooling {#sec-complete-pooling .smaller}
+
+::: notes
+- "One intercept for all groups. The model does not know that countries exist."
+- "Not always wrong. If groups are genuinely exchangeable — e.g., randomised treatment blocks — complete pooling is efficient and appropriate."
+- "But if groups differ in their baseline outcomes, complete pooling absorbs all group-level variation into the residual."
+:::
+
+**Model:** one intercept $\alpha$ for all groups — the grouping variable is ignored entirely.
+
+$$
+y_{ig} \sim \text{Normal}(\alpha + \beta x_{ig},\; \sigma)
+$$ {#eq-complete-pool}
+
+. . .
+
+::: {style="font-size: 0.82em"}
+- **Pros**: simple, maximum statistical power, no group-level parameters to estimate
+- **Cons**: assumes all group intercepts are identical; if groups differ, estimates are biased and uncertainty is understated
+- **When appropriate**: groups are genuinely exchangeable, or group structure is irrelevant to the research question
+:::
+
+. . .
+
+In `brms` — the model you already know from Week 8:
+
+```r
+brm(eu_support ~ income, data = df, family = gaussian(), ...)
+```
+
+---
+
+## Strategy 2: No Pooling {#sec-no-pooling .smaller}
+
+::: notes
+- "Separate intercept for each group. Equivalent to adding country dummies to the regression."
+- "This is what applied papers call 'country fixed effects'. Each country gets its own constant, estimated from its own data alone."
+- "The problem: small groups get wide, unreliable estimates. A country with 15 respondents will have a very uncertain intercept."
+- "And there is a subtler problem: the estimates do not talk to each other. Learning that Germany has high EU support tells the model nothing about Poland."
+:::
+
+**Model:** separate intercept $\alpha_g$ per group, each estimated independently.
+
+$$
+y_{ig} \sim \text{Normal}(\alpha_g + \beta x_{ig},\; \sigma)
+$$ {#eq-no-pool}
+
+. . .
+
+::: {style="font-size: 0.82em"}
+- **Pros**: group intercepts absorb any group-level confounders; FE-style identification argument for time-invariant unobservables
+- **Cons**: no information sharing — **small groups get wide, unreliable estimates**; cannot include country-level predictors (collinear with group dummies)
+- **When appropriate**: FE identification is required (e.g., panel DiD); you genuinely do not want to borrow strength across groups
+:::
+
+. . .
+
+Equivalent to adding `factor(country)` as a predictor:
+
+```r
+lm(eu_support ~ income + factor(country), data = df)
+```
+
+---
+
+## Strategy 3: Partial Pooling {#sec-partial-pooling .smaller}
+
+::: notes
+- "The Bayesian-native middle option. Group intercepts are not identical (not complete pooling) and not independent (not no pooling). They are treated as draws from a common distribution whose parameters we also estimate."
+- "The key quantity is τ — the SD of the country-intercept distribution. Small τ means countries are similar, estimates shrink toward the global mean. Large τ means countries are very different, estimates stay close to the group-specific data."
+- "Crucially, τ is not chosen by the researcher. It is estimated from the data, with its own prior."
+:::
+
+**Model:** group intercepts $\alpha_g$ are drawn from a common distribution with estimated parameters.
+
+$$
+\begin{aligned}
+y_{ig} &\sim \text{Normal}(\alpha_g + \beta x_{ig},\; \sigma) \\[4pt]
+\alpha_g &\sim \text{Normal}(\mu_\alpha,\; \tau) \\[4pt]
+\mu_\alpha,\; \tau &\sim \text{weakly informative priors}
+\end{aligned}
+$$ {#eq-partial-pool}
+
+. . .
+
+The hyperparameter $\tau$ is the key:
+
+::: {style="font-size: 0.82em"}
+| Value of $\tau$ | Interpretation | Limiting behaviour |
+|---|---|---|
+| $\tau \to 0$ | Groups are essentially identical | Complete pooling |
+| $\tau \to \infty$ | Groups are fully independent | No pooling |
+| $\tau$ estimated from data | **Partial pooling — data decide** | — |
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+$\tau$ is not a tuning parameter — it is a model parameter with its own prior, estimated jointly with all other parameters.
+This is the hierarchical prior structure Block II has been building toward: priors can have priors.
+:::
+
+---
+
+## The Shrinkage Plot {#sec-shrinkage .smaller}
+
+::: notes
+- "This is the click moment. Take a moment to read the three panels."
+- "Left: complete pooling — every country gets the same estimate (the global mean). No country-specific information."
+- "Middle: no pooling — each country gets its own estimate. Notice the wide intervals for small countries (small points). The estimates are noisy."
+- "Right: partial pooling — estimates are pulled toward the global mean, more strongly for small countries. Large countries stay close to their own data; small countries are pulled more."
+- "That pulling toward the mean is called shrinkage. It is not a bug — it is what happens when you say 'these countries share a common distribution' and pool information across them."
+- "Notice the partial pooling intervals are narrower than no pooling, especially for small groups."
+:::
+
+```{r}
+#| label: fig-shrinkage
+#| fig-cap: "The shrinkage plot: three strategies applied to the same data. Point size proportional to country sample size (15–75). Partial pooling pulls small-country estimates toward the global mean (dashed line) more strongly than large-country estimates."
+#| fig-height: 5.8
+#| dpi: 500
+global_mean <- mean(df$eu_support)
+
+no_pool_df <- df |>
+  group_by(country) |>
+  summarise(
+    n = n(),
+    est = mean(eu_support),
+    se = sd(eu_support) / sqrt(n()),
+    .groups = "drop"
+  )
+
+partial_df <- ranef(fit_partial)$country[,, "Intercept"] |>
+  as_tibble(rownames = "country") |>
+  mutate(
+    est = Estimate + fixef(fit_partial)["Intercept", "Estimate"],
+    lower = Q2.5 + fixef(fit_partial)["Intercept", "Estimate"],
+    upper = Q97.5 + fixef(fit_partial)["Intercept", "Estimate"]
+  )
+
+country_order <- no_pool_df |> arrange(est) |> pull(country)
+
+shrinkage_df <- bind_rows(
+  no_pool_df |>
+    transmute(
+      country,
+      n,
+      est = global_mean,
+      lower = NA_real_,
+      upper = NA_real_,
+      model = "Complete Pooling"
+    ),
+  no_pool_df |>
+    transmute(
+      country,
+      n,
+      est,
+      lower = est - 1.96 * se,
+      upper = est + 1.96 * se,
+      model = "No Pooling"
+    ),
+  partial_df |>
+    left_join(no_pool_df |> select(country, n), by = "country") |>
+    transmute(country, n, est, lower, upper, model = "Partial Pooling")
+) |>
+  mutate(
+    country = factor(country, levels = country_order),
+    model = factor(
+      model,
+      levels = c("Complete Pooling", "No Pooling", "Partial Pooling")
+    )
+  )
+
+ggplot(shrinkage_df, aes(x = est, y = country)) +
+  geom_vline(xintercept = global_mean, linetype = "dashed", colour = "gray55") +
+  geom_errorbarh(
+    aes(xmin = lower, xmax = upper),
+    height = 0.3,
+    alpha = 0.5,
+    colour = "gray40"
+  ) +
+  geom_point(aes(size = n, colour = model), alpha = 0.85) +
+  scale_colour_manual(
+    values = c(
+      "Complete Pooling" = col_3,
+      "No Pooling" = col_2,
+      "Partial Pooling" = col_1
+    ),
+    guide = "none"
+  ) +
+  scale_size_continuous(range = c(1.2, 4.5), guide = "none") +
+  facet_wrap(~model, ncol = 3) +
+  theme_bw() +
+  labs(
+    title = "The Shrinkage Plot: Three Strategies, Same Data",
+    subtitle = "Dashed line = global mean. Point size ∝ country n. Small-n countries shrink most.",
+    x = "Country-Level EU Support Estimate",
+    y = NULL
+  )
+```
+
+---
+
+## Three Tools, Three Jobs — No Winner {#sec-three-tools .smaller}
+
+::: notes
+- "Resist the temptation to say partial pooling is always better. It is not."
+- FE line: "If you are doing a DiD design with panel data and need the FE identification argument to absorb time-invariant unobserved confounding, no pooling is the right choice."
+- Partial pooling line: "If you want country-specific estimates AND a country-level predictor in the same model, partial pooling is the only option — FE absorbs the country-level predictor into the dummies."
+- Complete pooling: "If countries are genuinely exchangeable — e.g., a randomised experiment — complete pooling is efficient and correct."
+:::
+
+The three-point spectrum is a **spectrum**, not a ranking:
+
+. . .
+
+::: {style="font-size: 0.80em"}
+| Strategy | Use when | Avoid when |
+|---|---|---|
+| **Complete pooling** | Groups are exchangeable; group-specific estimates not of interest | Group structure is theoretically important |
+| **No pooling (FE)** | FE identification needed for unobserved confounders; DiD designs | Groups are small; need to estimate group-level predictors |
+| **Partial pooling** | Small or unequal group sizes; group-specific estimates wanted alongside cross-level predictors | FE identification is required for causal inference |
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+What applied papers call **"country fixed effects"** is the no-pooling endpoint of this spectrum.
+Partial pooling sits in the middle.
+Knowing the spectrum lets you read any paper and identify where its modelling choice sits.
+:::
+
+# Part 3: brms Syntax {#sec-part3}
+
+## One Line Changes {#sec-brms-formula .smaller}
+
+*3.1 Fitting a Multilevel Model with brms*
+
+::: notes
+- "You already know how to write the first line. The third line is the new one — and it adds exactly one term."
+- "(1 | country): the 1 is the random intercept; the | country means 'varying by country'. brms adds the hierarchical prior on α_g and estimates τ automatically."
+- Point to the new prior: class = "sd". This is the prior on τ, the SD of the random intercepts.
+:::
+
+The only change from Week 8 is `(1 | country)` in the formula:
+
+```r
+# Complete pooling — Week 8 style
+brm(eu_support ~ income,
+    data = df, family = gaussian(), ...)
+
+# No pooling — country dummies
+lm(eu_support ~ income + factor(country), data = df)
+
+# Partial pooling — one new term
+brm(eu_support ~ income + (1 | country),
+    data = df, family = gaussian(), ...)
+```
+
+. . .
+
+The `(1 | country)` term tells `brms`:
+
+::: {style="font-size: 0.82em"}
+- Fit a **separate intercept** for each country
+- Treat those intercepts as **drawn from a common Normal distribution** $\text{Normal}(\mu_\alpha, \tau)$
+- Estimate $\tau$ from the data, with its own prior (`class = "sd"`)
+:::
+
+---
+
+## Priors for the Multilevel Model {#sec-priors-mlm .smaller}
+
+::: notes
+- "One new prior: class = 'sd' covers τ, the SD of the random intercepts."
+- "exponential(1) is a standard weakly informative prior for scale parameters: most mass near zero but allowing larger values. It says 'country intercepts probably do not vary wildly, but I am not ruling it out.'"
+- "The fixed-effect priors are unchanged from Week 8."
+:::
+
+```{r}
+#| label: code-fit-partial
+#| eval: false
+fit_partial <- brm(
+  eu_support ~ income + (1 | country),
+  data = df,
+  family = gaussian(),
+  prior = c(
+    prior(normal(5, 2), class = "Intercept"), # global mean EU support
+    prior(normal(0, 1), class = "b"), # income slope
+    prior(exponential(1), class = "sigma"), # within-country noise σ
+    prior(exponential(1), class = "sd") # between-country SD τ
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 2026
+)
+```
+
+. . .
+
+::: {style="font-size: 0.82em"}
+| Prior | Parameter | Meaning |
+|---|---|---|
+| `normal(5, 2)` on `Intercept` | $\mu_\alpha$ | Global mean EU support, centred on the scale midpoint |
+| `normal(0, 1)` on `b` | $\beta$ | Income slope — weakly regularising |
+| `exponential(1)` on `sigma` | $\sigma$ | Within-country individual noise |
+| `exponential(1)` on `sd` | $\tau$ | Between-country variation in baseline support |
+:::
+
+---
+
+## Reading the Output {#sec-brms-output .smaller}
+
+:::: {.columns}
+
+::: {.column width="55%"}
+::: {style="font-size: 0.6em"}
+::: notes
+- "Two new sections in the output compared to Week 8: Group-Level Effects and Family Specific Parameters."
+- "sd(Intercept) = τ̂. If this is large relative to sigma, countries differ substantially in their baseline EU support."
+- "The fixed effects (Intercept and income) are the population-level — i.e., average — effects."
+- "Individual country intercepts are not shown in the summary. Use ranef() to extract them."
+:::
+```{r}
+#| label: tbl-partial-summary
+#| echo: true
+summary(fit_partial)
+```
+:::
+:::
+
+::: {.column width="45%"}
+
+**Key quantities to locate:**
+
+::: {style="font-size: 0.82em"}
+- **`sd(Intercept)`** = $\hat{\tau}$: estimated SD of country intercepts — how much countries vary in their EU support baseline
+- **`sigma`** = $\hat{\sigma}$: within-country residual noise
+- **Fixed `income`** = $\hat{\beta}$: population-average income effect, given the data and prior
+:::
+
+```{r}
+#| echo: true
+# Population-level estimates
+fixef(fit_partial) |> round(3)
+# Variance components: τ and σ
+VarCorr(fit_partial)
+# Country-specific intercepts
+ranef(fit_partial)$country[,, "Intercept"]
+```
+
+:::
+
+::::
+
+# Part 4: Connecting to the Literature {#sec-part4}
+
+## "Fixed Effects" in IR/EU Papers {#sec-fe-callout .smaller}
+
+*4.1 Vocabulary Bridge*
+
+::: notes
+- "You will encounter this vocabulary constantly. 'We include country fixed effects.' 'We use two-way fixed effects.' 'We cluster standard errors by country.'"
+- "Now you have the conceptual map. Country FE = no-pooling endpoint. RE / random intercepts = partial pooling."
+- "Both have principled uses. The choice is not about which is more rigorous — it is about what the research question requires."
+- "Two-way FE: country FE + year FE simultaneously. This absorbs country-invariant and year-invariant confounders. It is the DiD workhorse in applied IR."
+- Important caveat: the "random effects" vocabulary is inconsistent. In some literatures it means partial pooling; in others it means any random component. Check the equation.
+:::
+
+You will encounter this vocabulary in every applied IR/EU paper:
+
+. . .
+
+::: {style="font-size: 0.82em"}
+| What papers write | What it means | Position on the spectrum |
+|---|---|---|
+| "Pooled OLS" / baseline model | One intercept for all groups | **Complete pooling** |
+| "Country fixed effects" | Separate intercept per country (dummy variables) | **No pooling** |
+| "Two-way fixed effects" | Country FE + year FE simultaneously | **No pooling** (two dimensions) |
+| "Country random effects" / "random intercepts" | Hierarchical prior on country intercepts | **Partial pooling** |
+:::
+
+. . .
+
+::: {style="font-size: 0.82em"}
+*"What people in the literature call 'fixed effects' is the no-pooling endpoint of this spectrum.
+Partial pooling sits in the middle.
+Each has principled uses.
+We are showing you the spectrum so you can read any paper and know where its choice sits."*
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.76em"}
+**The vocabulary is inconsistent across disciplines.**
+"Random effects" means partial pooling in econometrics but can mean something different in biostatistics.
+When in doubt: find the model equation, not just the label.
+:::
+
+# Summary {#sec-summary}
+
+## Learning Goals: Check {#sec-goals-check .smaller}
+
+::: notes
+- Read through quickly. Connect each goal back to where it was covered.
+- Repeat the no-exam status clearly — some students will have missed the earlier mention.
+- Bridge to Week 13 (synthesis week — no new methods content).
+:::
+
+::: {.callout-important style="font-size: 0.80em"}
+**Reminder: This material is not on the take-home exam.**
+Exam scope = Weeks 8–11. Today's session is your departure point for future work.
+:::
+
+. . .
+
+::: {style="font-size: 0.82em"}
+By the end of today, you should be able to:
+
+1. ✓ **Identify hierarchical data** in IR/EU research and explain why the independence assumption (Gauss-Markov A4) breaks — and what happens to uncertainty estimates when it is ignored (Part 1)
+
+2. ✓ **Describe the three-point spectrum** — complete pooling, no pooling, partial pooling — and connect the vocabulary to applied papers ("country fixed effects" = no-pooling endpoint; "random intercepts" = partial pooling) (Part 2, Part 4)
+
+3. ✓ **Read the `(1 | country)` formula** in `brms` and interpret `sd(Intercept)` as $\hat{\tau}$, the estimated between-country variation in baseline outcomes (Part 3)
+:::
+
+---
+
+## Week 12 Homework: Course Reflection {#sec-homework .smaller}
+
+::: notes
+- "This homework is different from every previous week. No Bayesian workflow, no code."
+- "I read every response. This is the most useful feedback I can get about the course."
+- "30-minute cap — please respect it. I am not asking for a polished essay."
+- "No AI. The point is your own thinking, not a generated summary."
+- Distribute GitHub Classroom links for Mon and Thu groups separately.
+:::
+
+This week's homework is a **course reflection** — not a Bayesian analysis.
+
+. . .
+
+::: {style="font-size: 0.82em"}
+**Format:**
+
+- Passes on **any genuine attempt** — no wrong answers
+- **30-minute cap** — please respect it; do not over-engineer
+- **No AI use** — your own words only
+- Submitted via GitHub Classroom (links posted separately for Mon / Thu)
+:::
+
+. . .
+
+::: {style="font-size: 0.82em"}
+**Prompts (short, open answers — answer as many as you like):**
+
+1. What clicked for you in this course, and when?
+2. What did not click — and what would have helped?
+3. Which week was hardest, and why?
+4. What would you keep, and what would you change about the course design?
+5. Are you likely to use any of this beyond the course? In what context?
+6. Anything else you want me to know?
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+I read every response. This feedback shapes the next iteration of the course.
+:::
+
+---
+
+## References {#sec-references}
+
+::: {style="font-size: 0.80em"}
+**Primary reference for partial pooling:**
+
+McElreath, R. (2020). *Statistical Rethinking: A Bayesian Course with Examples in R and Stan* (2nd ed.). CRC Press. **Chapter 13**.
+
+**Secondary reference:**
+
+Gelman, A., & Hill, J. (2006). *Data Analysis Using Regression and Multilevel/Hierarchical Models*. Cambridge University Press.
+
+**For the formal treatment of PSIS-LOO** (referenced in Part 2 of Week 11):
+
+Vehtari, A., Gelman, A., & Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. *Statistics and Computing*, 27(5), 1413–1432.
+:::
+
+```{r}
+#| label: session-info
+#| eval: true
+#| include: false
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+#| eval: true
+#| include: false
+Sys.time() - start_time
+```

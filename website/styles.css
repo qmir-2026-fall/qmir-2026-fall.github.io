@@ -3,6 +3,13 @@
 /* Schedule table: keep it readable on narrow screens. */
 table { font-size: 0.95rem; }
 .schedule-tbd { color: var(--bs-secondary-color, #6c757d); }
+/* "not published yet" (.schedule-tbd) and "there is none" (.schedule-none) are
+   different claims, so they must not look the same. */
+.schedule-none {
+  color: var(--bs-secondary-color, #6c757d);
+  font-style: italic;
+  font-size: 0.85em;
+}
 
 /* Make the standing feedback-policy banner visually distinct wherever it appears. */
 blockquote {

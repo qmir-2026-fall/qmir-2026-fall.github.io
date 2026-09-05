@@ -1,0 +1,12 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 11 and the +7 day offset from course.yml.
+slug: hw-11
+week: "11"
+title: "Homework 11: Brexit, identity and the binary vote"
+released: 2026-11-25
+due: 2026-12-02
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: [3, 7]
+data:
+  - BrexitVote.csv

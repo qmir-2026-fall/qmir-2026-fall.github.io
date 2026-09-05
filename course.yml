@@ -65,7 +65,13 @@ sessions:
   office_hours: "By appointment. Please email me to arrange a meeting (in person or online). I aim to reply within 24 hours."
 
 homework:
-  count: 10
+  # ONE homework per session, in every session except the first and the last. Session 1 is
+  # orientation and session 13 is synthesis plus the exam briefing, so neither sets work.
+  # That makes the window weeks 2 to 12, and the count is last_week - first_week + 1 = 11.
+  # Keep the three in step: syllabus.qmd and schedule.qmd read all of them.
+  first_week: 2
+  last_week: 12
+  count: 11
   # Default offset from the session for a homework's due date, in days.
   due_offset_days: 7
 

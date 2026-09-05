@@ -1,0 +1,11 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 07 and the +7 day offset from course.yml.
+slug: hw-07
+week: "07"
+title: "Homework 07: Markov chain Monte Carlo"
+released: 2026-10-21
+due: 2026-10-28   # +7 as usual; note 2026-10-28 is the cancelled session date
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: [4, 5, 6]
+data: []

@@ -1,0 +1,12 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 10 and the +7 day offset from course.yml.
+slug: hw-10
+week: "10"
+title: "Homework 10: Interaction models"
+released: 2026-11-18
+due: 2026-11-25
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: [7]
+data:
+  - eu_growth.csv

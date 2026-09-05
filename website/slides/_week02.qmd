@@ -1,0 +1,512 @@
+---
+title: "Week 2: Reproducible literate programming with Quarto and Git"
+---
+
+<!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
+
+     This file is staged: the leading underscore keeps it out of the Quarto render, off
+     the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
+     below is the spring deck verbatim, so it does NOT yet follow STYLE.md.
+
+     To put this week live:
+       1. Convert the body to STYLE.md (em dashes, inline font-size, {#sec-} labels,
+          chunk labels and captions, the size ladder).
+       2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
+       3. ./automation/check-authoring.ps1 -Week NN -Fit
+     Nothing else moves: images/, data/ and theme.scss are already at the paths this
+     body expects, and the shared format block lives in _metadata.yml.
+-->
+
+
+## QMIR 2026
+
+### Week 2: Reproducible Research with R, Quarto & Git
+
+![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
+
+## Course Logistics & Philosophy
+
+-   Practical
+    -   Send me your GitHub username
+    -   If you email me, please include "QMIR" in the subject line
+-   Philosophy
+    -   I will show you a powerful workflow -- not a rigid religion
+    -   Tools should serve you, not the other way around -- be pragmatic, not dogmatic!
+    -   [80/20 principle](https://en.wikipedia.org/wiki/Pareto_principle) -- don't let perfect be the enemy of good
+
+## Week 2 Goals
+
+By the end of today, you should:
+
+1.  Understand how Quarto + R + Git + GitHub fit together
+2.  Be able to create a project with version control
+3.  Have pushed your first reproducible document to GitHub
+
+## Agenda 
+
+1.  The Big Picture -- What is Reproducible Research?
+2.  What is Literate Programming?
+3.  Version Control with Git
+4.  GitHub as Infrastructure
+5.  Walkthrough & Exercises
+
+# The Bid Picture -- What is Reproducible Research?
+
+------------------------------------------------------------------------
+
+## What is Reproducible Research?
+
+------------------------------------------------------------------------
+
+## What is Reproducible Research? {.smaller}
+
+:::::: columns
+::: {.column widh="50%"}
+
+- Reproducible research means:
+  - Every results can be regenerated from raw data
+  - Every transformation and coding decision is documented
+  - Every table and figure can be recreated automatically
+  - Analytical choices are transparent and traceable
+
+:::
+
+:::: {.column widh="50%"}
+
+- Why this matters:
+  - Reviewers can understand and verify your analysis
+  - Coauthors can follow and extend your work
+  - You can easily test alternative specifications (e.g., add variable X)
+  - Your future self knows exactly what you did
+  - If your laptop dies tomorrow, nothing is lost
+
+::::
+::::::
+
+------------------------------------------------------------------------
+
+## What is Reproducible Research?
+
+-   Quarto $\rightarrow$ integrates writing and code ✍️💻
+-   R $\rightarrow$ performs computation and analysis 📊🧮
+-   Git $\rightarrow$ tracks changes over time 🔄📝
+-   GitHub $\rightarrow$ enables remote storage and collaboration ☁️🤝
+
+------------------------------------------------------------------------
+
+## What is Reproducible Research?
+
+Used properly, this workflow promotes
+
+-   Reproducibility
+-   Transparency
+-   Traceability
+-   Automation
+
+------------------------------------------------------------------------
+
+## What is Reproducible Research?
+
+-   For small or one-off tasks, this workflow may seem excessive\
+-   ![](images/chainsaw.jpg){width="300"}
+-   Its advantages become substantial as projects increase in scope, duration, or collaboration
+
+------------------------------------------------------------------------
+
+## The Workflow {.smaller}
+
+:::::: columns
+::: {.column widh="60%"}
+```{dot}
+//| label: fig-workflow
+//| fig-cap: "The basic workflow"
+//| fig-width: 5
+digraph {
+  rankdir=TB;
+
+  A [label=".qmd\n(source document)"];
+  B [label="rendered output\n(e.g. html, pdf, docx)"];
+  C [label="Local Git repository\n(snapshot)"];
+  D [label="GitHub\n(remote repository)"];
+
+  A -> B;
+  B -> C;
+
+  { rank=same; C -> D; }  // forces C → D horizontally
+}
+```
+:::
+
+:::: {.column widh="40%"}
+::: {#fig-quarto fig-cap="Illustration of Quarto. Source: @quarto-cheatsheet"}
+![](https://rstudio.github.io/cheatsheets/html/images/quarto-illustration.png)
+:::
+::::
+::::::
+
+::: notes
+Repository: just a fancy word for (code-based) project folder with memory
+:::
+
+# What is Literate Programming?
+
+------------------------------------------------------------------------
+
+## Literate Programming
+
+------------------------------------------------------------------------
+
+## Literate Programming
+
+Core idea [@knuth1984literate]:
+
+------------------------------------------------------------------------
+
+## Literate Programming
+
+Core idea [@knuth1984literate]:
+
+> The document is the analysis
+
+------------------------------------------------------------------------
+
+## Literate Programming
+
+Our tool for literate programming: **Q**uarto **m**ark**d**own files (`.qmd`)
+
+------------------------------------------------------------------------
+
+## Literate Programming
+
+Our tool for literate programming: **Q**uarto **m**ark**d**own files (`.qmd`)
+
+-   Markdown
+-   Code cells
+-   Output embedded in document
+-   No copy-paste between different programs
+
+------------------------------------------------------------------------
+
+## Markdown {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+``` markdown
+# Section header
+
+## A subsection
+
+*This sentence is written in italics.*
+**This one is bold.**
+Using backticks formats text to `look like code`.
+
+[This is a hyperlink](www.uni-mannheim.de)
+```
+:::
+
+::: {.column width="50%"}
+### A Section {.unlisted}
+
+#### A subsection {.unlisted}
+
+*This sentence is written in italics.* **This one is bold.** Using backticks formats text to `look like code`.
+
+[This is a hyperlink](https://www.uni-mannheim.de)
+:::
+:::::
+
+
+------------------------------------------------------------------------
+
+## Quarto Markdown {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+``` markdown
+---
+format: html
+---
+
+# Section header
+
+## A subsection
+
+*This sentence is written in italics.*
+**This one is bold.**
+Using backticks formats text to `look like code`.
+
+[This is a hyperlink](www.uni-mannheim.de)
+```
+:::
+
+::: {.column width="50%"}
+### A Section {.unlisted}
+
+#### A subsection {.unlisted}
+
+*This sentence is written in italics.* **This one is bold.** Using backticks formats text to `look like code`.
+
+[This is a hyperlink](https://www.uni-mannheim.de)
+:::
+:::::
+
+
+------------------------------------------------------------------------
+
+## Code Cells {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+```` markdown
+## A subsection
+
+*This sentence is written in italics.*
+**This one is bold.**
+Using backticks formats text to `look like code`.
+
+```r
+#| echo: true
+#| eval: true
+age <- c(18, 23, 21, 57, 24, 19)
+mean_age <- mean(age)
+```
+
+The mean age is ``{r} mean_age``.
+````
+:::
+
+::: {.column width="50%"}
+#### A subsection
+
+*This sentence is written in italics.* **This one is bold.** Using backticks formats text to `look like code`.
+
+```{r}
+#| echo: true
+#| eval: true
+age <- c(18, 23, 21, 57, 24, 19)
+mean_age <- mean(age)
+```
+
+The mean age is `r mean_age`.
+:::
+:::::
+
+## Output embedded in documents {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+```` markdown
+## Example of embedded figure
+
+```r
+#| echo: true
+#| eval: true
+#| label: fig-demo
+#| fig-cap: "A demo figure"
+library(forcats)
+library(ggplot2)
+
+demo_data <- data.frame(
+  country = c("Germany", "France", "Italy", "Spain", "Poland"),
+  pop = c(83, 67, 60, 47, 38)
+)
+
+ggplot(
+  data = demo_data,
+  aes(x = fct_reorder(country, pop), y = pop)
+) +
+  geom_col(fill = "white", color = "black") +
+  theme_bw() +
+  labs(x = "Country", y = "Population in Million")
+```
+
+@fig-demo shows an embedded figure.
+````
+:::
+
+::: {.column width="50%"}
+### Example of embedded figure
+
+```{r}
+#| echo: true
+#| eval: true
+#| label: fig-demo
+#| fig-cap: "A demo figure"
+library(forcats)
+library(ggplot2)
+
+demo_data <- data.frame(
+  country = c("Germany", "France", "Italy", "Spain", "Poland"),
+  pop = c(83, 67, 60, 47, 38)
+)
+
+ggplot(
+  data = demo_data,
+  aes(x = fct_reorder(country, pop), y = pop)
+) +
+  geom_col(fill = "white", color = "black") +
+  theme_bw() +
+  labs(x = "Country", y = "Population in Million")
+```
+
+@fig-demo shows an embedded figure.
+:::
+:::::
+
+# Version Control with Git
+
+## Version Control with Git {.smaller}
+
+- Repository (repo) $\rightarrow$ project folder with memory 🗂️
+- git init $\rightarrow$ Turns a normal folder into a Git repository 🚀
+- Stage (git add) $\rightarrow$ Select changes you want to include in the next snapshot 📦
+- Commit $\rightarrow$ A saved snapshot of staged changes 📸
+- Commit message $\rightarrow$ Short explanation of what and why you changed something 💬
+- History (git log) $\rightarrow$ Timeline of all committed snapshots 🕰️
+- Remote $\rightarrow$ Online copy of your repository (e.g., GitHub) ☁️
+
+![](images/git-logo.png){width=10%}
+
+------------------------------------------------------------------------
+
+## Version Control with Git
+
+![](images/git-conceptual.png)
+
+------------------------------------------------------------------------
+
+## Version Control with Git
+
+What we want to avoid:
+
+```
+analysis_final.R
+analysis_final2.R
+analysis_REALLY_final.R
+
+draft1.pdf
+draft2.pdf
+draft2_final.pdf
+```
+
+This is **manual version control** -- and it breaks down quickly.
+
+> Remember: Git tracks changes *inside* files -- not by duplicating them
+
+
+# GitHub as Infrastructure
+
+## GitHub as Infrastructure
+
+- Remote backup of your repositories ☁️
+- Collaboration via pull requests & issues 👥
+- Transparency & reproducibility 🔎
+- Platform for public research visibility 📢
+- Hub for open-source software development 🧩
+
+--------------------------------------------------------------------------------
+
+## GitHub as Infrastructure
+
+:::{.nonincremental}
+- Remote backup of your repositories ☁️
+- Collaboration via pull requests & issues 👥
+- Transparency & reproducibility 🔎
+- Platform for public research visibility 📢
+- Hub for open-source software development 🧩
+:::
+
+> Today, sharing code on GitHub is often part of the research output itself.
+
+## A Critical Note on Platform Choice
+
+- GitHub is a US-based, privately owned company (Microsoft)
+- There are alternatives (e.g. GitLab, Codeberg)
+- Platform choice is therefore also a question of:
+  - Data governance
+  - Digital sovereignty
+  - Infrastructure dependence
+
+## A Critical Note on Platform Choice {.smaller}
+
+::: {.nonincremental}
+- GitHub is a US-based, privately owned company (Microsoft)
+- There are alternatives (e.g. GitLab, Codeberg)
+- Platform choice is therefore also a question of:
+  - Data governance
+  - Digital sovereignty
+  - Infrastructure dependence
+:::
+
+> 🔐 Reminder: Uploading data to US-hosted platforms can have legal implications. Never upload personal or restricted data without checking GDPR and institutional regulations.
+
+## So why use GitHub?
+
+- It is industry standard 🌐
+- Most open-source projects are hosted there 🧑‍💻
+- Most active developers and scientists use it 🧪
+- Learning GitHub increases career portability 📚
+
+## So why use GitHub?
+
+::: {.nonincremental}
+- It is industry standard 🌐
+- Most open-source projects are hosted there 🧑‍💻
+- Most active developers and scientists use it 🧪
+- Learning GitHub increases career portability 📚
+:::
+
+For these pragmatic reasons, we will use GitHub in this course.
+
+## GitHub
+
+- 📁 [GitHub QMIR2026 organization](https://github.com/qmir-2026): [https://github.com/qmir-2026](https://github.com/qmir-2026)
+  - Course Website Repo
+  - Homework Repos
+
+
+# Time to Practice!
+
+## Test if Git is installed
+
+```bash
+git status
+```
+
+## Live Demo 1: Create new empty project
+
+::: notes
+Step 1: Create new empty project
+Step 2: Create .qmd file
+Step 3: initialize repository
+Step 4: Stage and Commit .qmd file
+Step 5: Switch to GitHub and create new private repo
+Step 6: Show GitHub instructions to connect GitHub and local git
+Step 7: Push
+Step 8: change file.qmd
+Step 9: Show file changes viewer
+Step 10: stage
+Step 11: Commit
+Step 12: Push
+Step 13: repeat
+:::
+
+## Live Demo 2: Clone repo from GitHub
+
+::: notes
+Step 1: Go to GitHub repo
+Step 2: Copy link
+Step 3: Open Positron
+Step 4: Click Open Folder from GitHub
+Step 5: Paste Link
+Step 6: Create
+Step 7: Change files -> show file changes viewe
+Step 8: Push wont work, you dont have access
+Step 9: For homeworks you will
+Step 10: Show how I see in GitHub the date and time of commits
+:::
+
+# Thank you for your attention and see you next week!
+
+
+<a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a>

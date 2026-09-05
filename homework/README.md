@@ -9,9 +9,14 @@ It is the payload that `automation/release-homework.ps1` pushes into the distrib
 
 ## Start a new homework
 
+**Check `_import/` first.** Weeks 2 and 4 to 12 already exist there, ported from the 2026 spring
+course and in the right shape but not yet converted to `STYLE.md`. Their sample solutions are
+already in the private submodule. `_import/README.md` has the provenance and the known gaps.
+
 ```powershell
-cp -r homework/_template homework/hw-05
-mkdir solutions/hw-05    # and copy solutions/_template/solution.qmd into it
+cp -r homework/_import/hw-05 homework/hw-05   # a ported week
+cp -r homework/_template     homework/hw-03   # a week with no spring source
+mkdir solutions/hw-03    # and copy solutions/_template/solution.qmd into it
 ```
 
 Then edit, in `homework/hw-05/`:

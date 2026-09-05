@@ -331,6 +331,11 @@ How to act on stage B, in order of preference:
 Stage B needs the `chromote` R package and a Chrome or Edge install. If either is missing it
 prints a skip notice and returns success, so stage A still stands on its own.
 
+**What the check does not look at.** Two staging paths are skipped: `website/slides/_weekNN.qmd`
+and `homework/_import/`. Both hold 2026 spring material ported verbatim, which does not follow
+this file yet (CLAUDE.md §7). Neither is rendered or linked anywhere, and converting a week means
+renaming or copying it back into scope, so nothing student-facing ever escapes the gate.
+
 ---
 
 ## 7. Contracts that automation depends on

@@ -1,0 +1,11 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 06 and the +7 day offset from course.yml.
+slug: hw-06
+week: "06"
+title: "Homework 06: The logic of Bayesian inference"
+released: 2026-10-14
+due: 2026-10-21
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: [3, 4]
+data: []

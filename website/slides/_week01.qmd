@@ -1,0 +1,647 @@
+---
+title: "Week 1: Introduction"
+---
+
+<!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
+
+     This file is staged: the leading underscore keeps it out of the Quarto render, off
+     the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
+     below is the spring deck verbatim, so it does NOT yet follow STYLE.md.
+
+     To put this week live:
+       1. Convert the body to STYLE.md (em dashes, inline font-size, {#sec-} labels,
+          chunk labels and captions, the size ladder).
+       2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
+       3. ./automation/check-authoring.ps1 -Week NN -Fit
+     Nothing else moves: images/, data/ and theme.scss are already at the paths this
+     body expects, and the shared format block lives in _metadata.yml.
+-->
+
+
+## QMIR 2026
+
+### Week 1: Course Roadmap & Research Workflow
+
+![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
+
+## Agenda {.smaller}
+
+1. Introduction
+    - About me
+    - About you
+2. Course overview and expectations 
+    - What you will learn
+    - What this course does *not* cover
+    - Why the course is structured this way
+3. Getting started
+    - Installation
+    - First look at Positron
+
+------------------------------------------------------------------------
+
+# Introduction
+
+## Survey
+
+Please fill out the following survey:
+
+[dertristan.limesurvey.net/qmir-2026-welcome](https://dertristan.limesurvey.net/qmir-2026-welcome?lang=en&newtest=Y)
+
+![](images/QRCode.png){width="80"}
+
+
+## About me
+
+
+## About you
+
+- What name would you like us to call you?
+- What natural (spoken) languages do you speak or are currently learning? (e.g., German, Spanish, Arabic -- not programming languages)
+- How do you usually spend your time outside university? (This can be anything: a side job, vocational/civilian service, volunteering, sports, creative hobbies, gaming, family time -- whatever is part of your life)
+
+## About you continued
+
+```{r}
+#| label: get-responses
+#| eval: false
+
+library(here)
+library(limer)
+library(keyring)
+library(tidyverse)
+
+key_set("lime")
+
+options(lime_api = "https://dertristan.limesurvey.net/admin/remotecontrol")
+options(lime_username = "dertristan")
+options(lime_password = key_get("lime"))
+
+get_session_key()
+responses <- get_responses(698617) |>
+  as_tibble()
+
+saveRDS(responses, file = here("survey_data", "responses.RDS"))
+```
+
+```{r}
+#| label: load-responses
+
+library(here)
+library(tidyverse)
+
+responses <- readRDS(
+  file = here("survey_data", "responses.RDS")
+)
+
+# recode no answers
+responses <- responses |>
+  mutate(
+    across(
+      where(is.character),
+      ~ na_if(.x, "")
+    )
+  )
+
+# for real data run
+responses <- responses |>
+  filter(!str_detect(Q806045, "TEST"))
+```
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: fig-primary-study
+#| fig-cap: "Your answers to: *What is your primary field of study (major/Hauptfach)?*"
+#| echo: true
+
+library(ggpubr)
+
+color_main <- "#003056"
+color_highlight <- "#DE7E50"
+
+ggplot(
+  data = responses,
+  mapping = aes(y = fct_rev(fct_infreq(Q806045)))
+) +
+  geom_bar(
+    color = color_highlight,
+    fill = "white",
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    x = "Answer",
+    y = "Count"
+  ) +
+  theme(aspect.ratio = 0.618)
+
+```
+
+------------------------------------------------------------------------
+
+
+```{r}
+#| label: fig-sec-study
+#| fig-cap: "Your answers to: *What is your secondary field of study (minor/Nebenfach)?*"
+#| echo: true
+
+ggplot(
+  data = responses,
+  mapping = aes(y = fct_rev(fct_infreq(Q933620)))
+) +
+  geom_bar(
+    color = color_highlight,
+    fill = "white",
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    x = "Answer",
+    y = "Count"
+  ) +
+  theme(aspect.ratio = 0.618)
+
+```
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: fig-semester
+#| fig-cap: "Your answers to: *Which semester of your Bachelor's program are you currently in?*"
+#| echo: true
+
+ggplot(
+  data = responses,
+  mapping = aes(x = fct_infreq(Q897542))
+) +
+  geom_bar(
+    color = color_highlight,
+    fill = "white",
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    x = "Answer",
+    y = "Count"
+  ) +
+  theme(aspect.ratio = 0.618)
+
+```
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: fig-priorstatsclass
+#| fig-cap: "Your answers to: *Have you taken any quantitative methods or statistics course before?*"
+#| echo: true
+
+ggplot(
+  data = responses,
+  mapping = aes(x = fct_infreq(Q507207))
+) +
+  geom_bar(
+    color = color_highlight,
+    fill = "white",
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    x = "Anwer",
+    y = "Count"
+  ) +
+  theme(aspect.ratio = 0.618)
+
+```
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: fig-yuhere
+#| fig-cap: "Your answers to: *Why did you register for this course specifically?*"
+#| echo: true
+
+ggplot(
+  data = responses,
+  mapping = aes(y = fct_infreq(Q609569))
+) +
+  geom_bar(
+    color = color_highlight,
+    fill = "white",
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    x = "Count",
+    y = "Answer"
+  ) +
+  theme(aspect.ratio = 0.618)
+
+```
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: fig-feelings
+#| fig-cap: "Your answers to: *Which statements best describes how you feel about quantitative methods right now?*"
+#| echo: true
+
+responses |>
+  select(Q2610) |>
+  mutate(
+    Q2610_re = str_replace_all(Q2610, "&nbsp;", "")
+  ) |>
+  ggplot(
+    mapping = aes(x = fct_infreq(Q2610_re))
+  ) +
+  geom_bar(
+    fill = "white",
+    color = color_highlight,
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    y = "Count",
+    x = "Answer"
+  ) +
+  theme(aspect.ratio = 0.618)
+
+```
+
+------------------------------------------------------------------------
+
+
+```{r}
+#| label: fig-tools-heard-of
+#| fig-cap: "Your answers to: *Which of the following tools have you heard of before?*"
+#| echo: true
+
+# Create a named vector for renaming
+tool_names <- c(
+  "SQ001." = "R",
+  "SQ002." = "RStudio",
+  "SQ004." = "Rmarkdown",
+  "SQ005." = "Git",
+  "SQ006." = "GitHub",
+  "SQ007." = "Python",
+  "SQ008." = "Stata",
+  "SQ009." = "SPSS",
+  "SQ010." = "MS Excel",
+  "SQ011." = "LateX",
+  "SQ012." = "Command line/terminal",
+  "SQ013." = "Positron",
+  "SQ014." = "Markdown",
+  "SQ015." = "Quarto",
+  "SQ016." = "Overleaf",
+  "SQ017." = "MS Word",
+  "SQ018." = "VS Code"
+)
+
+
+tools_heardof_long <- responses |>
+  select(contains("Q509412")) |>
+  # rename columns by replacing SQ### with tool names
+  rename_with(~ str_replace_all(., tool_names), .cols = everything()) |>
+  # pivot longer for ggplot
+  pivot_longer(
+    cols = everything(),
+    names_to = "tool",
+    values_to = "answer"
+  ) |>
+  mutate(tool = str_replace(tool, "Q509412.", ""))
+
+max_count <- tools_heardof_long |>
+  group_by(tool) |>
+  count(answer, sort = T) |>
+  ungroup() |>
+  slice(1) |>
+  pull(n)
+
+
+ggplot(
+  data = tools_heardof_long,
+  mapping = aes(y = fct_infreq(answer))
+) +
+  geom_bar(
+    fill = "white",
+    color = color_highlight,
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    x = "Count",
+    y = "Answer"
+  ) +
+  theme(aspect.ratio = 0.618) +
+  scale_x_continuous(
+    breaks = seq(from = 0, to = max_count, by = 1)
+  ) +
+  facet_wrap(~tool)
+
+```
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: fig-tools-used
+#| fig-cap: "Your answers to: *Which of the following tools have you actively worked with before?*"
+#| echo: true
+
+tools_used_long <- responses |>
+  select(contains("Q928658")) |>
+  # rename columns by replacing SQ### with tool names
+  rename_with(~ str_replace_all(., tool_names), .cols = everything()) |>
+  # pivot longer for ggplot
+  pivot_longer(
+    cols = everything(),
+    names_to = "tool",
+    values_to = "answer"
+  ) |>
+  mutate(tool = str_replace(tool, "Q928658.", ""))
+
+max_count <- tools_used_long |>
+  group_by(tool) |>
+  count(answer, sort = T) |>
+  ungroup() |>
+  slice(1) |>
+  pull(n)
+
+
+ggplot(
+  data = tools_used_long,
+  mapping = aes(y = fct_infreq(answer))
+) +
+  geom_bar(
+    fill = "white",
+    color = color_highlight,
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    x = "Count",
+    y = "Answer"
+  ) +
+  theme(aspect.ratio = 0.618) +
+  scale_x_continuous(
+    breaks = seq(from = 0, to = max_count, by = 1)
+  ) +
+  facet_wrap(~tool)
+
+```
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: fig-code-experience
+#| fig-cap: "Your answers to: *How would you describe your overall confidence in working with code?*"
+#| echo: true
+
+ggplot(
+  data = responses,
+  mapping = aes(y = fct_infreq(Q278073))
+) +
+  geom_bar(
+    fill = "white",
+    color = color_highlight,
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    x = "Count",
+    y = "Answer"
+  ) +
+  theme(aspect.ratio = 0.618)
+
+```
+
+------------------------------------------------------------------------
+
+```{r}
+#| label: fig-agreescales-I
+#| fig-cap: "Your answers in the agreement/disagreement items I."
+#| echo: true
+
+items_map <- c(
+  "Q751740" = "Statistical analysis is mainly about determining whether a hypothesis is true or false.",
+  "Q91718" = "Empirical data can increase or decrease our confidence in a theoretical claim.",
+  "Q797817" = "Uncertainty should be explicitly reported when presenting empirical results.",
+  "Q235999" = "Scientific knowledge is always provisional and subject to revision with new data.",
+  "Q402631" = "A single statistical results can definitely prove or disprove a theory.",
+  "Q613049" = "Models are simplifications of reality rather than exact representations."
+)
+
+responses |>
+  select(all_of(c(
+    "Q751740",
+    "Q91718",
+    "Q797817",
+    "Q235999",
+    "Q402631",
+    "Q613049"
+  ))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "question",
+    values_to = "response"
+  ) |>
+  mutate(
+    question = items_map[question],
+    question = str_wrap(question, width = 40)
+  ) |>
+  ggplot(
+    mapping = aes(x = response)
+  ) +
+  geom_bar(
+    fill = "white",
+    color = color_highlight,
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    y = "Count",
+    x = "Answer"
+  ) +
+  scale_x_continuous(
+    breaks = 1:5,
+    labels = c(
+      "Strongly\ndisagree",
+      "disagree",
+      "neither\nagree nor\ndisagree",
+      "agree",
+      "strongly\nagree"
+    )
+  ) +
+  theme(
+    aspect.ratio = 0.618,
+    axis.text.x = element_text(size = 8)
+  ) +
+  facet_wrap(~question)
+
+```
+
+
+--------------------------------------------------------------------------------
+
+
+```{r}
+#| label: fig-agreescales-II
+#| fig-cap: "Your answers in the agreement/disagreement items II: *Imagine you read a study claiming that attending a political debate doubles the likelihood of a person voting in the next election. When you see a numerical result like this (e.g., an estimate or coefficient), what are you usually most interested in?*"
+#| echo: true
+
+items_map <- c(
+  "Q859946" = "Whether it is statistically significant.",
+  "Q65120" = "The size of the effect.",
+  "Q157010" = "The uncertainty around the estimate.",
+  "Q233596" = "Whether the result fits the theory.",
+  "Q699812" = "Whether the model assumptions seem plausible.",
+  "Q975313" = "I am usually unsure how to interpret such results."
+)
+
+responses |>
+  select(all_of(names(items_map))) |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "question",
+    values_to = "response"
+  ) |>
+  mutate(
+    question = items_map[question],
+    question = str_wrap(question, width = 40)
+  ) |>
+  ggplot(
+    mapping = aes(x = response)
+  ) +
+  geom_bar(
+    fill = "white",
+    color = color_highlight,
+    width = 0.5
+  ) +
+  theme_pubr() +
+  labs(
+    y = "Count",
+    x = "Answer"
+  ) +
+  scale_x_continuous(
+    breaks = 1:5,
+    labels = c(
+      "Strongly\ndisagree",
+      "disagree",
+      "neither\nagree nor\ndisagree",
+      "agree",
+      "strongly\nagree"
+    )
+  ) +
+  theme(
+    aspect.ratio = 0.618,
+    axis.text.x = element_text(size = 8)
+  ) +
+  facet_wrap(~question)
+
+```
+
+
+------------------------------------------------------------------------
+
+
+# Course overview and expectations
+
+[Course website](https://qmir-2026.github.io)
+
+## What you will learn
+
+- How to build a reproducible, open-source research workflow -- integrating data, code, analysis, and writing into a transparent scientific process
+- How to use statistical models to learn from data -- understanding what models assume, what they estimate, how they update our beliefs, and how to interpret results responsibly
+- How to communicate empirical results clearly and responsibly -- through well-structured reports, visualizations, and reproducible documents
+
+## What this course does *not* cover {.smaller}
+
+- Data collection and research design -- we work with existing datasets and do not cover survey design, measurement strategies, or fieldwork (the university offers dedicated courses and resources in these areas)
+- Causal inference methods -- we focus on analyzing and interpreting associations between variables rather than formal causal identification (specialized courses cover causal inference in depth)
+- Substantive political theory or normative argumentation -- we use real political science examples, but the focus is methodological and conceptual training rather than developing theoretical frameworks
+
+## Why the course is structured this way
+
+![](images/iceberg-plain.jpg)
+
+--------------------------------------------------------------------------------
+
+![](images/programming-iceberg.jpg)
+
+--------------------------------------------------------------------------------
+
+
+![](images/tidyverse-meme.png)
+
+--------------------------------------------------------------------------------
+
+![](images/iceberg-plain.jpg)
+
+--------------------------------------------------------------------------------
+
+![](images/bizim-iceberg-1.png)
+
+--------------------------------------------------------------------------------
+
+![](images/bizim-iceberg-2.png)
+
+--------------------------------------------------------------------------------
+
+![](images/bizim-iceberg-3.png)
+
+--------------------------------------------------------------------------------
+
+![](images/bizim-iceberg-4.png)
+
+
+--------------------------------------------------------------------------------
+
+![](images/bizim-iceberg-5.png)
+
+--------------------------------------------------------------------------------
+
+![](images/bizim-iceberg-6.png)
+
+--------------------------------------------------------------------------------
+
+![](images/bizim-iceberg-7.png)
+
+--------------------------------------------------------------------------------
+
+![](images/bizim-iceberg-8.png)
+
+--------------------------------------------------------------------------------
+
+![](images/bizim-iceberg-9.png)
+
+
+## Why the course is structured this way
+
+- An (toy) example of a fully integrated, reproducible research pipeline in action: [Quarto manuscript](https://quarto-ext.github.io/manuscript-template-jupyter/)
+- We will build up to this step by step, learning and integrating each piece along the way
+
+
+--------------------------------------------------------------------------------
+
+## Why the course is structured this way {.smaller}
+
+- Admittedly overkill for simple tasks, but it provides a scalable, FOSS toolbox for complex projects, advanced models, and fully reproducible workflows
+- ![](images/chainsaw.jpg)
+- Builds a foundation in quantitative methods and data science that’s useful across disciplines and careers, helping you understand research from other fields while gaining essential data skills
+
+
+# Questions?
+
+# Getting started
+
+## Installation
+
+[Installation guide](https://qmir-2026.github.io/installation.html)
+
+## First glance at Positron
+
+[Positron documentation](https://positron.posit.co/welcome.html)
+
+# Thank you for your attention and see you next week!
+
+Please make sure to install all software and send me your GitHub name or email address. 
+
+<a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a>

@@ -1,0 +1,1479 @@
+---
+title: "Week 11: Modelling binary outcomes: logit and probit"
+---
+
+<!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
+
+     This file is staged: the leading underscore keeps it out of the Quarto render, off
+     the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
+     below is the spring deck verbatim, so it does NOT yet follow STYLE.md.
+
+     To put this week live:
+       1. Convert the body to STYLE.md (em dashes, inline font-size, {#sec-} labels,
+          chunk labels and captions, the size ladder).
+       2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
+       3. ./automation/check-authoring.ps1 -Week NN -Fit
+     Nothing else moves: images/, data/ and theme.scss are already at the paths this
+     body expects, and the shared format block lives in _metadata.yml.
+-->
+
+
+```{r, message = NA}
+#| label: setup
+#| include: false
+#| eval: true
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(brms) # Bayesian models via Stan
+library(bayesplot) # MCMC diagnostics and posterior plots
+library(patchwork) # combine ggplot panels
+library(modelsummary) # regression tables
+library(ggpubr) # nice theme
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED COLOURS
+# ─────────────────────────────────────────────────────────────────────────────
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# HELPER: Draw a simple DAG with ggplot2 (reused from Week 9)
+# ─────────────────────────────────────────────────────────────────────────────
+draw_dag <- function(
+  nodes,
+  edges,
+  title = NULL,
+  xlim = c(0, 4),
+  ylim = c(0.4, 3.2)
+) {
+  p <- ggplot() +
+    geom_segment(
+      data = edges,
+      aes(x = x, y = y, xend = xend, yend = yend),
+      arrow = arrow(length = unit(0.22, "cm"), type = "closed"),
+      linewidth = 0.9,
+      colour = "gray25",
+      lineend = "butt"
+    ) +
+    geom_label(
+      data = nodes,
+      aes(x = x, y = y, label = label),
+      size = 3.6,
+      fill = "white",
+      colour = "gray10",
+      fontface = "bold",
+      label.padding = unit(0.45, "lines"),
+      label.r = unit(0.25, "lines")
+    ) +
+    coord_cartesian(xlim = xlim, ylim = ylim) +
+    theme_void() +
+    theme(
+      plot.title = element_text(
+        size = 11,
+        hjust = 0.5,
+        face = "bold",
+        colour = "gray25",
+        margin = margin(b = 6)
+      )
+    )
+  if (!is.null(title)) {
+    p <- p + labs(title = title)
+  }
+  p
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DATASET: Voter Turnout (Synthetic, n = 1000)
+#
+# True DGP (logit scale):
+#   α = -0.2, β_pol = 0.12, β_income = 0.45, β_education = 0.55, β_gender = 0.20
+#
+# Confounders: income, education, gender drive both pol_interest and voted.
+# Naive bivariate model overstates the pol_interest coefficient.
+# ─────────────────────────────────────────────────────────────────────────────
+set.seed(2026)
+n <- 1000
+
+income <- rnorm(n, 0, 1)
+education <- rnorm(n, 0, 1)
+gender <- rbinom(n, 1, 0.5) # 0 = female, 1 = male
+
+pol_interest_latent <- 5 +
+  1.8 * income +
+  1.2 * education +
+  0.5 * gender +
+  rnorm(n, 0, 1.0)
+pol_interest <- as.integer(round(pmin(pmax(pol_interest_latent, 0), 10)))
+
+eta <- -2.5 +
+  0.45 * pol_interest +
+  1.20 * income +
+  1.40 * education +
+  0.60 * gender
+prob_voted <- plogis(eta)
+voted <- rbinom(n, 1, prob_voted)
+
+df <- tibble(voted, pol_interest, income, education, gender) |>
+  mutate(gender_lab = if_else(gender == 1, "Male", "Female"))
+
+rm(pol_interest_latent, eta, prob_voted)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PRE-FIT MODELS (cached so slides render instantly)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Prior predictive check only
+fit_prior <- brm(
+  voted ~ pol_interest + income + education + gender,
+  data = df,
+  family = bernoulli(),
+  prior = c(
+    prior(normal(0, 1.5), class = "Intercept"),
+    prior(normal(0, 1), class = "b")
+  ),
+  sample_prior = "only",
+  chains = 2,
+  iter = 1000,
+  warmup = 500,
+  seed = 2026
+)
+
+# Naive bivariate
+fit_naive <- brm(
+  voted ~ pol_interest,
+  data = df,
+  family = bernoulli(),
+  prior = c(
+    prior(normal(0, 1.5), class = "Intercept"),
+    prior(normal(0, 1), class = "b")
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 2026
+)
+
+# Adjusted (all confounders)
+fit_adjusted <- brm(
+  voted ~ pol_interest + income + education + gender,
+  data = df,
+  family = bernoulli(),
+  prior = c(
+    prior(normal(0, 1.5), class = "Intercept"),
+    prior(normal(0, 1), class = "b")
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 2026
+)
+```
+
+## QMIR 2026 {#sec-title}
+
+::: notes
+- Opening.
+- Arc: first half (conceptual, ~55 min) + second half (live coding walkthrough, ~35 min).
+- Core message: same machinery as Weeks 8–10; only the likelihood changes.
+- The dataset is a voter-turnout simulation — political interest, income, education, gender, and a binary outcome.
+:::
+
+### Week 11: Modeling Binary Outcomes
+
+![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
+
+---
+
+## Week 11 Learning Goals {#sec-goals .smaller}
+
+::: notes
+- Read aloud. Three goals map onto first half (Part 1, subparts 1.1–1.9) and second half (Part 2, subparts 2.1–2.12).
+- Students already have the full Bayesian workflow from Weeks 8–10 — today they apply it to a new likelihood family.
+- Goal 3 (LOO) is the first time LOO is formally explained from scratch — it appeared in Week 9 slides but was not delivered in class.
+:::
+
+By the end of today, you should be able to:
+
+1. Explain why **Linear models are structurally wrong for binary outcomes** and how the GLM framework resolves this via the Bernoulli likelihood and a link function
+2. **Fit and interpret a Bayesian logistic regression** with `brms` — including priors on the logit scale, posterior coefficient summaries, and predicted probability ribbons
+3. Assess model quality using **posterior predictive checks, confusion matrix, ROC/AUC, and LOO** — and compare models using Bayesian leave-one-out cross-validation
+
+---
+
+## Today's Core Message {#sec-core-message .smaller}
+
+::: notes
+- Say this explicitly. It is the most important frame for the session.
+- "You have been doing Bayesian inference for three weeks. Nothing about the engine changes today. We are only swapping the likelihood."
+- Then proceed to motivate WHY the Gaussian likelihood is wrong for binary data — that's the content of Part I.
+:::
+
+The Bayesian inferential machinery is **unchanged**:
+
+$$
+p(\mathbf{\theta} \mid \mathbf{Y}, \mathbf{X}) \;\propto\; L(\mathbf{Y}, \mathbf{X} \mid \mathbf{\theta}) \;\times\; p(\mathbf{\theta})
+$$ {#eq-bayes-core}
+
+. . .
+
+**Weeks 8–10**: $L(\mathbf{Y}, \mathbf{X} \mid \boldsymbol{\theta}) = \prod_i \text{Normal}(Y_i \mid \mu_i, \sigma)$
+
+**Week 11**: $L(\mathbf{Y}, \mathbf{X} \mid \boldsymbol{\theta}) = \prod_i \text{Bernoulli}(Y_i \mid \mu_i)$
+
+. . .
+
+The `brms` call changes by **one word**:
+
+```r
+brm(y ~ x, family = gaussian(), ...)   # Weeks 8–10
+brm(y ~ x, family = bernoulli(), ...)  # Week 11
+```
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+Before we can use the Bernoulli likelihood, we need to understand why the Gaussian likelihood fails for binary outcomes and how the GLM framework connects the two.
+:::
+
+# Part 1: Conceptual Foundations {#sec-part1}
+
+## Why Linear Models Fail for Binary Outcomes {#sec-ols-problem .smaller}
+
+::: {style="font-size: 0.72em"}
+*1.1 Why Linear Models Fail for Binary Outcomes*
+:::
+
+::: notes
+- "The linear probability model (LPM) is the linear model applied to a 0/1 outcome. It produces predicted values interpreted as probabilities. But it has three structural problems that are not fixable with better data or better priors."
+- The problems are not a frequentist vs. Bayesian issue — a Bayesian model with `family = gaussian()` on binary data is equally broken.
+- Key insight: these problems are properties of the Gaussian + linear model combination, not of any inferential framework.
+:::
+
+::: {style="font-size: 0.72em"}
+Apply a **linear model** to a binary outcome $Y_i \in \{0, 1\}$: this is sometimes called the Linear Probability Model.
+:::
+
+. . .
+
+::: {style="font-size: 0.75em"}
+**Problem 1 — Out-of-range predictions**:
+
+$$
+\hat{\mu}_i = \alpha + \beta X_i \quad \text{is unbounded on } \mathbb{R}
+$$ {#eq-lpm}
+
+For extreme values of $X$, $\hat{\mu}_i \notin [0, 1]$ — a "probability" above 1 or below 0 is nonsensical.
+:::
+
+. . .
+
+::: {style="font-size: 0.75em"}
+**Problem 2 — Heteroskedasticity by construction**:
+
+For a Bernoulli outcome, $\text{Var}(Y_i \mid X_i) = \mu_i(1 - \mu_i)$, which depends on $\mu_i$.
+OLS assumes constant variance (Gauss-Markov A3); that assumption is structurally violated *regardless of the data*.
+:::
+
+. . .
+
+::: {style="font-size: 0.75em"}
+**Problem 3 — Residuals are not Normal**:
+
+Binary $Y$ residuals take only two values ($1 - \hat{\mu}_i$ and $-\hat{\mu}_i$) — the Gaussian likelihood (A6) is mechanically wrong.
+:::
+
+---
+
+## The Linear Model Applied to Binary Data {#sec-lpm-plot .smaller}
+
+::: notes
+- Show the scatter and ask students: "What happens at pol_interest = 0 or pol_interest = 10?"
+- The linear model line exits [0, 1] on both sides — this is the visual proof of Problem 1.
+- "A Bayesian model with family = gaussian() would produce exactly the same impossible predictions. The problem is the Gaussian + linear predictor combination, not the inferential framework."
+:::
+
+```{r}
+#| label: fig-lpm
+#| fig-cap: "A linear model applied to a binary outcome: predicted values exit [0, 1] for extreme values of the predictor."
+#| dpi: 500
+#| echo: true
+fit_lpm <- lm(voted ~ pol_interest, data = df)
+
+tibble(pol_interest = seq(-2, 13, by = 0.1)) |>
+  mutate(pred = predict(fit_lpm, newdata = tibble(pol_interest))) |>
+  ggplot(aes(x = pol_interest, y = pred)) +
+  geom_hline(yintercept = c(0, 1), linetype = "dashed", colour = "gray50") +
+  geom_jitter(
+    data = df,
+    aes(y = voted),
+    height = 0.02,
+    alpha = 0.12,
+    colour = col_1,
+    size = 0.9
+  ) +
+  geom_line(colour = col_2, linewidth = 1.3) +
+  annotate(
+    "text",
+    x = 11,
+    y = 1.1,
+    label = "P > 1",
+    colour = col_2,
+    size = 3.5
+  ) +
+  annotate(
+    "text",
+    x = -1,
+    y = -0.06,
+    label = "P < 0",
+    colour = col_2,
+    size = 3.5
+  ) +
+  theme_bw() +
+  labs(
+    title = "Linear Model on Binary Outcome: Predictions Exit [0, 1]",
+    x = "Political Interest (0–10)",
+    y = "Predicted P(voted = 1)"
+  )
+```
+
+## Three Components of the GLM {#sec-glm-framework .smaller}
+
+*1.2 The GLM Framework*
+
+::: notes
+- The GLM separates the linear predictor from the response distribution using a link function.
+- "The link function is a translation layer. The linear predictor can roam freely over ℝ; the link squashes it back into (0, 1) before it becomes a probability."
+- This resolves all three problems: (1) predictions are always in (0, 1); (2) variance is correct for Bernoulli; (3) likelihood is correctly specified.
+:::
+
+The **Generalized Linear Model** has three components:
+
+. . .
+
+**1. Linear predictor** — the familiar linear combination, unbounded on $\mathbb{R}$:
+
+$$
+\eta_i = \alpha + \beta_1 X_{i1} + \ldots + \beta_k X_{ik}
+$$ {#eq-linear-predictor}
+
+. . .
+
+**2. Link function** $g(\cdot)$ — maps the linear predictor to the natural parameter of the response distribution.
+For binary outcomes: $g(\mu_i) = \eta_i$, where $\mu_i = P(Y_i = 1 \mid X_i) \in (0, 1)$.
+
+. . .
+
+**3. Response distribution** — specifies how $Y_i$ is generated given $\mu_i$:
+
+$$
+Y_i \mid X_i \sim \text{Bernoulli}(\mu_i)
+$$ {#eq-bernoulli-response}
+
+---
+
+## The Logistic Regression Model {#sec-logistic-model .smaller}
+
+::: notes
+- Put all three components together as a stack of equations.
+- "The logistic function squashes any real number to (0, 1). If η_i = 0, μ_i = 0.5. Large positive η → μ near 1; large negative η → μ near 0. The S-shape is visible in the figure from Part I."
+- Note that σ disappears: the Bernoulli has only one parameter. No separate noise term to estimate — variance is fully determined by the mean.
+:::
+
+$$
+\begin{aligned}
+Y_i &\sim \text{Bernoulli}(\mu_i) \\[4pt]
+\mu_i &= \text{logistic}(\eta_i) = \frac{1}{1 + e^{-\eta_i}} \\[4pt]
+\eta_i &= \alpha + \beta_1 X_{i1} + \ldots + \beta_k X_{ik}
+\end{aligned}
+$$ {#eq-logistic-model}
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+**$\sigma$ disappears**: the Bernoulli distribution has only one free parameter ($\mu_i$).
+Its variance $\mu_i(1 - \mu_i)$ is already fully determined by the mean — no separate noise term to estimate or place a prior on.
+:::
+
+. . .
+
+**The link function as a translation layer**: the linear predictor $\eta_i$ roams freely over $\mathbb{R}$; the logistic function squashes it into $(0, 1)$ before it is used as a probability.
+This resolves all three structural problems of the LPM.
+
+## The Correct Likelihood for Binary Data {#sec-bernoulli-likelihood .smaller}
+
+*1.3 The Bernoulli Likelihood*
+
+::: notes
+- Brief connection to Week 6: Bernoulli is Binomial(n=1, p). Students saw the Binomial when we simulated coin flips.
+- Walk through the likelihood for one observation carefully. "If Y_i = 1, we want high μ_i to assign high probability. If Y_i = 0, we want low μ_i."
+- The log-likelihood sum is what MCMC is maximising (weighted by the prior) — exact same structure as Weeks 8–10.
+:::
+
+The Bernoulli is the Binomial with $n = 1$: $\text{Binomial}(1, p) = \text{Bernoulli}(p)$.
+
+. . .
+
+::: {style="font-size: 0.72em"}
+**Likelihood for one observation**:
+
+$$
+P(Y_i \mid \mu_i) = \mu_i^{Y_i}(1 - \mu_i)^{1 - Y_i}
+$$ {#eq-bernoulli-one}
+
+When $Y_i = 1$: $P = \mu_i$ (high $\mu$ is rewarded). When $Y_i = 0$: $P = 1 - \mu_i$.
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+**Full likelihood** (assuming independence across observations):
+
+$$
+L(\mathbf{Y}, \mathbf{X} \mid \boldsymbol{\beta}) = \prod_{i=1}^{n} \mu_i^{Y_i}(1 - \mu_i)^{1 - Y_i}
+$$ {#eq-bernoulli-full}
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+**Log-likelihood** (sum replaces product):
+
+$$
+\ell(\boldsymbol{\beta}) = \sum_{i=1}^{n} \left[ Y_i \log \mu_i + (1 - Y_i) \log(1 - \mu_i) \right]
+$$ {#eq-bernoulli-loglik}
+
+where $\mu_i = \text{logistic}(\eta_i)$.
+The structure is identical to Weeks 8–10 — only the functional form of $L$ changes.
+:::
+
+## Two Link Functions {#sec-logit-probit .smaller}
+
+::: {style="font-size: 0.72em"}
+*1.4 Two Link Functions*
+
+::: notes
+- One slide, can be cut if time is short. Both link functions are valid; the choice rarely matters in practice.
+- "probit × 1.6 ≈ logit" is a useful translator for reading applied papers that use probit.
+- brms: family = bernoulli() uses logit by default; family = bernoulli(link = "probit") switches — no value judgment implied.
+:::
+
+Two common link functions for binary outcomes — both are valid:
+
+| Link | $g(\mu)$ | Inverse $g^{-1}(\eta)$ | Distribution |
+|---|---|---|---|
+| **Logit** | $\log\frac{\mu}{1-\mu}$ | $\frac{1}{1+e^{-\eta}}$ (logistic CDF) | Logistic |
+| **Probit** | $\Phi^{-1}(\mu)$ | $\Phi(\eta)$ (Normal CDF) | Standard Normal |
+:::
+
+. . .
+
+```{r}
+#| label: fig-link-functions
+#| fig-cap: "Logistic and standard normal CDFs: both are S-shaped and map ℝ → (0, 1). The logistic CDF has slightly heavier tails."
+#| fig-height: 2
+#| dpi: 500
+#| echo: false
+tibble(eta = seq(-4, 4, length.out = 400)) |>
+  mutate(
+    Logit = plogis(eta),
+    Probit = pnorm(eta)
+  ) |>
+  pivot_longer(c(Logit, Probit), names_to = "Link", values_to = "prob") |>
+  ggplot(aes(x = eta, y = prob, colour = Link)) +
+  geom_line(linewidth = 1.3) +
+  scale_colour_manual(values = c(Logit = col_2, Probit = col_1)) +
+  theme_bw() +
+  labs(
+    title = "Two Link Functions: Logistic vs. Probit CDF",
+    x = "Linear predictor η",
+    y = "P(Y = 1)"
+  )
+```
+
+. . .
+
+::: {style="font-size: 0.72em"}
+- Both produce nearly identical results in practice — the choice rarely matters
+- `family = bernoulli()` uses logit by default; `family = bernoulli(link = "probit")` switches
+:::
+
+## One Line Changes {#sec-bayes-continuity .smaller}
+
+*1.5 Why Our Bayesian Machinery Handles This Seamlessly*
+
+::: notes
+- This should feel like relief, not novelty.
+- "You already know how to do this. You have been doing it since Week 8. The engine is: posterior ∝ likelihood × prior, evaluated via MCMC. That engine does not change. We are only telling it to use a different likelihood."
+- Note that σ drops out — Week 8 needed a prior on σ; Week 11 does not.
+- brms compiles new Stan code automatically for the Bernoulli likelihood.
+:::
+
+**Week 8 model**:
+
+$$
+p(\alpha, \beta, \sigma \mid \mathbf{Y}, \mathbf{X}) \;\propto\; \underbrace{\prod_{i} \text{Normal}(Y_i \mid \mu_i, \sigma)}_{\text{Gaussian likelihood}} \;\times\; \underbrace{p(\alpha, \beta, \sigma)}_{\text{Priors}}
+$$ {#eq-week8-model}
+
+. . .
+
+**Week 11 model**:
+
+$$
+p(\alpha, \boldsymbol{\beta} \mid \mathbf{Y}, \mathbf{X}) \;\propto\; \underbrace{\prod_{i} \text{Bernoulli}(Y_i \mid \mu_i)}_{\text{Bernoulli likelihood}} \;\times\; \underbrace{p(\alpha, \boldsymbol{\beta})}_{\text{Priors}}
+$$ {#eq-week11-model}
+
+. . .
+
+The only change: **Gaussian → Bernoulli**.
+MCMC samples from the same posterior structure; `brms` compiles Stan code for the new likelihood automatically.
+
+```r
+brm(y ~ x, family = gaussian(), ...)   # Weeks 8–10 — needs prior on σ
+brm(y ~ x, family = bernoulli(), ...)  # Week 11 — σ drops out
+```
+
+## Why Flat Priors Are Dangerous Here {#sec-prior-danger .smaller}
+
+*1.6 Priors on the Logit Scale*
+
+::: notes
+- Counter-intuitive but important. "A Normal(0, 10) prior on the intercept looks vague — it is 10 standard deviations wide. But on the probability scale it is anything but vague."
+- logistic(10) ≈ 0.9999; logistic(-10) ≈ 0.0001. Almost all prior mass ends up near 0 and 1, with almost nothing near 0.5.
+- "This is not a vague prior. It is a strong prior belief that the baseline outcome probability is extreme. That is almost never what we mean."
+:::
+
+Priors for logistic regression must be placed on the **logit (log-odds) scale**.
+
+. . .
+
+**Counter-intuitive fact**: a wide prior on the logit scale piles mass at the *extremes* of the probability scale:
+
+::: {style="font-size: 0.82em"}
+| Logit value $\eta$ | $P = \text{logistic}(\eta)$ |
+|---|---|
+| $-10$ | $\approx 0.0001$ |
+| $-3$ | $\approx 0.05$ |
+| $0$ | $= 0.50$ |
+| $+3$ | $\approx 0.95$ |
+| $+10$ | $\approx 0.9999$ |
+:::
+
+. . .
+
+A $\text{Normal}(0, 10)$ prior on $\alpha$ covers logit values far beyond $\pm 3$ — mapping almost all prior mass to probabilities near 0 or 1, with very little weight near 0.5.
+This is the **opposite of vague**.
+
+---
+
+## Recommended Weakly Informative Priors {#sec-prior-recommended .smaller}
+
+::: notes
+- Following Gelman et al. and the rstanarm/brms conventions.
+- For the intercept: Normal(0, 1.5) covers the range (-3, +3) on the logit scale with 95% of the mass. logistic(±3) ≈ (0.05, 0.95). This is genuine prior uncertainty about the baseline probability — it does not prejudge the outcome.
+- For slopes: Normal(0, 1) on a standardized predictor. ±2 log-odds per unit is already a very large effect on the probability scale. Standardize first when predictors have different scales.
+- Calibration: "Show me the prior predictive distribution." We do this in the walkthrough.
+:::
+
+```{r}
+#| label: fig-prior-logit
+#| fig-cap: "Normal(0, 1.5) prior on the intercept: 95% of prior mass maps to P ∈ (0.05, 0.95) — genuine uncertainty, not prejudice toward extremes."
+#| fig-height: 3.6
+#| dpi: 500
+#| echo: false
+q025 <- qnorm(0.025, 0, 1.5)
+q975 <- qnorm(0.975, 0, 1.5)
+
+tibble(eta = seq(-5, 5, length.out = 600)) |>
+  mutate(prob = plogis(eta)) |>
+  ggplot(aes(x = eta, y = prob)) +
+  geom_ribbon(
+    data = ~ filter(.x, between(eta, q025, q975)),
+    aes(ymin = 0, ymax = prob),
+    fill = col_1,
+    alpha = 0.25
+  ) +
+  geom_line(colour = col_2, linewidth = 1.3) +
+  geom_vline(
+    xintercept = c(q025, q975),
+    linetype = "dashed",
+    colour = "gray50"
+  ) +
+  geom_hline(
+    yintercept = c(plogis(q025), plogis(q975)),
+    linetype = "dashed",
+    colour = "gray50"
+  ) +
+  annotate(
+    "text",
+    x = -4.5,
+    y = 0.72,
+    label = "Normal(0, 1.5) prior:\n95% interval ≈ (−2.94, +2.94)\n→ P ∈ (0.05, 0.95)",
+    colour = col_1,
+    size = 3.2,
+    hjust = 0
+  ) +
+  theme_bw() +
+  labs(
+    title = "Normal(0, 1.5) Intercept Prior → Probability Scale",
+    x = "Log-odds η (logit scale)",
+    y = "P(Y = 1)"
+  )
+```
+
+. . .
+
+$$
+\alpha \sim \text{Normal}(0,\; 1.5) \qquad \beta_j \sim \text{Normal}(0,\; 1)
+$$ {#eq-recommended-priors}
+
+Priors are **philosophical commitments**: $\text{Normal}(0, 1)$ on a slope says "most predictors have modest effects on the probability scale." This is more rigorous than a flat prior, not less.
+
+. . .
+
+::: {.callout-note style="font-size: 0.75em"}
+**Probit scale**: the same caution applies to the probit link — priors must be on the probit (standard normal quantile) scale.
+$\text{Normal}(0, 1)$ on the intercept is a natural starting point: $\Phi(\pm 1) \approx (0.16, 0.84)$ — similar coverage to $\text{Normal}(0, 1.5)$ on the logit scale.
+$\text{Normal}(0, 0.5)$ on slopes is roughly analogous to $\text{Normal}(0, 1)$ for logit.
+:::
+
+## Posterior Predicted Probabilities {#sec-pred-probs .smaller}
+
+*1.8 Predicted Probabilities and Posterior Uncertainty*
+
+::: notes
+- 1.7 note: coefficients are log-odds — sign and CI exclusion of zero are interpretable, magnitude is not.
+- Mirror the Week 8 distinction between posterior_epred() and posterior_predict().
+- "posterior_epred() gives you the expected probability for a given covariate profile — with full posterior uncertainty. This is the right tool for substantive interpretation."
+- "posterior_predict() gives you sampled 0/1 outcomes — it draws Bernoulli(μ) for each posterior draw. Use it for pp_check() and confusion matrix computation."
+- The visualization recipe is live-coded in Part 2 Step 2.10 using conditional_effects().
+:::
+
+::: {.callout-note style="font-size: 0.78em"}
+**1.7 Interpreting Coefficients** — Coefficients are on the **log-odds scale**.
+You can read: the **sign** (direction of association) and whether **zero is excluded** from the credible interval (evidence of a systematic association).
+You cannot read: magnitude as a probability change — the marginal effect is non-linear and depends on the baseline probability.
+Use predicted probabilities (below) for substantive interpretation.
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+
+Two distinct posterior quantities (mirror Week 8):
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+**`posterior_epred()`** → $E[Y \mid X] = P(Y=1 \mid X)$
+
+The expected probability for a given covariate profile, averaged over posterior uncertainty.
+This is the right tool for substantive interpretation.
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+**`posterior_predict()`** → sampled $0/1$ outcomes
+
+Each posterior draw samples $\tilde{Y} \sim \text{Bernoulli}(\mu)$.
+Use for posterior predictive checks and confusion matrix computation.
+:::
+
+. . .
+
+::: {style="font-size: 0.72em"}
+**Visualisation recipe** (live demo in Part 2 — subpart 2.10):
+
+1. Call `conditional_effects()` with `effects = "pol_interest"` and `conditions` fixing confounders at reference values (`income = 0`, `education = 0`, `gender = 0`)
+2. Pass the result to `plot()` — produces an S-shaped ribbon showing P(voted = 1 | X) with 95% credible interval
+
+The S-shaped ribbon is the link function made visible: the dose-response with honest posterior uncertainty.
+:::
+
+## Posterior Predictive Checks for Binary Data {#sec-ppc .smaller}
+
+*1.9 Model Assessment*
+
+::: notes
+- "pp_check() with type = 'bars' is the correct check for binary data. Density plots make no sense — there are only two possible values."
+- "The dark bar is the observed proportion of voted = 1. The grey bars are the posterior replications. A well-calibrated model clusters the grey bars tightly around the dark bar."
+- Segue: "We will do this live in Part X Step 7."
+:::
+
+For Bernoulli outcomes, `pp_check(fit, type = "bars")` shows a **bar chart** of observed vs. replicated proportion of $Y = 1$:
+
+```r
+pp_check(fit_adjusted, type = "bars", ndraws = 50)
+```
+
+. . .
+
+- **Light bar**: observed proportion of `voted = 1`
+- **Dark points and segments**: mean proportions in posterior-replicated datasets with 95% credible intervals
+
+A well-calibrated model produces grey bars clustered tightly around the light bar.
+
+. . .
+
+::: {.callout-important style="font-size: 0.78em"}
+**Always use `type = "bars"` for binary outcomes.**
+Density plots (`type = "dens"`) are nonsensical for discrete $\{0, 1\}$ data.
+:::
+
+---
+
+## Confusion Matrix {#sec-confusion .smaller}
+
+::: notes
+- "The confusion matrix assesses classification performance at a specific threshold — not the underlying probabilistic model. We care primarily about the latter."
+- "Changing the threshold (default = 0.5) moves along the tradeoff curve — which motivates the ROC curve."
+- Quick definitions: accuracy, sensitivity, specificity. No need to dwell.
+:::
+
+At a decision threshold (default: 0.5), classify each predicted probability as $\hat{Y} \in \{0, 1\}$:
+
+| | Predicted 0 | Predicted 1 |
+|---|---|---|
+| Observed 0 | True Negative (TN) | False Positive (FP) |
+| Observed 1 | False Negative (FN) | True Positive (TP) |
+
+. . .
+
+- **Accuracy**: $(TP + TN) / n$
+- **Sensitivity** (true positive rate): $TP / (TP + FN)$ — correctly identified voters
+- **Specificity** (true negative rate): $TN / (TN + FP)$ — correctly identified non-voters
+
+. . .
+
+::: {style="font-size: 0.82em"}
+The confusion matrix at threshold 0.5 is one point on a continuous tradeoff curve.
+Changing the threshold trades sensitivity for specificity — which motivates the ROC curve.
+:::
+
+---
+
+## ROC Curve and AUC {#sec-roc .smaller}
+
+::: notes
+- "The ROC curve shows the sensitivity/specificity tradeoff across ALL possible thresholds simultaneously. The confusion matrix gives you one point on this curve."
+- "AUC measures how well the model RANKS individuals by predicted probability — it is threshold-agnostic."
+- AUC = 0.5 is the diagonal (random classifier). AUC = 1.0 is perfect discrimination.
+- "Comparing two models by AUC is more informative than comparing accuracy at a single threshold."
+:::
+
+The **ROC curve** visualises the sensitivity/specificity tradeoff across *all* classification thresholds simultaneously.
+
+. . .
+
+$$
+\text{Sensitivity}(t) = \frac{TP(t)}{TP(t) + FN(t)}, \qquad \text{FPR}(t) = \frac{FP(t)}{FP(t) + TN(t)}
+$$ {#eq-roc}
+
+. . .
+
+**AUC** (Area Under the Curve): single-number summary
+
+::: {style="font-size: 0.82em"}
+| AUC | Interpretation |
+|---|---|
+| 1.0 | Perfect discrimination |
+| 0.8–0.9 | Excellent |
+| 0.7–0.8 | Acceptable |
+| 0.5 | No better than random |
+:::
+
+. . .
+
+**Key insight**: AUC is threshold-agnostic — it measures how well the model *ranks* individuals by predicted probability.
+Comparing two models by AUC is more informative than comparing accuracy at any single threshold.
+
+---
+
+## Bayesian LOO Cross-Validation {#sec-loo .smaller}
+
+::: notes
+- LOO was in Week 9 slides but not delivered in class. This is the first full formal explanation.
+- Motivating problem: in-sample fit always rewards complexity. We want out-of-sample predictive performance.
+- PSIS-LOO: approximate LOO from a SINGLE fitted model. Key selling point: fast, one call.
+- Pareto k diagnostics: k > 0.7 flags unreliable observations. Worth mentioning briefly.
+- Connection to AIC/BIC: LOO is more principled — directly estimates out-of-sample performance, no asymptotic approximations.
+:::
+
+**Motivating problem**: how do we compare `voted ~ pol_interest` vs. `voted ~ pol_interest + income + education + gender`?
+In-sample fit always rewards more parameters — we want *out-of-sample* predictive performance.
+
+. . .
+
+**Ideal**: leave-one-out cross-validation — refit on $n-1$ observations, evaluate on the held-out one, sum over all $n$ hold-outs.
+**Problem**: requires $n$ model refits — too slow for MCMC.
+
+. . .
+
+**PSIS-LOO** (@vehtari2017practical): approximate LOO from a *single* fitted model by reweighting existing posterior draws.
+Pareto-smoothing stabilises the importance weights to make the approximation reliable.
+
+. . .
+
+- **`elpd_loo`**: estimated sum of out-of-sample log predictive densities — higher = better
+- **Pareto $k$ diagnostics**: $k > 0.7$ flags observations where the approximation is unreliable
+- **Meaningful difference**: $\Delta\text{elpd} \gtrsim 2 \times \text{SE}_\Delta$
+
+. . .
+
+::: {.callout-note style="font-size: 0.75em"}
+**Same `loo()` call for all `brms` models** — Gaussian, Bernoulli, multilevel.
+This is the key selling point: one tool, one workflow, all model types.
+:::
+
+# Part 2: Applied Walkthrough — Voter Turnout {#sec-part10}
+
+## Research Question and Causal Structure {#sec-rq .smaller}
+
+:::: {.columns}
+
+::: {.column width="45%"}
+*2.1 Research Question and Causal Structure*
+
+*Workflow Step 1 — DAG + Estimand*
+
+::: notes
+- State the research question clearly. The DAG tells us what to control for.
+- "All three confounders drive both political interest and turnout simultaneously. If we don't adjust for them, the naive coefficient absorbs their influence and overstates the causal effect of political interest."
+- The naive-to-adjusted comparison is the substantive payoff at the end.
+:::
+
+> **Does political interest increase the probability of voting? Does this effect persist after adjusting for socioeconomic confounders?**
+
+```
+income ────────────────────────┐
+          ↘                    ↓
+education ──→ pol_interest ──→ voted
+          ↗                    ↑
+gender ────────────────────────┘
+```
+:::
+
+::: {.column width="55%"}
+**Variable definitions:**
+
+::: {style="font-size: 0.75em"}
+| Symbol | Substantive variable | Scale |
+|---|----------------------|--------|
+| $Y_i$ | `voted` — whether individual $i$ voted | Binary $\{0, 1\}$ |
+| $X_i^{(1)}$ | `pol_interest` — political interest | Ordinal 0–10 |
+| $X_i^{(2)}$ | `income` — standardised household income | Continuous |
+| $X_i^{(3)}$ | `education` — standardised years of education | Continuous |
+| $X_i^{(4)}$ | `gender` — 0 = female, 1 = male | Binary |
+
+**Estimand:** The association between political interest and the probability of voting, after adjusting for the confounding influence of income, education, and gender.
+
+:::
+
+:::
+
+::::
+
+---
+
+## 2.2 Data Summary {#sec-step1 .smaller}
+
+*Workflow Step 2 — Data Summary*
+
+::: notes
+- Point out the binary outcome — only 0s and 1s. Any other value would be a data problem.
+- Show the turnout rate: roughly 65% voted. Realistic for a national election.
+- The bar chart shows the positive raw correlation between political interest and turnout — before adjusting for confounders.
+:::
+
+```{r}
+#| label: fig-step1-turnout
+#| fig-cap: "Turnout rate by political interest level. A positive raw correlation is visible — but note this is unadjusted for income, education, and gender."
+#| fig-height: 5
+#| dpi: 500
+df |> count(voted) |> mutate(prop = n / sum(n))
+
+df |>
+  ggplot(aes(x = pol_interest, fill = factor(voted))) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(
+    values = c(col_1, col_2),
+    labels = c("Did not vote", "Voted"),
+    name = NULL
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_bw() +
+  labs(
+    title = "Turnout Rate by Political Interest Level",
+    x = "Political Interest (0–10)",
+    y = "Proportion"
+  )
+```
+
+---
+
+## 2.3 Model Formalization {#sec-step2a .smaller}
+
+*Workflow Step 3 — Formal Model Specification*
+
+::: notes
+- "Before writing a single line of brms code, write down the model. This forces you to make three decisions explicit: what distribution generates your outcome, which variables enter the linear predictor, and which link function connects the two."
+- "The posterior notation at the bottom tells you exactly how many parameters you have — and therefore exactly how many priors you need to write."
+- "In the take-home exam, I expect you to produce something that looks like this table before fitting anything."
+- Walk through each row top to bottom.
+:::
+
+::: {style="font-size: 0.75em"}
+
+**Step 1 — Outcome distribution (model family):**
+
+$$
+Y_i \sim \text{Bernoulli}(\mu_i)
+$$
+
+$Y_i \in \{0, 1\}$ is binary $\Rightarrow$ Bernoulli family. No $\sigma$ to estimate: variance $= \mu_i(1 - \mu_i)$ is determined by the mean.
+:::
+
+. . .
+
+::: {style="font-size: 0.75em"}
+**Step 2 — Linear predictor (variable structure):**
+
+$$
+\eta_i = \alpha + \beta_1\, X_i^{(1)} + \beta_2\, X_i^{(2)} + \beta_3\, X_i^{(3)} + \beta_4\, X_i^{(4)}
+$$
+
+Four predictors, no interactions $\Rightarrow$ five parameters: one intercept $\alpha$ and four slopes $\beta_1, \ldots, \beta_4$.
+:::
+
+. . .
+
+::: {style="font-size: 0.75em"}
+**Step 3 — Link function:**
+
+$$
+\mu_i = \text{logistic}(\eta_i) = \frac{1}{1 + e^{-\eta_i}}
+$$
+
+The logistic function maps $\eta_i \in \mathbb{R}$ to $\mu_i \in (0, 1)$.
+:::
+
+. . .
+
+::: {style="font-size: 0.75em"}
+**Step 4 — Posterior (proportional form):**
+
+$$
+p(\alpha, \beta_1, \beta_2, \beta_3, \beta_4 \mid \mathbf{Y}, \mathbf{X}) \;\propto\; L(\mathbf{Y}, \mathbf{X} \mid \alpha, \boldsymbol{\beta}) \;\times\; p(\alpha)\, p(\beta_1)\, p(\beta_2)\, p(\beta_3)\, p(\beta_4)
+$$
+
+Five parameters $\Rightarrow$ five priors to specify on the next slide.
+:::
+
+
+---
+
+## 2.3 Prior Specification {#sec-step2b .smaller}
+
+*Workflow Step 3 — Prior Specification*
+
+::: notes
+- "The posterior notation on the previous slide told us we need five priors. Here they are."
+- "All priors are on the logit scale. Normal(0, 1.5) on the intercept covers the range (0.05, 0.95) on the probability scale — genuine uncertainty. Normal(0, 1) on each slope says 'most predictors have modest effects' — a unit increase in a standardised predictor rarely shifts the log-odds by more than ±2."
+- "These are the same priors we use in the brm() call. The model spec and the code should be consistent — always write the spec first."
+:::
+
+::: {style="font-size: 0.75em"}
+Given the model formalized on the previous slide, the five priors are:
+
+$$
+\begin{aligned}
+\alpha      &\sim \text{Normal}(0,\; 1.5) \\
+\beta_1     &\sim \text{Normal}(0,\; 1) \quad [\text{pol_interest}] \\
+\beta_2     &\sim \text{Normal}(0,\; 1) \quad [\text{income}] \\
+\beta_3     &\sim \text{Normal}(0,\; 1) \quad [\text{education}] \\ 
+\beta_4     &\sim \text{Normal}(0,\; 1) \quad [\text{gender}] \\
+\end{aligned}
+$$ {#eq-priors-adjusted}
+:::
+
+. . .
+
+::: {style="font-size: 0.75em"}
+**Rationale:**
+
+- $\alpha \sim \text{Normal}(0, 1.5)$: on the logit scale, the 95% interval $(-2.94, +2.94)$ maps to probabilities $(0.05, 0.95)$ — genuine prior uncertainty about the baseline turnout rate
+- $\beta_j \sim \text{Normal}(0, 1)$: a slope of $\pm 2$ log-odds per unit is already a very large effect; this prior is moderately regularising without being informative about direction
+- Verify both choices with a prior predictive check (subpart 2.4)
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.75em"}
+In `brms`: `prior(normal(0, 1.5), class = "Intercept")` and `prior(normal(0, 1), class = "b")`.
+The `class = "b"` prior applies to **all** slope coefficients simultaneously -- consistent with the identical $\text{Normal}(0, 1)$ specification above.
+:::
+
+---
+
+## 2.4 Prior Predictive Check {#sec-step3 .smaller}
+
+*Workflow Step 4 — Prior Predictive Check*
+
+::: notes
+- "Before fitting to data, we ask: do our priors produce plausible turnout rates?"
+- Normal(0, 1.5) on the intercept + Normal(0, 1) on all slopes → prior predictive turnout rates spread across [0, 1] without piling up at 0 or 1. That's what we want.
+- "If the prior predictive check had produced all-zero or all-one predictions, that would be a red flag — our priors would be pushing the model toward an implausible baseline."
+:::
+
+Before fitting, verify that the chosen priors produce **plausible turnout rates**.
+Use `sample_prior = "only"` to draw from the prior predictive distribution:
+
+```{r}
+#| label: code-fit-prior
+#| eval: false
+#| echo: false
+fit_prior <- brm(
+  voted ~ pol_interest + income + education + gender,
+  data = df,
+  family = bernoulli(),
+  prior = c(
+    prior(normal(0, 1.5), class = "Intercept"),
+    prior(normal(0, 1), class = "b")
+  ),
+  sample_prior = "only",
+  chains = 2,
+  iter = 1000,
+  warmup = 500,
+  seed = 2026
+)
+```
+
+```{r}
+#| label: fig-step3-prior-ppc
+#| fig-cap: "Prior predictive check: Normal(0, 1.5) intercept + Normal(0, 1) slopes produce prior turnout rates spread across [0, 1] — genuine prior uncertainty, not prejudice toward extreme probabilities."
+#| fig-height: 5
+#| dpi: 500
+pp_check(fit_prior, type = "bars", ndraws = 50) +
+  theme_bw() +
+  labs(
+    title = "Prior Predictive Check: Does the Prior Produce Plausible Turnout?"
+  )
+```
+
+---
+
+## 2.5 Fit Naive Model {#sec-step4 .smaller}
+
+*Workflow Step 5 — Fit with brms*
+
+::: notes
+- "This is the same brm() workflow you know from Weeks 8–10. The only change is family = bernoulli()."
+- The model is already pre-fit in the setup chunk — rendering is instant.
+- Callout: #| cache: true is essential. Without it, every render refits Stan from scratch (30-60 seconds each time).
+:::
+
+```{r}
+#| label: code-fit-naive
+#| eval: false
+fit_naive <- brm(
+  voted ~ pol_interest,
+  data = df,
+  family = bernoulli(),
+  prior = c(
+    prior(normal(0, 1.5), class = "Intercept"),
+    prior(normal(0, 1), class = "b")
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 2026
+)
+```
+
+::: {.callout-tip style="font-size: 0.78em"}
+**Always set `#| cache: true` on `brm()` chunks.**
+Without caching, every document render refits the model from scratch (30–60 seconds each).
+With caching, Quarto stores the result and only reruns the chunk when the code changes.
+Add `_cache/` to your `.gitignore` — cache folders are large and machine-specific.
+:::
+
+---
+
+## 2.6 Fit Adjusted Model {#sec-step5 .smaller}
+
+*Workflow Step 5 — Fit with brms*
+
+::: notes
+- "One more predictor, same workflow. The prior on class = 'b' applies to all slope coefficients simultaneously."
+- The conceptual payoff: naive vs. adjusted coefficient comparison in Step 8.
+:::
+
+```{r}
+#| label: code-fit-adjusted
+#| eval: false
+fit_adjusted <- brm(
+  voted ~ pol_interest + income + education + gender,
+  data = df,
+  family = bernoulli(),
+  prior = c(
+    prior(normal(0, 1.5), class = "Intercept"),
+    prior(normal(0, 1), class = "b")
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  seed = 2026
+)
+```
+
+. . .
+
+::: {style="font-size: 0.82em"}
+The `prior(normal(0, 1), class = "b")` applies to **all** slope coefficients.
+If you want coefficient-specific priors, use the `coef =` argument:
+
+```r
+prior(normal(0, 0.5), class = "b", coef = "pol_interest")
+```
+
+For unstandardised predictors with very different scales, scale the prior to the predictor range.
+:::
+
+---
+
+## 2.7 MCMC Diagnostics {#sec-step6 .smaller}
+
+*Workflow Step 6a — MCMC Diagnostics*
+
+::: notes
+- plot() on a brms object is the recommended diagnostic workflow — trace + posterior density in one call.
+- Walk through: "Four chains, well-mixed trace plots (no trends, no divergence between chains). Posterior densities are smooth and unimodal."
+- summary() gives the numerical diagnostics: R-hat < 1.01 and Bulk ESS > 1000 for all parameters.
+:::
+
+`plot()` on a `brms` object produces combined **trace + posterior density** panels for every parameter:
+
+```{r}
+#| label: fig-step6-diagnostics
+#| fig-cap: "MCMC diagnostics for fit_adjusted: trace plots (left) and posterior densities (right). Four chains should mix well — no trends, no divergence."
+#| fig-height: 8.5
+plot(fit_adjusted)
+```
+
+. . .
+
+Check numerical diagnostics:
+
+```{r}
+#| label: step6-summary
+#| eval: false
+summary(fit_adjusted) # check R-hat < 1.01, Bulk ESS > 1000
+```
+
+---
+
+## 2.8 Posterior Predictive Check {#sec-step7 .smaller}
+
+*Workflow Step 6b — PPC*
+
+::: notes
+- "For Bernoulli models, always use type = 'bars'. Density plots don't make sense for binary data."
+- Dark bar = observed proportion of voted = 1. Grey bars = posterior replications.
+- A well-calibrated model clusters the grey bars around the dark bar.
+:::
+
+```{r}
+#| label: fig-step7-ppc
+#| fig-cap: "Posterior predictive check: light blue bars show the empirical distribution of outcomes; dark blue points and segments show predicted outcomes from 50 posterior draws (with 95% uncertainty)."
+#| fig-height: 3.2
+#| dpi: 500
+pp_check(fit_adjusted, type = "bars", ndraws = 50) +
+  theme_bw() +
+  labs(title = "Posterior Predictive Check: Proportion Voted")
+```
+
+---
+
+## 2.9 Coefficient Table {#sec-step8 .smaller}
+
+*Workflow Step 7 — Interpretation*
+
+::: notes
+- Key observation: the pol_interest coefficient shrinks substantially in the adjusted model.
+- "The DAG told us this would happen: income, education, and gender are confounders. The naive model attributed their shared influence to political interest."
+- Remind students: coefficients are in log-odds. They are honest but not directly interpretable as probability changes — that's the purpose of the predicted probability plot in Step 9.
+:::
+
+
+:::: {.columns}
+
+::: {.column width="55%"}
+::: {style="font-size: 0.6em"}
+```{r}
+#| label: tbl-step8-coefs
+#| tbl-cap: "Posterior coefficient summaries (log-odds scale) with 95% credible intervals. The pol_interest coefficient shrinks substantially from the naive to the adjusted model — confirming the DAG's confounding prediction."
+modelsummary(
+  list("Naive" = fit_naive, "Adjusted" = fit_adjusted),
+  statistic = "conf.int",
+  shape = term ~ model + statistic
+)
+```
+:::
+:::
+
+::: {.column width="45%"}
+::: {.callout-important style="font-size: 0.72em"}
+**What you CAN read from this table:**
+
+- **Sign**: direction of association (positive = higher X → higher probability of Y = 1)
+- **Zero excluded from 95% credible interval**: evidence of a systematic association in that direction
+
+**What you CANNOT read:**
+
+- **Magnitude as probability change**: the marginal effect is non-linear — a coefficient of 0.12 does NOT mean "0.12 pp increase in turnout probability per unit of political interest"
+- **Effect size in any intuitive unit**: use predicted probabilities (subpart 2.10) for substantive interpretation
+:::
+:::
+
+::::
+
+---
+
+## 2.10 Predicted Probabilities {#sec-step9 .smaller}
+
+*Workflow Step 7 — Interpretation*
+
+::: notes
+- "Hold the confounders at reference values. Female baseline (gender = 0) is the natural reference."
+- "The S-shape is the link function made visible. The ribbon is the 95% posterior credible interval — it narrows where we have dense data and widens at the extremes."
+- "conditional_effects() handles the grid construction and posterior averaging automatically. This is how you communicate the effect of political interest to a non-statistical audience — not with log-odds."
+:::
+
+```{r}
+#| label: fig-step9-ribbon
+#| fig-cap: "Predicted probability of voting as a function of political interest (income = 0, education = 0, gender = Female). Ribbon = 95% posterior credible interval from conditional_effects()."
+#| fig-height: 5
+#| dpi: 500
+brms_condeff <- conditional_effects(
+  fit_adjusted,
+  effects = "pol_interest",
+  conditions = data.frame(income = 0, education = 0, gender = 0),
+  method = "posterior_epred",
+  prob = 0.95
+)
+
+plot(brms_condeff, plot = FALSE)[[1]] +
+  labs(x = "Political Interest Index") +
+  theme_pubr()
+```
+
+::: {.callout-note style="font-size: 0.78em"}
+`conditional_effects()` constructs the predictor grid, averages over posterior draws, and returns a 95% credible ribbon — the S-shaped curve is the link function made visible.
+Fix confounders at reference values via `conditions`; vary the predictor of interest via `effects`.
+:::
+
+---
+
+## 2.11 Confusion Matrix and ROC {#sec-step10 .smaller}
+
+*Workflow Step 7 — Interpretation*
+
+::: notes
+- Walk through: the confusion matrix is ONE point on the ROC curve (at threshold 0.5).
+- AUC tells us how well the model ranks individuals by predicted probability — threshold-agnostic.
+- No additional packages needed: map_dfr (purrr, part of tidyverse) + base R arithmetic.
+:::
+
+```{r}
+#| label: step10-confusion
+pred_probs <- posterior_epred(fit_adjusted) |> apply(2, median)
+pred_binary <- as.integer(pred_probs >= 0.5)
+table(Predicted = pred_binary, Observed = df$voted)
+```
+
+```{r}
+#| label: fig-step10-roc
+#| fig-cap: "ROC curve for fit_adjusted. Each point = one classification threshold. The confusion matrix at threshold 0.5 is one point on this curve. AUC = area under curve (0.5 = random; 1.0 = perfect)."
+#| fig-height: 3.0
+#| dpi: 500
+thresholds <- seq(0, 1, by = 0.01)
+roc_df <- map_dfr(thresholds, function(t) {
+  pred <- as.integer(pred_probs >= t)
+  tp <- sum(pred == 1 & df$voted == 1)
+  fp <- sum(pred == 1 & df$voted == 0)
+  tn <- sum(pred == 0 & df$voted == 0)
+  fn <- sum(pred == 0 & df$voted == 1)
+  tibble(threshold = t, sensitivity = tp / (tp + fn), fpr = fp / (fp + tn))
+})
+
+auc_val <- roc_df |>
+  arrange(fpr) |>
+  summarise(
+    auc = sum(diff(fpr) * (head(sensitivity, -1) + tail(sensitivity, -1)) / 2)
+  ) |>
+  pull(auc)
+
+roc_df |>
+  ggplot(aes(x = fpr, y = sensitivity)) +
+  geom_line(colour = col_2, linewidth = 1.2) +
+  geom_abline(linetype = "dashed", colour = "gray50") +
+  annotate(
+    "text",
+    x = 0.6,
+    y = 0.25,
+    label = paste0("AUC = ", round(auc_val, 3)),
+    colour = col_1,
+    size = 4.5
+  ) +
+  theme_bw() +
+  labs(
+    title = "ROC Curve: Adjusted Turnout Model",
+    subtitle = "Each point = one classification threshold",
+    x = "False Positive Rate (1 – Specificity)",
+    y = "True Positive Rate (Sensitivity)"
+  )
+```
+
+---
+
+## 2.12 LOO Model Comparison {#sec-step11 .smaller}
+
+*Workflow Step 7 — Interpretation*
+
+::: notes
+- First live use of LOO. Students now have the full explanation from subpart 1.9.
+- Walk through the output: (1) per-model elpd_loo; (2) Pareto k diagnostics; (3) comparison table.
+- "The adjusted model should score higher — consistent with the DAG's implication that the confounders are genuine."
+- Continuity callout: same call again in Week 12 for pooled vs. partially pooled models.
+:::
+
+:::: {.columns}
+
+::: {.column width="52%"}
+```{r}
+#| label: step11-loo
+loo(fit_naive, fit_adjusted)
+```
+:::
+
+::: {.column width="48%"}
+
+**Reading the output:**
+
+::: {style="font-size: 0.82em"}
+1. **`elpd_loo`** per model — higher = better out-of-sample predictive performance
+2. **Pareto $k$ diagnostics** — flag any $k > 0.7$ (unreliable approximation for that observation)
+3. **Comparison table** — `elpd_diff` and `se_diff`: meaningful when $|\text{elpd_diff}| \gtrsim 2 \times \text{se_diff}$
+:::
+
+::: {.callout-note style="font-size: 0.75em"}
+**Continuity**: same `loo()` call, same interpretation, in Week 12 — comparing pooled vs. partially pooled multilevel models.
+:::
+
+:::
+
+::::
+
+# Summary {#sec-summary}
+
+## The Canonical 8-Step Workflow {#sec-workflow .smaller}
+
+::: notes
+- Read through. This workflow applies regardless of likelihood family.
+- "Every analysis you submit must have these eight elements — bivariate, multivariate, interaction, logistic (today), multilevel (Week 12)."
+- The likelihood changes; the workflow does not.
+:::
+
+The same eight-step workflow applies to **every** model:
+
+. . .
+
+::: {style="font-size: 0.7em"}
+| Step | What you do | Why |
+|------|------------|-----|
+| 1. DAG + Estimand | Draw the causal graph; state the quantity of interest | Clarifies what to estimate and what to control for |
+| 2. Data Summary | Visualise and describe your variables | Check for patterns, outliers, and model plausibility |
+| 3. Formal Model | Write out $L$ and all priors before coding | Forces precision; makes assumptions explicit |
+| 4. Prior Predictive | Simulate $Y$ from priors; check plausibility | Catches implausible priors before MCMC |
+| 5. Fit with `brms` | Run `brm()` with explicit priors | Obtains posterior draws |
+| 6a. MCMC Diagnostics | Check $\hat{R}$, ESS, trace plots | Confirms convergence before interpreting |
+| 6b. PPC | Run `pp_check()` | Checks model adequacy |
+| 7. Interpretation | Posterior summaries, predicted probabilities, LOO | Answers the research question |
+| 8. Limitations | State what could still bias results | Scientific honesty |
+:::
+
+---
+
+## Learning Goals: Check {#sec-goals-check .smaller}
+
+::: notes
+- Read through quickly. Connect each goal to where it was covered.
+- Week 12 preview: hierarchical data, random intercepts and slopes, partial pooling.
+:::
+
+::: {style="font-size: 0.82em"}
+By the end of today, you should be able to:
+
+1. ✓ Explain why Linear models are structurally wrong for binary outcomes (out-of-range predictions, heteroskedasticity, non-Normal residuals) and how the GLM framework resolves this via Bernoulli likelihood + link function (subparts 1.1–1.4)
+
+2. ✓ Fit and interpret a Bayesian logistic regression with `brms` — including weakly informative priors on the logit scale, posterior coefficient summaries, and predicted probability ribbons (subparts 1.5–1.8, steps 2.5–2.10)
+
+3. ✓ Assess model quality using posterior predictive checks, confusion matrix, ROC/AUC, and LOO — and compare models using Bayesian leave-one-out cross-validation (subpart 1.9, steps 2.8–2.12)
+:::
+
+---
+
+## Course Evaluation Survey {#sec-survey .smaller}
+
+
+
+---
+
+## Bridge to Week 12 {#sec-bridge .smaller}
+
+::: notes
+- "Next week we let coefficients vary by group. The Bayesian machinery is the same — we add a hierarchical prior that pools information across groups."
+- Students will use loo() again in Week 12 to compare pooled vs. partially pooled models.
+- Partial pooling is a direct consequence of the Bayesian hierarchical prior structure — they have the conceptual tools already.
+:::
+
+**Next week: Multilevel Models and Partial Pooling**
+
+. . .
+
+::: {style="font-size: 0.82em"}
+The structure of next week mirrors today exactly — same workflow, different likelihood component:
+
+- Data with a **hierarchical structure**: individuals nested within countries (or students within universities, observations within regions)
+- **Random intercepts**: allow the baseline outcome probability to vary by group
+- **Partial pooling**: group-level estimates are pulled toward the population mean — a direct consequence of the Bayesian hierarchical prior
+- **LOO again**: compare pooled vs. partially pooled models using the same `loo()` call from Step 11
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+**The conceptual core is the same**: likelihood + prior → posterior via MCMC.
+We add one new ingredient — a prior distribution *over the group-level intercepts* themselves.
+:::
+
+## References {#sec-references}
+
+```{r}
+#| label: session-info
+#| eval: true
+#| include: false
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+#| eval: true
+#| include: false
+Sys.time() - start_time
+```

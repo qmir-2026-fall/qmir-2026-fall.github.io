@@ -1,0 +1,1010 @@
+---
+title: "Week 4: The tidyverse"
+---
+
+<!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
+
+     This file is staged: the leading underscore keeps it out of the Quarto render, off
+     the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
+     below is the spring deck verbatim, so it does NOT yet follow STYLE.md.
+
+     To put this week live:
+       1. Convert the body to STYLE.md (em dashes, inline font-size, {#sec-} labels,
+          chunk labels and captions, the size ladder).
+       2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
+       3. ./automation/check-authoring.ps1 -Week NN -Fit
+     Nothing else moves: images/, data/ and theme.scss are already at the paths this
+     body expects, and the shared format block lives in _metadata.yml.
+-->
+
+
+## QMIR 2026
+
+### Week 4: The Tidyverse & Tidy Data
+
+![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
+
+# Leftovers & Housekeeping
+
+## Git & GitHub -- A Folder Structure Reminder {.smaller}
+
+A few students ran into problems with last week's homework. Here is a summary of how to set things up correctly.
+
+**One dedicated QMIR folder**, at a stable path on your computer:
+
+```
+Documents/
+  QMIR_2026/  ← your top-level course folder. Individual repos go INSIDE here, e.g:
+    hw-w04/ 
+    lab-w04/
+    ...
+```
+
+::: {.nonincremental}
+- ✅ Place individual repositories **inside** the QMIR folder
+- ❌ Do **not** turn the top-level `QMIR_2026/` folder itself into a Git repo — Git repos inside Git repos cause problems
+- ❌ Do **not** place your QMIR folder inside a **cloud-synced folder** (iCloud Drive, Google Drive, OneDrive, Dropbox) — syncing services and Git conflict with each other and corrupt repositories
+:::
+
+---
+
+## Week 4 Goals
+
+By the end of today, you should:
+
+1. Understand what the tidyverse is and why it exists
+2. Know what tidy data means and why it matters
+3. Be able to import data with `readr`
+4. Be able to explore data with `glimpse()`, `head()`, `summary()`
+5. Be able to wrangle data with the core `dplyr` verbs
+6. Have a first intuition for `ggplot2`
+7. Know how to use Quarto cell options for labels, captions, and execution control
+
+---
+
+## Agenda
+
+1. The Tidyverse -- What and Why
+2. Tidy Data
+3. The Data Science Cycle
+4. Data Import with `readr`
+5. Data Exploration with `glimpse()`
+6. Data Manipulation with `dplyr`
+7. A First Look at `ggplot2`
+8. Quarto: Cell Options & Cross-References
+9. Walkthrough & Exercises
+
+# Part I: The Tidyverse
+
+---
+
+## The Tidyverse -- A Coherent Ecosystem {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+Last week: packages are collections of functions.
+
+The **tidyverse** is a collection of packages that share:
+
+- a common philosophy of how data should be structured
+- a consistent grammar (functions behave predictably)
+- seamless interoperability -- they are designed to work together
+
+```{r}
+#| message: false
+library(tidyverse)
+```
+
+One `library()` call loads the core set.
+
+:::
+
+::: {.column width="50%"}
+
+![Source: Mine Çetinkaya-Rundel (2020)](https://education.rstudio.com/blog/2020/07/teaching-the-tidyverse-in-2020-part-1-getting-started/img/tidyverse-packages.png){width="90%"}
+
+:::
+::::::
+
+---
+
+## Core Tidyverse Packages {.smaller}
+
+| Package | Role | Key functions |
+|---|---------|----------------------|
+| `readr` | Import rectangular data | `read_csv()`, `read_tsv()` |
+| `tibble` | Modern data frames | `tibble()`, `as_tibble()` |
+| `dplyr` | Data manipulation | `filter()`, `select()`, `mutate()`, `summarise()`, `group_by()` `distinct()` `count()` |
+| `tidyr` | Reshape data | `pivot_longer()`, `pivot_wider()` |
+| `ggplot2` | Data visualisation | `ggplot()`, `geom_*()` |
+| `stringr` | String manipulation | `str_detect()`, `str_replace()` |
+| `forcats` | Factor handling | `fct_reorder()`, `fct_relevel()` |
+| `purrr` | Functional programming | `map()`, `map_df()` |
+
+---
+
+## The Tibble -- A Better Data Frame {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+The tidyverse uses **tibbles** instead of base R data frames.
+
+They are the same idea -- rows × columns, each column one type -- but with better defaults:
+
+- Prints only the first 10 rows
+- Shows column types below the header
+- Never converts strings to factors silently
+- Never creates row names
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| message: false
+library(gapminder)
+
+# gapminder is already a tibble
+gapminder
+```
+
+:::
+::::::
+
+# Part II: Tidy Data
+
+---
+
+## What is Tidy Data?
+
+> *Tidy datasets are all alike, but every messy dataset is messy in its own way.*
+>
+> -- Hadley Wickham
+
+. . .
+
+A dataset is **tidy** when:
+
+1. Each **variable** has its own **column**
+2. Each **observation** has its own **row**
+3. Each **value** has its own **cell**
+
+---
+
+## Tidy vs. Wide Data -- An Example {.smaller}
+
+**Wide format** (common in spreadsheets, not tidy):
+
+| country | gdpPercap_1952 | gdpPercap_1957 | gdpPercap_1962 |
+|---|---|---|---|
+| Germany | 7144 | 10188 | 12902 |
+| France | 7030 | 8663 | 10560 |
+
+. . .
+
+**Long (tidy) format** (what the tidyverse expects):
+
+| country | year | gdpPercap |
+|---|---|---|
+| Germany | 1952 | 7144 |
+| Germany | 1957 | 10188 |
+| France | 1952 | 7030 |
+| France | 1957 | 8663 |
+
+. . .
+
+> In the tidy version, `year` is a variable -- a column. In the wide version, year is hiding inside column names. The tidyverse (and especially `ggplot2`) expects tidy data.
+
+---
+
+## Reshaping with `tidyr` -- A Brief Preview {.smaller}
+
+You will encounter wide data in the wild. `tidyr` provides two functions to convert between formats:
+
+- `pivot_longer()` -- wide → long (tidy)
+- `pivot_wider()` -- long → wide
+
+```{r}
+#| eval: false
+
+# Hypothetical wide dataset
+wide_data |>
+  pivot_longer(
+    cols = starts_with("gdpPercap_"),
+    names_to = "year",
+    values_to = "gdpPercap"
+  )
+```
+
+. . .
+
+We won't go deep on reshaping today -- the gapminder data is already tidy. But knowing these functions exist will save you hours when you start working with real-world data.
+
+# Part III: The Data Science Cycle
+
+---
+
+## The Data Science Cycle {.smaller}
+
+:::::: columns
+::: {.column width="55%"}
+
+Everything we do in this course fits somewhere in this cycle:
+
+**Import** → **Tidy** → **Transform** → **Visualise** → **Model** → **Communicate**
+
+Where we are today:
+
+- ✅ **Import** -- `readr`
+- ✅ **Tidy** -- we got lucky, gapminder is already tidy
+- ✅ **Transform** -- `dplyr`
+- 👀 **Visualise** -- `ggplot2` preview
+- 📅 **Model** -- coming later in the course
+- ✅ **Communicate** -- Quarto, all along
+
+:::
+
+::: {.column width="45%"}
+
+![Source: @wickham2023r4ds](https://r4ds.hadley.nz/diagrams/data-science/base.png){width="100%"}
+
+:::
+::::::
+
+# Part IV: Data Import
+
+---
+
+## Installing and Loading Packages {.smaller}
+
+Before you can use a package, you need to:
+
+1. **Install** it once (downloads from CRAN to your computer)
+2. **Load** it in each session (makes its functions available)
+
+```{r}
+#| eval: false
+
+# Install once -- you only need to do this one time
+install.packages("gapminder")
+install.packages("tidyverse")
+
+# Load every session -- goes at the top of your .qmd
+library(tidyverse)
+library(gapminder)
+```
+
+. . .
+
+::: {.callout-tip}
+Never put `install.packages()` inside a Quarto document that you intend to render or share. Quarto blocks package installation during rendering for security reasons, so the document will fail to render and throw an error. In addition, even if it were allowed, it would attempt to reinstall the package every time the document is rendered, which can create unnecessary delays and compatibility issues in other users’ environments.
+:::
+
+---
+
+## Data Import with `readr` {.smaller}
+
+`readr` is the tidyverse package for importing rectangular data files.
+
+| Function | File type |
+|---|---|
+| `read_csv("file.csv")` | Comma-separated values |
+| `read_tsv("file.tsv")` | Tab-separated values |
+| `read_delim("file.txt", delim = ";")` | Any delimiter |
+
+. . .
+
+```{r}
+#| eval: false
+
+# Import a CSV file and assign it to an object
+my_data <- read_csv("data/my_dataset.csv")
+```
+
+. . .
+
+For other formats:
+
+```{r}
+#| eval: false
+
+library(haven)
+my_data <- read_dta("data/dataset.dta") # Stata
+my_data <- read_sav("data/dataset.sav") # SPSS
+
+library(readxl)
+my_data <- read_excel("data/dataset.xlsx") # Excel
+```
+
+. . .
+
+> **Always assign the result to an object.** `read_csv("file.csv")` alone reads the file but immediately discards it.
+
+---
+
+## Data Export {.smaller}
+
+To save a data frame to disk:
+
+```{r}
+#| eval: false
+
+# Write to CSV
+write_csv(my_data, "output/my_dataset_clean.csv")
+
+# Write to RDS (R's native format -- preserves types exactly)
+saveRDS(my_data, "output/my_dataset_clean.rds")
+
+# Read it back
+my_data <- readRDS("output/my_dataset_clean.rds")
+```
+
+. . .
+
+| Format | Pros | Cons |
+|---|---|---|
+| `.csv` | Universal, opens in Excel | Loses type info (factors become strings) |
+| `.rds` | Preserves all R types exactly | Only readable in R |
+| `.dta` | Stata-compatible | Requires `haven` |
+
+# Part V: Data Exploration
+
+---
+
+## Your First Questions When You See a Dataset {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# Compact overview: types and first values
+glimpse(gapminder)
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Summary statistics per column
+summary(gapminder)
+```
+
+:::
+::::::
+
+---
+
+## More Exploration Functions {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# First n rows
+head(gapminder, 5)
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Dimensions and column names
+nrow(gapminder)
+ncol(gapminder)
+names(gapminder)
+```
+
+:::
+::::::
+
+---
+
+## Counting with `count()` and `distinct()` {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# How many observations per continent?
+# count() is the tidyverse alternative to table()
+gapminder |>
+  count(continent)
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Which years are in the data?
+# distinct() returns unique combinations of columns
+gapminder |>
+  distinct(year)
+```
+
+:::
+::::::
+
+# Part VI: Data Manipulation with `dplyr`
+
+## `dplyr` -- A Grammar of Data Manipulation {.smaller}
+
+:::::: columns
+::: {.column width="30%"}
+
+All `dplyr` functions follow the same pattern:
+
+- **First argument**: the data frame (automatically filled if working with pipe `|>`)
+- **Subsequent arguments**: what to do
+- **Return value**: always a (new) data frame
+
+:::
+
+::: {.column width="70%"}
+
+The core verbs:
+
+| Verb | What it does |
+|---|-----------------|
+| `filter()` | Keep rows that meet a condition |
+| `select()` | Keep or drop columns |
+| `mutate()` | Create or modify variables |
+| `arrange()` | Sort rows |
+| `summarise()` | Compute summary statistics |
+| `group_by()` | Group rows for grouped operations |
+| `ungroup()` | Remove grouping |
+
+:::
+::::::
+
+---
+
+## `filter()` -- Keep Rows by Condition {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# Keep only European countries
+gapminder |>
+  filter(continent == "Europe")
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Multiple conditions -- AND
+gapminder |>
+  filter(
+    continent == "Europe" &
+      year == 2007
+  )
+```
+
+:::
+::::::
+
+---
+
+## `filter()` -- More Examples {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# OR condition
+gapminder |>
+  filter(
+    country == "Germany" |
+      country == "France"
+  )
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# %in% for multiple values
+gapminder |>
+  filter(
+    country %in% c("Germany", "France", "Italy")
+  )
+```
+
+:::
+::::::
+
+---
+
+## `select()` -- Keep or Drop Columns {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# Keep specific columns
+gapminder |>
+  select(country, year, lifeExp)
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Drop columns with minus
+gapminder |>
+  select(-continent, -pop)
+```
+
+:::
+::::::
+
+---
+
+## `mutate()` -- Create or Modify Variables {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# Create a new variable: total GDP
+gapminder |>
+  mutate(gdp_total = pop * gdpPercap) |>
+  select(country, year, gdp_total)
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Modify an existing variable: GDP in billions
+gapminder |>
+  mutate(
+    gdp_billions = (pop * gdpPercap) / 1e9
+  ) |>
+  select(country, year, gdp_billions)
+```
+
+:::
+::::::
+
+---
+
+## `arrange()` -- Sort Rows {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# Ascending (default)
+gapminder |>
+  filter(year == 2007) |>
+  arrange(lifeExp) |>
+  select(country, lifeExp)
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Descending with desc()
+gapminder |>
+  filter(year == 2007) |>
+  arrange(desc(lifeExp)) |>
+  select(country, lifeExp)
+```
+
+:::
+::::::
+
+---
+
+## `summarise()` -- Compute Summary Statistics {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# Overall mean life expectancy
+gapminder |>
+  summarise(
+    mean_lifeExp = mean(lifeExp),
+    median_lifeExp = median(lifeExp),
+    n = n()
+  )
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Multiple summary statistics at once
+gapminder |>
+  filter(year == 2007) |>
+  summarise(
+    mean_gdp = mean(gdpPercap),
+    max_gdp = max(gdpPercap),
+    min_gdp = min(gdpPercap)
+  )
+```
+
+:::
+::::::
+
+---
+
+## `group_by()` + `summarise()` -- The Power Combo {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+# Mean life expectancy by continent
+gapminder |>
+  group_by(continent) |>
+  summarise(mean_lifeExp = mean(lifeExp))
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+# Mean life expectancy by continent and year
+gapminder |>
+  group_by(continent, year) |>
+  summarise(
+    mean_lifeExp = mean(lifeExp),
+    .groups = "drop" # good practice: always ungroup after
+  )
+```
+
+:::
+::::::
+
+---
+
+## Putting It Together -- A Full Pipeline {.smaller}
+
+```{r}
+gapminder |>
+  filter(year == 2007) |>
+  mutate(gdp_billions = (pop * gdpPercap) / 1e9) |>
+  group_by(continent) |>
+  summarise(
+    mean_lifeExp = round(mean(lifeExp), 1),
+    total_gdp_bn = round(sum(gdp_billions), 0),
+    n_countries = n(),
+    .groups = "drop"
+  ) |>
+  arrange(desc(mean_lifeExp))
+```
+
+. . .
+
+> Read this as: *take gapminder, then keep only 2007, then compute GDP in billions, then group by continent, then summarise, then sort by life expectancy descending.*
+
+---
+
+## Bad Practice vs. Good Practice {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+**Bad practice** -- nested or intermediate objects:
+
+```{r}
+#| eval: false
+
+gap_2007 <- filter(gapminder, year == 2007)
+gap_gdp <- mutate(gap_2007, gdp = pop * gdpPercap)
+gap_grp <- group_by(gap_gdp, continent)
+summarise(gap_grp, mean_gdp = mean(gdp))
+```
+
+:::
+
+::: {.column width="50%"}
+
+**Good practice** -- piped chain:
+
+```{r}
+#| eval: false
+
+gapminder |>
+  filter(year == 2007) |>
+  mutate(gdp = pop * gdpPercap) |>
+  group_by(continent) |>
+  summarise(mean_gdp = mean(gdp))
+```
+
+:::
+::::::
+
+. . .
+
+Both produce the same result. The piped version reads like a sentence and requires no intermediate objects. However, **you should always be aware of what each individual pipe step does**. Especially when learning, test each step separately in the console to make sure you understand how the data changes at every stage.
+
+# Part VII: A First Look at `ggplot2`
+
+---
+
+## The Grammar of Graphics {.smaller}
+
+`ggplot2` builds plots from **layers**. Every plot starts the same way:
+
+```r
+ggplot(data = <DATA>, aes(x = <VAR>, y = <VAR>, ...)) +
+  geom_*()
+```
+
+. . .
+
+The three essential pieces:
+
+- **`ggplot()`** -- sets up the canvas and declares the data
+- **`aes()`** -- maps variables to visual properties (x, y, colour, size, ...)
+- **`geom_*()`** -- the geometric object that draws the data (points, lines, bars, ...)
+
+. . .
+
+> Note the `+` operator, not the pipe `|>`. ggplot2 layers are added with `+`.
+
+---
+
+## A First Scatterplot {.smaller}
+
+:::::: columns
+::: {.column width="50%"}
+
+```{r}
+#| label: fig-scatter
+#| fig-cap: "GDP per capita vs. life expectancy, 2007"
+#| echo: true
+#| eval: true
+
+gapminder |>
+  filter(year == 2007) |>
+  ggplot(aes(
+    x = gdpPercap,
+    y = lifeExp,
+    color = continent
+  )) +
+  geom_point() +
+  theme_bw() +
+  labs(
+    x = "GDP per Capita (USD)",
+    y = "Life Expectancy (years)",
+    color = "Continent"
+  )
+```
+
+:::
+
+::: {.column width="50%"}
+
+The plot in @fig-scatter shows the classic wealth-health relationship: richer countries tend to have longer life expectancies.
+
+Notice:
+
+- data piped into `ggplot()`
+- `aes()` maps variables to visual properties
+- `geom_point()` adds the points layer
+- `theme_bw()` gives a clean look
+- `labs()` adds axis labels
+
+:::
+::::::
+
+---
+
+## Log Scale and `facet_wrap()` {.smaller}
+
+:::::: columns
+::: {.column width="55%"}
+
+```{r}
+#| label: fig-facet
+#| fig-cap: "GDP vs. life expectancy by continent, 2007"
+#| echo: true
+#| eval: true
+
+gapminder |>
+  filter(year == 2007) |>
+  ggplot(aes(
+    x = gdpPercap,
+    y = lifeExp
+  )) +
+  geom_point(alpha = 0.6) +
+  scale_x_log10() +
+  facet_wrap(~continent) +
+  theme_bw() +
+  labs(
+    x = "GDP per Capita (log scale)",
+    y = "Life Expectancy"
+  )
+```
+
+:::
+
+::: {.column width="45%"}
+
+`scale_x_log10()` -- log-transforms the x axis, making the skewed GDP distribution easier to read.
+
+`facet_wrap(~ continent)` -- creates one small panel per continent.
+
+We will go much deeper on `ggplot2` next week. Today you are just seeing the shape of it.
+
+:::
+::::::
+
+# Part VIII: Quarto Cell Options
+
+---
+
+## Execution Options -- Global vs. Cell Level {.smaller}
+
+Last week you saw `echo` and `eval` as cell-level options. You can also set them **globally** in the YAML header so they apply to all cells at once:
+
+```yaml
+execute:
+  eval: true    # run all code cells
+  echo: true    # show all source code
+  warning: false  # suppress warnings (e.g. tidyverse startup)
+  message: false  # suppress messages
+  error: false  # stop on errors (set true to render despite errors)
+  freeze: true  # don't re-run cells unless source changes
+```
+
+. . .
+
+Cell-level options **override** global ones for that specific cell:
+
+````markdown
+```{{r}}
+#| echo: false   # overrides global echo: true for this cell only
+my_plot
+```
+````
+
+---
+
+## Cell Options Reference {.smaller}
+
+| Option | Values | What it controls |
+|---|-------|-------------------------|
+| `eval` | `true` / `false` | Whether the code is executed |
+| `echo` | `true` / `false` | Whether the source code is shown |
+| `warning` | `true` / `false` | Whether warnings appear in output |
+| `message` | `true` / `false` | Whether messages appear in output |
+| `error` | `true` / `false` | Whether errors stop rendering |
+| `include` | `true` / `false` | Whether cell output appears at all |
+| `label` | `fig-*` / `tbl-*` / any string | Cell identifier for cross-referencing |
+| `fig-cap` | string | Caption for figure output |
+
+---
+
+## Labels and Cross-References {.smaller}
+
+Labelling a code cell that produces a figure enables **automatic cross-references** in your prose:
+
+:::::: columns
+::: {.column width="50%"}
+
+````markdown
+```{{r}}
+#| label: fig-lifeexp
+#| fig-cap: "Life expectancy over time"
+#| message: false
+
+gapminder |>
+  group_by(year, continent) |>
+  summarise(mean_le = mean(lifeExp),
+            .groups = "drop") |>
+  ggplot(aes(x = year, y = mean_le,
+             color = continent)) +
+  geom_line() +
+  theme_bw()
+```
+
+As shown in @fig-lifeexp, life
+expectancy has risen across all
+continents since 1952.
+````
+
+:::
+
+::: {.column width="50%"}
+
+- The `label` must start with `fig-` for figures, `tbl-` for tables
+- `@fig-lifeexp` in prose becomes "Figure 1" (auto-numbered) in the rendered output
+- Figure numbers update automatically if you add or reorder figures
+- Works in HTML, PDF, and Word output
+
+This is how academic papers keep figure references consistent. Your future self will thank you.
+
+:::
+::::::
+
+---
+
+## Suppressing Tidyverse Messages {.smaller}
+
+When you load `tidyverse`, R prints a message listing attached packages. When you use `read_csv()`, it prints column types. These are useful interactively, but clutter your rendered document.
+
+. . .
+
+Suppress them with cell options or globally:
+
+:::::: columns
+::: {.column width="50%"}
+
+**Cell level:**
+
+````markdown
+```{{r}}
+#| message: false
+#| warning: false
+library(tidyverse)
+library(gapminder)
+```
+````
+
+:::
+
+::: {.column width="50%"}
+
+**Global YAML (applies to all cells):**
+
+```yaml
+execute:
+  message: false
+  warning: false
+```
+
+:::
+::::::
+
+. . .
+
+Prefer the global approach in homework submissions so your rendered PDF looks clean.
+
+# Time to Practice!
+
+---
+
+## Walkthrough Overview
+
+- Clone the Week 4 exercise repo from GitHub (same workflow as previous weeks)
+- Open `exercise_week04.qmd` in Positron
+- Work through the tasks in order using the **gapminder** dataset
+- **Fast finishers:** optional depth exercises at the bottom of the document
+
+::: notes
+Live-load gapminder, show glimpse(), run a filter-mutate-summarise pipe together, then let them work. Circulate. Reserve ~10 min for questions and homework preview.
+:::
+
+---
+
+## Homework
+
+- Distributed via GitHub (same workflow as previous weeks)
+- Submit a rendered Quarto document (`.qmd` + rendered PDF)
+- **Due:** one week from today
+
+The homework follows the arc of today's session. You will work with the gapminder dataset to practice `dplyr` wrangling and produce at least one properly labelled and captioned figure that you cross-reference in your prose.
+
+# Thank you for your attention and see you next week!
+
+<a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a>

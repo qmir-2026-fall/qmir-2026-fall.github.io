@@ -33,6 +33,16 @@ due date, the sample solution.
 | {{< fa file-circle-check >}} | **Sample solution.** Published after the due date, for every homework. |
 | {{< fa book >}} | **Reading.** Further readings and online resources for the week. |
 | [{{< fa chalkboard >}}]{.schedule-tbd} | Greyed out means not published yet. |
+| [none]{.schedule-none} | There is no homework in that session at all. |
+:::
+
+::: {.callout-note}
+**There are `r cfg$homework$count` homework assignments, one in every session except the first and the last.**
+The first session is orientation and the last is synthesis and the exam briefing, so neither sets
+work.
+Every session from week `r cfg$homework$first_week` to week `r cfg$homework$last_week` has exactly
+one.
+Week 1 and week `r cfg$sessions$count` are marked [none]{.schedule-none} in the tables above.
 :::
 
 ::: {.callout-note}
@@ -114,7 +124,19 @@ hw_meta <- function(i) {
 # release-homework.ps1 has not created yet, and students would hit a 404.
 # The gate is evaluated at RENDER time, so release-homework.ps1 and publish-site.ps1
 # are run together at the end of the session.
+
+# A week outside the homework window has no homework AT ALL, which is a different
+# statement from "not published yet". A greyed icon says the second, so say the first
+# explicitly. The window is course.yml, never a literal week number here.
+has_hw <- function(i) {
+  i >= cfg$homework$first_week && i <= cfg$homework$last_week
+}
+no_hw <- "[none]{.schedule-none}"
+
 hw_of <- function(i) {
+  if (!has_hw(i)) {
+    return(no_hw)
+  }
   m <- hw_meta(i)
   if (is.null(m) || is.null(m$released) || as.Date(m$released) > Sys.Date()) {
     return(icon_off("laptop-code"))
@@ -122,6 +144,9 @@ hw_of <- function(i) {
   icon_link("laptop-code", sprintf("https://github.com/%s/hw-%s/generate", org, pad(i)))
 }
 sol_of <- function(i) {
+  if (!has_hw(i)) {
+    return(no_hw)
+  }
   m <- hw_meta(i)
   if (is.null(m) || is.null(m$due)) {
     return(icon_off("file-circle-check"))

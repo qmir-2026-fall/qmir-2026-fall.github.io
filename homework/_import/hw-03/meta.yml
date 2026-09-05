@@ -1,0 +1,11 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 03 and the +7 day offset from course.yml.
+slug: hw-03
+week: "03"
+title: "Homework 03: R fundamentals"
+released: 2026-09-23
+due: 2026-09-30
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: []
+data: []
