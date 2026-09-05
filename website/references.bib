@@ -1,1369 +1,1213 @@
-@book{mcelreath2020statistical,
-  title={Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  author={McElreath, Richard},
-  year={2020},
-  edition = {2},
-  publisher={Chapman and Hall/CRC},
-  doi = {10.1201/9780429029608}
-}
-
-@article{knuth1984literate,
-  title={Literate Programming},
-  author={Knuth, Donald Ervin},
-  journal={The Computer Journal},
-  volume={27},
-  number={2},
-  pages={97--111},
-  year={1984},
-  doi = {10.1093/comjnl/27.2.97},
-  publisher={Oxford University Press}
-}
-
-@book{wickham2023r4ds,
-  title={R for Data Science: Import, Tidy, Transform, Visualize, and Model Data},
-  author = {Wickham, Hadley and Çetinkaya-Rundel, Mine and Grolemund, Garrett},
-  edition={2},
-  year={2023},
-  publisher={O'Reilly},
-  url = {https://r4ds.hadley.nz/}
-}
-
-@book{gelman2014bayesian,
-  title={Bayesian Data Analysis},
-  author = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  editiom = {3},
-  year = {2014},
-  publisher={CRC Press},
-  series = {Texts in Statistical Science}
-}
-
-@incollection{wickham2023r4ds-intro,
-  title = {Introduction},
-  booktitle = {R for Data Science: Import, Tidy, Transform, Visualize, and Model Data},
-  author={Wickham, Hadley and Çetinkaya-Rundel, Mine and Grolemund, Garrett},
-  editor={Wickham, Hadley and Çetinkaya-Rundel, Mine and Grolemund, Garrett},
-  edition={2},
-  year={2023},
-  publisher={O'Reilly},
-  url = {https://r4ds.hadley.nz/intro.html}
-}
-
-@incollection{wickham2023r4ds-quarto,
-  title = {Quarto},
-  booktitle={R for Data Science: Import, Tidy, Transform, Visualize, and Model Data},
-  author={Wickham, Hadley and Çetinkaya-Rundel, Mine and Grolemund, Garrett},
-  editor={Wickham, Hadley and Çetinkaya-Rundel, Mine and Grolemund, Garrett},
-  edition={2},
-  year={2023},
-  publisher={O'Reilly},
-  url = {https://r4ds.hadley.nz/quarto.html}
-}
-
-@book{pearl2016causal,
-  title={Causal Inference in Statistics: A Primer},
-  author={Pearl, Judea and Glymour, Madelyn and Jewell, Nicholas P},
-  year={2016},
-  publisher={John Wiley \& Sons}
-}
-
-@article{kruschke2018bayesian,
-  title={Bayesian Data Analysis for Newcomers},
-  author={Kruschke, John K and Liddell, Torrin M},
-  journal={Psychonomic Bulletin \& Review},
-  volume={25},
-  number={1},
-  pages={155--177},
-  year={2018},
-  publisher={Springer}
-}
-
-@article{kruschke2014doing,
-  title={Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and STAN},
-  author={Kruschke, John},
-  year={2014},
-  publisher={Academic Press}
-}
-
-@article{burkner2017advanced,
-  title={Advanced Bayesian Multilevel Modeling with the R Package brms},
-  author={B{\"u}rkner, Paul-Christian},
-  journal={arXiv preprint arXiv:1705.11123},
-  year={2017}
-}
-
-@manual{quarto-cheatsheet,
-  title        = {Publish and Share with Quarto: Quarto Cheatsheet},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {2025},
-  month        = {07},
-  url          = {https://rstudio.github.io/cheatsheets/html/quarto.html},
-  note         = {Updated: July 2025; CC BY SA},
-}
-
-@manual{lubridate-cheatsheet,
-  title        = {Dates and Times with lubridate: Cheatsheet},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {2024},
-  month        = {05},
-  url          = {https://rstudio.github.io/cheatsheets/html/lubridate.html},
-  note         = {Updated: May 2024; CC BY SA}, 
-}
-
-@manual{factors-cheatsheet,
-  title        = {Factors with forcats: Cheatsheet},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {2024},
-  month        = {05},
-  url          = {https://rstudio.github.io/cheatsheets/html/factors.html},
-  note         = {Updated: May 2024; CC BY SA}, 
-}
-
-@manual{strings-cheatsheet,
-  title        = {String manipulation with stringr: Cheatsheet},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {2025},
-  month        = {07},
-  url          = {https://rstudio.github.io/cheatsheets/html/strings.html},
-  note         = {Updated: July 2025; CC BY SA}, 
-}
-
-@manual{data-import-cheatsheet,
-  title        = {Data import with the tidyverse: Cheatsheet},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {n.d.},
-  url          = {https://rstudio.github.io/cheatsheets/html/data-import.html},
-  note         = {CC BY SA}, 
-}
-
-@manual{tidyr-cheatsheet,
-  title        = {Data tidying with tidyr: Cheatsheet},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {2024},
-  month        = {05},
-  url          = {https://rstudio.github.io/cheatsheets/html/tidyr.html},
-  note         = {Updated: May 2024; CC BY SA}, 
-}
-
-@manual{data-transformation-cheatsheet,
-  title        = {Data transformation with dplyr: Cheatsheet},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {2025},
-  month        = {08},
-  url          = {https://rstudio.github.io/cheatsheets/html/data-transformation.html},
-  note         = {Updated: August 2025; CC BY SA}, 
-}
-
-@manual{data-visualization-cheatsheet,
-  title        = {Data visualization with ggplot2: Cheatsheet},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {2025},
-  month        = {08},
-  url          = {https://rstudio.github.io/cheatsheets/html/data-visualization.html},
-  note         = {Updated: August 2025; CC BY SA}, 
-}
-
-@manual{quarto-guide,
-  title        = {Quarto Guide},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {n.d.},
-  url          = {https://quarto.org/docs/guide/},
-  note         = {Quarto documentation — comprehensive guide to using Quarto; accessed 2026-02-06},
-}
-
-@manual{white2021git4dummies,
-  title        = {Git Tutorial For Dummies},
-  author       = {{Nick White}},
-  organization = {YouTube},
-  year         = {2021},
-  url          = {https://www.youtube.com/watch?v=mJ-qvsxPHpY},
-  note         = {accessed 2026-02-09},
-}
-
-@manual{positron-layout,
-  title        = {Positron Layout},
-  author       = {{Posit Software, PBC}},
-  organization = {Posit},
-  year         = {n.d.},
-  url          = {https://positron.posit.co/layout.html},
-  note         = {Positron documentation — overview of customizable layout options for the Positron IDE; accessed 2026-02-06},  
-}
-
-@manual{datacamp-intro-r,
-  title        = {Introduction to {R}},
-  author       = {{DataCamp}},
-  organization = {DataCamp},
-  year         = {2026},
-  url          = {https://www.datacamp.com/courses/free-introduction-to-r},
-  note         = {Online interactive course covering core R data structures (vectors, matrices, factors, lists, data frames); instructor: Jonathan Cornelissen; accessed 2026-02-20},
-}
-
-@manual{datacamp-tidyverse,
-  title        = {Introduction to the Tidyverse},
-  author       = {{DataCamp}},
-  organization = {DataCamp},
-  year         = {2026},
-  url          = {https://www.datacamp.com/courses/introduction-to-the-tidyverse},
-  note         = {Online interactive course introducing data manipulation and visualization in R using dplyr and ggplot2; instructor: David Robinson; accessed 2026-02-20},
-}
-
-@manual{datacamp-foundations-probability,
-  title        = {Foundations of Probability in R},
-  author       = {{DataCamp}},
-  organization = {DataCamp},
-  year         = {2022},
-  url          = {https://www.datacamp.com/courses/foundations-of-probability-in-r},
-  note         = {Online interactive course covering random variables, probability distributions, simulation, and Bayesian updating in R; instructor: David Robinson; accessed 2026-02-20},
-}
-
-@manual{base-r-cheatsheet,
-  title        = {Base {R}: Cheatsheet},
-  author       = {Mhairi McNeill},
-  organization = {IQSS, Harvard University},
-  year         = {2015},
-  url          = {https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf},
-  note         = {Updated: March 15, 2025; CC BY}, 
-}
-
-@manual{datacamp-getting-started-r-cheatsheet,
-  title        = {Getting Started with {R} Cheat Sheet},
-  author       = {{DataCamp}},
-  organization = {DataCamp},
-  year         = {2022},
-  month        = {06},
-  url          = {https://www.datacamp.com/cheat-sheet/getting-started-r},
-  note         = {Published: June 3, 2022; accessed 2026-02-20}, 
-}
-
-@article{ccetinkaya2021educator,
-  title={An educator's perspective of the tidyverse},
-  author={{\c{C}}etinkaya-Rundel, Mine and Hardin, Johanna and Baumer, Benjamin S and McNamara, Amelia and Horton, Nicholas J and Rundel, Colin},
-  journal={arXiv preprint arXiv:2108.03510},
-  year={2021},
-  doi = {10.48550/arXiv.2108.03510}
-}
-
-@incollection{wickham2023r4ds-whole-game,
-  title = {Whole game},
-  booktitle = {R for Data Science: Import, Tidy, Transform, Visualize, and Model Data},
-  author={Wickham, Hadley and Çetinkaya-Rundel, Mine and Grolemund, Garrett},
-  editor={Wickham, Hadley and Çetinkaya-Rundel, Mine and Grolemund, Garrett},
-  edition={2},
-  year={2023},
-  publisher={O'Reilly},
-  url = {https://r4ds.hadley.nz/intro.html}
-}
-
-@book{wickham2023r4ds,
-title = {R for Data Science: Import, Tidy, Transform, Visualize, and Model Data},
-  author={Wickham, Hadley and Çetinkaya-Rundel, Mine and Grolemund, Garrett},
-  edition={2},
-  year={2023},
-  publisher={O'Reilly},
-  url = {https://r4ds.hadley.nz/intro.html}
-}
-
-
-@book{wickham2023ggplot2,
-title = {ggplot2: Elegant Graphics for Data Analysis},
-  author={Wickham, Hadley and Navarro, Danielle and Pedersen, Thomas Lin},
-  edition={3},
-  year={2023},
-  url = {https://ggplot2-book.org/}
-}
-
-@manual{datacamp-intro-ggplot2,
-  title        = {Introduction to Data Visualization with ggplot2},
-  author       = {{DataCamp}},
-  organization = {DataCamp},
-  year         = {2025},
-  url          = {https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2},
-  note         = {Online interactive course introducing the grammar of graphics and practical data visualization in R using ggplot2; instructor: Rick Scavetta; accessed 2026-03-12},
-}
-
-@manual{datacamp-intermediate-ggplot2,
-  title        = {Intermediate Data Visualization with ggplot2},
-  author       = {{DataCamp}},
-  organization = {DataCamp},
-  year         = {2024},
-  url          = {https://app.datacamp.com/learn/courses/intermediate-data-visualization-with-ggplot2},
-  note         = {Online interactive course on advanced ggplot2 visualization techniques including statistical transformations, coordinate systems, facets, and visualization best practices in R; instructor: Rick Scavetta; accessed 2026-03-12},
-}
-
-@online{mcelreath2026rethinking-A01,
-  title        = {Statistical Rethinking 2026 Lecture A01: Introduction to Bayesian Workflow},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=ztbYkBPDOgU},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-A02,
-  title        = {Statistical Rethinking 2026 Lecture A02: Building a Generative Model},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=2nqGvV6K3kY},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-A03,
-  title        = {Statistical Rethinking 2026 Lecture A03: Sampling and Simulation},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=AdpYxM4K2Q0},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-A04,
-  title        = {Statistical Rethinking 2026 Lecture A04: Linear Models},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=6z4YxVYp9R8},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-A05,
-  title        = {Statistical Rethinking 2026 Lecture A05: Causal Models and DAGs},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=7H9xkQp0m8U},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-A06,
-  title        = {Statistical Rethinking 2026 Lecture A06: Multivariate Models},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=5x4M5Zc1lPQ},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-A07,
-  title        = {Statistical Rethinking 2026 Lecture A07: Maximum Entropy and GLMs},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=GL1xPtH5yXQ},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-A08,
-  title        = {Statistical Rethinking 2026 Lecture A08: MCMC and Item Response Models},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=N_LRQUrdHag},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-B01,
-  title        = {Statistical Rethinking 2026 Lecture B01: Hamiltonian Monte Carlo},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=7JHkq0l9p2M},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-B02,
-  title        = {Statistical Rethinking 2026 Lecture B02: Hierarchical Models},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=FdnMWdICdRs},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-B03,
-  title        = {Statistical Rethinking 2026 Lecture B03: Multilevel Models},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=0h9q0YhT0Q4},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-B04,
-  title        = {Statistical Rethinking 2026 Lecture B04: Measurement Models},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=F3xQqG7C1kE},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-B05,
-  title        = {Statistical Rethinking 2026 Lecture B05: Gaussian Processes},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=QyWvJ0Y6H8g},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-B06,
-  title        = {Statistical Rethinking 2026 Lecture B06: Mixture Models},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=U5yY1zQqz8c},
-  note         = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
-}
-
-@online{mcelreath2026rethinking-course,
-  title        = {Statistical Rethinking 2026},
-  author       = {McElreath, Richard},
-  year         = {2026},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/playlist?list=PLDcUM9US4XdPMtSV81e1R_4B6NugQBvTP},
-  note         = {Full lecture series accompanying Statistical Rethinking; accessed 2026-03-12}
-}
-
 @online{3blue1brown-bayes,
-  title        = {Bayes theorem, the geometry of changing beliefs},
-  author       = {3blue1brown},
-  year         = {2019},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=HZGCoVF3YvM},
-  note         = {Accessed 2026-03-12}
+  title         = {Bayes theorem, the geometry of changing beliefs},
+  author        = {3blue1brown},
+  year          = {2019},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=HZGCoVF3YvM},
+  note          = {Accessed 2026-03-12}
 }
-
-@online{veritasium-bayes,
-  title        = {The Bayesian Trap},
-  author       = {Veritasium},
-  year         = {2017},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=R13BD8qKeTg},
-  note         = {Accessed 2026-03-12}
-}
-
-@incollection{mcelreath2020rethinking-ch1,
-  author    = {McElreath, Richard},
-  title     = {The Golem of Prague},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch2,
-  author    = {McElreath, Richard},
-  title     = {Small Worlds and Large Worlds},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch3,
-  author    = {McElreath, Richard},
-  title     = {Sampling the Imaginary},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@article{hoekstra2014robust,
-  title={Robust misinterpretation of confidence intervals},
-  author={Hoekstra, Rink and Morey, Richard D and Rouder, Jeffrey N and Wagenmakers, Eric-Jan},
-  journal={Psychonomic bulletin \& review},
-  volume={21},
-  number={5},
-  pages={1157--1164},
-  year={2014},
-  publisher={Springer}
-}
-
-@incollection{mcelreath2020rethinking-ch4,
-  author    = {McElreath, Richard},
-  title     = {Geocentric Models},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch5,
-  author    = {McElreath, Richard},
-  title     = {The Many Variables and the Spurious Waffles},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch6,
-  author    = {McElreath, Richard},
-  title     = {The Haunted DAG and the Causal Terror},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch7,
-  author    = {McElreath, Richard},
-  title     = {Ulysses' Compass},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch8,
-  author    = {McElreath, Richard},
-  title     = {Conditional Manatees},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch10,
-  author    = {McElreath, Richard},
-  title     = {Big Entropy and the Generalized Linear Model},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch11,
-  author    = {McElreath, Richard},
-  title     = {God Spiked the Integers},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch12,
-  author    = {McElreath, Richard},
-  title     = {Monsters and Mixtures},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch13,
-  author    = {McElreath, Richard},
-  title     = {Models with Memory},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch14,
-  author    = {McElreath, Richard},
-  title     = {Adventures in Covariance},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{mcelreath2020rethinking-ch15,
-  author    = {McElreath, Richard},
-  title     = {Missing Data and Other Opportunities},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@incollection{gelman2013bda-ch1,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Probability and Inference},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch2,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Single-Parameter Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch3,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Introduction to Multiparameter Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch4,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Asymptotics and Connections to Non-Bayesian Approaches},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch5,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Hierarchical Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch6,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Model Checking},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch7,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Evaluating, Comparing, and Expanding Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch8,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Modeling Accounting for Data Collection},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch9,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Decision Analysis},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch10,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Introduction to Bayesian Computation},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch11,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Basics of Markov Chain Simulation},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch12,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Computationally Efficient Markov Chain Simulation},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch13,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Modal and Distributional Approximations},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch14,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Introduction to Regression Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch15,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Hierarchical Linear Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch16,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Generalized Linear Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch17,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Models for Robust Inference},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch18,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Models for Missing Data},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch19,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Parametric Nonlinear Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch20,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Basis Function Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch21,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Gaussian Process Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch22,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Finite Mixture Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@incollection{gelman2013bda-ch23,
-  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
-  title     = {Dirichlet Process Models},
-  booktitle = {Bayesian Data Analysis},
-  edition   = {3},
-  publisher = {Chapman and Hall/CRC},
-  year      = {2013},
-  url       = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
-}
-
-@article{metropolis1949monte,
-  title={The Monte Carlo Method},
-  author={Metropolis, Nicholas and Ulam, Stanislaw},
-  journal={Journal of the American Statistical Association},
-  volume={44},
-  number={247},
-  pages={335--341},
-  year={1949},
-  publisher={Taylor \& Francis},
-  doi = {10.1080/01621459.1949.10483310}
-}
-
-@article{metropolis1953equation,
-  title={Equation of State Calculations by Fast Computing Machines},
-  author={Metropolis, Nicholas and Rosenbluth, Arianna W. and Rosenbluth, Marshall N. and Teller, Augusta H. and Teller, Edward},
-  journal={The Journal of Chemical Physics},
-  volume={21},
-  number={6},
-  pages={1087--1092},
-  year={1953},
-  publisher={American Institute of Physics},
-  doi = {10.1063/1.1699114}
-}
-
-@article{gelfand1990sampling,
-  title={Sampling-Based Approaches to Calculating Marginal Densities},
-  author={Gelfand, Alan E. and Smith, Adrian FM},
-  journal={Journal of the American Statistical Association},
-  volume={85},
-  number={410},
-  pages={398--409},
-  year={1990},
-  publisher={Taylor \& Francis},
-  doi = {10.1080/01621459.1990.10476213}
-}
-
-@article{gelfand1990illustration,
-  title={Illustration of Bayesian Inference in Normal Data Models Using Gibbs Sampling},
-  author={Gelfand, Alan E. and Hills, Susan E. and Racine-Poon, Amy and Smith, Adrian FM},
-  journal={Journal of the American Statistical Association},
-  volume={85},
-  number={412},
-  pages={972--985},
-  year={1990},
-  publisher={Taylor \& Francis},
-  doi = {10.1080/01621459.1990.10474968}
-}
-
-@article{hoffman2014no,
-  author  = {Matthew D. Hoffman and Andrew Gelman},
-  title   = {The No-U-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo},
-  journal = {Journal of Machine Learning Research},
-  year    = {2014},
-  volume  = {15},
-  number  = {47},
-  pages   = {1593--1623},
-  url     = {http://jmlr.org/papers/v15/hoffman14a.html}
-}
-
-@article{burkner2017brms,
-  title={brms: An {{R}} Package for Bayesian Multilevel Models Using Stan},
-  author={B{\"u}rkner, Paul-Christian},
-  journal={Journal of Statistical Software},
-  volume={80},
-  pages={1--28},
-  year={2017}
-}
-
-@article{vehtari2021rank,
-  title={Rank-Normalization, Folding, and Localization: An Improved $\hat{R}$ for Assessing Convergence of MCMC (with Discussion)},
-  author={Vehtari, Aki and Gelman, Andrew and Simpson, Daniel and Carpenter, Bob and B{\"u}rkner, Paul-Christian},
-  journal={Bayesian Analysis},
-  volume={16},
-  number={2},
-  pages={667--718},
-  year={2021},
-  doi = {10.1214/20-BA1221},
-  publisher={International Society for Bayesian Analysis}
-}
-
-@incollection{mcelreath2020rethinking-ch9,
-  author    = {McElreath, Richard},
-  title     = {Markov Chain Monte Carlo},
-  booktitle = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
-  publisher = {Chapman and Hall/CRC},
-  edition   = {2},
-  year      = {2020},
-  doi       = {10.1201/9780429029608}
-}
-
-@online{montecarlo2021simulation,
-  title        = {Monte Carlo Simulation},
-  author       = {{MarbleScience}},
-  year         = {2021},
-  organization = {YouTube},
-  url          = {https://www.youtube.com/watch?v=7ESK5SaP-bc},
-  note         = {accessed 2026-03-19}
-}
-
-@article{carpenter2017stan,
-  title={Stan: A Probabilistic Programming Language},
-  author={Carpenter, Bob and Gelman, Andrew and Hoffman, Matthew D. and Lee, Daniel and Goodrich, Ben and Betancourt, Michael and Brubaker, Marcus and Guo, Jiqiang and Li, Peter and Riddell, Allen},
-  journal={Journal of Statistical Software},
-  volume={76},
-  pages={1--32},
-  year={2017},
-  doi = {10.18637/jss.v076.i01}
-}
-
-@misc{ess11multilevel2025,
-  title        = {{ESS11} Multilevel Data, Edition 1.2},
-  author       = {{European Social Survey European Research Infrastructure (ESS ERIC)}},
-  year         = {2025},
-  publisher    = {Sikt -- Norwegian Agency for Shared Services in Education and Research},
-  doi          = {10.21338/ess11md_e01_2}
-}
-
-% ============================================================
-% Bayesian Political Science – General (First List)
-% ============================================================
-
-@article{fariss2014respect,
-  author    = {Christopher J. Fariss},
-  title     = {Respect for Human Rights has Improved Over Time: Modeling the Changing Standard of Accountability},
-  journal   = {American Political Science Review},
-  year      = {2014},
-  volume    = {108},
-  number    = {2},
-  pages     = {297--318},
-  doi       = {10.1017/S0003055414000070}
-}
-
-@article{humphreys2015mixing,
-  author    = {Macartan Humphreys and Alan M. Jacobs},
-  title     = {Mixing Methods: A Bayesian Approach},
-  journal   = {American Political Science Review},
-  year      = {2015},
-  volume    = {109},
-  number    = {4},
-  pages     = {653--673},
-  doi       = {10.1017/S0003055415000453}
-}
-
-@article{stegmueller2013many,
-  author    = {Daniel Stegmueller},
-  title     = {How Many Countries for Multilevel Modeling? A Comparison of Frequentist and Bayesian Approaches},
-  journal   = {American Journal of Political Science},
-  year      = {2013},
-  volume    = {57},
-  number    = {3},
-  pages     = {748--761},
-  doi       = {10.1111/ajps.12001}
-}
-
-@article{jackman2000estimation,
-  author    = {Simon Jackman},
-  title     = {Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation},
-  journal   = {Political Analysis},
-  year      = {2000},
-  volume    = {8},
-  number    = {4},
-  pages     = {307--332},
-  doi       = {10.1093/oxfordjournals.pan.a029818 }
-}
-
-@article{grimmer2010bayesian,
-  author    = {Justin Grimmer},
-  title     = {A Bayesian Hierarchical Topic Model for Political Texts: Measuring Expressed Agendas in Senate Press Releases},
-  journal   = {Political Analysis},
-  year      = {2010},
-  volume    = {18},
-  number    = {1},
-  pages     = {1--35},
-  doi       = {10.1093/pan/mpp034}
-}
-
-@article{linzer2015global,
-  author    = {Drew A. Linzer and Jeffrey K. Staton},
-  title     = {A Global Measure of Judicial Independence, 1948--2012},
-  journal   = {Journal of Law and Courts},
-  year      = {2015},
-  volume    = {3},
-  number    = {2},
-  pages     = {223--256},
-  doi       = {10.1086/682150}
-}
-
-@article{lauderdale2014supreme,
-  author    = {Benjamin E. Lauderdale and Tom S. Clark},
-  title     = {Scaling Politically Meaningful Dimensions Using Texts and Votes},
-  journal   = {American Political Science Review},
-  year      = {2014},
-  volume    = {108},
-  number    = {4},
-  pages     = {754--770},
-  doi       = {10.1017/S0003055413000543}
-}
-
-@article{claassen2019estimating,
-  author    = {Christopher Claassen},
-  title     = {Estimating Smooth Country--Year Panels of Public Opinion},
-  journal   = {Political Analysis},
-  year      = {2019},
-  volume    = {27},
-  number    = {1},
-  pages     = {1--20},
-  doi       = {10.1017/pan.2018.32}
-}
-
-@article{bafumi2005practical,
-  author    = {Joseph Bafumi and Andrew Gelman and David K. Park and Noah Kaplan},
-  title     = {Practical Issues in Implementing and Understanding Bayesian Ideal Point Estimation},
-  journal   = {Political Analysis},
-  year      = {2005},
-  volume    = {13},
-  number    = {2},
-  pages     = {171--187},
-  doi       = {10.1093/pan/mpi010}
-}
-
-% ============================================================
-% Bayesian Political Science – Binary Outcomes (Second List)
-% ============================================================
-
-@article{clinton2004statistical,
-  author    = {Joshua Clinton and Simon Jackman and Douglas Rivers},
-  title     = {The Statistical Analysis of Roll Call Data},
-  journal   = {American Political Science Review},
-  year      = {2004},
-  volume    = {98},
-  number    = {2},
-  pages     = {355--370},
-  doi       = {10.1017/S0003055404001194}
-}
-
-@article{treier2008democracy,
-  author    = {Shawn Treier and Simon Jackman},
-  title     = {Democracy as a Latent Variable},
-  journal   = {American Journal of Political Science},
-  year      = {2008},
-  volume    = {52},
-  number    = {1},
-  pages     = {201--217},
-  doi       = {10.1111/j.1540-5907.2007.00308.x}
-}
-
-@article{fariss2014respect2,
-  author    = {Christopher J. Fariss},
-  title     = {Respect for Human Rights has Improved Over Time: Modeling the Changing Standard of Accountability},
-  journal   = {American Political Science Review},
-  year      = {2014},
-  volume    = {108},
-  number    = {2},
-  pages     = {297--318},
-  doi       = {10.1017/S0003055414000070}
-}
-
-@article{lauderdale2014scaling,
-  author    = {Benjamin E. Lauderdale and Tom S. Clark},
-  title     = {Scaling Politically Meaningful Dimensions Using Texts and Votes},
-  journal   = {American Political Science Review},
-  year      = {2014},
-  volume    = {108},
-  number    = {4},
-  pages     = {754--770},
-  doi       = {10.1111/ajps.12085}
-}
-
-@article{western1994bayesian,
-  author    = {Bruce Western and Simon Jackman},
-  title     = {Bayesian Inference for Comparative Research},
-  journal   = {American Political Science Review},
-  year      = {1994},
-  volume    = {88},
-  number    = {2},
-  pages     = {412--423},
-  doi       = {10.2307/2944713}
-}
-
-@article{esarey2012assessing,
-  author    = {Justin Esarey and Andrew Pierce},
-  title     = {Assessing Fit Quality and Testing for Misspecification in Binary-Dependent Variable Models},
-  journal   = {Political Analysis},
-  year      = {2012},
-  volume    = {20},
-  number    = {4},
-  pages     = {480--500},
-  doi       = {10.1093/pan/mpr039}
-}
-
-@article{claassen2020support,
-  author    = {Christopher Claassen},
-  title     = {Does Public Support Help Democracy Survive?},
-  journal   = {American Journal of Political Science},
-  year      = {2020},
-  volume    = {64},
-  number    = {1},
-  pages     = {18--35},
-  doi       = {10.1111/ajps.12452}
-}
-
-@article{linzer2015judicial,
-  author    = {Drew A. Linzer and Jeffrey K. Staton},
-  title     = {A Global Measure of Judicial Independence, 1948--2012},
-  journal   = {Journal of Law and Courts},
-  year      = {2015},
-  volume    = {3},
-  number    = {2},
-  pages     = {223--256},
-  doi       = {10.1086/682150}
-}
-
-@article{park2004bayesian,
-  author    = {David K. Park and Andrew Gelman and Joseph Bafumi},
-  title     = {Bayesian Multilevel Estimation with Poststratification: State-Level Estimates from National Polls},
-  journal   = {Political Analysis},
-  year      = {2004},
-  volume    = {12},
-  number    = {4},
-  pages     = {375--385},
-  doi       = {10.1093/pan/mph024}
-}
-
-@article{reuning2019exploring,
-  author    = {Kevin Reuning and Michael R. Kenwick and Christopher J. Fariss},
-  title     = {Exploring the Dynamics of Latent Variable Models},
-  journal   = {Political Analysis},
-  year      = {2019},
-  volume    = {27},
-  number    = {4},
-  pages     = {503--517},
-  doi       = {10.1017/pan.2019.1}
-}
-
-@article{brambor2006understanding,
-  title={Understanding interaction models: Improving empirical analyses},
-  author={Brambor, Thomas and Clark, William Roberts and Golder, Matt},
-  journal={Political analysis},
-  volume={14},
-  number={1},
-  pages={63--82},
-  year={2006},
-  publisher={Cambridge University Press},
-  doi = {10.1093/pan/mpi014}
-}
-
-@article{vehtari2017practical,
-  title={Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC},
-  author={Vehtari, Aki and Gelman, Andrew and Gabry, Jonah},
-  journal={Statistics and computing},
-  volume={27},
-  number={5},
-  pages={1413--1432},
-  year={2017},
-  publisher={Springer},
-  doi = {10.1007/s11222-016-9696-4}
-}
-
-@book{king1989unifying,
-  title={Unifying Political Methodology: The Likelihood Theory of Statistical Inference},
-  author={King, Gary},
-  year={1989},
-  publisher={Cambridge}
-}
-
-@article{deng2022thebenefits, 
-  author = {Deng, Jianyang and Lin, Yijia}, 
-  title = {The Benefits and Challenges of ChatGPT: An Overview}, 
-  journal = {Frontiers in Computing and Intelligent Systems}, 
-  year = {2022}, 
-  volume = {2}, 
-  number = {2}, 
-  pages = {81-83}
-}
-
-@article{haque2024exploring, 
-  author = {Haque, Md. Asraful and Li, Shuai}, 
-  title = {Exploring ChatGPT and its impact on society}, 
-  journal = {AI and Ethics}, 
-  year = {2024}, 
-  volume = {5}, 
-  pages = {791-803}
-}
-
-@book{sarrion2023exploring,
-  title={Exploring the Power of ChatGPT: Applications, Techniques, and Implications},
-  author={Sarrion, Eric},
-  year={2023},
-  publisher={Apress},
-  address = {Berkeley}
-}
-
-@article{mogavi2024chatgpt,
-  title={ChatGPT in education: A blessing or a curse? A qualitative study exploring early adopters’ utilization and perceptions},
-  author={Mogavi, Reza Hadi and Deng, Chao and Kim, Justin Juho and Zhou, Pengyuan and Kwon, Young D and Metwally, Ahmed Hosny Saleh and Tlili, Ahmed and Bassanelli, Simone and Bucchiarone, Antonio and Gujar, Sujit and others},
-  journal={Computers in Human Behavior: Artificial Humans},
-  volume={2},
-  number={1},
-  pages={100027},
-  year={2024},
-  publisher={Elsevier}
-}
-
-
-@article{brown2020language,
-  title={Language models are few-shot learners},
-  author={Brown, Tom and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared D and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and others},
-  journal={Advances in Neural Information Processing Systems},
-  volume={33},
-  pages={1877--1901},
-  year={2020}
-}
-
-@article{openai2023gpt4,
-  title={GPT-4 Technical Report},
-  author={OpenAI},
-  journal={arXiv preprint arXiv:2303.08774},
-  year={2023},
-  url={https://cdn.openai.com/papers/gpt-4.pdf}
-}
-
-
 @article{argyle2023out,
-  title={Out of one, many: Using language models to simulate human samples},
-  author={Argyle, Lisa P and Busby, Ethan C and Fulda, Nancy and Gubler, Joshua R and Rytting, Christopher and Wingate, David},
-  journal={Political Analysis},
-  volume={31},
-  number={3},
-  pages={337--351},
-  year={2023},
-  publisher={Cambridge University Press},
-  doi={10.1017/pan.2023.2}
+  title         = {Out of one, many: Using language models to simulate human samples},
+  author        = {Argyle, Lisa P and Busby, Ethan C and Fulda, Nancy and Gubler, Joshua R and Rytting, Christopher and Wingate, David},
+  journal       = {Political Analysis},
+  volume        = {31},
+  number        = {3},
+  pages         = {337--351},
+  year          = {2023},
+  publisher     = {Cambridge University Press},
+  doi           = {10.1017/pan.2023.2}
 }
-
-
-@article{chen2025unleashing,
-  title={Unleashing the potential of prompt engineering for large language models},
-  author={Chen, B. and Zhang, Z. and Langren{\'e}, N. and Zhu, S.},
-  journal={Patterns},
-  volume={6},
-  number={6},
-  pages={101260},
-  year={2025},
-  doi={10.1016/j.patter.2025.101260}
-}
-
-@article{chen2024evaluating,
-  title={Evaluating the ChatGPT family of models for biomedical reasoning and classification},
-  author={Chen, S. and Li, Y. and Lu, S. and Van, H. and Aerts, H. J. W. L. and Savova, G. K. and Bitterman, D. S.},
-  journal={Journal of the American Medical Informatics Association},
-  volume={31},
-  number={4},
-  pages={940--948},
-  year={2024},
-  doi={10.1093/jamia/ocad256}
-}
-
-@article{noy2023experimental,
-  title={Experimental evidence on the productivity effects of generative artificial intelligence},
-  author={Noy, Shakked and Zhang, Whitney},
-  journal={Science},
-  volume={381},
-  number={6654},
-  pages={187--192},
-  year={2023},
-  doi={10.1126/science.adh2586}
-}
-
-@article{shah2023creation,
-  title={Creation and adoption of large language models in medicine},
-  author={Shah, N. H. and Entwistle, D. and Pfeffer, M. A.},
-  journal={JAMA},
-  volume={330},
-  number={9},
-  pages={866--869},
-  year={2023},
-  doi={10.1001/jama.2023.14217}
-}
-
-@article{ratkovic2025harnessing,
-  title={Harnessing GPT for Enhanced Academic Writing: Evidence from a Field Experiment with Early-Career Researchers in the Social Sciences},
-  author={Ratkovic, Marc and Gschwend, Thomas and Wendering, Leonard and Bauer, Kevin and Kurella, Anna-Sophie and Rittmann, Oliver and Sauter, Melanie and Schwitter, Nicole},
-  journal={SSRN Electronic Journal},
-  year={2025},
-  doi={10.2139/ssrn.5313034}
-}
-
-@article{wendering2025lessons,
-  title={Lessons from an AI-Sprint: a proposal for measuring human-AI cooperation in research},
-  author={Wendering, Leonard and Ratkovic, Marc and Gschwend, Thomas and Schoenenberger, Henning and Scaplehorn, Niki},
-  journal={Humanities and Social Sciences Communications},
-  volume={12},
-  number={1},
-  pages={1--4},
-  year={2025},
-  publisher={Palgrave},
-  doi = {10.1057/s41599-025-06110-1}
-}
-
-@article{jacobsen2023promises,
-  title={The promises and pitfalls of ChatGPT as a feedback provider in higher education: An exploratory study of prompt engineering and the quality of AI-driven feedback},
-  author={Jacobsen, Lucas Jasper and Weber, Kira Elena},
-  journal={OSF Preprints},
-  year={2023},
-  doi={10.31219/osf.io/cr257}
-}
-
 @article{azaria2023chatgptremarkabletool,
-  title={ChatGPT is a Remarkable Tool -- For Experts}, 
-  author={Azaria, Amos and Azoulay, Rina and Reches, Shulamit},
-  journal={arXiv preprint arXiv:2306.03102},
-  year={2023},
-  doi = {10.48550/arXiv.2306.03102}
+  title         = {ChatGPT is a Remarkable Tool -- For Experts},
+  author        = {Azaria, Amos and Azoulay, Rina and Reches, Shulamit},
+  journal       = {arXiv preprint arXiv:2306.03102},
+  year          = {2023},
+  doi           = {10.48550/arXiv.2306.03102}
 }
-
-@book{gelman2026workflow,
-  title = {Bayesian Workflow},
-  author = {Gelman, Andrew and Vehtari, Aki and McElreath, Richard and Simpson, Daniel and Margossian, Charles C. and Yao, Yuling and Kennedy, Lauren and Gabry, Jonah and B{\"u}rkner, Paul-Christian and Modr{\'a}k, Martin and Barajas, Vianey Leos},
-  year = {2026},
-  publisher = {Chapman and Hall/CRC},
-  address = {New York},
-  isbn = {9781003044024},
-  doi = {10.1201/9781003044024}
+@article{bafumi2005practical,
+  author        = {Joseph Bafumi and Andrew Gelman and David K. Park and Noah Kaplan},
+  title         = {Practical Issues in Implementing and Understanding Bayesian Ideal Point Estimation},
+  journal       = {Political Analysis},
+  year          = {2005},
+  volume        = {13},
+  number        = {2},
+  pages         = {171--187},
+  doi           = {10.1093/pan/mpi010}
 }
-
+@manual{base-r-cheatsheet,
+  title         = {Base {R}: Cheatsheet},
+  author        = {Mhairi McNeill},
+  organization  = {IQSS, Harvard University},
+  year          = {2015},
+  url           = {https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf},
+  note          = {Updated: March 15, 2025; CC\hspace{0.167em}BY}
+}
+@article{brambor2006understanding,
+  title         = {Understanding interaction models: Improving empirical analyses},
+  author        = {Brambor, Thomas and Clark, William Roberts and Golder, Matt},
+  journal       = {Political analysis},
+  volume        = {14},
+  number        = {1},
+  pages         = {63--82},
+  year          = {2006},
+  publisher     = {Cambridge University Press},
+  doi           = {10.1093/pan/mpi014}
+}
+@article{brown2020language,
+  title         = {Language models are few-shot learners},
+  author        = {Brown, Tom and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared D and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and others},
+  journal       = {Advances in Neural Information Processing Systems},
+  volume        = {33},
+  pages         = {1877--1901},
+  year          = {2020}
+}
+@article{burkner2017advanced,
+  title         = {Advanced Bayesian Multilevel Modeling with the R Package brms},
+  author        = {B{\"u}rkner, Paul-Christian},
+  journal       = {arXiv preprint arXiv:1705.11123},
+  year          = {2017}
+}
+@article{burkner2017brms,
+  title         = {brms: An {{R}} Package for Bayesian Multilevel Models Using Stan},
+  author        = {B{\"u}rkner, Paul-Christian},
+  journal       = {Journal of Statistical Software},
+  volume        = {80},
+  pages         = {1--28},
+  year          = {2017}
+}
+@article{carpenter2017stan,
+  title         = {Stan: A Probabilistic Programming Language},
+  author        = {Carpenter, Bob and Gelman, Andrew and Hoffman, Matthew D. and Lee, Daniel and Goodrich, Ben and Betancourt, Michael and Brubaker, Marcus and Guo, Jiqiang and Li, Peter and Riddell, Allen},
+  journal       = {Journal of Statistical Software},
+  volume        = {76},
+  pages         = {1--32},
+  year          = {2017},
+  doi           = {10.18637/jss.v076.i01}
+}
+@article{ccetinkaya2021educator,
+  title         = {An educator's perspective of the tidyverse},
+  author        = {{\c{C}}etinkaya-Rundel, Mine and Hardin, Johanna and Baumer, Benjamin S and McNamara, Amelia and Horton, Nicholas J and Rundel, Colin},
+  journal       = {arXiv preprint arXiv:2108.03510},
+  year          = {2021},
+  doi           = {10.48550/arXiv.2108.03510}
+}
+@article{chen2024evaluating,
+  title         = {Evaluating the ChatGPT family of models for biomedical reasoning and classification},
+  author        = {Chen, S. and Li, Y. and Lu, S. and Van, H. and Aerts, H. J. W. L. and Savova, G. K. and Bitterman, D. S.},
+  journal       = {Journal of the American Medical Informatics Association},
+  volume        = {31},
+  number        = {4},
+  pages         = {940--948},
+  year          = {2024},
+  doi           = {10.1093/jamia/ocad256}
+}
+@article{chen2025unleashing,
+  title         = {Unleashing the potential of prompt engineering for large language models},
+  author        = {Chen, B. and Zhang, Z. and Langren{\'e}, N. and Zhu, S.},
+  journal       = {Patterns},
+  volume        = {6},
+  number        = {6},
+  pages         = {101260},
+  year          = {2025},
+  doi           = {10.1016/j.patter.2025.101260}
+}
+@article{claassen2019estimating,
+  author        = {Christopher Claassen},
+  title         = {Estimating Smooth Country--Year Panels of Public Opinion},
+  journal       = {Political Analysis},
+  year          = {2019},
+  volume        = {27},
+  number        = {1},
+  pages         = {1--20},
+  doi           = {10.1017/pan.2018.32}
+}
+@article{claassen2020support,
+  author        = {Christopher Claassen},
+  title         = {Does Public Support Help Democracy Survive?},
+  journal       = {American Journal of Political Science},
+  year          = {2020},
+  volume        = {64},
+  number        = {1},
+  pages         = {18--35},
+  doi           = {10.1111/ajps.12452}
+}
+@article{clinton2004statistical,
+  author        = {Joshua Clinton and Simon Jackman and Douglas Rivers},
+  title         = {The Statistical Analysis of Roll Call Data},
+  journal       = {American Political Science Review},
+  year          = {2004},
+  volume        = {98},
+  number        = {2},
+  pages         = {355--370},
+  doi           = {10.1017/S0003055404001194}
+}
+@manual{data-import-cheatsheet,
+  title         = {Data import with the tidyverse: Cheatsheet},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {n.d.},
+  url           = {https://rstudio.github.io/cheatsheets/html/data-import.html},
+  note          = {CC\hspace{0.167em}BY\hspace{0.167em}SA}
+}
+@manual{data-transformation-cheatsheet,
+  title         = {Data transformation with dplyr: Cheatsheet},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {2025},
+  month         = {08},
+  url           = {https://rstudio.github.io/cheatsheets/html/data-transformation.html},
+  note          = {Updated: August 2025; CC\hspace{0.167em}BY\hspace{0.167em}SA}
+}
+@manual{data-visualization-cheatsheet,
+  title         = {Data visualization with ggplot2: Cheatsheet},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {2025},
+  month         = {08},
+  url           = {https://rstudio.github.io/cheatsheets/html/data-visualization.html},
+  note          = {Updated: August 2025; CC\hspace{0.167em}BY\hspace{0.167em}SA}
+}
+@manual{datacamp-foundations-probability,
+  title         = {Foundations of Probability in R},
+  author        = {{DataCamp}},
+  organization  = {DataCamp},
+  year          = {2022},
+  url           = {https://www.datacamp.com/courses/foundations-of-probability-in-r},
+  note          = {Online interactive course covering random variables, probability distributions, simulation, and Bayesian updating in R; instructor: David Robinson; accessed 2026-02-20}
+}
+@manual{datacamp-getting-started-r-cheatsheet,
+  title         = {Getting Started with {R} Cheat Sheet},
+  author        = {{DataCamp}},
+  organization  = {DataCamp},
+  year          = {2022},
+  month         = {06},
+  url           = {https://www.datacamp.com/cheat-sheet/getting-started-r},
+  note          = {Published: June 3, 2022; accessed 2026-02-20}
+}
+@manual{datacamp-intermediate-ggplot2,
+  title         = {Intermediate Data Visualization with ggplot2},
+  author        = {{DataCamp}},
+  organization  = {DataCamp},
+  year          = {2024},
+  url           = {https://app.datacamp.com/learn/courses/intermediate-data-visualization-with-ggplot2},
+  note          = {Online interactive course on advanced ggplot2 visualization techniques including statistical transformations, coordinate systems, facets, and visualization best practices in R; instructor: Rick Scavetta; accessed 2026-03-12}
+}
+@manual{datacamp-intro-ggplot2,
+  title         = {Introduction to Data Visualization with ggplot2},
+  author        = {{DataCamp}},
+  organization  = {DataCamp},
+  year          = {2025},
+  url           = {https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2},
+  note          = {Online interactive course introducing the grammar of graphics and practical data visualization in R using ggplot2; instructor: Rick Scavetta; accessed 2026-03-12}
+}
+@manual{datacamp-intro-r,
+  title         = {Introduction to {R}},
+  author        = {{DataCamp}},
+  organization  = {DataCamp},
+  year          = {2026},
+  url           = {https://www.datacamp.com/courses/free-introduction-to-r},
+  note          = {Online interactive course covering core R data structures (vectors, matrices, factors, lists, data frames); instructor: Jonathan Cornelissen; accessed 2026-02-20}
+}
+@manual{datacamp-tidyverse,
+  title         = {Introduction to the Tidyverse},
+  author        = {{DataCamp}},
+  organization  = {DataCamp},
+  year          = {2026},
+  url           = {https://www.datacamp.com/courses/introduction-to-the-tidyverse},
+  note          = {Online interactive course introducing data manipulation and visualization in R using dplyr and ggplot2; instructor: David Robinson; accessed 2026-02-20}
+}
+@article{deng2022thebenefits,
+  author        = {Deng, Jianyang and Lin, Yijia},
+  title         = {The Benefits and Challenges of ChatGPT: An Overview},
+  journal       = {Frontiers in Computing and Intelligent Systems},
+  year          = {2022},
+  volume        = {2},
+  number        = {2},
+  pages         = {81--83}
+}
+@article{esarey2012assessing,
+  author        = {Justin Esarey and Andrew Pierce},
+  title         = {Assessing Fit Quality and Testing for Misspecification in Binary-Dependent Variable Models},
+  journal       = {Political Analysis},
+  year          = {2012},
+  volume        = {20},
+  number        = {4},
+  pages         = {480--500},
+  doi           = {10.1093/pan/mpr039}
+}
+@misc{ess11multilevel2025,
+  title         = {{ESS11} Multilevel Data, Edition 1.2},
+  author        = {{European Social Survey European Research Infrastructure (ESS ERIC)}},
+  year          = {2025},
+  publisher     = {Sikt -- Norwegian Agency for Shared Services in Education and Research},
+  doi           = {10.21338/ess11md_e01_2}
+}
+@manual{factors-cheatsheet,
+  title         = {Factors with forcats: Cheatsheet},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {2024},
+  month         = {05},
+  url           = {https://rstudio.github.io/cheatsheets/html/factors.html},
+  note          = {Updated: May 2024; CC\hspace{0.167em}BY\hspace{0.167em}SA}
+}
+@article{fariss2014respect,
+  author        = {Christopher J. Fariss},
+  title         = {Respect for Human Rights has Improved Over Time: Modeling the Changing Standard of Accountability},
+  journal       = {American Political Science Review},
+  year          = {2014},
+  volume        = {108},
+  number        = {2},
+  pages         = {297--318},
+  doi           = {10.1017/S0003055414000070}
+}
+@article{fariss2014respect2,
+  author        = {Christopher J. Fariss},
+  title         = {Respect for Human Rights has Improved Over Time: Modeling the Changing Standard of Accountability},
+  journal       = {American Political Science Review},
+  year          = {2014},
+  volume        = {108},
+  number        = {2},
+  pages         = {297--318},
+  doi           = {10.1017/S0003055414000070}
+}
+@article{gelfand1990illustration,
+  title         = {Illustration of Bayesian Inference in Normal Data Models Using Gibbs Sampling},
+  author        = {Gelfand, Alan E. and Hills, Susan E. and Racine-Poon, Amy and Smith, Adrian FM},
+  journal       = {Journal of the American Statistical Association},
+  volume        = {85},
+  number        = {412},
+  pages         = {972--985},
+  year          = {1990},
+  publisher     = {Taylor \& Francis},
+  doi           = {10.1080/01621459.1990.10474968}
+}
+@article{gelfand1990sampling,
+  title         = {Sampling-Based Approaches to Calculating Marginal Densities},
+  author        = {Gelfand, Alan E. and Smith, Adrian FM},
+  journal       = {Journal of the American Statistical Association},
+  volume        = {85},
+  number        = {410},
+  pages         = {398--409},
+  year          = {1990},
+  publisher     = {Taylor \& Francis},
+  doi           = {10.1080/01621459.1990.10476213}
+}
+@incollection{gelman2013bda-ch1,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Probability and Inference},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch10,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Introduction to Bayesian Computation},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch11,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Basics of Markov Chain Simulation},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch12,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Computationally Efficient Markov Chain Simulation},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch13,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Modal and Distributional Approximations},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch14,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Introduction to Regression Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch15,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Hierarchical Linear Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch16,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Generalized Linear Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch17,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Models for Robust Inference},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch18,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Models for Missing Data},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch19,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Parametric Nonlinear Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch2,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Single-Parameter Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch20,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Basis Function Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch21,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Gaussian Process Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch22,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Finite Mixture Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch23,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Dirichlet Process Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch3,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Introduction to Multiparameter Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch4,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Asymptotics and Connections to Non-Bayesian Approaches},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch5,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Hierarchical Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch6,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Model Checking},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch7,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Evaluating, Comparing, and Expanding Models},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch8,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Modeling Accounting for Data Collection},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@incollection{gelman2013bda-ch9,
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  title         = {Decision Analysis},
+  booktitle     = {Bayesian Data Analysis},
+  edition       = {3},
+  publisher     = {Chapman and Hall/CRC},
+  year          = {2013},
+  url           = {https://sites.stat.columbia.edu/gelman/book/BDA3.pdf}
+}
+@book{gelman2014bayesian,
+  title         = {Bayesian Data Analysis},
+  author        = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  editiom       = {3},
+  year          = {2014},
+  publisher     = {CRC Press},
+  series        = {Texts in Statistical Science}
+}
 @article{gelman2026statistical,
-  title = {Statistical Workflow},
-  author = {Gelman, Andrew and Vehtari, Aki and McElreath, Richard},
-  journal = {Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences},
-  year = {2026},
-  volume = {384},
-  number = {2321},
-  pages = {20250293},
-  doi = {10.1098/rsta.2025.0293}
+  title         = {Statistical Workflow},
+  author        = {Gelman, Andrew and Vehtari, Aki and McElreath, Richard},
+  journal       = {Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences},
+  year          = {2026},
+  volume        = {384},
+  number        = {2321},
+  pages         = {20250293},
+  doi           = {10.1098/rsta.2025.0293}
+}
+@book{gelman2026workflow,
+  title         = {Bayesian Workflow},
+  author        = {Gelman, Andrew and Vehtari, Aki and McElreath, Richard and Simpson, Daniel and Margossian, Charles C. and Yao, Yuling and Kennedy, Lauren and Gabry, Jonah and B{\"u}rkner, Paul-Christian and Modr{\'a}k, Martin and Barajas, Vianey Leos},
+  year          = {2026},
+  publisher     = {Chapman and Hall/CRC},
+  address       = {New York},
+  isbn          = {9781003044024},
+  doi           = {10.1201/9781003044024}
+}
+@article{grimmer2010bayesian,
+  author        = {Justin Grimmer},
+  title         = {A Bayesian Hierarchical Topic Model for Political Texts: Measuring Expressed Agendas in Senate Press Releases},
+  journal       = {Political Analysis},
+  year          = {2010},
+  volume        = {18},
+  number        = {1},
+  pages         = {1--35},
+  doi           = {10.1093/pan/mpp034}
+}
+@article{haque2024exploring,
+  author        = {Haque, Md. Asraful and Li, Shuai},
+  title         = {Exploring ChatGPT and its impact on society},
+  journal       = {AI and Ethics},
+  year          = {2024},
+  volume        = {5},
+  pages         = {791--803}
+}
+@article{hoekstra2014robust,
+  title         = {Robust misinterpretation of confidence intervals},
+  author        = {Hoekstra, Rink and Morey, Richard D and Rouder, Jeffrey N and Wagenmakers, Eric-Jan},
+  journal       = {Psychonomic bulletin \& review},
+  volume        = {21},
+  number        = {5},
+  pages         = {1157--1164},
+  year          = {2014},
+  publisher     = {Springer}
+}
+@article{hoffman2014no,
+  author        = {Matthew D. Hoffman and Andrew Gelman},
+  title         = {The No-U-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo},
+  journal       = {Journal of Machine Learning Research},
+  year          = {2014},
+  volume        = {15},
+  number        = {47},
+  pages         = {1593--1623},
+  url           = {http://jmlr.org/papers/v15/hoffman14a.html}
+}
+@article{humphreys2015mixing,
+  author        = {Macartan Humphreys and Alan M. Jacobs},
+  title         = {Mixing Methods: A Bayesian Approach},
+  journal       = {American Political Science Review},
+  year          = {2015},
+  volume        = {109},
+  number        = {4},
+  pages         = {653--673},
+  doi           = {10.1017/S0003055415000453}
+}
+@article{jackman2000estimation,
+  author        = {Simon Jackman},
+  title         = {Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation},
+  journal       = {Political Analysis},
+  year          = {2000},
+  volume        = {8},
+  number        = {4},
+  pages         = {307--332},
+  doi           = {10.1093/oxfordjournals.pan.a029818}
+}
+@article{jacobsen2023promises,
+  title         = {The promises and pitfalls of ChatGPT as a feedback provider in higher education: An exploratory study of prompt engineering and the quality of AI-driven feedback},
+  author        = {Jacobsen, Lucas Jasper and Weber, Kira Elena},
+  journal       = {OSF Preprints},
+  year          = {2023},
+  doi           = {10.31219/osf.io/cr257}
+}
+@book{king1989unifying,
+  title         = {Unifying Political Methodology: The Likelihood Theory of Statistical Inference},
+  author        = {King, Gary},
+  year          = {1989},
+  publisher     = {Cambridge}
+}
+@article{knuth1984literate,
+  title         = {Literate Programming},
+  author        = {Knuth, Donald Ervin},
+  journal       = {The Computer Journal},
+  volume        = {27},
+  number        = {2},
+  pages         = {97--111},
+  year          = {1984},
+  doi           = {10.1093/comjnl/27.2.97},
+  publisher     = {Oxford University Press}
+}
+@article{kruschke2014doing,
+  title         = {Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and STAN},
+  author        = {Kruschke, John},
+  year          = {2014},
+  publisher     = {Academic Press}
+}
+@article{kruschke2018bayesian,
+  title         = {Bayesian Data Analysis for Newcomers},
+  author        = {Kruschke, John K and Liddell, Torrin M},
+  journal       = {Psychonomic Bulletin \& Review},
+  volume        = {25},
+  number        = {1},
+  pages         = {155--177},
+  year          = {2018},
+  publisher     = {Springer}
+}
+@article{lauderdale2014scaling,
+  author        = {Benjamin E. Lauderdale and Tom S. Clark},
+  title         = {Scaling Politically Meaningful Dimensions Using Texts and Votes},
+  journal       = {American Political Science Review},
+  year          = {2014},
+  volume        = {108},
+  number        = {4},
+  pages         = {754--770},
+  doi           = {10.1111/ajps.12085}
+}
+@article{lauderdale2014supreme,
+  author        = {Benjamin E. Lauderdale and Tom S. Clark},
+  title         = {Scaling Politically Meaningful Dimensions Using Texts and Votes},
+  journal       = {American Political Science Review},
+  year          = {2014},
+  volume        = {108},
+  number        = {4},
+  pages         = {754--770},
+  doi           = {10.1017/S0003055413000543}
+}
+@article{linzer2015global,
+  author        = {Drew A. Linzer and Jeffrey K. Staton},
+  title         = {A Global Measure of Judicial Independence, 1948--2012},
+  journal       = {Journal of Law and Courts},
+  year          = {2015},
+  volume        = {3},
+  number        = {2},
+  pages         = {223--256},
+  doi           = {10.1086/682150}
+}
+@article{linzer2015judicial,
+  author        = {Drew A. Linzer and Jeffrey K. Staton},
+  title         = {A Global Measure of Judicial Independence, 1948--2012},
+  journal       = {Journal of Law and Courts},
+  year          = {2015},
+  volume        = {3},
+  number        = {2},
+  pages         = {223--256},
+  doi           = {10.1086/682150}
+}
+@manual{lubridate-cheatsheet,
+  title         = {Dates and Times with lubridate: Cheatsheet},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {2024},
+  month         = {05},
+  url           = {https://rstudio.github.io/cheatsheets/html/lubridate.html},
+  note          = {Updated: May 2024; CC\hspace{0.167em}BY\hspace{0.167em}SA}
+}
+@incollection{mcelreath2020rethinking-ch1,
+  author        = {McElreath, Richard},
+  title         = {The Golem of Prague},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch10,
+  author        = {McElreath, Richard},
+  title         = {Big Entropy and the Generalized Linear Model},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch11,
+  author        = {McElreath, Richard},
+  title         = {God Spiked the Integers},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch12,
+  author        = {McElreath, Richard},
+  title         = {Monsters and Mixtures},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch13,
+  author        = {McElreath, Richard},
+  title         = {Models with Memory},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch14,
+  author        = {McElreath, Richard},
+  title         = {Adventures in Covariance},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch15,
+  author        = {McElreath, Richard},
+  title         = {Missing Data and Other Opportunities},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch2,
+  author        = {McElreath, Richard},
+  title         = {Small Worlds and Large Worlds},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch3,
+  author        = {McElreath, Richard},
+  title         = {Sampling the Imaginary},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch4,
+  author        = {McElreath, Richard},
+  title         = {Geocentric Models},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch5,
+  author        = {McElreath, Richard},
+  title         = {The Many Variables and the Spurious Waffles},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch6,
+  author        = {McElreath, Richard},
+  title         = {The Haunted DAG and the Causal Terror},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch7,
+  author        = {McElreath, Richard},
+  title         = {Ulysses' Compass},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch8,
+  author        = {McElreath, Richard},
+  title         = {Conditional Manatees},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@incollection{mcelreath2020rethinking-ch9,
+  author        = {McElreath, Richard},
+  title         = {Markov Chain Monte Carlo},
+  booktitle     = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  publisher     = {Chapman and Hall/CRC},
+  edition       = {2},
+  year          = {2020},
+  doi           = {10.1201/9780429029608}
+}
+@book{mcelreath2020statistical,
+  title         = {Statistical Rethinking: A Bayesian Course with Examples in R and STAN},
+  author        = {McElreath, Richard},
+  year          = {2020},
+  edition       = {2},
+  publisher     = {Chapman and Hall/CRC},
+  doi           = {10.1201/9780429029608}
+}
+@online{mcelreath2026rethinking-A01,
+  title         = {Statistical Rethinking 2026 Lecture A01: Introduction to Bayesian Workflow},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=ztbYkBPDOgU},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-A02,
+  title         = {Statistical Rethinking 2026 Lecture A02: Building a Generative Model},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=2nqGvV6K3kY},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-A03,
+  title         = {Statistical Rethinking 2026 Lecture A03: Sampling and Simulation},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=AdpYxM4K2Q0},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-A04,
+  title         = {Statistical Rethinking 2026 Lecture A04: Linear Models},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=6z4YxVYp9R8},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-A05,
+  title         = {Statistical Rethinking 2026 Lecture A05: Causal Models and DAGs},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=7H9xkQp0m8U},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-A06,
+  title         = {Statistical Rethinking 2026 Lecture A06: Multivariate Models},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=5x4M5Zc1lPQ},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-A07,
+  title         = {Statistical Rethinking 2026 Lecture A07: Maximum Entropy and GLMs},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=GL1xPtH5yXQ},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-A08,
+  title         = {Statistical Rethinking 2026 Lecture A08: MCMC and Item Response Models},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=N_LRQUrdHag},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-B01,
+  title         = {Statistical Rethinking 2026 Lecture B01: Hamiltonian Monte Carlo},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=7JHkq0l9p2M},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-B02,
+  title         = {Statistical Rethinking 2026 Lecture B02: Hierarchical Models},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=FdnMWdICdRs},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-B03,
+  title         = {Statistical Rethinking 2026 Lecture B03: Multilevel Models},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=0h9q0YhT0Q4},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-B04,
+  title         = {Statistical Rethinking 2026 Lecture B04: Measurement Models},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=F3xQqG7C1kE},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-B05,
+  title         = {Statistical Rethinking 2026 Lecture B05: Gaussian Processes},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=QyWvJ0Y6H8g},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-B06,
+  title         = {Statistical Rethinking 2026 Lecture B06: Mixture Models},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=U5yY1zQqz8c},
+  note          = {Statistical Rethinking 2026 lecture series; accessed 2026-03-12}
+}
+@online{mcelreath2026rethinking-course,
+  title         = {Statistical Rethinking 2026},
+  author        = {McElreath, Richard},
+  year          = {2026},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/playlist?list=PLDcUM9US4XdPMtSV81e1R_4B6NugQBvTP},
+  note          = {Full lecture series accompanying Statistical Rethinking; accessed 2026-03-12}
+}
+@article{metropolis1949monte,
+  title         = {The Monte Carlo Method},
+  author        = {Metropolis, Nicholas and Ulam, Stanislaw},
+  journal       = {Journal of the American Statistical Association},
+  volume        = {44},
+  number        = {247},
+  pages         = {335--341},
+  year          = {1949},
+  publisher     = {Taylor \& Francis},
+  doi           = {10.1080/01621459.1949.10483310}
+}
+@article{metropolis1953equation,
+  title         = {Equation of State Calculations by Fast Computing Machines},
+  author        = {Metropolis, Nicholas and Rosenbluth, Arianna W. and Rosenbluth, Marshall N. and Teller, Augusta H. and Teller, Edward},
+  journal       = {The Journal of Chemical Physics},
+  volume        = {21},
+  number        = {6},
+  pages         = {1087--1092},
+  year          = {1953},
+  publisher     = {American Institute of Physics},
+  doi           = {10.1063/1.1699114}
+}
+@article{mogavi2024chatgpt,
+  title         = {ChatGPT in education: A blessing or a curse? A qualitative study exploring early adopters' utilization and perceptions},
+  author        = {Mogavi, Reza Hadi and Deng, Chao and Kim, Justin Juho and Zhou, Pengyuan and Kwon, Young D and Metwally, Ahmed Hosny Saleh and Tlili, Ahmed and Bassanelli, Simone and Bucchiarone, Antonio and Gujar, Sujit and others},
+  journal       = {Computers in Human Behavior: Artificial Humans},
+  volume        = {2},
+  number        = {1},
+  pages         = {100027},
+  year          = {2024},
+  publisher     = {Elsevier}
+}
+@online{montecarlo2021simulation,
+  title         = {Monte Carlo Simulation},
+  author        = {{MarbleScience}},
+  year          = {2021},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=7ESK5SaP-bc},
+  note          = {accessed 2026-03-19}
+}
+@article{noy2023experimental,
+  title         = {Experimental evidence on the productivity effects of generative artificial intelligence},
+  author        = {Noy, Shakked and Zhang, Whitney},
+  journal       = {Science},
+  volume        = {381},
+  number        = {6654},
+  pages         = {187--192},
+  year          = {2023},
+  doi           = {10.1126/science.adh2586}
+}
+@article{openai2023gpt4,
+  title         = {GPT-4 Technical Report},
+  author        = {OpenAI},
+  journal       = {arXiv preprint arXiv:2303.08774},
+  year          = {2023},
+  url           = {https://cdn.openai.com/papers/gpt-4.pdf}
+}
+@article{park2004bayesian,
+  author        = {David K. Park and Andrew Gelman and Joseph Bafumi},
+  title         = {Bayesian Multilevel Estimation with Poststratification: State-Level Estimates from National Polls},
+  journal       = {Political Analysis},
+  year          = {2004},
+  volume        = {12},
+  number        = {4},
+  pages         = {375--385},
+  doi           = {10.1093/pan/mph024}
+}
+@book{pearl2016causal,
+  title         = {Causal Inference in Statistics: A Primer},
+  author        = {Pearl, Judea and Glymour, Madelyn and Jewell, Nicholas P},
+  year          = {2016},
+  publisher     = {John Wiley \& Sons}
+}
+@manual{positron-layout,
+  title         = {Positron Layout},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {n.d.},
+  url           = {https://positron.posit.co/layout.html},
+  note          = {Positron documentation -- overview of customizable layout options for the Positron IDE; accessed 2026-02-06}
+}
+@manual{quarto-cheatsheet,
+  title         = {Publish and Share with Quarto: Quarto Cheatsheet},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {2025},
+  month         = {07},
+  url           = {https://rstudio.github.io/cheatsheets/html/quarto.html},
+  note          = {Updated: July 2025; CC BY SA}
+}
+@manual{quarto-guide,
+  title         = {Quarto Guide},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {n.d.},
+  url           = {https://quarto.org/docs/guide/},
+  note          = {Quarto documentation -- comprehensive guide to using Quarto; accessed 2026-02-06}
+}
+@article{ratkovic2025harnessing,
+  title         = {Harnessing GPT for Enhanced Academic Writing: Evidence from a Field Experiment with Early-Career Researchers in the Social Sciences},
+  author        = {Ratkovic, Marc and Gschwend, Thomas and Wendering, Leonard and Bauer, Kevin and Kurella, Anna-Sophie and Rittmann, Oliver and Sauter, Melanie and Schwitter, Nicole},
+  journal       = {SSRN Electronic Journal},
+  year          = {2025},
+  doi           = {10.2139/ssrn.5313034}
+}
+@article{reuning2019exploring,
+  author        = {Kevin Reuning and Michael R. Kenwick and Christopher J. Fariss},
+  title         = {Exploring the Dynamics of Latent Variable Models},
+  journal       = {Political Analysis},
+  year          = {2019},
+  volume        = {27},
+  number        = {4},
+  pages         = {503--517},
+  doi           = {10.1017/pan.2019.1}
+}
+@book{sarrion2023exploring,
+  title         = {Exploring the Power of ChatGPT: Applications, Techniques, and Implications},
+  author        = {Sarrion, Eric},
+  year          = {2023},
+  publisher     = {Apress},
+  address       = {Berkeley}
+}
+@article{shah2023creation,
+  title         = {Creation and adoption of large language models in medicine},
+  author        = {Shah, N. H. and Entwistle, D. and Pfeffer, M. A.},
+  journal       = {JAMA},
+  volume        = {330},
+  number        = {9},
+  pages         = {866--869},
+  year          = {2023},
+  doi           = {10.1001/jama.2023.14217}
+}
+@article{stegmueller2013many,
+  author        = {Daniel Stegmueller},
+  title         = {How Many Countries for Multilevel Modeling? A Comparison of Frequentist and Bayesian Approaches},
+  journal       = {American Journal of Political Science},
+  year          = {2013},
+  volume        = {57},
+  number        = {3},
+  pages         = {748--761},
+  doi           = {10.1111/ajps.12001}
+}
+@manual{strings-cheatsheet,
+  title         = {String manipulation with stringr: Cheatsheet},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {2025},
+  month         = {07},
+  url           = {https://rstudio.github.io/cheatsheets/html/strings.html},
+  note          = {Updated: July 2025; CC\hspace{0.167em}BY\hspace{0.167em}SA}
+}
+@manual{tidyr-cheatsheet,
+  title         = {Data tidying with tidyr: Cheatsheet},
+  author        = {{Posit Software, PBC}},
+  organization  = {Posit},
+  year          = {2024},
+  month         = {05},
+  url           = {https://rstudio.github.io/cheatsheets/html/tidyr.html},
+  note          = {Updated: May 2024; CC\hspace{0.167em}BY\hspace{0.167em}SA}
+}
+@article{treier2008democracy,
+  author        = {Shawn Treier and Simon Jackman},
+  title         = {Democracy as a Latent Variable},
+  journal       = {American Journal of Political Science},
+  year          = {2008},
+  volume        = {52},
+  number        = {1},
+  pages         = {201--217},
+  doi           = {10.1111/j.1540-5907.2007.00308.x}
+}
+@article{vehtari2017practical,
+  title         = {Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC},
+  author        = {Vehtari, Aki and Gelman, Andrew and Gabry, Jonah},
+  journal       = {Statistics and computing},
+  volume        = {27},
+  number        = {5},
+  pages         = {1413--1432},
+  year          = {2017},
+  publisher     = {Springer},
+  doi           = {10.1007/s11222-016-9696-4}
+}
+@article{vehtari2021rank,
+  title         = {Rank-Normalization, Folding, and Localization: An Improved $\hat{R}$ for Assessing Convergence of MCMC (with Discussion)},
+  author        = {Vehtari, Aki and Gelman, Andrew and Simpson, Daniel and Carpenter, Bob and B{\"u}rkner, Paul-Christian},
+  journal       = {Bayesian Analysis},
+  volume        = {16},
+  number        = {2},
+  pages         = {667--718},
+  year          = {2021},
+  doi           = {10.1214/20-BA1221},
+  publisher     = {International Society for Bayesian Analysis}
+}
+@online{veritasium-bayes,
+  title         = {The Bayesian Trap},
+  author        = {Veritasium},
+  year          = {2017},
+  organization  = {YouTube},
+  url           = {https://www.youtube.com/watch?v=R13BD8qKeTg},
+  note          = {Accessed 2026-03-12}
+}
+@article{wendering2025lessons,
+  title         = {Lessons from an AI-Sprint: a proposal for measuring human-AI cooperation in research},
+  author        = {Wendering, Leonard and Ratkovic, Marc and Gschwend, Thomas and Schoenenberger, Henning and Scaplehorn, Niki},
+  journal       = {Humanities and Social Sciences Communications},
+  volume        = {12},
+  number        = {1},
+  pages         = {1--4},
+  year          = {2025},
+  publisher     = {Palgrave},
+  doi           = {10.1057/s41599-025-06110-1}
+}
+@article{western1994bayesian,
+  author        = {Bruce Western and Simon Jackman},
+  title         = {Bayesian Inference for Comparative Research},
+  journal       = {American Political Science Review},
+  year          = {1994},
+  volume        = {88},
+  number        = {2},
+  pages         = {412--423},
+  doi           = {10.2307/2944713}
+}
+@manual{white2021git4dummies,
+  title         = {Git Tutorial For Dummies},
+  author        = {{Nick White}},
+  organization  = {YouTube},
+  year          = {2021},
+  url           = {https://www.youtube.com/watch?v=mJ-qvsxPHpY},
+  note          = {accessed 2026-02-09}
+}
+@book{wickham2023ggplot2,
+  title         = {ggplot2: Elegant Graphics for Data Analysis},
+  author        = {Wickham, Hadley and Navarro, Danielle and Pedersen, Thomas Lin},
+  edition       = {3},
+  year          = {2023},
+  url           = {https://ggplot2-book.org/}
+}
+@book{wickham2023r4ds,
+  title         = {R for Data Science: Import, Tidy, Transform, Visualize, and Model Data},
+  author        = {Wickham, Hadley and \c{C}etinkaya-Rundel, Mine and Grolemund, Garrett},
+  edition       = {2},
+  year          = {2023},
+  publisher     = {O'Reilly},
+  url           = {https://r4ds.hadley.nz/}
+}
+@incollection{wickham2023r4ds-intro,
+  title         = {Introduction},
+  booktitle     = {R for Data Science: Import, Tidy, Transform, Visualize, and Model Data},
+  author        = {Wickham, Hadley and \c{C}etinkaya-Rundel, Mine and Grolemund, Garrett},
+  editor        = {Wickham, Hadley and \c{C}etinkaya-Rundel, Mine and Grolemund, Garrett},
+  edition       = {2},
+  year          = {2023},
+  publisher     = {O'Reilly},
+  url           = {https://r4ds.hadley.nz/intro.html}
+}
+@incollection{wickham2023r4ds-quarto,
+  title         = {Quarto},
+  booktitle     = {R for Data Science: Import, Tidy, Transform, Visualize, and Model Data},
+  author        = {Wickham, Hadley and \c{C}etinkaya-Rundel, Mine and Grolemund, Garrett},
+  editor        = {Wickham, Hadley and \c{C}etinkaya-Rundel, Mine and Grolemund, Garrett},
+  edition       = {2},
+  year          = {2023},
+  publisher     = {O'Reilly},
+  url           = {https://r4ds.hadley.nz/quarto.html}
+}
+@incollection{wickham2023r4ds-whole-game,
+  title         = {Whole game},
+  booktitle     = {R for Data Science: Import, Tidy, Transform, Visualize, and Model Data},
+  author        = {Wickham, Hadley and \c{C}etinkaya-Rundel, Mine and Grolemund, Garrett},
+  editor        = {Wickham, Hadley and \c{C}etinkaya-Rundel, Mine and Grolemund, Garrett},
+  edition       = {2},
+  year          = {2023},
+  publisher     = {O'Reilly},
+  url           = {https://r4ds.hadley.nz/intro.html}
 }
