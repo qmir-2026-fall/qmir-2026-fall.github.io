@@ -24,7 +24,7 @@ Reassure students that each week deepens one or two steps.
 Point at the exam.
 :::
 
-## Where things live {#sec-where-things-live}
+## Where things live {#sec-where-things-live .smaller}
 
 - The **website** is everything: slides, schedule, homeworks, exam.
 - Homeworks are distributed through the GitHub org, one starter repo each.
