@@ -29,18 +29,20 @@ github:
 
 # One session per week (CLAUDE.md §1 — no more Mon/Thu doubling).
 sessions:
+  # 13 TAUGHT sessions across 14 calendar dates, 9 Sep to 9 Dec 2026.
   count: 13
-  weekday: Thursday
-  # First session; week N = first_session + (N-1) weeks. Used to build the schedule.
-  # PLACEHOLDER — set the real HWS 2026 start date before publishing the schedule.
-  # NOTE: 2026-09-09 is a Wednesday. Once the real calendar is known, this date and
-  # `weekday` above must agree.
+  weekday: Wednesday
+  # First session. The term runs weekly from here, and week N is the Nth weekly date
+  # AFTER removing everything in skip_dates. That arithmetic lives in exactly one
+  # place, session_dates() in website/_course-helpers.R, so no page computes its own.
   first_session: 2026-09-09
-  # PLACEHOLDER — the room and the time slot, shown on the about page.
-  time: "PLACEHOLDER"
-  room: "PLACEHOLDER"
-  # PLACEHOLDER — open consultation slot, shown on the about page.
-  office_hours: "PLACEHOLDER"
+  # Dates on the weekly grid that are NOT taught. The schedule prints each as a greyed
+  # "no session" row, so a gap in the dates is explained rather than mysterious.
+  skip_dates:
+    - 2026-10-28 # instructor at a congress
+  time: "13:45-15:15"
+  room: "A 5, 6 -- C 108"
+  office_hours: "By appointment, please email me"
 
 homework:
   count: 10
@@ -78,30 +80,158 @@ blocks:
 # Planned topic per week. The deck's OWN YAML title wins once website/slides/weekNN.qmd
 # exists -- that is the E040 contract in STYLE.md §5.4. This list is the forward plan
 # shown on the schedule until the deck is written.
+#
+# Each entry also carries the session plan rendered by website/syllabus.qmd:
+#   steps:    which of the 8 workflow steps (CLAUDE.md §3) the session foregrounds
+#   goals:    learning goals, addressed to the student ("You will be able to ...")
+#   content:  one short paragraph on what the session actually covers
+# STRUCTURAL DRAFT. The wording is due a substantive pass before the term starts.
 weeks:
   - week: 1
     topic: "The whole workflow, up front"
+    steps: []
+    goals:
+      - "Describe the eight steps of a Bayesian analysis and how they fit together."
+      - "Say what the take-home exam asks for, and why the term is arranged around it."
+      - "Find the site, the schedule, the glossary and the homework flow."
+    content: |
+      An orientation session. We look at a complete worked analysis end to end before
+      taking any part of it apart, so that every later week has somewhere to attach
+      itself. You will not be able to run this yet, and that is the point: the skeleton
+      comes first, the muscles follow.
   - week: 2
     topic: "Reproducible research with R, Quarto and Git"
+    steps: []
+    goals:
+      - "Render a Quarto document and explain what rendering does."
+      - "Record work as small commits with messages a reader can follow."
+      - "Push to GitHub and generate your own homework repository from a template."
+    content: |
+      The working environment, and the habits that make results checkable by someone
+      else. Projects, paths that survive a change of machine, literate documents, and
+      version control as the record of how a piece of work came about. This is also the
+      session where the AI disclosure convention in the syllabus starts to apply.
   - week: 3
     topic: "R fundamentals: data types and structures"
+    steps: []
+    goals:
+      - "Distinguish the basic data types and say why the distinction matters."
+      - "Build, subset and inspect vectors, lists and data frames."
+      - "Read an error message and work out what R was actually asked to do."
+    content: |
+      The language itself. Types, coercion, vectors and data frames, functions and
+      arguments, and the small vocabulary of operations that everything later is
+      assembled from. Time is spent deliberately on reading errors, because that is the
+      skill that makes independent work possible.
   - week: 4
     topic: "Tidy data: wrangling and visualisation"
+    steps: [2]
+    goals:
+      - "State what makes a dataset tidy, and recognise when one is not."
+      - "Filter, select, mutate and summarise with the tidyverse and the native pipe."
+      - "Build a first layered plot with ggplot2."
+    content: |
+      Getting data into a shape that tools can work with, which is most of the work in
+      most analyses. The core dplyr verbs chained with the native pipe, then the grammar
+      of graphics as the visual counterpart of the same idea. Step 2 of the workflow,
+      the data summary, starts here.
   - week: 5
     topic: "Reshaping, merging and visualisation"
+    steps: [2]
+    goals:
+      - "Pivot data between long and wide form, and say which shape a task needs."
+      - "Join two datasets and check that the join did what you intended."
+      - "Produce a figure that carries its own caption and stands on its own."
+    content: |
+      The harder half of data work: reshaping, joining, and the checks that catch a
+      merge that silently dropped or duplicated rows. On the visual side, moving from a
+      plot that displays data to a figure that makes a point.
   - week: 6
     topic: "Probability, simulation and Bayes' theorem"
+    steps: [3, 4]
+    goals:
+      - "Read a probability distribution as a statement about plausibility."
+      - "Simulate from a distribution and use simulation to answer a question."
+      - "Apply Bayes' theorem to combine a prior with a likelihood."
+    content: |
+      The conceptual core of the course. Probability as a description of uncertainty
+      rather than of long-run frequency, distributions for data and for parameters, and
+      the single rule that combines what you believed beforehand with what you observed.
+      Simulation is used throughout, because it makes the abstractions checkable.
   - week: 7
     topic: "Markov chain Monte Carlo"
+    steps: [4, 5, 6]
+    goals:
+      - "Explain why posteriors are usually approximated rather than solved."
+      - "Read a trace plot, R-hat and effective sample size, and say what each shows."
+      - "Recognise a failed fit and know what to do about it."
+    content: |
+      How a posterior is actually obtained. Sampling as exploration, chains, warmup, and
+      the diagnostics that tell you whether the sampler did its job. The emphasis is on
+      reading the diagnostics rather than on the algorithms behind them.
   - week: 8
     topic: "Bivariate linear regression"
+    steps: [1, 3, 4, 5, 6]
+    goals:
+      - "Write a simple regression as a generative model, likelihood and priors."
+      - "Fit it with brms and defend the priors you chose."
+      - "Run a prior predictive and a posterior predictive check, and act on them."
+    content: |
+      The first full model, deliberately the simplest one. One outcome, one predictor,
+      and the whole workflow run around it from the estimand through the fit to the
+      predictive checks. Every later model extends this one rather than replacing it.
   - week: 9
     topic: "Multivariate regression"
+    steps: [1, 7]
+    goals:
+      - "Draw a DAG and use it to decide what to adjust for."
+      - "Interpret a coefficient as conditional on the rest of the model."
+      - "Explain why adding a variable is a claim, not a precaution."
+    content: |
+      More than one predictor, and the questions that come with it. Confounding,
+      adjustment, and the point that a set of controls is an assumption about how the
+      world works rather than a way to be safe.
   - week: 10
     topic: "Interactions"
+    steps: [7]
+    goals:
+      - "Specify a model in which one effect depends on another variable."
+      - "Interpret an interaction jointly rather than term by term."
+      - "Communicate a conditional effect with a figure instead of a table."
+    content: |
+      Effects that are not the same everywhere. Specification is the easy part, and
+      interpretation is where interactions are usually got wrong, so most of the session
+      goes on reading them correctly and showing them clearly.
   - week: 11
     topic: "Modelling binary outcomes"
+    steps: [3, 7]
+    goals:
+      - "Explain why a linear model is a poor fit for a binary outcome."
+      - "Fit a logistic regression and set priors on the logit scale."
+      - "Convert results to probabilities before interpreting them."
+    content: |
+      Outcomes that are yes or no. Link functions, the logit scale, and the discipline
+      of never reporting a log-odds coefficient as if it were the answer. Quantities of
+      interest and marginal effects do the interpretive work.
   - week: 12
     topic: "Multilevel models and partial pooling"
+    steps: [3, 5, 7]
+    goals:
+      - "Say what a multilevel model buys you over one model per group."
+      - "Fit varying intercepts with brms and read the group-level output."
+      - "Explain shrinkage to someone who has not taken this course."
+    content: |
+      Data with structure: students in classes, regions in countries, years in states.
+      Complete pooling and no pooling as the two extremes, and partial pooling as the
+      compromise the model estimates for you.
   - week: 13
     topic: "Beyond the course: applying what you have learned"
+    steps: [1, 2, 3, 4, 5, 6, 7, 8]
+    goals:
+      - "Run the full eight steps on a dataset you have not seen before."
+      - "Report a result with its uncertainty and its limitations."
+      - "Take the workflow into a thesis or a job after this course."
+    content: |
+      Consolidation, and the exam in view. The whole workflow once more at full speed,
+      what to do when a real dataset does not cooperate, and where to go next. We also
+      revisit the AI disclosure convention with a term of commits behind us.

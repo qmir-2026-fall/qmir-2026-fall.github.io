@@ -58,93 +58,113 @@ That gives us time to troubleshoot, and it keeps technical setup from becoming a
 we move into substantive work.
 
 ::: {.callout-tip}
-**Install in the order given below.**
+**Do the steps in the order given.**
 R comes before Positron, and the C++ compiler comes before `brms`.
 Each step assumes the ones above it are done.
 :::
 
-## Installing R {#sec-install-r}
+## What the words mean {#sec-vocabulary}
 
-First, install R, a free and open-source programming language widely used for statistical
-analysis, data visualisation and reproducible research.
-R is our main tool.
-You can think of it as the engine that does our calculations.[^rengige]
+The instructions below say things like "run this in the Console" and "open a Terminal".
+Those are two different places, and mixing them up is the single most common reason a step
+appears not to work.
+@fig-positron-layout shows where each of them lives once Positron is installed.
 
-[^rengige]: The engine and dashboard analogy is borrowed from [Andrew Heiss](https://datavizf25.classes.andrewheiss.com/syllabus.html#r-and-rstudio).
+![The Positron interface. The **Editor** in the middle is where your `.qmd` and `.R` files are
+open. The **Console** (bottom) is where you type R commands and see their results. The
+**Terminal** sits next to the Console and is where you talk to your operating system rather than
+to R. Panes can be moved around, so yours may not look identical, but the names stay the
+same.](https://positron.posit.co/images/user-interface-for-rstudio-migration.jpeg){#fig-positron-layout}
 
-::: {.panel-tabset group="os"}
+**Console.**
+An R session waiting for R commands.
+If an instruction shows R code, such as `install.packages("here")`, it goes here.
+You can tell it is an R console by the `>` prompt at the start of the line.
 
-## Windows {#sec-r-windows}
+**Terminal.**
+A place to type commands to your operating system, not to R.
+On Windows this is PowerShell, on macOS it is the Terminal app, and Positron has one built in.
+Commands such as `git --version` or `quarto install tinytex` go here, and running them in the
+Console instead will produce an error.
+
+**Editor.**
+The main pane where files are open for editing.
+Writing code in the Editor and then running it is the normal way to work, because the Editor
+keeps a record and the Console does not.
+
+**Pane.**
+One of the rectangular regions of the window.
+Positron lets you show, hide and rearrange them, which is worth doing once you know what each is
+for.
+
+::: {.callout-note}
+**A quick way to tell them apart.**
+If the line starts with `>` you are in the R Console.
+If it starts with your username, a folder name, or `PS C:\>`, you are in a Terminal.
+:::
+
+## Why Positron and not RStudio? {#sec-why-positron}
+
+If you have had any contact with R already, or know people who have, you may know that one of the
+most widespread IDEs for R is RStudio.
+I decided to teach Positron for a few reasons.
+
+1. It is a modern and genuinely useful IDE for both programming and project management, with
+   features that integrate coding in R and writing in Quarto well.
+2. It works neatly with R *and* Python. Although we learn R here, being able to add Python later
+   is valuable, as many other scientific disciplines and private enterprises use Python.
+3. It has very good graphical integration of version control with Git.
+4. It is built on an open-source predecessor of VS Code, one of the most popular editors globally,
+   so it is very similar to it.
+5. If you learn to work with Positron, you will have no problem adapting to RStudio.
+
+## Install the toolchain {#sec-install}
+
+Pick your operating system once, below.
+The tab you choose stays selected for the whole guide, so work straight down it from step 1 to
+step 8.
+
+::: {.panel-tabset}
+
+### Windows {#sec-install-windows}
+
+#### 1. Install R
+
+R is a free and open-source programming language widely used for statistical analysis, data
+visualisation and reproducible research.
+R is our main tool, and you can think of it as the engine that does our calculations.[^rengine]
+
+[^rengine]: The engine and dashboard analogy is borrowed from [Andrew Heiss](https://datavizf25.classes.andrewheiss.com/syllabus.html#r-and-rstudio).
 
 1. Go to the [Comprehensive R Archive Network (CRAN) website](https://cran.r-project.org/).
 2. Click "Download R for Windows".
 3. Select `base` and download the installation file.
 4. Run the downloaded file to install R.
 
-## macOS {#sec-r-macos}
-
-1. Go to the [Comprehensive R Archive Network (CRAN) website](https://cran.r-project.org/).
-2. Click "Download R for macOS".
-3. Take the **current release** offered at the top of the page, choosing the build for your chip:
-   the `arm64` package for Apple silicon, or the `x86_64` package for older Intel Macs.
-4. Download and install it.
-5. Also [download and install XQuartz](https://www.xquartz.org/).
-
-:::
-
 ::: {.callout-note}
 **Take the current release rather than a specific version number.**
 CRAN always offers the latest release at the top of the download page, and that is the one to
 take.
-Note which version you installed, because the Windows compiler in @sec-install-compiler has to
-match it.
+Note which version you installed, because Rtools in step 3 has to match it.
 :::
 
-## Installing Positron {#sec-install-positron}
+#### 2. Install Positron
 
-Next, we use Positron as our integrated development environment (IDE) to program with R.
-You can think of it as the dashboard for our engine.
-It gives you a graphical interface to control, monitor and run R code.
-Positron is a free, source-available IDE designed specifically for data science with R and Python.
-
-::: {.callout-note}
-## Why are we not using RStudio?
-
-If you have had any contact with R already, or know people who have, you may know that one of the
-most widespread IDEs for R is RStudio.
-I decided to teach Positron for a few reasons:
-
-1. It is a modern and genuinely useful IDE for both programming and project management, with
-   features that integrate coding in R and writing in Quarto well.
-2. It works neatly with R *and* Python. Although we learn R here, being able to add Python later
-   is valuable, because many scientific disciplines and applied employers use it.
-3. It has very good graphical integration of version control with Git.
-4. It is built on an open-source predecessor of VS Code, one of the most popular editors globally,
-   so it is very similar to it.
-5. If you learn to work with Positron, you will have no problem adapting to RStudio.
-:::
-
-::: {.panel-tabset group="os"}
-
-## Windows {#sec-positron-windows}
+Positron is our integrated development environment (IDE), the program you actually sit in front
+of to write R.
+If R is the engine, Positron is the dashboard: it gives you a graphical interface to control,
+monitor and run R code.
+It is a free, source-available IDE designed specifically for data science with R and Python.
 
 1. Navigate to <https://positron.posit.co/install.html>.
-2. Install all prerequisites listed for your operating system. You can ignore the `Python setup`
-   and `R setup` panes.
+2. Install all prerequisites listed for Windows. You can ignore the `Python setup` and `R setup`
+   panes.
 3. Accept the license agreement by ticking the box.
 4. Click `Download Positron for Windows` and run the downloaded file.
 
-## macOS {#sec-positron-macos}
+Once it opens, find the Console and the Terminal described in @sec-vocabulary.
 
-1. Navigate to <https://positron.posit.co/install.html>.
-2. Install all prerequisites listed for your operating system. You can ignore the `Python setup`
-   and `R setup` panes.
-3. Accept the license agreement by ticking the box.
-4. Click `Download Positron for macOS` and run the downloaded file.
-
-:::
-
-## Installing a C++ compiler {#sec-install-compiler}
+#### 3. Install a C++ compiler (Rtools)
 
 Some R packages we use later rely internally on **C++**, a much more efficient language for
 computationally intensive tasks.
@@ -153,27 +173,10 @@ the scenes.
 You will not usually interact with C++ directly, but the compiler is required to install and use
 certain packages, `brms` among them.
 
-::: {.panel-tabset group="os"}
-
-## Windows {#sec-compiler-windows}
-
 1. Go to the [Rtools page on CRAN](https://cran.r-project.org/bin/windows/Rtools/).
-2. Download and install the Rtools version that **matches the R version you installed** in
-   @sec-install-r. The page lists one Rtools release per R release, so R 4.5.x takes Rtools45.
+2. Download and install the Rtools version that **matches the R version you installed** in step 1.
+   The page lists one Rtools release per R release, so R 4.5.x takes Rtools45.
 3. Follow the installation instructions and keep the default settings unless told otherwise.
-
-## macOS {#sec-compiler-macos}
-
-1. Download and install **Xcode** from the [Mac App Store](https://developer.apple.com/xcode/resources/).
-2. Afterwards, open the Terminal and install the command-line tools as well:
-
-```bash
-xcode-select --install
-```
-
-Once that is done, your system can compile the C++ code some R packages need.
-
-:::
 
 ::: {.callout-warning}
 **A mismatched Rtools version is the most common setup failure on Windows.**
@@ -182,7 +185,7 @@ version first.
 Installing a newer R afterwards means installing the matching Rtools too.
 :::
 
-## Installing Git {#sec-install-git}
+#### 4. Install Git
 
 **Git** is a free and open-source version control system, a tool that tracks changes in your files
 over time.
@@ -193,14 +196,10 @@ as pull requests, issues and automated workflows.
 Together they make it easier to write code, analyse data, and manage research projects
 **transparently and reproducibly**.
 
-::: {.panel-tabset group="os"}
-
-## Windows {#sec-git-windows}
-
 1. Go to the [Git download page](https://git-scm.com/install/windows).
 2. Press the `Click here to download` link.
 3. Open the downloaded `.exe` file and follow the installation instructions.
-4. Open Windows PowerShell or the Terminal application and type:
+4. Open a **Terminal** (PowerShell, or the Terminal pane in Positron) and type:
 
 ```bash
 git --version
@@ -209,59 +208,185 @@ git --version
 You should see a version number.
 If so, Git is installed correctly.
 
-## macOS {#sec-git-macos}
-
-Git comes with Xcode.
-Open the Terminal and enter:
-
-```bash
-git --version
-```
-
-You should see a version number.
-If so, Git is installed correctly.
-
-:::
-
-### Configure Git {#sec-configure-git}
+#### 5. Configure Git
 
 To use Git you need to set a **name** and an **email address**.
 These are attached to every change (commit) you make, acting like a digital signature.
 You do not have to use your full name, but it is recommended.
+Run both lines in the **Terminal**, substituting your own details.
 
 ```bash
 git config --global user.name "Your Name"
 git config --global user.email "your@mail.com"
 ```
 
-### Create a GitHub account {#sec-github-account}
+::: {.callout-warning}
+**Do not skip this step.**
+It is easy to overlook, because nothing goes wrong until the first time you try to commit, and then Git refuses with an error message.
+Setting both values now saves you that error in week 2, when everybody is committing for the first time at once.
+:::
+
+#### 6. Create a GitHub account
 
 If you do not already have one, [create a free GitHub account](https://github.com/join).
 GitHub lets you store repositories online, collaborate, and reach your work from anywhere.
 We use it to distribute all course materials.
 
-## Installing Quarto {#sec-install-quarto}
+#### 7. Check Quarto
 
 **Quarto** is the publishing system that turns a `.qmd` file into HTML, PDF or slides, running
 your R code as it goes.
 Every artefact in this course, including this page, is a Quarto document.
 
-Positron ships with Quarto, so if you installed Positron in @sec-install-positron you already
-have it.
-You can confirm it from a terminal:
+Positron ships with Quarto, so if you installed Positron in step 2 you already have it.
+Confirm it from the **Terminal**:
 
 ```bash
 quarto --version
 ```
 
+#### 8. Install TinyTeX
+
 To render **PDF** output, Quarto needs a LaTeX engine.
-The `tinytex` package in @sec-install-packages provides it, or you can install it directly:
+Let Quarto install and manage a small one for you, from the **Terminal**:
 
 ```bash
 quarto install tinytex
 ```
 
-## Installing the R packages {#sec-install-packages}
+Now continue with @sec-install-packages, which is the same on every operating system.
+
+### macOS {#sec-install-macos}
+
+#### 1. Install R
+
+R is a free and open-source programming language widely used for statistical analysis, data
+visualisation and reproducible research.
+R is our main tool, and you can think of it as the engine that does our calculations.
+
+1. Go to the [Comprehensive R Archive Network (CRAN) website](https://cran.r-project.org/).
+2. Click "Download R for macOS".
+3. Take the **current release** offered at the top of the page, choosing the build for your chip:
+   the `arm64` package for Apple silicon, or the `x86_64` package for older Intel Macs.
+4. Download and install it.
+5. Also [download and install XQuartz](https://www.xquartz.org/).
+
+::: {.callout-note}
+**Take the current release rather than a specific version number.**
+CRAN always offers the latest release at the top of the download page, and that is the one to
+take.
+:::
+
+#### 2. Install Positron
+
+Positron is our integrated development environment (IDE), the program you actually sit in front
+of to write R.
+If R is the engine, Positron is the dashboard: it gives you a graphical interface to control,
+monitor and run R code.
+It is a free, source-available IDE designed specifically for data science with R and Python.
+
+1. Navigate to <https://positron.posit.co/install.html>.
+2. Install all prerequisites listed for macOS. You can ignore the `Python setup` and `R setup`
+   panes.
+3. Accept the license agreement by ticking the box.
+4. Click `Download Positron for macOS` and run the downloaded file.
+
+Once it opens, find the Console and the Terminal described in @sec-vocabulary.
+
+#### 3. Install a C++ compiler (Xcode)
+
+Some R packages we use later rely internally on **C++**, a much more efficient language for
+computationally intensive tasks.
+For this to work, R needs access to a **C++ compiler** so it can compile and run C++ code behind
+the scenes.
+You will not usually interact with C++ directly, but the compiler is required to install and use
+certain packages, `brms` among them.
+
+1. Download and install **Xcode** from the [Mac App Store](https://developer.apple.com/xcode/resources/).
+2. Afterwards, open a **Terminal** and install the command-line tools as well:
+
+```bash
+xcode-select --install
+```
+
+Once that is done, your system can compile the C++ code some R packages need.
+
+#### 4. Install Git
+
+**Git** is a free and open-source version control system, a tool that tracks changes in your files
+over time.
+It lets you see what changed, revert to earlier versions, and collaborate without overwriting
+other people's work.
+**GitHub** is an online platform that hosts Git repositories and adds collaboration features such
+as pull requests, issues and automated workflows.
+Together they make it easier to write code, analyse data, and manage research projects
+**transparently and reproducibly**.
+
+Git comes with Xcode, which you installed in step 3.
+Open a **Terminal** and enter:
+
+```bash
+git --version
+```
+
+You should see a version number.
+If so, Git is installed correctly.
+
+#### 5. Configure Git
+
+To use Git you need to set a **name** and an **email address**.
+These are attached to every change (commit) you make, acting like a digital signature.
+You do not have to use your full name, but it is recommended.
+Run both lines in the **Terminal**, substituting your own details.
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your@mail.com"
+```
+
+::: {.callout-warning}
+**Do not skip this step.**
+It is easy to overlook, because nothing goes wrong until the first time you try to commit, and
+then Git refuses with a message like `Please tell me who you are`.
+Setting both values now saves you that error in week 2, when everybody is committing for the
+first time at once.
+:::
+
+#### 6. Create a GitHub account
+
+If you do not already have one, [create a free GitHub account](https://github.com/join).
+GitHub lets you store repositories online, collaborate, and reach your work from anywhere.
+We use it to distribute all course materials.
+
+#### 7. Check Quarto
+
+**Quarto** is the publishing system that turns a `.qmd` file into HTML, PDF or slides, running
+your R code as it goes.
+Every artefact in this course, including this page, is a Quarto document.
+
+Positron ships with Quarto, so if you installed Positron in step 2 you already have it.
+Confirm it from the **Terminal**:
+
+```bash
+quarto --version
+```
+
+#### 8. Install TinyTeX
+
+To render **PDF** output, Quarto needs a LaTeX engine.
+Let Quarto install and manage a small one for you, from the **Terminal**:
+
+```bash
+quarto install tinytex
+```
+
+Now continue with @sec-install-packages, which is the same on every operating system.
+
+:::
+
+## Install the R packages {#sec-install-packages}
+
+This step is identical on Windows and macOS.
 
 R packages are bundles of functions, data and documentation that extend R.
 You install a package once, and load it in each session where you need it.
@@ -279,28 +404,19 @@ You install a package once, and load it in each session where you need it.
 | `patchwork` | Combines several plots into one figure. | For multi-panel figures. |
 | `modelsummary` | Formats model output into tables. | Regression tables that can go straight into a report. |
 | `knitr` | The engine that runs the R code inside a Quarto document. | Also provides `kable()` for computed tables. |
-| `tinytex` | Manages a lightweight LaTeX distribution. | What lets Quarto produce PDFs without a full LaTeX install. |
 
-: The R packages this course uses, and what each one is for. Install them all before the first session. {#tbl-packages}
+: The R packages this course uses, and what each one is for. Install them all before the first session. LaTeX is not on this list, because `quarto install tinytex` in step 8 already handled it. {#tbl-packages}
 
 **How to install.**
-In Positron, find the `CONSOLE` tab,[^positron-layout] start an R session (this often happens
-automatically) and run:
-
-[^positron-layout]: [Positron layout overview](https://positron.posit.co/layout.html)
+In Positron, find the **Console** (see @fig-positron-layout), start an R session if one is not
+running already, and run:
 
 ```r
 install.packages(c(
   "tidyverse", "here", "brms", "posterior", "bayesplot",
   "marginaleffects", "ggpubr", "patchwork", "modelsummary",
-  "knitr", "tinytex"
+  "knitr"
 ))
-```
-
-Then install the LaTeX distribution itself, once:
-
-```r
-tinytex::install_tinytex()
 ```
 
 ::: {.callout-note}
@@ -308,6 +424,21 @@ tinytex::install_tinytex()
 `brms` compiles C++ code during installation, so it is much slower than the others.
 Start it when you have time to leave it running.
 :::
+
+## Great, you made it {#sec-done}
+
+::: {.callout-tip}
+**That was a lot, and you got through it.**
+You now have a research toolchain on your machine that is genuinely the same one used for
+published empirical work.
+Nothing more is required before the first session.
+:::
+
+If something did not work, do not spend an evening fighting it alone.
+Bring it to the first session, or email me beforehand with the exact error message, and we will
+sort it out together.
+Setup problems are common, they are almost always quick to fix once someone has seen them before,
+and this is precisely why the guide asks you to install early.
 
 ## Submitting your work {#sec-submitting}
 

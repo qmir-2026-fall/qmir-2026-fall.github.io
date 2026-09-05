@@ -1,0 +1,509 @@
+# -----------------------------------------------------------------------------
+# The course glossary, as data. Rendered alphabetically by website/glossary.qmd.
+#
+# Adding a term:
+#   term:  as it should be displayed. Package and function names in backticks.
+#   block: index into `blocks:` in course.yml (1, 2 or 3), the block where students
+#          FIRST meet the term, not where it is most advanced. Named once there, so
+#          the glossary and the schedule cannot drift apart.
+#   tags:  one or more from the CLOSED vocabulary below. glossary.qmd stops the
+#          render on an unknown tag, so the tag set cannot sprawl the way the slide
+#          font sizes did in the previous course iteration.
+#          workflow quarto git r data probability model prior mcmc diagnostics
+#          regression multilevel interpretation
+#   def:   one or two sentences, ONE SENTENCE PER LINE (STYLE.md section 1).
+#
+# STYLE.md applies here as everywhere: no em dashes, no en dashes, no semicolons.
+# No frequentist framing (CLAUDE.md section 3). Where a contrast genuinely teaches
+# something, as with credible versus confidence intervals, explain the contrast
+# rather than substituting one framework for the other.
+#
+# Order in this file does not matter. The page sorts alphabetically.
+# -----------------------------------------------------------------------------
+
+- term: "Reproducible research"
+  block: 1
+  tags: [workflow]
+  def: |
+    Research whose results can be regenerated from the raw data and the code alone, by someone
+    else, on another machine.
+    The practical test is whether one command rebuilds every number and figure in the output.
+
+- term: "Literate programming"
+  block: 1
+  tags: [workflow, quarto]
+  def: |
+    Writing code and the prose that explains it in a single document, so the reasoning and the
+    computation cannot drift apart.
+    Quarto is the tool we use for it.
+
+- term: "Quarto"
+  block: 1
+  tags: [quarto]
+  def: |
+    The publishing system that turns a `.qmd` file into HTML, PDF or slides, running the embedded
+    code as it goes.
+    Everything in this course, including this page, is a Quarto document.
+
+- term: "Render"
+  block: 1
+  tags: [quarto, workflow]
+  def: |
+    The act of turning a source `.qmd` into its output document.
+    A submission that does not render is not a submission, because nobody else can reproduce it.
+
+- term: "Code chunk"
+  block: 1
+  tags: [quarto, r]
+  def: |
+    A block of executable code inside a `.qmd`.
+    Every chunk in this course carries a label, so it can be referred to and so an error points
+    somewhere specific.
+
+- term: "YAML front matter"
+  block: 1
+  tags: [quarto]
+  def: |
+    The block between the two `---` lines at the top of a `.qmd`, which sets the document title,
+    output format and options.
+    It is configuration, not content.
+
+- term: "Project root"
+  block: 1
+  tags: [workflow, r]
+  def: |
+    The top directory of a project, the fixed point every other path is expressed relative to.
+    Anchoring paths to it is what makes a project work on a machine other than yours.
+
+- term: "`here()`"
+  block: 1
+  tags: [r, workflow]
+  def: |
+    The function from the `here` package that builds a path from the project root rather than from
+    whatever the current working directory happens to be.
+    Use it for every path, always.
+
+- term: "Working directory"
+  block: 1
+  tags: [r, workflow]
+  def: |
+    The directory R currently treats as "here" when it resolves a relative path.
+    It changes depending on how code is run, which is exactly why we do not rely on it.
+
+- term: "Git"
+  block: 1
+  tags: [git]
+  def: |
+    A version control system that records the history of a project as a series of snapshots.
+    It answers what changed, when, and why, and it lets you go back.
+
+- term: "Repository"
+  block: 1
+  tags: [git]
+  def: |
+    A project under version control, together with its full history.
+    Usually shortened to "repo".
+
+- term: "Commit"
+  block: 1
+  tags: [git]
+  def: |
+    One recorded snapshot of the project, with a message saying what changed.
+    A commit is the unit of history, so its message is written for the next reader.
+
+- term: "Branch"
+  block: 1
+  tags: [git]
+  def: |
+    A named line of development inside a repository, so work in progress does not disturb the main
+    version.
+    This course uses `main` for sources and `gh-pages` for the rendered website.
+
+- term: "Remote"
+  block: 1
+  tags: [git]
+  def: |
+    A copy of the repository hosted elsewhere, normally on GitHub, that you push to and pull from.
+    The remote is what makes the work shared rather than local.
+
+- term: "Clone"
+  block: 1
+  tags: [git]
+  def: |
+    Making a local copy of a remote repository, including its history.
+
+- term: "Push and pull"
+  block: 1
+  tags: [git]
+  def: |
+    Sending your local commits to the remote (push), and fetching other people's commits from it
+    (pull).
+
+- term: "Template repository"
+  block: 1
+  tags: [git]
+  def: |
+    A repository GitHub can copy to make a fresh, independent repository with no shared history.
+    Every homework starter is distributed this way, which is why your submission repo is yours
+    alone.
+
+- term: "GitHub"
+  block: 1
+  tags: [git]
+  def: |
+    The platform that hosts repositories and adds collaboration features such as issues and
+    automated checks.
+    Course materials are distributed and homework submitted through it.
+
+- term: "Tidy data"
+  block: 1
+  tags: [data]
+  def: |
+    Data arranged so that each variable is a column, each observation is a row, and each cell holds
+    one value.
+    Most of the work in an analysis is getting data into this shape, and most tools assume it.
+
+- term: "Data frame and tibble"
+  block: 1
+  tags: [data, r]
+  def: |
+    A rectangular table of data in R, with one column per variable.
+    A tibble is the tidyverse version of a data frame, with friendlier printing and fewer
+    surprises.
+
+- term: "Native pipe"
+  block: 1
+  tags: [r]
+  def: |
+    The `|>` operator, which passes the result on its left into the first argument of the function
+    on its right, so a sequence of steps reads left to right.
+    This course uses `|>` throughout and not the older `%>%`.
+
+- term: "Function and argument"
+  block: 1
+  tags: [r]
+  def: |
+    A function is a named, reusable piece of code, and its arguments are the inputs you give it.
+    Naming arguments explicitly makes code readable a month later.
+
+- term: "Package"
+  block: 1
+  tags: [r]
+  def: |
+    A bundle of functions, data and documentation that extends R.
+    Installed once with `install.packages()`, loaded per session with `library()`.
+
+- term: "`set.seed()`"
+  block: 1
+  tags: [r, workflow]
+  def: |
+    Fixes the starting point of R's random number generator, so anything involving randomness
+    gives the same result on every run.
+    Required wherever this course simulates or samples.
+
+- term: "Freeze"
+  block: 1
+  tags: [quarto, workflow]
+  def: |
+    Quarto's cache of already-computed results, stored in `_freeze/`, so a rebuild does not re-run
+    expensive code.
+    It is committed deliberately, so the site rebuilds identically anywhere.
+
+- term: "Probability distribution"
+  block: 2
+  tags: [probability]
+  def: |
+    A description of how plausible each possible value of a quantity is.
+    Here, distributions describe both data and parameters, which is the central move of the
+    Bayesian approach.
+
+- term: "Parameter"
+  block: 2
+  tags: [probability, model]
+  def: |
+    An unknown quantity in a model that we want to learn about, such as a slope or an average.
+    Bayesian inference gives a parameter a distribution rather than one fixed number.
+
+- term: "Prior"
+  block: 2
+  tags: [prior, model]
+  def: |
+    The distribution expressing what is plausible about a parameter before seeing the data.
+    A prior is a philosophical commitment, so it is defended on principled grounds rather than
+    chosen for convenience.
+
+- term: "Likelihood"
+  block: 2
+  tags: [probability, model]
+  def: |
+    How probable the observed data would be, for each candidate value of the parameters.
+    It is the part of the model that lets the data speak.
+
+- term: "Posterior"
+  block: 2
+  tags: [probability, model]
+  def: |
+    The distribution of the parameters after conditioning on the data.
+    This is what Bayes' theorem returns, and every quantity of interest is computed from it.
+
+- term: "Bayes' theorem"
+  block: 2
+  tags: [probability]
+  def: |
+    The rule that combines prior and likelihood into a posterior.
+    Read as a proportionality, the posterior is the likelihood times the prior, up to a constant.
+
+- term: "Normalising constant"
+  block: 2
+  tags: [probability]
+  def: |
+    The quantity that rescales the posterior so it integrates to one.
+    It does not depend on the parameters, which is why we can usually ignore it and work with the
+    unnormalised posterior.
+
+- term: "Estimand"
+  block: 2
+  tags: [workflow, interpretation]
+  def: |
+    The quantity you actually want to know, stated precisely, before any model is fitted.
+    Naming it first is step 1 of the workflow, and it is what keeps a model answerable to a
+    question.
+
+- term: "Directed acyclic graph"
+  block: 2
+  tags: [workflow, model]
+  def: |
+    A diagram of assumed causal relationships, drawn as arrows between variables with no cycles.
+    Usually called a DAG, it makes explicit which variables must be adjusted for and which must
+    not.
+
+- term: "Confounder"
+  block: 2
+  tags: [model, interpretation]
+  def: |
+    A variable that influences both the presumed cause and the outcome, so leaving it out distorts
+    the relationship you are trying to measure.
+    Whether a variable is a confounder is a claim about the DAG, not something the data can tell
+    you.
+
+- term: "Generative model"
+  block: 2
+  tags: [model]
+  def: |
+    A model complete enough to simulate fake data that looks like the real thing.
+    If you can simulate from it, you can check it before it ever touches your data.
+
+- term: "Prior predictive check"
+  block: 2
+  tags: [prior, diagnostics]
+  def: |
+    Simulating data from the priors alone, before fitting, to see what outcomes the model considers
+    plausible.
+    It catches priors that imply impossible values, such as a turnout rate above 100 percent.
+
+- term: "Posterior predictive check"
+  block: 2
+  tags: [diagnostics, model]
+  def: |
+    Simulating data from the fitted model and comparing it against the observed data.
+    It asks whether the model can reproduce the features of the data you care about.
+
+- term: "Markov chain Monte Carlo"
+  block: 2
+  tags: [mcmc]
+  def: |
+    A family of algorithms, usually shortened to MCMC, that explore the posterior by taking a long,
+    dependent random walk through it.
+    We need it because most interesting posteriors cannot be written down in closed form.
+
+- term: "Chain"
+  block: 2
+  tags: [mcmc]
+  def: |
+    One run of the sampler, producing a sequence of draws.
+    Several chains are run from different starting points so their agreement can be checked.
+
+- term: "Warmup"
+  block: 2
+  tags: [mcmc]
+  def: |
+    The initial draws a chain uses to adapt and find the posterior, discarded before inference.
+    They describe the sampler getting started, not the posterior.
+
+- term: "Draw"
+  block: 2
+  tags: [mcmc]
+  def: |
+    A single sample from the posterior.
+    A posterior is represented in practice as a large collection of draws, and every summary is
+    computed from them.
+
+- term: "Divergent transition"
+  block: 2
+  tags: [mcmc, diagnostics]
+  def: |
+    A warning that the sampler failed to explore part of the posterior faithfully.
+    Divergences are not cosmetic, so they are understood rather than silenced.
+
+- term: "R-hat"
+  block: 2
+  tags: [mcmc, diagnostics]
+  def: |
+    A convergence diagnostic comparing variation between chains against variation within them.
+    Values near 1 are consistent with convergence, and clearly larger values mean the chains do
+    not agree.
+
+- term: "Effective sample size"
+  block: 2
+  tags: [mcmc, diagnostics]
+  def: |
+    How many independent draws the correlated MCMC draws are worth.
+    A low value means a summary rests on less information than the raw number of draws suggests.
+
+- term: "Trace plot"
+  block: 2
+  tags: [mcmc, diagnostics]
+  def: |
+    A plot of drawn values against iteration, one line per chain.
+    Well-mixed chains overlap and look stationary, like noise around a stable level.
+
+- term: "Credible interval"
+  block: 2
+  tags: [interpretation, probability]
+  def: |
+    A range containing a stated share of the posterior probability, for example 90 percent.
+    It is a direct statement about the parameter given the data and the model, which is what makes
+    it straightforward to interpret.
+    A frequentist confidence interval is a different object, describing the long-run behaviour of
+    the procedure rather than the parameter.
+
+- term: "Linear regression"
+  block: 3
+  tags: [regression]
+  def: |
+    A model in which the expected outcome is a straight-line function of the predictors.
+    The foundation the later models extend rather than replace.
+
+- term: "Coefficient"
+  block: 3
+  tags: [regression, interpretation]
+  def: |
+    A parameter multiplying a predictor, describing how the expected outcome changes as that
+    predictor changes.
+    In a Bayesian model a coefficient has a full posterior, not a single value.
+
+- term: "Intercept"
+  block: 3
+  tags: [regression, interpretation]
+  def: |
+    The expected outcome when every predictor is zero.
+    It is only interpretable when zero is a meaningful value, which is one reason predictors are
+    often centred.
+
+- term: "Link function"
+  block: 3
+  tags: [regression, model]
+  def: |
+    The transformation connecting a linear predictor to the scale of the outcome.
+    It lets a linear model describe outcomes that are bounded, such as probabilities.
+
+- term: "Logistic regression"
+  block: 3
+  tags: [regression]
+  def: |
+    A model for a binary outcome, using the logit link to keep predicted probabilities between zero
+    and one.
+
+- term: "Log-odds"
+  block: 3
+  tags: [regression, interpretation]
+  def: |
+    The scale a logistic regression's coefficients live on, the logarithm of the odds.
+    Coefficients are additive here but not on the probability scale, which is why results are
+    converted before interpretation.
+
+- term: "Interaction"
+  block: 3
+  tags: [regression, interpretation]
+  def: |
+    A term letting the effect of one predictor depend on the value of another.
+    An interaction is a claim that an effect is conditional, so it is interpreted jointly and not
+    term by term.
+
+- term: "Multilevel model"
+  block: 3
+  tags: [multilevel]
+  def: |
+    A model with parameters that vary by group, where the group-level variation is itself
+    estimated.
+    Also called a hierarchical model.
+
+- term: "Partial pooling"
+  block: 3
+  tags: [multilevel]
+  def: |
+    The compromise a multilevel model strikes between one estimate for all groups and a separate,
+    independent estimate per group.
+    Groups with little data are pulled towards the overall pattern, and groups with plenty are left
+    largely alone.
+
+- term: "Shrinkage"
+  block: 3
+  tags: [multilevel]
+  def: |
+    The pull of a group's estimate towards the overall mean under partial pooling.
+    It is a feature, because it stops small groups producing extreme estimates on thin evidence.
+
+- term: "Population-level and group-level effects"
+  block: 3
+  tags: [multilevel, model]
+  def: |
+    Population-level effects apply across all observations, and group-level effects vary by group.
+    `brms` uses these names for what are elsewhere called fixed and random effects.
+
+- term: "Marginal effect"
+  block: 3
+  tags: [interpretation]
+  def: |
+    How the expected outcome changes with a predictor, after averaging over the others.
+    It is often the form in which a result becomes reportable.
+
+- term: "Quantity of interest"
+  block: 3
+  tags: [interpretation]
+  def: |
+    The specific, interpretable number a reader should take away, computed from the posterior.
+    Deciding it in advance is what stops an analysis becoming a table of coefficients with no
+    conclusion.
+
+- term: "Counterfactual prediction"
+  block: 3
+  tags: [interpretation, model]
+  def: |
+    A model-based prediction of the outcome under a specified, possibly unobserved, setting of the
+    predictors.
+    It is how a fitted model answers a substantive question.
+
+- term: "Posterior predictive distribution"
+  block: 3
+  tags: [interpretation, model]
+  def: |
+    The distribution of new outcomes implied by the fitted model, accounting for both parameter
+    uncertainty and outcome variability.
+    Predictions come from it rather than from point estimates alone.
+
+- term: "`brms`"
+  block: 3
+  tags: [r, model]
+  def: |
+    The R package used throughout this course to fit Bayesian regression models with familiar
+    formula syntax.
+    Every model call here sets its priors explicitly.
+
+- term: "Stan"
+  block: 3
+  tags: [mcmc, model]
+  def: |
+    The probabilistic programming language and sampler that `brms` compiles models down to and
+    runs.
+    You will rarely write Stan code directly, but its diagnostics are the ones you read.

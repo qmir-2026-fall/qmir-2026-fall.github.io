@@ -1,5 +1,7 @@
 ---
 title: "Schedule"
+toc: true
+toc-depth: 2
 ---
 
 ```{r}
@@ -14,108 +16,65 @@ library(yaml) # read course.yml and the per-homework meta.yml
 # website/_quarto.yml is itself a project-root marker, so a bare here() would stop at
 # website/ rather than the repo root. i_am() anchors it explicitly. See STYLE.md section 4.
 here::i_am("website/schedule.qmd")
+source(here("website", "_course-helpers.R"))
 
-cfg <- yaml::read_yaml(here("course.yml"))
-
-# A PLACEHOLDER in course.yml prints as an honest "to be announced", never as the
-# literal word. See course.yml for the keys that are still unset.
-shown <- function(x, fallback = "to be announced") {
-  if (is.null(x) || !nzchar(x) || identical(x, "PLACEHOLDER")) fallback else x
-}
-exam_window <- if (identical(shown(cfg$exam$opens), "to be announced") ||
-  identical(shown(cfg$exam$closes), "to be announced")) {
-  "to be announced"
-} else {
-  paste(cfg$exam$opens, "to", cfg$exam$closes)
-}
+cfg <- read_course()
 ```
 
 Your roadmap for the term.
-One session per week, and each row of @tbl-schedule links the slides, the homework starter repo,
-and, after the due date, the sample solution.
+One session per week, and each row links the slides, the homework starter repo, and, after the
+due date, the sample solution.
 
-- Class
-  - {{< fa chalkboard >}} Instructor-led session: concepts, theory and foundations.
-  - {{< fa code >}} Hands-on exercises with guidance.
-- Homework ({{< fa laptop-code >}})
-  - Assigned at the end of class.
-  - Due `r cfg$homework$due_offset_days` days later, before the next session.
-- Additional resources ({{< fa book >}})
-  - Further readings and online learning resources for the week.
-
-The term runs in three blocks, shown in the Block column: scientific programming fundamentals
-first, then the logic of Bayesian inference, then applied modelling.
-Week 1 sits outside them, because it shows the whole workflow up front.
-
-::: {.callout-note}
-## Take-home exam
-The exam is a complete **8-step Bayesian analysis**.
-You see the target in week 1 and every week builds toward it.
-
-**Window:** `r exam_window`.
-
-**Distribution:** the `exam` repo on the course org, the same template flow as the weekly
-homework.
-
-**Submission:** the state of your repository when the deadline passes is what gets graded.
-
-**What to expect:** a dataset, the background you need, and a research question.
-You run the analysis yourself, end to end, and submit a reproducible repository with a rendered
-PDF.
-Detailed grading criteria come with the exam.
+::: {.schedule-legend}
+| | |
+|---|---|
+| {{< fa chalkboard >}} | **Slides.** The session's deck: concepts, theory, and the hands-on part. |
+| {{< fa laptop-code >}} | **Homework.** Opens GitHub's "use this template" page. Assigned at the end of class, due `r cfg$homework$due_offset_days` days later, before the next session. |
+| {{< fa file-circle-check >}} | **Sample solution.** Published after the due date, for every homework. |
+| {{< fa book >}} | **Reading.** Further readings and online resources for the week. |
+| [{{< fa chalkboard >}}]{.schedule-tbd} | Greyed out means not published yet. |
 :::
 
+The term runs in three blocks.
+Week 1 sits outside them, because it shows the whole workflow up front.
+
 ```{r}
-#| label: tbl-schedule
-#| tbl-cap: "Weekly schedule, grouped into the term's three blocks. A link appears as soon as its
-#|   source file exists on disk. A greyed topic is the planned topic from course.yml, not yet a
-#|   published deck, and the sample-solution link appears only once the homework due date has
-#|   passed."
+#| label: schedule-tables
 #| echo: false
 #| message: false
 #| warning: false
+#| results: asis
 
-# ─────────────────────────────────────────────────────────────────────────────
-# This table is BUILT, not typed. Sources of truth:
+# -----------------------------------------------------------------------------
+# These tables are BUILT, not typed. Sources of truth:
 #   course.yml                -> term dates, org, sessions, blocks, planned topics
 #   website/slides/weekNN.qmd -> the week's topic (its YAML title), which WINS
 #   homework/hw-NN/meta.yml   -> homework title + due date
 #   website/resources/hw-NN-solution.pdf -> published sample solution
 #   website/resources/NN_resources.qmd   -> the week's reading page
 # A link appears as soon as its file exists. Nothing to remember to swap on release.
-# cfg / here() are set up in the setup-schedule chunk above.
-# ─────────────────────────────────────────────────────────────────────────────
+# Dates come from session_dates(), which skips the cancelled dates in course.yml.
+# cfg / here() / pad() are set up in the setup-schedule chunk and the helpers file.
+# -----------------------------------------------------------------------------
 n_wk <- cfg$sessions$count
-first <- as.Date(cfg$sessions$first_session)
+dates <- session_dates(cfg)
 org <- cfg$github$org
 
-pad <- function(i) sprintf("%02d", i)
 tbd <- "[]{.schedule-tbd}--"
 # Grey, not a link: planned but not yet published.
 planned <- function(x) sprintf("[%s]{.schedule-tbd}", x)
-
-# --- block: which of the three teaching blocks a week belongs to ---
-# Named ONCE in course.yml, so the schedule and glossary.qmd cannot drift apart.
-# The name prints on the block's first week only, to keep the column readable.
-block_of <- function(i) {
-  for (b in cfg$blocks) {
-    if (i >= b$from && i <= b$to) {
-      return(if (i == b$from) planned(b$name) else "")
-    }
-  }
-  "" # week 1 sits outside the blocks
-}
+icon <- function(name) sprintf("{{< fa %s >}}", name)
+icon_link <- function(name, href) sprintf("[%s](%s)", icon(name), href)
+icon_off <- function(name) sprintf("[%s]{.schedule-tbd}", icon(name))
 
 # --- topic: the deck's own YAML title, minus the "Week N: " prefix ---
 # The title shape is a contract (STYLE.md section 5.4) and check-authoring.ps1
 # enforces it, so this strip is safe. With no deck yet, fall back to the planned
 # topic from course.yml, greyed so a plan never looks like a published deck.
-planned_topic <- function(i) {
-  hit <- Filter(function(w) identical(w$week, i), cfg$weeks)
-  if (length(hit) == 0 || is.null(hit[[1]]$topic)) NULL else hit[[1]]$topic
-}
+deck_of <- function(i) here("website", "slides", paste0("week", pad(i), ".qmd"))
+
 topic_of <- function(i) {
-  f <- here("website", "slides", paste0("week", pad(i), ".qmd"))
+  f <- deck_of(i)
   ttl <- if (file.exists(f)) {
     tryCatch(rmarkdown::yaml_front_matter(f)$title, error = function(e) NULL)
   } else {
@@ -124,12 +83,15 @@ topic_of <- function(i) {
   if (!is.null(ttl)) {
     return(trimws(sub("^Week\\s*\\d+\\s*:\\s*", "", ttl)))
   }
-  p <- planned_topic(i)
-  if (is.null(p)) tbd else planned(p)
+  w <- week_entry(cfg, i)
+  if (is.null(w) || is.null(w$topic)) tbd else planned(w$topic)
 }
 slides_of <- function(i) {
-  f <- here("website", "slides", paste0("week", pad(i), ".qmd"))
-  if (file.exists(f)) sprintf("[slides](slides/week%s.html)", pad(i)) else tbd
+  if (file.exists(deck_of(i))) {
+    icon_link("chalkboard", sprintf("slides/week%s.html", pad(i)))
+  } else {
+    icon_off("chalkboard")
+  }
 }
 
 # --- homework: exists on disk => link the template repo, due passed => the solution ---
@@ -141,54 +103,118 @@ hw_meta <- function(i) {
   tryCatch(yaml::read_yaml(f), error = function(e) NULL)
 }
 hw_of <- function(i) {
-  m <- hw_meta(i)
-  if (is.null(m)) {
-    return(tbd)
+  if (is.null(hw_meta(i))) {
+    return(icon_off("laptop-code"))
   }
-  due <- if (!is.null(m$due)) format(as.Date(m$due), " (due %d %b)") else ""
-  sprintf("[hw-%s](https://github.com/%s/hw-%s/generate)%s", pad(i), org, pad(i), due)
+  icon_link("laptop-code", sprintf("https://github.com/%s/hw-%s/generate", org, pad(i)))
 }
-sol_of <- function(i) {
+due_of <- function(i) {
   m <- hw_meta(i)
   if (is.null(m) || is.null(m$due)) {
     return(tbd)
   }
+  format(as.Date(m$due), "%d %b")
+}
+sol_of <- function(i) {
+  m <- hw_meta(i)
+  if (is.null(m) || is.null(m$due)) {
+    return(icon_off("file-circle-check"))
+  }
   pdf <- here("website", "resources", sprintf("hw-%s-solution.pdf", pad(i)))
-  if (as.Date(m$due) >= Sys.Date()) {
-    return("[]{.schedule-tbd}after due date")
+  if (as.Date(m$due) >= Sys.Date() || !file.exists(pdf)) {
+    return(icon_off("file-circle-check"))
   }
-  if (!file.exists(pdf)) {
-    return("[]{.schedule-tbd}soon")
-  }
-  sprintf("[solution](resources/hw-%s-solution.pdf)", pad(i))
+  icon_link("file-circle-check", sprintf("resources/hw-%s-solution.pdf", pad(i)))
 }
 
 # --- resources: the week's reading page, NN_resources.qmd (see resources/README.md) ---
 res_of <- function(i) {
   f <- here("website", "resources", sprintf("%s_resources.qmd", pad(i)))
-  if (file.exists(f)) sprintf("[reading](resources/%s_resources.html)", pad(i)) else tbd
+  if (file.exists(f)) {
+    icon_link("book", sprintf("resources/%s_resources.html", pad(i)))
+  } else {
+    icon_off("book")
+  }
 }
 
-weeks <- seq_len(n_wk)
-tab <- data.frame(
-  Week = pad(weeks),
-  Date = format(first + (weeks - 1) * 7, "%d %b"),
-  Block = vapply(weeks, block_of, character(1)),
-  Topic = vapply(weeks, topic_of, character(1)),
-  Slides = vapply(weeks, slides_of, character(1)),
-  Homework = vapply(weeks, hw_of, character(1)),
-  Solution = vapply(weeks, sol_of, character(1)),
-  Resources = vapply(weeks, res_of, character(1)),
-  check.names = FALSE,
-  stringsAsFactors = FALSE
+row_of <- function(i) {
+  sprintf(
+    "| %s | %s | %s | %s | %s | %s | %s | %s |",
+    pad(i), format(dates[i], "%d %b"), topic_of(i),
+    slides_of(i), hw_of(i), due_of(i), sol_of(i), res_of(i)
+  )
+}
+
+# A cancelled date, printed where it falls so the gap in the dates is explained.
+skip_row <- function(d) {
+  sprintf(
+    "| [--]{.schedule-tbd} | %s | %s | | | | | |",
+    format(d, "%d %b"),
+    planned("No session")
+  )
+}
+
+header <- c(
+  "| Week | Date | Topic | Slides | HW | Due | Solution | Reading |",
+  "|-----:|:-----|:------|:------:|:--:|:-----|:--------:|:-------:|"
 )
-knitr::kable(tab, align = c("r", "l", "l", "l", "l", "l", "l", "l"))
+
+skips <- skipped_sessions(cfg)
+
+emit_table <- function(weeks, caption, id) {
+  rows <- vapply(weeks, row_of, character(1))
+  # Any cancelled date that falls inside this block's span goes in at its place.
+  for (k in seq_len(nrow(skips))) {
+    aw <- skips$after_week[k]
+    if (aw %in% weeks) {
+      at <- which(weeks == aw)
+      rows <- append(rows, skip_row(skips$date[k]), after = at)
+    }
+  }
+  cat(c(header, rows), sep = "\n")
+  cat("\n\n: ", caption, " {#", id, "}\n\n", sep = "")
+}
+
+emit_table(1, "Week 1, orientation. The whole 8-step workflow is shown up front, so every later week has somewhere to attach itself.", "tbl-schedule-week1")
+
+for (k in seq_along(cfg$blocks)) {
+  b <- cfg$blocks[[k]]
+  weeks <- seq(b$from, min(b$to, n_wk))
+  cat("#### Block ", block_numeral(k), ": ", b$name, "\n\n", sep = "")
+  emit_table(
+    weeks,
+    sprintf(
+      "Block %s of the term, %s. A link appears as soon as its source file exists, a greyed topic is the planned topic from course.yml rather than a published deck, and the sample solution appears once the due date has passed.",
+      block_numeral(k), tolower(b$name)
+    ),
+    sprintf("tbl-schedule-block%d", k)
+  )
+}
 ```
 
-The **Homework** links in @tbl-schedule open GitHub's "create from template" page, which makes
-your own `hw-NN-<username>` repo.
+The **{{< fa laptop-code >}}** links open GitHub's "create from template" page, which makes your
+own `hw-NN-<username>` repo.
 
 ::: {.callout-important}
 **Name that repo exactly `hw-NN-<username>`.**
 The tracker looks for it by name, so anything else will not be counted as a submission.
+:::
+
+## Take-home exam {#sec-exam}
+
+::: {.callout-note}
+**The exam is a complete 8-step Bayesian analysis.**
+You see the target in week 1 and every week builds toward it.
+
+**Window:** `r exam_window(cfg)`.
+
+**Distribution:** the `exam` repo on the course org, the same template flow as the weekly
+homework.
+
+**Submission:** the state of your repository when the deadline passes is what gets graded.
+
+**What to expect:** a dataset, the background you need, and a research question.
+You run the analysis yourself, end to end, and submit a reproducible repository with a rendered
+PDF.
+Detailed grading criteria come with the exam.
 :::

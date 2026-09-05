@@ -15,14 +15,11 @@ library(yaml) # read course.yml
 # website/_quarto.yml is itself a project-root marker, so a bare here() would stop at
 # website/ rather than the repo root. i_am() anchors it explicitly. See STYLE.md section 4.
 here::i_am("website/index.qmd")
+source(here("website", "_course-helpers.R"))
 
-cfg <- yaml::read_yaml(here("course.yml"))
-
-# Room, time and office hours are still PLACEHOLDER in course.yml. Print an honest
-# "to be announced" rather than the literal word, and fill them in in ONE place.
-shown <- function(x, fallback = "to be announced") {
-  if (is.null(x) || !nzchar(x) || identical(x, "PLACEHOLDER")) fallback else x
-}
+# shown() prints an honest "to be announced" for any key still PLACEHOLDER in
+# course.yml, which is where every value on this page comes from.
+cfg <- read_course()
 ```
 
 `r cfg$course$term`<br>
@@ -59,9 +56,8 @@ shown <- function(x, fallback = "to be announced") {
 
 ### Contacting me {#sec-contact}
 
-- {{< fa calendar-check >}} `r shown(cfg$sessions$office_hours)`: open consultation, no appointment
-  needed.
-- For any other time, email me to arrange an appointment, in person or online.
+- {{< fa calendar-check >}} **Office hours:** `r shown(cfg$sessions$office_hours)`.
+- Email me to arrange a time, in person or online.
   I aim to reply within 24 hours.
 
 :::

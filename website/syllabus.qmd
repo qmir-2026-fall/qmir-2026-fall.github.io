@@ -16,8 +16,9 @@ library(yaml) # read course.yml
 # website/_quarto.yml is itself a project-root marker, so a bare here() would stop at
 # website/ rather than the repo root. i_am() anchors it explicitly. See STYLE.md section 4.
 here::i_am("website/syllabus.qmd")
+source(here("website", "_course-helpers.R"))
 
-cfg <- yaml::read_yaml(here("course.yml"))
+cfg <- read_course()
 
 # Every threshold below is DERIVED from course.yml, never typed. The 2026 spring
 # syllabus stated 11 homeworks in prose and then patched itself to 10 in a callout,
@@ -32,18 +33,6 @@ att_lo <- ceiling(att_lo_frac * n_sessions)
 n_hw <- cfg$homework$count
 hw_frac <- cfg$thresholds$homework
 hw_min <- ceiling(hw_frac * n_hw)
-
-pct <- function(x) paste0(round(100 * x), "%")
-
-shown <- function(x, fallback = "to be announced") {
-  if (is.null(x) || !nzchar(x) || identical(x, "PLACEHOLDER")) fallback else x
-}
-exam_window <- if (identical(shown(cfg$exam$opens), "to be announced") ||
-  identical(shown(cfg$exam$closes), "to be announced")) {
-  "to be announced"
-} else {
-  paste(cfg$exam$opens, "to", cfg$exam$closes)
-}
 ```
 
 ## Course description {#sec-course-description}
@@ -72,14 +61,81 @@ visualisation, and communicating empirical findings clearly to a non-technical a
 Through weekly assignments and a cumulative take-home exam, you will develop the ability to
 evaluate statistical claims critically, in academic research and in public debate alike.
 
-## The through-line: an 8-step Bayesian workflow {#sec-through-line}
+## From research question to empirical answer {#sec-through-line}
 
-Everything in this course builds toward one skill: running a complete Bayesian analysis end to
-end.
-The **take-home exam is exactly that**, on a dataset you will meet at the end.
-You see the whole workflow in week 1, shown in @tbl-workflow, and deepen it each week.
+Everything in this course builds toward one skill: getting from a question about the world to an
+answer you can defend, with its uncertainty attached.
+That route has eight steps, shown in @tbl-workflow, and they are the same eight steps every time.
+The **take-home exam is exactly this route**, run end to end on a dataset you meet at the end of
+the term.
 
 {{< include slides/_workflow-8step.qmd >}}
+
+**Several of the words in that table probably mean nothing to you yet.**
+That is expected, and it is the honest starting point.
+Estimand, prior predictive check, R-hat: learning what these are, why each step exists, and what
+goes wrong when you skip one, is what the term is for.
+You see the whole route in session 1, before you can walk any of it, so that every later session
+has somewhere to attach itself.
+By session 13 you will have run all eight steps yourself, more than once.
+
+The [Glossary](glossary.qmd) holds the short version of every term, and each session's slides
+hold the long version.
+
+## Session plan {#sec-session-plan}
+
+What each session covers, and what you should be able to do afterwards.
+Dates, topics and links are on the [Schedule](schedule.qmd).
+
+::: {.callout-note}
+**This is a plan, not a contract.**
+Pace is adjusted to the group.
+If a topic needs more time, it gets more time, and the schedule is updated rather than the plan
+silently abandoned.
+:::
+
+```{r}
+#| label: session-plan
+#| echo: false
+#| message: false
+#| warning: false
+#| results: asis
+
+# -----------------------------------------------------------------------------
+# BUILT from `weeks:` in course.yml, which is also what schedule.qmd reads, so the
+# syllabus and the schedule cannot state different topics for the same session.
+# Add or reword a session THERE. Dates come from session_dates(), which skips the
+# cancelled dates, so the session numbering here matches the schedule exactly.
+# -----------------------------------------------------------------------------
+dates <- session_dates(cfg)
+
+for (i in seq_len(cfg$sessions$count)) {
+  w <- week_entry(cfg, i)
+  if (is.null(w)) next
+
+  cat("### Session ", i, ": ", w$topic, " {#sec-session-", pad(i), "}\n\n", sep = "")
+
+  meta <- format(dates[i], "%d %B %Y")
+  blk <- block_name_of(cfg, i)
+  if (!is.na(blk)) meta <- paste0(meta, " · ", blk)
+  steps <- unlist(w$steps)
+  if (length(steps) > 0) {
+    meta <- paste0(
+      meta, " · workflow step", if (length(steps) > 1) "s" else "",
+      " ", paste(steps, collapse = ", ")
+    )
+  }
+  cat("::: {.session-meta}\n", meta, "\n:::\n\n", sep = "")
+
+  if (!is.null(w$content)) cat(trimws(w$content), "\n\n", sep = "")
+
+  goals <- unlist(w$goals)
+  if (length(goals) > 0) {
+    cat("**Afterwards you will be able to:**\n\n")
+    cat(paste0("- ", goals, collapse = "\n"), "\n\n", sep = "")
+  }
+}
+```
 
 ## Course logistics {#sec-logistics}
 
@@ -145,7 +201,7 @@ assessed pass or fail.
 
 The final examination is a **take-home exam**.
 
-**Window:** `r exam_window`.
+**Window:** `r exam_window(cfg)`.
 
 The exam is distributed through the `exam` repository on the course GitHub organisation, the same
 template flow as the weekly homework.
@@ -193,13 +249,24 @@ Install all required software before the first session, following the separate
 Doing it early means we can sort out any problems on day one and start the programming work
 properly in the following session.
 
-### Optional practice materials {#sec-practice-materials}
+### Additional learning resources {#sec-practice-materials}
 
-I strongly recommend making use of the DataCamp access provided with this course.
-DataCamp is an online learning platform with useful opportunities to practise the material covered
-here and well beyond it.
-The introduction to R tutorial is a good starting point.
-DataCamp courses are voluntary and are not part of the requirements to pass.
+Two external platforms are worth your time.
+Both are voluntary and neither is part of the requirements to pass, but each fills a gap this
+course cannot fill on its own in one session a week.
+
+**[DataCamp](https://www.datacamp.com/groups/shared_links/bfecde68ebfcd9af2db396c17af1267ab74165318bfda32072373d1d1ded1a47).**
+Use the link to join the course group, which gives you **six months of premium access**.
+DataCamp offers in-depth, self-paced practical training in R, coding, data analytics and AI
+topics, so it is the right place to drill something until it is automatic, at whatever speed
+suits you.
+The introduction to R track is a good starting point.
+
+**[Duolingo Math](https://www.duolingo.com/math).**
+Freemium, and a good starting point if you would like to relaunch yourself into mathematics
+fundamentals or introductory statistics.
+No prior statistics is assumed in this course, so this is not a prerequisite.
+It is simply there if the maths behind a session feels shakier than you would like.
 
 ## Homework and feedback policy {#sec-feedback-policy}
 
@@ -232,19 +299,103 @@ deadline, not after.
 All submissions are checked for plagiarism, and violations of the code of conduct may result in
 failing the course or in expulsion.
 
-Generative AI tools such as ChatGPT or Gemini are permitted for the final examination, but any
-AI-generated content or code must be clearly marked, thoroughly commented, and accompanied by the
-chat history, so that your understanding is demonstrable.
-I will give occasional guidance on using AI responsibly.
-Relying on it from the start does hinder learning:
+#### AI is encouraged {#sec-ai-encouraged}
+
+You will use AI tools during this course.
+That is a prediction, not a guess, and pretending otherwise would produce a policy nobody follows.
+So the question here is not *whether* but *how to make AI use visible and trustworthy*.
+
+::: {.callout-tip}
+**Use it, and think of it as a tutor.**
+Always available, infinitely patient, and no question is too basic.
+Lean on it when you are stuck, to explain a concept, to tidy code, to improve your writing.
+You take final responsibility for everything you submit.
+:::
+
+Two honest caveats.
+First, AI is more reliable on formal logic, programming and well-covered general topics than on
+narrow substantive questions in international relations, so treat narrow factual claims
+sceptically and check the source.
+Second, leaning on it *before* you understand the material does hinder learning:
 [research suggests AI helps most those who already understand the topic](https://arxiv.org/abs/2306.03102).
 For a fuller explanation of why AI can undermine learning, see
 [this piece by Andrew Heiss](https://governancef25.classes.andrewheiss.com/syllabus.html#ai-large-language-models-and-bullshit).
+Do the thinking first, then let the tool help.
+
+#### The one rule: say so in the commit message {#sec-ai-rule}
+
+This course asks for exactly one thing in return, and it is a habit rather than a paperwork
+exercise.
+
+::: {.callout-important}
+**Your own work first, committed. Then the AI-assisted improvement, committed separately, with a
+message that names what the AI did.**
+Two commits: one yours, one AI-assisted and labelled as such.
+That is the whole policy.
+:::
+
+In practice:
+
+1. Write your own draft, whether that is a paragraph, a chunk of code, or a piece of analysis.
+   Commit it, with a message describing **your** work.
+2. If you then use AI to improve it, whether spell checking, rewording, tidying code or
+   restructuring, commit that improved version **separately**, and say in the message what the AI
+   did.
+
+Example messages for the AI step:
+
+```
+AI spell check
+AI wording improvement
+AI code formatting
+AI suggested restructuring of section 3
+```
+
+If your tool offers it, the open-source convention of a trailer line works too, and is what much
+of the software world now does:
+
+```
+Tighten the interpretation of the interaction term
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+#### Why this instead of a chat transcript {#sec-ai-why}
+
+A blanket declaration that "generative AI was used to improve the language of this manuscript"
+cannot be checked by anyone.
+It is a claim about a process that left no trace.
+Submitting chat transcripts does not work either, because a transcript cannot be matched to the
+passages it actually shaped.
+
+Version control solves this, and you are learning it anyway.
+Your repository already records every change, who made it, when, and exactly what changed.
+Marking where AI entered turns that ordinary record into the disclosure, produced at the moment
+the work happens rather than reconstructed weeks later.
+It separates your work from AI-assisted work in the history, it lets me see the trajectory and
+judge accordingly, and it rests on the same voluntary integrity that scientific standards have
+always rested on.
+
+**Where the line is.**
+Asking AI to explain a concept, proofread your draft, clean up code you wrote, or help debug an
+error message: all fine, all encouraged, all easy to attribute.
+Generating an analysis from scratch and submitting it as your own, or editing AI output before
+committing so the AI step never appears: not fine.
+The common thread is the same in both directions.
+The history must not misrepresent who did the work.
+
+::: {.callout-important}
+**You do not need to know any of this yet.**
+Git, commits and commit messages are taught in session 2, and you will practise this convention
+in every homework from then on.
+By the time the exam arrives it is a habit rather than a rule to memorise.
+Nobody is expected to arrive already knowing how to do it.
+:::
 
 ::: {.callout-note}
 **Two different things, both involving AI.**
-The policy above is about AI *you* use while doing your own work, which must be disclosed and
-commented.
+The policy above is about AI *you* use while doing your own work, which is disclosed in your
+commit messages.
 The opt-in feedback described in @sec-feedback-policy is different: it is run by me, on an
 explicit `license.md` opt-in, and it comments on work you have already submitted.
 Using the feedback pipeline is never something you need to declare.

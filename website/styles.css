@@ -41,3 +41,50 @@ blockquote {
    both. See STYLE.md section 5.1. */
 .small  { font-size: 0.90rem; }
 .xsmall { font-size: 0.82rem; }
+
+/* --- Schedule ------------------------------------------------------------ */
+/* The icon legend above the block tables. Borderless, so it reads as a key
+   rather than as a fifth data table. */
+.schedule-legend table { border: none; margin-bottom: 1.5rem; }
+.schedule-legend td { border: none; padding: 0.15rem 0.6rem 0.15rem 0; }
+.schedule-legend td:first-child { text-align: center; width: 2.2rem; }
+.schedule-legend thead { display: none; }
+
+/* Block headings separate the per-block tables into readable units. */
+h4 { margin-top: 2.2rem; }
+
+/* --- Glossary ------------------------------------------------------------ */
+/* The A to Z jump bar. Letters with no entries are greyed by .schedule-tbd. */
+.glossary-jump {
+  font-family: var(--bs-font-monospace, monospace);
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  line-height: 2;
+  margin: 0.5rem 0 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+/* Tag badges under each entry. Muted on purpose: they are metadata, and must not
+   compete with the definition itself. */
+.glossary-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  padding: 0 0.5rem;
+  margin-right: 0.25rem;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 1rem;
+  color: var(--bs-secondary-color, #6c757d);
+  white-space: nowrap;
+}
+/* The block tag is the one that says WHERE you first meet the term, so it leads. */
+.glossary-block { border-color: #2a6f97; color: #2a6f97; }
+
+/* --- Syllabus ------------------------------------------------------------ */
+/* The date / block / workflow-step line under each session heading. */
+.session-meta {
+  font-size: 0.85rem;
+  color: var(--bs-secondary-color, #6c757d);
+  margin: -0.5rem 0 0.75rem;
+}
