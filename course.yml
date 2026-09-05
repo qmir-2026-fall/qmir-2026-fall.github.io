@@ -122,13 +122,13 @@ blocks:
 weeks:
   - week: 1
     topic: "Introduction"
-    steps: [1, 2]
+    steps: [1, 2, 3, 4, 5, 6, 7, 8]
     content: |
       An orientation session built around a short welcome survey we fill in together.
       The responses give us a dataset of our own, and we run the whole eight-step workflow
       over it before taking any single step apart.
     goals:
-      - "Recognise the main types of data a survey produces, and why the type constrains what you can do with it."
+      - "Read a set of descriptive figures built from data the class produced minutes earlier."
       - "Follow the eight steps of a Bayesian analysis end to end on a dataset we collected in the room."
       - "Say how the course is structured, what the take-home exam asks for, and why the two match."
       - "Find your way around the course site: schedule, syllabus, glossary and the homework flow."

@@ -1,9 +1,233 @@
 ---
-title: "Week 1: The whole workflow, up front"
+title: "Week 1: The whole workflow, on our own data"
 ---
 
-<!-- Copy _deck-template.qmd to start week02.qmd. Shared format options live in
-     _metadata.yml, so this deck's YAML carries only the title. -->
+<!-- Shared format options live in _metadata.yml, so this deck's YAML carries only the title.
+
+     THE DATA IN THIS DECK IS FETCHED LIVE from the week 1 Google Form response sheet.
+     Nothing it reads is committed: the snapshot is git-ignored, and so is the cached fit.
+     Every data-dependent chunk is gated on `have_data`, so the deck also renders on a
+     machine that has never seen the sheet. See the fetch-survey chunk for the details.
+
+     Before the session:  quarto render slides/week01.qmd
+     For the live run, generate the script and open it in Positron. The two assign() calls
+     are needed because purl evaluates `!expr` chunk options as it goes:
+
+         assign("have_data", TRUE, envir = knitr::knit_global())
+         assign("no_data", FALSE, envir = knitr::knit_global())
+         knitr::purl(
+           here::here("website", "slides", "week01.qmd"),
+           output = here::here("website", "slides", "week01-live.R"),
+           documentation = 1
+         )
+-->
+
+```{r}
+#| label: setup
+#| include: false
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(googlesheets4) # read the Google Form response sheet
+library(ggpubr) # theme_pubr()
+library(brms) # Bayesian regression via Stan
+
+# website/_quarto.yml is itself a project-root marker, so a bare here() would stop at
+# website/ rather than the repo root. i_am() anchors it explicitly. See STYLE.md section 4.
+here::i_am("website/slides/week01.qmd")
+
+# Shared palette. Reused verbatim across slides, homework and solutions so a
+# chain colour means the same thing in every artefact of the course.
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+```
+
+```{r}
+#| label: fetch-survey
+#| include: false
+
+# The response sheet behind https://forms.gle/kkvtRQXW5UJMoWq1A. It is private, so the
+# fetch needs an OAuth token. That token lives in gargle's USER-LEVEL cache, outside this
+# repo, and must never be moved into the project: this repo is public and its history is
+# permanent.
+sheet_id <- "197pTJ0r5uRWRbXKG-oRPUFSNLNdxFzZyKixHpFNeqb0"
+snapshot <- here("website", "slides", "data", "week01-survey.local.csv")
+
+# Everything as character. We parse each column deliberately below rather than letting
+# the reader guess, which also avoids read_sheet() handing back list-columns.
+raw <- tryCatch(
+  {
+    gs4_auth(email = "trismuno@gmail.com")
+    fetched <- read_sheet(sheet_id, sheet = 1, col_types = "c")
+    write_csv(fetched, snapshot)
+    fetched
+  },
+  error = function(e) NULL
+)
+
+# The snapshot is the FALLBACK for a failed fetch, not the primary source. If the room
+# wifi or the token gives up mid-session, the last good pull is still on disk.
+if (is.null(raw) && file.exists(snapshot)) {
+  raw <- read_csv(snapshot, col_types = cols(.default = col_character()))
+}
+
+have_data <- !is.null(raw) && nrow(raw) > 0
+no_data <- !have_data
+```
+
+```{r}
+#| label: tidy-survey
+#| include: false
+#| eval: !expr have_data
+
+# Google Sheets uses the FULL QUESTION TEXT as each column header, so the first real
+# wrangling of this course is giving those columns names you can type. Match on a short
+# distinctive fragment rather than the whole sentence, so that rewording a question in the
+# form does not silently break the deck.
+fragments <- c(
+  submitted = "^(timestamp|zeitstempel)$",
+  major = "primary field of study",
+  minor = "secondary field of study",
+  semester = "semester of your bachelor",
+  prior_courses = "taken a statistics or quantitative methods course",
+  why_here = "register for this course",
+  feeling = "how you feel about quantitative methods",
+  heard_of = "tools have you heard of",
+  worked_with = "tools have you worked with",
+  conf_stats = "confidence in reading",
+  conf_code = "confidence in working with code",
+  comment = "anything else you would like me to know"
+)
+
+short_name <- function(nm) {
+  hits <- names(fragments)[vapply(
+    fragments,
+    function(f) str_detect(nm, regex(f, ignore_case = TRUE)),
+    logical(1)
+  )]
+  if (length(hits) == 1) hits else NA_character_
+}
+
+survey <- raw |>
+  rename_with(~ coalesce(map_chr(.x, short_name), .x))
+
+# Fail loudly and early. A rename that half worked would surface as an empty figure in
+# front of the room, which is the one failure mode worth spending five lines to prevent.
+missing_cols <- setdiff(names(fragments), names(survey))
+if (length(missing_cols) > 0) {
+  stop(
+    "Survey columns not found after renaming: ",
+    paste(missing_cols, collapse = ", "),
+    ".\nThe form wording has probably changed. Update `fragments` in the tidy-survey chunk."
+  )
+}
+
+# Parse the columns we actually model. Everything else stays character and is ordered by
+# frequency where it is plotted, so the deck never hardcodes an answer option.
+survey <- survey |>
+  mutate(
+    semester = as.integer(semester),
+    conf_stats = as.integer(conf_stats),
+    conf_code = as.integer(conf_code)
+  )
+
+n_responses <- nrow(survey)
+n_missing_conf <- sum(is.na(survey$conf_stats))
+```
+
+```{r}
+#| label: tidy-grids
+#| include: false
+#| eval: !expr have_data
+
+# A Forms grid arrives as one column per row of the grid, named
+# "<question text> [<row label>]". Pull the label out of the brackets instead of writing
+# down the row wording, which keeps this working when the items are edited.
+likert_levels <- c(
+  "Strongly disagree",
+  "Disagree",
+  "Neither agree nor disagree",
+  "Agree",
+  "Strongly agree"
+)
+
+grid_long <- function(df, question_fragment, wrap = 30) {
+  df |>
+    select(matches(regex(question_fragment, ignore_case = TRUE))) |>
+    pivot_longer(everything(), names_to = "item", values_to = "answer") |>
+    mutate(
+      item = str_extract(item, "\\[(.*)\\]", group = 1),
+      item = str_wrap(item, width = wrap),
+      # Sentence case first, so "Strongly Agree" and "Strongly agree" are one level.
+      answer = factor(str_to_sentence(answer), levels = likert_levels)
+    ) |>
+    filter(!is.na(answer))
+}
+
+beliefs_long <- grid_long(survey, "how much do you agree with each statement")
+reading_long <- grid_long(survey, "attending a political debate")
+
+# The two checkbox questions arrive as one comma-separated string per respondent.
+tools_long <- survey |>
+  select(heard_of, worked_with) |>
+  mutate(respondent = row_number()) |>
+  pivot_longer(c(heard_of, worked_with), names_to = "level", values_to = "tool") |>
+  separate_longer_delim(tool, delim = ", ") |>
+  filter(!is.na(tool), tool != "") |>
+  mutate(
+    level = case_match(
+      level,
+      "heard_of" ~ "Heard of it",
+      "worked_with" ~ "Worked with it"
+    )
+  )
+```
+
+## First, the survey {#sec-survey}
+
+Please fill this in now. It takes about five minutes.
+
+[forms.gle/kkvtRQXW5UJMoWq1A](https://forms.gle/kkvtRQXW5UJMoWq1A)
+
+![](images/qr-week01-survey.png){width="230" fig-alt="QR code linking to the week 1 welcome survey."}
+
+::: notes
+Hand this out first and say nothing else until most people are typing.
+Everything after slide 5 runs on what they enter here, so the responses need a head start.
+Mention that it is anonymous and that the free-text box is read by you only.
+:::
+
+```{r}
+#| label: no-data-notice
+#| echo: false
+#| results: asis
+#| eval: !expr no_data
+#| purl: false
+
+cat(
+  "::: {.callout-note}\n",
+  "**No responses have been collected yet.**\n",
+  "The figures in this deck appear the next time it is rendered with the survey open.\n",
+  ":::\n",
+  sep = ""
+)
+```
+
+## Today {#sec-today}
+
+1. Who is in the room.
+2. A whole Bayesian analysis, on the data you just gave me.
+3. How the course works, and where everything lives.
+4. Files, folders and the terminal.
+
+::: notes
+Keep this to thirty seconds.
+:::
 
 ## What this course is {#sec-what-this-is}
 
@@ -20,15 +244,605 @@ Say the second bullet out loud. It reframes everything that follows.
 
 ::: notes
 Show the whole skeleton now.
-Reassure students that each week deepens one or two steps.
-Point at the exam.
+Do not explain the steps. Promise that we run all eight in the next half hour.
+Each later week deepens one or two of them.
 :::
 
-## Where things live {#sec-where-things-live .smaller}
+## About me {#sec-about-me}
 
-- The **website** is everything: slides, schedule, homeworks, exam.
-- Homeworks are distributed through the GitHub org, one starter repo each.
-- There are 11, one per session, in every session except this one and the last.
+- Tristan Muno, Department of Political Science.
+- I work on international relations, and I spend most of my time in R.
+- Office hours by appointment, and email gets a reply within a day.
+
+::: notes
+Two minutes maximum. The survey is still being filled in, which is the real purpose of
+this slide.
+:::
+
+# Who is in the room {#sec-room}
+
+```{r}
+#| label: fig-fields
+#| fig-cap: "Primary and secondary fields of study in the room. Most of you share a major,
+#|   which matters later: a group this homogeneous is not a sample of anything wider."
+#| fig-height: 4
+#| dpi: 500
+#| echo: false
+#| eval: !expr have_data
+
+survey |>
+  select(Major = major, Minor = minor) |>
+  pivot_longer(everything(), names_to = "which", values_to = "field") |>
+  filter(!is.na(field)) |>
+  ggplot(aes(y = fct_rev(fct_infreq(field)))) +
+  geom_bar(fill = "white", colour = col_2, width = 0.6) +
+  facet_wrap(~which) +
+  theme_pubr() +
+  labs(x = "Count", y = NULL, title = "Fields of study")
+```
+
+## How far along, and what you have done before {#sec-background .smaller}
+
+```{r}
+#| label: fig-semester
+#| fig-cap: "Current semester and previous exposure to quantitative methods. The semester
+#|   panel is the predictor in the analysis we are about to run, so how much it varies
+#|   decides how much this data can possibly tell us."
+#| fig-height: 3.6
+#| dpi: 500
+#| echo: false
+#| eval: !expr have_data
+
+p_sem <- survey |>
+  filter(!is.na(semester)) |>
+  ggplot(aes(x = factor(semester))) +
+  geom_bar(fill = "white", colour = col_1, width = 0.6) +
+  theme_pubr() +
+  labs(x = "Semester", y = "Count", title = "Which semester")
+
+p_prior <- survey |>
+  filter(!is.na(prior_courses)) |>
+  ggplot(aes(y = fct_rev(fct_infreq(prior_courses)))) +
+  geom_bar(fill = "white", colour = col_1, width = 0.6) +
+  theme_pubr() +
+  labs(x = "Count", y = NULL, title = "Methods courses before this one")
+
+ggarrange(p_sem, p_prior, ncol = 2)
+```
+
+::: notes
+Point at the semester panel and ask the room to notice how narrow it is.
+Do not resolve it yet. It comes back at step 8.
+:::
+
+## Why you are here, and how you feel about it {#sec-why-here .smaller}
+
+```{r}
+#| label: fig-why-feeling
+#| fig-cap: "Reasons for registering, and current feelings about quantitative methods.
+#|   Nervousness in the room is normal and it is information, not a verdict."
+#| fig-height: 3.6
+#| dpi: 500
+#| echo: false
+#| eval: !expr have_data
+
+p_why <- survey |>
+  filter(!is.na(why_here)) |>
+  ggplot(aes(y = fct_rev(fct_infreq(why_here)))) +
+  geom_bar(fill = "white", colour = col_2, width = 0.6) +
+  theme_pubr() +
+  labs(x = "Count", y = NULL, title = "Why this course")
+
+p_feel <- survey |>
+  filter(!is.na(feeling)) |>
+  ggplot(aes(y = fct_rev(fct_infreq(feeling)))) +
+  geom_bar(fill = "white", colour = col_2, width = 0.6) +
+  theme_pubr() +
+  labs(x = "Count", y = NULL, title = "How you feel right now")
+
+ggarrange(p_why, p_feel, ncol = 2)
+```
+
+::: notes
+If the nervous bars are tall, say plainly that this is the normal starting point and that
+the course is built for it.
+:::
+
+## Tools {#sec-tools .smaller}
+
+```{r}
+#| label: fig-tools
+#| fig-cap: "Tools the room has heard of, against tools the room has actually used. The gap
+#|   between the two bars is roughly what this course is for."
+#| fig-height: 4
+#| dpi: 500
+#| echo: false
+#| eval: !expr have_data
+
+tools_long |>
+  count(tool, level) |>
+  ggplot(aes(x = n, y = fct_rev(fct_reorder(tool, n, .fun = sum)), fill = level)) +
+  geom_col(position = position_dodge(width = 0.75), width = 0.7) +
+  scale_fill_manual(values = c("Heard of it" = col_1, "Worked with it" = col_2)) +
+  theme_pubr() +
+  labs(x = "Count", y = NULL, fill = NULL, title = "Heard of, against worked with")
+```
+
+::: notes
+Find one tool nobody has used and say we will use it in week 2.
+:::
+
+## How confident do you feel? {#sec-confidence .smaller}
+
+```{r}
+#| label: fig-confidence
+#| fig-cap: "Self-rated confidence in reading statistical results and in working with code,
+#|   both on a 1 to 10 scale. The left panel is the outcome of the analysis that follows."
+#| fig-height: 3.6
+#| dpi: 500
+#| echo: false
+#| eval: !expr have_data
+
+survey |>
+  select(Statistics = conf_stats, Code = conf_code) |>
+  pivot_longer(everything(), names_to = "domain", values_to = "confidence") |>
+  filter(!is.na(confidence)) |>
+  ggplot(aes(x = confidence)) +
+  geom_bar(fill = "white", colour = col_3, width = 0.6) +
+  facet_wrap(~domain) +
+  scale_x_continuous(breaks = 1:10, limits = c(0.5, 10.5)) +
+  theme_pubr() +
+  labs(x = "Confidence, 1 to 10", y = "Count", title = "Where you think you are now")
+```
+
+::: notes
+Say that we will come back to this exact number at the end of term.
+:::
+
+## What you already think about evidence {#sec-beliefs .smaller}
+
+```{r}
+#| label: fig-beliefs
+#| fig-cap: "Agreement with six statements about what statistical evidence can do. These
+#|   are the questions the whole course is an answer to, so the split in the room is the
+#|   point rather than a problem."
+#| fig-height: 4
+#| dpi: 500
+#| echo: false
+#| eval: !expr have_data
+
+ggplot(beliefs_long, aes(x = answer)) +
+  geom_bar(fill = "white", colour = col_4, width = 0.6) +
+  facet_wrap(~item, ncol = 3) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10), drop = FALSE) +
+  theme_pubr() +
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(x = NULL, y = "Count", title = "What evidence can and cannot do")
+```
+
+::: notes
+Read out the "a single result can prove a theory" panel.
+That is the belief this course is going to take apart.
+:::
+
+## What you look for in a result {#sec-reading .smaller}
+
+```{r}
+#| label: fig-reading
+#| fig-cap: "What the room says it attends to when reading a quantitative claim. Keep an eye
+#|   on the significance panel against the uncertainty panel, because the next half hour is
+#|   an argument for the second one."
+#| fig-height: 4
+#| dpi: 500
+#| echo: false
+#| eval: !expr have_data
+
+ggplot(reading_long, aes(x = answer)) +
+  geom_bar(fill = "white", colour = col_4, width = 0.6) +
+  facet_wrap(~item, ncol = 3) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10), drop = FALSE) +
+  theme_pubr() +
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(x = NULL, y = "Count", title = "Reading a quantitative claim")
+```
+
+::: notes
+This is the bridge into the analysis. Whatever the room says here, the workflow answers with
+an interval rather than a verdict.
+:::
+
+# A whole analysis, in eight steps {#sec-analysis}
+
+## The question {#sec-question}
+
+> Do students become more confident in statistics as they progress through their studies?
+
+We have exactly what we need to try: a **semester** for each of you, and a **confidence**
+score for each of you.
+
+::: notes
+Flag this as a deliberately small question, chosen because it fits on one slide.
+The point is the procedure, not the finding.
+:::
+
+## Step 1: the estimand {#sec-estimand .smaller}
+
+**The average difference in self-rated statistical confidence, in scale points, associated
+with being one semester further along.**
+
+. . .
+
+Three things to notice about that sentence.
+
+- It names a **quantity**, not a test, and it comes with a **unit**.
+- It is written down **before** any model exists.
+- It says **associated with**, not **caused by**.
+
+. . .
+
+::: {.callout-important}
+**Nothing in this analysis licenses a causal claim.**
+Nobody was assigned a semester, so we are comparing different people, not following one
+person through their degree.
+Causal identification is a separate course.
+:::
+
+::: notes
+Insist on the unit. "More confident" is not an estimand. "0.4 scale points per semester" is.
+:::
+
+## Step 2: the data {#sec-data-summary .smaller}
+
+```{r}
+#| label: fig-scatter
+#| fig-cap: "Self-rated statistical confidence against current semester, one point per
+#|   respondent. Points are nudged sideways so that overlapping answers stay visible."
+#| fig-height: 3.4
+#| dpi: 500
+#| eval: !expr have_data
+
+model_df <- survey |>
+  filter(!is.na(conf_stats), !is.na(semester)) |>
+  mutate(semester_c = semester - 5)
+
+set.seed(2026)
+ggplot(model_df, aes(x = semester, y = conf_stats)) +
+  geom_jitter(width = 0.12, height = 0.12, colour = col_1, size = 3, alpha = 0.8) +
+  scale_y_continuous(breaks = 1:10, limits = c(1, 10)) +
+  theme_pubr() +
+  labs(
+    x = "Semester",
+    y = "Confidence, 1 to 10",
+    title = "Every response we are going to model"
+  )
+```
+
+## Step 2: what the data is, out loud {#sec-data-honest .smaller}
+
+```{r}
+#| label: data-facts
+#| echo: false
+#| results: asis
+#| eval: !expr have_data
+
+cat(sprintf(
+  "- **%d** responses, of which **%d** left the confidence question blank.\n- **%d** rows go into the model.\n- Semester runs from **%d** to **%d**.\n- Confidence runs from **%d** to **%d** on a 1 to 10 scale.\n",
+  n_responses, n_missing_conf, nrow(model_df),
+  min(model_df$semester), max(model_df$semester),
+  min(model_df$conf_stats), max(model_df$conf_stats)
+))
+```
+
+::: {.callout-warning}
+**The confidence question was the only optional one in the survey.**
+Blank answers are dropped here, and dropping them is a decision that deserves a sentence in
+any writeup rather than a silent filter.
+:::
+
+::: notes
+Read the semester range out. If it is one or two values wide, say so now and promise the
+consequence at step 8.
+:::
+
+## Step 3: the formal model {#sec-model .smaller}
+
+$$
+\text{confidence}_i \sim \text{Normal}(\mu_i,\ \sigma), \qquad
+\mu_i = \alpha + \beta\,(\text{semester}_i - 5)
+$$ {#eq-model}
+
+- $\alpha$ is the expected confidence of a **fifth-semester** student, because that is where
+  we centred the predictor.
+- $\beta$ is the estimand from step 1, in scale points per semester.
+- $\sigma$ is how much people differ from each other at the same semester.
+
+. . .
+
+::: {.callout-warning}
+**Treating a 1 to 10 scale as a number is a choice, not a fact.**
+It assumes the step from 3 to 4 is the same size as the step from 8 to 9.
+We are doing it on purpose, and we come back to it at step 8.
+:::
+
+::: notes
+Centring is the one piece of technique worth pausing on here.
+Without it alpha would be the confidence of a semester-zero student, which nobody is.
+:::
+
+## Step 3: the priors {#sec-priors .smaller}
+
+A prior says what the parameter could plausibly be **before** seeing this data.
+
+::: {.small}
+| Parameter | Prior | Why that one |
+|---|---|---|
+| $\alpha$ | $\text{Normal}(5.5,\ 2)$ | 5.5 is the middle of a 1 to 10 scale, and 2 is loose enough to allow a shy or a bold cohort. |
+| $\beta$ | $\text{Normal}(0,\ 1)$ | Centred on no effect. A whole scale point per semester would already be a large change. |
+| $\sigma$ | $\text{Exponential}(0.5)$ | Prior mean of 2 scale points of spread between people. |
+
+: The priors for @eq-model, each one a statement we are prepared to defend. {#tbl-priors}
+:::
+
+::: notes
+Priors are commitments, not conveniences.
+Being centred on zero for beta is the honest starting point, not a trick to get a null.
+:::
+
+## Step 4: do the priors imply sane data? {#sec-prior-predictive .smaller}
+
+Before touching the data, simulate from the priors alone and look at what they predict.
+
+```{r}
+#| label: fig-prior-predictive
+#| fig-cap: "One thousand datasets simulated from the priors alone, before any response was
+#|   used. The priors imply confidence scores mostly inside the scale, which is what we
+#|   want, but the Normal likelihood also puts real mass below 1 and above 10."
+#| fig-height: 3.2
+#| dpi: 500
+#| eval: !expr have_data
+
+set.seed(2026)
+n_sim <- 1000
+
+prior_draws <- tibble(
+  alpha = rnorm(n_sim, mean = 5.5, sd = 2),
+  beta = rnorm(n_sim, mean = 0, sd = 1),
+  sigma = rexp(n_sim, rate = 0.5)
+) |>
+  mutate(
+    # A fifth-semester student, so the beta term drops out, and a ninth-semester one.
+    sem_5 = rnorm(n_sim, mean = alpha, sd = sigma),
+    sem_9 = rnorm(n_sim, mean = alpha + beta * 4, sd = sigma)
+  ) |>
+  select(sem_5, sem_9) |>
+  pivot_longer(everything(), names_to = "who", values_to = "confidence") |>
+  mutate(who = case_match(who, "sem_5" ~ "Semester 5", "sem_9" ~ "Semester 9"))
+
+ggplot(prior_draws, aes(x = confidence)) +
+  geom_histogram(bins = 40, fill = "white", colour = col_3, linewidth = 0.3) +
+  geom_vline(xintercept = c(1, 10), linetype = "dashed", colour = col_2) +
+  facet_wrap(~who) +
+  theme_pubr() +
+  labs(x = "Simulated confidence", y = "Count", title = "What the priors alone predict")
+```
+
+::: notes
+This is the step people skip and the step that catches bad priors.
+Point at the dashed lines. Our model can predict a confidence of 12, and it should not.
+Keep that for step 8.
+:::
+
+## Step 5: fit it {#sec-fit .smaller}
+
+```{r}
+#| label: fit-model
+#| eval: !expr have_data
+#| output: false
+
+priors <- c(
+  prior(normal(5.5, 2), class = "Intercept"),
+  prior(normal(0, 1), class = "b"),
+  prior(exponential(0.5), class = "sigma")
+)
+
+fit <- brm(
+  conf_stats ~ semester_c,
+  data = model_df,
+  family = gaussian(),
+  prior = priors,
+  chains = 4,
+  iter = 2000,
+  seed = 2026,
+  refresh = 0,
+  file = here("website", "slides", "data", "week01-fit"),
+  file_refit = "on_change"
+)
+```
+
+. . .
+
+`brms` turns those four lines into Stan code, compiles it to C++, and runs four chains that
+wander around the parameter space in proportion to how well each combination explains the
+data.
+
+::: notes
+Run this live and talk over the compile. Say what is happening: R writes Stan, Stan writes
+C++, the compiler builds a sampler specific to this model.
+That wait is the reason week 7 exists.
+:::
+
+## Step 6a: did the sampling work? {#sec-diagnostics .smaller}
+
+```{r}
+#| label: fig-trace
+#| fig-cap: "Trace plots for the three parameters. Four chains started in different places
+#|   and ended up exploring the same region, which is what convergence looks like. A chain
+#|   wandering off on its own would be the warning sign."
+#| fig-height: 3.2
+#| dpi: 500
+#| eval: !expr have_data
+
+mcmc_plot(fit, type = "trace") +
+  scale_colour_manual(values = chain_cols) +
+  theme_pubr()
+```
+
+```{r}
+#| label: tbl-diagnostics
+#| tbl-cap: "Convergence diagnostics. R-hat at 1.00 and effective sample sizes in the
+#|   thousands mean the sampler did its job. This says nothing about whether the model is
+#|   a good model."
+#| echo: false
+#| eval: !expr have_data
+
+posterior::summarise_draws(fit, "rhat", "ess_bulk", "ess_tail") |>
+  filter(str_detect(variable, "^b_|^sigma")) |>
+  knitr::kable(digits = 2)
+```
+
+## Step 6b: can the model reproduce the data? {#sec-ppc .smaller}
+
+```{r}
+#| label: fig-ppc
+#| fig-cap: "Posterior predictive check. The dark line is the confidence we actually
+#|   observed, the pale lines are datasets the fitted model generates. Where they disagree
+#|   is where the model is wrong about the world."
+#| fig-height: 3.4
+#| dpi: 500
+#| eval: !expr have_data
+
+set.seed(2026)
+pp_check(fit, ndraws = 50) +
+  theme_pubr()
+```
+
+::: notes
+Expect the model to over-smooth: it predicts a continuous bell where the data is ten
+discrete steps. Name that. It is honest and it previews week 11.
+:::
+
+## Step 7: what is the answer? {#sec-interpretation .smaller}
+
+```{r}
+#| label: answer
+#| echo: false
+#| results: asis
+#| eval: !expr have_data
+
+b <- as_draws_df(fit)$b_semester_c
+q <- quantile(b, probs = c(0.05, 0.5, 0.95))
+
+cat(sprintf(
+  "Each additional semester is associated with a change of **%.2f** scale points of confidence,\nwith a 90 percent credible interval from **%.2f** to **%.2f**.\n\nThe posterior puts **%.0f percent** of its mass above zero.\n",
+  q[2], q[1], q[3], 100 * mean(b > 0)
+))
+```
+
+. . .
+
+::: {.callout-note}
+**An interval is the answer, not a decoration on it.**
+The width of that interval is the honest summary of how much this data settles the
+question.
+:::
+
+## Step 7: the same answer, drawn {#sec-interpretation-plot .smaller}
+
+```{r}
+#| label: fig-posterior
+#| fig-cap: "The posterior for the slope. Zero sits comfortably inside the plausible range,
+#|   so on this data the answer to our question is that we cannot tell."
+#| fig-height: 3.4
+#| dpi: 500
+#| eval: !expr have_data
+
+mcmc_plot(fit, type = "areas", variable = "b_semester_c", prob = 0.9) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = col_2) +
+  theme_pubr() +
+  labs(x = "Scale points of confidence per semester", y = NULL)
+```
+
+## Step 8: what this cannot tell us {#sec-limitations .smaller}
+
+::: {.small}
+- **Almost everyone here is in the same semester.** With a predictor that barely varies, the
+  data can say very little about the slope, and the posterior shows exactly that.
+- **There are nine of us.** That is a class, not a sample of any population.
+- **Nobody was assigned a semester.** We compared different people, not one person over time.
+- **Self-reported confidence is not skill.** It might even move the other way as you learn how
+  much there is to know.
+- **The Normal likelihood ignores the scale.** We saw it predict below 1 and above 10 at
+  step 4, and the posterior predictive check at step 6b shows the same thing.
+:::
+
+::: notes
+This is the punchline. A wide interval centred near zero is the correct answer here, not a
+failed demo.
+Being able to say why is the thing being graded on the exam.
+:::
+
+## That was all eight steps {#sec-recap}
+
+- We named a quantity, wrote a model, checked it, fitted it, criticised it, and said what we
+  do not know.
+- Every week from here deepens one or two of those steps.
+- The exam is this, on a real dataset, written up properly.
+
+::: notes
+Point back at the workflow table. Everything on the schedule now has somewhere to attach.
+:::
+
+# How the course works {#sec-course}
+
+## Everything lives on the website {#sec-website .smaller}
+
+- **Schedule.** Every session, its slides, its homework, its solution, its reading.
+- **Syllabus.** Goals per session, the workload arithmetic, and the exam rules.
+- **Glossary.** Terms as they get introduced.
+- **Installation.** Do this before week 2.
+
+. . .
+
+::: {.callout-important}
+**If it is not linked from the website, it does not exist.**
+There is no second channel, no handouts and no shared drive.
+:::
+
+## What you will learn {#sec-learn .smaller}
+
+- How to build a reproducible, open-source research workflow, integrating data, code,
+  analysis and writing into one transparent process.
+- How to use statistical models to learn from data: what they assume, what they estimate,
+  and how to interpret them responsibly.
+- How to communicate empirical results clearly, through structured reports, figures and
+  reproducible documents.
+
+## What this course does not cover {#sec-not-cover .smaller}
+
+- **Data collection and research design.** We work with existing datasets. The university has
+  dedicated courses for survey design and measurement.
+- **Causal inference.** We analyse and interpret associations rather than identify causes,
+  which you saw me insist on at step 1.
+- **Political theory.** The examples are political, but the training is methodological.
+
+## Why the course is built this way {#sec-why-built}
+
+![](images/iceberg-plain.jpg){fig-alt="An iceberg, with a small part above the waterline."}
+
+------------------------------------------------------------------------
+
+![](images/programming-iceberg.jpg){fig-alt="The iceberg labelled with programming skills, most of them below the waterline."}
+
+------------------------------------------------------------------------
+
+![](images/bizim-iceberg-9.png){fig-alt="The full course iceberg, showing everything under the visible result."}
+
+## Homework {#sec-homework .smaller}
+
+- Eleven assignments, one in every session except this one and the last.
+- Each opens when its session ends and is due seven days later.
+- The schedule links a template repo. Generate yours and name it exactly
+  `hw-NN-<username>`.
 
 . . .
 
@@ -39,3 +853,153 @@ Point at the exam.
 default.** The only individual feedback available is the **optional AI feedback** you can opt
 into by adding an open-source `license.md` to your submission repo.
 :::
+
+## The exam {#sec-exam .smaller}
+
+- A take-home analysis, opening as the last session ends and running for two weeks.
+- A dataset, a research question, and the eight steps you just watched.
+- You submit a repository that someone else can render, plus a PDF.
+
+. . .
+
+::: {.callout-note}
+**You have now seen the entire shape of it.**
+Nothing on the exam is a step this course did not spend a week on.
+:::
+
+# Files, folders, and the terminal {#sec-files}
+
+::: notes
+If the clock has beaten you, stop here and open week 2 with this section.
+Nothing later depends on finishing it today.
+:::
+
+## A path is an address {#sec-paths .smaller}
+
+- **Absolute** starts at the root and works anywhere on your machine only:
+  `C:/Users/you/projects/qmir/data/survey.csv`.
+- **Relative** starts where you already are, and travels: `data/survey.csv`.
+- `.` is here, `..` is one level up.
+
+. . .
+
+::: {.callout-warning}
+**An absolute path is the most common reason someone else cannot run your code.**
+Your `C:/Users/you/` does not exist on my machine.
+:::
+
+## Plain text against everything else {#sec-plain-text .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Plain text**
+
+`.qmd` `.R` `.csv` `.md` `.txt`
+
+- Open in any editor, on any machine, forever.
+- A change shows up as a changed line.
+- Searchable with one command.
+:::
+
+::: {.column width="50%"}
+**Binary**
+
+`.docx` `.xlsx` `.pdf` `.sav`
+
+- Needs the program that made it.
+- A change shows up as "the file changed".
+- Not searchable without opening it.
+:::
+
+::::
+
+::: notes
+Open a .qmd and a .docx side by side in a text editor. The demo does the arguing.
+This is why version control works at all, which is next week.
+:::
+
+## The terminal {#sec-terminal .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**macOS and Linux**
+
+```bash
+pwd           # where am I
+ls            # what is here
+cd data       # go into data
+cd ..         # go back up
+cat notes.md  # print a file
+```
+:::
+
+::: {.column width="50%"}
+**Windows PowerShell**
+
+```powershell
+pwd                    # where am I
+ls                     # what is here
+cd data                # go into data
+cd ..                  # go back up
+Get-Content notes.md   # print a file
+```
+:::
+
+::::
+
+::: notes
+Have everyone open a terminal and run pwd and ls before moving on.
+Two minutes of everyone typing beats ten minutes of you explaining.
+:::
+
+## The working directory {#sec-working-directory .smaller}
+
+The folder R thinks it is standing in. Every relative path is resolved from it.
+
+```r
+getwd()
+```
+
+. . .
+
+::: {.callout-warning}
+**Do not fix a path problem with `setwd()`.**
+It hardcodes your machine into the document, so the next person to render it gets an error
+on line one.
+:::
+
+. . .
+
+The fix is to open the **project**, not the file, and let the project root be the anchor.
+
+## `here()` is the answer we use {#sec-here .smaller}
+
+```r
+library(here) # project-root-relative paths
+
+read_csv(here("data", "survey.csv"))
+```
+
+- Finds the project root by itself, from any file, in any subfolder.
+- Works the same in the console, in a render, and on my machine.
+- You will see it in every piece of code in this course.
+
+## Next week {#sec-next-week}
+
+- Install everything from the **Installation** page before the session.
+- Send me your GitHub username.
+- Week 2: Quarto, Git, and your first reproducible document.
+
+::: notes
+End here. Repeat the installation ask, it is the one thing that blocks week 2.
+:::
+
+```{r}
+#| label: session-info
+#| include: false
+
+sessionInfo()
+Sys.time() - start_time
+```
