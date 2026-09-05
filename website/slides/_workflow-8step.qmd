@@ -10,7 +10,7 @@ This is the rubric the exam is graded against and the structure the AI feedback 
 ::: {.small}
 | # | Step | What you produce |
 |--:|------|------------------|
-| 1 | **DAG and estimand** | The causal or associational question stated as a target quantity, plus a DAG. |
+| 1 | **Estimand** | The quantity you want to learn about, stated precisely as a target before any model is fitted. |
 | 2 | **Data summary** | The data described: measurement, coverage, obvious issues. |
 | 3 | **Formal model** | Likelihood and priors written down, the generative model. |
 | 4 | **Prior predictive check** | Simulate from the priors, confirm they imply plausible data. |

@@ -16,6 +16,24 @@ course:
   university: "University of Mannheim"
   email: "tristan.muno@uni-mannheim.de"
   office: "A 5, 6 — Room A 351"
+  # Module facts shown in the syllabus logistics section. PLACEHOLDER prints as an
+  # honest "to be announced" via shown(), so fill these in HERE rather than in prose.
+  #
+  # Source: Modulkatalog B.A. Politikwissenschaft (HWS 2023), pp. 31-33. This course
+  # is the Uebung "Methoden der Internationalen Beziehungen" inside the Aufbaumodul
+  # "Internationale Beziehungen". The Schwerpunktmodul IB has no Uebung, so there is
+  # no ambiguity about which entry applies.
+  module: "Advanced Module: International Relations"
+  course_type: "Methods exercise class (Übung)"
+  target_semester: "5th Semester"
+  # NUMBERS, not strings: the workload figures in the syllabus are COMPUTED from
+  # these by workload() in website/_course-helpers.R, never typed into prose.
+  ects: 6
+  ects_hours: 30 # hours of student workload one ECTS credit represents
+  # The catalogue's own nominal budget for a 6 ECTS course. Our real contact time is
+  # lower (13 x 90 min = 19.5 h), so the syllabus prints both and explains the gap.
+  nominal_contact_hours: 30
+  nominal_self_study_hours: 150
 
 github:
   org: qmir-2026-fall
@@ -32,6 +50,8 @@ sessions:
   # 13 TAUGHT sessions across 14 calendar dates, 9 Sep to 9 Dec 2026.
   count: 13
   weekday: Wednesday
+  # Length of one session, in minutes. Feeds the contact-time half of workload().
+  minutes: 90
   # First session. The term runs weekly from here, and week N is the Nth weekly date
   # AFTER removing everything in skip_dates. That arithmetic lives in exactly one
   # place, session_dates() in website/_course-helpers.R, so no page computes its own.
@@ -42,7 +62,7 @@ sessions:
     - 2026-10-28 # instructor at a congress
   time: "13:45-15:15"
   room: "A 5, 6 -- C 108"
-  office_hours: "By appointment, please email me"
+  office_hours: "By appointment. Please email me to arrange a meeting (in person or online). I aim to reply within 24 hours."
 
 homework:
   count: 10
@@ -52,10 +72,14 @@ homework:
 # The take-home exam window. The 2026 spring iteration kept THREE conflicting exam
 # dates across syllabus.qmd, schedule.qmd and CLAUDE.md. One source, here.
 # These are strings, not dates: the pages print them verbatim and do no arithmetic.
-# PLACEHOLDER — set both before publishing the syllabus.
+# The window follows the 2026 spring pattern: it opens as the last session ends and
+# runs for 14 days. Last session is 9 Dec 2026, which ends at 15:15.
 exam:
-  opens: "PLACEHOLDER"
-  closes: "PLACEHOLDER"
+  opens: "9 December 2026, 15:30"
+  closes: "23 December 2026, 23:59"
+  # The binding length limit, from the Modulkatalog entry for this Uebung: the
+  # Pruefungsleistung is a "schriftliche Hausarbeit (max. 6000 Woerter)".
+  max_words: 6000
 
 # Pass thresholds (fractions of the totals above).
 thresholds:
@@ -84,154 +108,167 @@ blocks:
 # Each entry also carries the session plan rendered by website/syllabus.qmd:
 #   steps:    which of the 8 workflow steps (CLAUDE.md §3) the session foregrounds
 #   goals:    learning goals, addressed to the student ("You will be able to ...")
-#   content:  one short paragraph on what the session actually covers
-# STRUCTURAL DRAFT. The wording is due a substantive pass before the term starts.
+#   content:  one or two sentences on what the session actually covers
+#
+# Goals are carried over from the 2026 spring decks (qmir-2026/.../slides/weekNN.qmd)
+# and re-cut to the session structure of this term. Sessions 8 and 13 carry classical
+# statistics deliberately, as CONTRAST rather than substitution (CLAUDE.md §3).
 weeks:
   - week: 1
-    topic: "The whole workflow, up front"
-    steps: []
-    goals:
-      - "Describe the eight steps of a Bayesian analysis and how they fit together."
-      - "Say what the take-home exam asks for, and why the term is arranged around it."
-      - "Find the site, the schedule, the glossary and the homework flow."
+    topic: "Introduction"
+    steps: [1, 2]
     content: |
-      An orientation session. We look at a complete worked analysis end to end before
-      taking any part of it apart, so that every later week has somewhere to attach
-      itself. You will not be able to run this yet, and that is the point: the skeleton
-      comes first, the muscles follow.
+      An orientation session built around a short welcome survey we fill in together.
+      The responses give us a dataset of our own, and we run the whole eight-step workflow
+      over it before taking any single step apart.
+    goals:
+      - "Recognise the main types of data a survey produces, and why the type constrains what you can do with it."
+      - "Follow the eight steps of a Bayesian analysis end to end on a dataset we collected in the room."
+      - "Say how the course is structured, what the take-home exam asks for, and why the two match."
+      - "Find your way around the course site: schedule, syllabus, glossary and the homework flow."
+      - "Get started with the basics: files and folders, the terminal, working directories, and what Quarto does."
   - week: 2
-    topic: "Reproducible research with R, Quarto and Git"
+    topic: "Reproducible literate programming with Quarto and Git"
     steps: []
-    goals:
-      - "Render a Quarto document and explain what rendering does."
-      - "Record work as small commits with messages a reader can follow."
-      - "Push to GitHub and generate your own homework repository from a template."
     content: |
-      The working environment, and the habits that make results checkable by someone
-      else. Projects, paths that survive a change of machine, literate documents, and
-      version control as the record of how a piece of work came about. This is also the
-      session where the AI disclosure convention in the syllabus starts to apply.
+      The working environment, and the habits that make a result checkable by somebody else.
+      Everything happens in Positron from this session onwards.
+    goals:
+      - "Understand how Quarto, R, Git and GitHub fit together."
+      - "Create a project under version control and render a Quarto document."
+      - "Push your first reproducible document to GitHub, and generate your own homework repository from a template."
+      - "Write a commit message a later reader can follow, which is also where AI assistance gets declared."
   - week: 3
-    topic: "R fundamentals: data types and structures"
+    topic: "R fundamentals: data structures, objects and functions"
     steps: []
+    content: |
+      The language itself, and the small vocabulary everything later is assembled from.
+      Time is spent deliberately on reading errors, because that is the skill that makes
+      independent work possible.
     goals:
-      - "Distinguish the basic data types and say why the distinction matters."
-      - "Build, subset and inspect vectors, lists and data frames."
+      - "Understand the core concepts: objects, functions and pipes."
+      - "Know the main data types R uses to store information."
+      - "Know the main data structures R uses to organise information."
+      - "Access and explore data using `[]` and `$`."
       - "Read an error message and work out what R was actually asked to do."
-    content: |
-      The language itself. Types, coercion, vectors and data frames, functions and
-      arguments, and the small vocabulary of operations that everything later is
-      assembled from. Time is spent deliberately on reading errors, because that is the
-      skill that makes independent work possible.
   - week: 4
-    topic: "Tidy data: wrangling and visualisation"
+    topic: "The tidyverse"
     steps: [2]
-    goals:
-      - "State what makes a dataset tidy, and recognise when one is not."
-      - "Filter, select, mutate and summarise with the tidyverse and the native pipe."
-      - "Build a first layered plot with ggplot2."
     content: |
-      Getting data into a shape that tools can work with, which is most of the work in
-      most analyses. The core dplyr verbs chained with the native pipe, then the grammar
-      of graphics as the visual counterpart of the same idea. Step 2 of the workflow,
-      the data summary, starts here.
+      Getting data into a shape that tools can work with, which is most of the work in most
+      analyses. Step 2 of the workflow, the data summary, starts here.
+    goals:
+      - "Understand what the tidyverse is and why it exists."
+      - "Know what tidy data means and why it matters."
+      - "Import data with `readr` and explore it with `glimpse()`, `head()` and `summary()`."
+      - "Wrangle data with the core `dplyr` verbs, chained with the native pipe."
+      - "Use Quarto cell options for labels, captions and execution control."
   - week: 5
-    topic: "Reshaping, merging and visualisation"
+    topic: "Data visualisation"
     steps: [2]
-    goals:
-      - "Pivot data between long and wide form, and say which shape a task needs."
-      - "Join two datasets and check that the join did what you intended."
-      - "Produce a figure that carries its own caption and stands on its own."
     content: |
-      The harder half of data work: reshaping, joining, and the checks that catch a
-      merge that silently dropped or duplicated rows. On the visual side, moving from a
-      plot that displays data to a figure that makes a point.
+      Moving from a plot that displays data to a figure that makes a point, plus the reshaping
+      and joining that usually comes first. We close on probabilities and distributions, which
+      is the bridge into the second block.
+    goals:
+      - "Reshape data between wide and long form with `pivot_longer()` and `pivot_wider()`."
+      - "Combine datasets from several sources with `left_join()`, and verify the result."
+      - "Handle missing values transparently, and understand the risks of imputation."
+      - "Build and customise `ggplot2` figures through aesthetics, geoms, scales and themes."
+      - "Produce publication-ready tables and embed computed results directly in prose with inline code."
+      - "Read a distribution as a statement about how plausible each value is."
   - week: 6
-    topic: "Probability, simulation and Bayes' theorem"
+    topic: "The logic of Bayesian inference"
     steps: [3, 4]
-    goals:
-      - "Read a probability distribution as a statement about plausibility."
-      - "Simulate from a distribution and use simulation to answer a question."
-      - "Apply Bayes' theorem to combine a prior with a likelihood."
     content: |
-      The conceptual core of the course. Probability as a description of uncertainty
-      rather than of long-run frequency, distributions for data and for parameters, and
-      the single rule that combines what you believed beforehand with what you observed.
-      Simulation is used throughout, because it makes the abstractions checkable.
+      The conceptual core of the course, and a deliberate change of gear: the programming gets
+      easier and the thinking gets harder. Probability as a description of uncertainty, and the
+      single rule that combines what you believed beforehand with what you observed.
+    goals:
+      - "Articulate the distinction between frequentist and Bayesian interpretations of probability, and explain why each suits different questions."
+      - "Explain why parameters are treated as uncertain quantities with distributions."
+      - "Name and interpret the three core ingredients: prior, likelihood and posterior."
+      - "State Bayes' theorem in full, identify each term, and explain the role of the normalising constant."
+      - "Describe how the posterior changes as the prior changes and as data accumulates."
+      - "Apply grid approximation in R to compute and visualise a posterior."
   - week: 7
     topic: "Markov chain Monte Carlo"
     steps: [4, 5, 6]
-    goals:
-      - "Explain why posteriors are usually approximated rather than solved."
-      - "Read a trace plot, R-hat and effective sample size, and say what each shows."
-      - "Recognise a failed fit and know what to do about it."
     content: |
-      How a posterior is actually obtained. Sampling as exploration, chains, warmup, and
-      the diagnostics that tell you whether the sampler did its job. The emphasis is on
-      reading the diagnostics rather than on the algorithms behind them.
+      The computational implementation of everything session 6 established.
+      The emphasis is on reading the diagnostics rather than on deriving the algorithms.
+    goals:
+      - "Articulate why grid approximation is intractable for realistic models."
+      - "Explain the Monte Carlo idea: approximating integrals by random sampling and counting."
+      - "Define a Markov chain and explain what a stationary distribution is."
+      - "State the Metropolis acceptance rule and show why the normalising constant cancels."
+      - "Explain qualitatively how Hamiltonian Monte Carlo differs from random-walk Metropolis, and why it is more efficient."
+      - "Interpret `brms` output: trace plots, R-hat, effective sample size and posterior distributions."
+      - "Understand that convergence cannot be proven, only falsified, and recognise what non-convergence looks like."
   - week: 8
     topic: "Bivariate linear regression"
     steps: [1, 3, 4, 5, 6]
-    goals:
-      - "Write a simple regression as a generative model, likelihood and priors."
-      - "Fit it with brms and defend the priors you chose."
-      - "Run a prior predictive and a posterior predictive check, and act on them."
     content: |
-      The first full model, deliberately the simplest one. One outcome, one predictor,
-      and the whole workflow run around it from the estimand through the fit to the
-      predictive checks. Every later model extends this one rather than replacing it.
+      The first full model, deliberately the simplest one: one outcome, one predictor, and the
+      whole workflow run around it. Every later model extends this one rather than replacing it.
+    goals:
+      - "Frame a regression problem as estimand (what we want to know), estimator (the procedure) and estimate (the number we get)."
+      - "Explain what OLS assumes, and see where the classical and the Bayesian account of the same model meet."
+      - "Specify weakly informative priors for regression coefficients and defend them on principled grounds."
+      - "Understand `brms` as sampling from the posterior: an estimator that returns a distribution rather than one number."
+      - "Interpret `brms` output and extract quantities of interest, such as predictions and marginal effects."
   - week: 9
-    topic: "Multivariate regression"
+    topic: "Multivariate linear regression"
     steps: [1, 7]
-    goals:
-      - "Draw a DAG and use it to decide what to adjust for."
-      - "Interpret a coefficient as conditional on the rest of the model."
-      - "Explain why adding a variable is a claim, not a precaution."
     content: |
-      More than one predictor, and the questions that come with it. Confounding,
-      adjustment, and the point that a set of controls is an assumption about how the
-      world works rather than a way to be safe.
+      More than one predictor, and the questions that come with it.
+      A set of controls is a claim about how the world works, not a way of being safe.
+    goals:
+      - "Explain omitted variable bias, and use a DAG to classify a control variable as a confounder, a mediator or a collider."
+      - "Extend the Bayesian regression model to several predictors and interpret each coefficient as a partial effect."
+      - "Handle categorical predictors using dummy variables."
+      - "Compare competing models with Bayesian leave-one-out cross-validation (LOO-IC)."
   - week: 10
-    topic: "Interactions"
+    topic: "Interaction terms in linear regression"
     steps: [7]
-    goals:
-      - "Specify a model in which one effect depends on another variable."
-      - "Interpret an interaction jointly rather than term by term."
-      - "Communicate a conditional effect with a figure instead of a table."
     content: |
-      Effects that are not the same everywhere. Specification is the easy part, and
-      interpretation is where interactions are usually got wrong, so most of the session
-      goes on reading them correctly and showing them clearly.
+      Effects that are not the same everywhere. Specification is the easy part, and interpretation
+      is where interactions are usually got wrong, so most of the session goes there.
+    goals:
+      - "Specify a multiplicative interaction model and interpret the conditional marginal effect of a predictor as a function of its moderator."
+      - "Extract posterior marginal effects separately for each level of the moderator."
+      - "Compare an interaction model against the additive model with LOO-IC."
+      - "Show a conditional effect in a figure rather than asking a reader to combine coefficients."
   - week: 11
-    topic: "Modelling binary outcomes"
+    topic: "Modelling binary outcomes: logit and probit"
     steps: [3, 7]
-    goals:
-      - "Explain why a linear model is a poor fit for a binary outcome."
-      - "Fit a logistic regression and set priors on the logit scale."
-      - "Convert results to probabilities before interpreting them."
     content: |
-      Outcomes that are yes or no. Link functions, the logit scale, and the discipline
-      of never reporting a log-odds coefficient as if it were the answer. Quantities of
-      interest and marginal effects do the interpretive work.
+      Outcomes that are yes or no. Nothing about the engine changes here: we are only swapping
+      the likelihood, and then doing the work of getting back to a scale a reader can use.
+    goals:
+      - "Explain why linear models are structurally wrong for binary outcomes, and how a Bernoulli likelihood plus a link function resolves it."
+      - "Fit and interpret a Bayesian logistic regression in `brms`, including priors on the logit scale and predicted probability ribbons."
+      - "Say how the probit link differs from the logit, and when the choice matters."
+      - "Assess model quality with posterior predictive checks, a confusion matrix, ROC and AUC, and compare models with LOO."
   - week: 12
-    topic: "Multilevel models and partial pooling"
+    topic: "Introduction to multilevel models"
     steps: [3, 5, 7]
-    goals:
-      - "Say what a multilevel model buys you over one model per group."
-      - "Fit varying intercepts with brms and read the group-level output."
-      - "Explain shrinkage to someone who has not taken this course."
     content: |
-      Data with structure: students in classes, regions in countries, years in states.
-      Complete pooling and no pooling as the two extremes, and partial pooling as the
-      compromise the model estimates for you.
+      Data with structure: candidates in parties, regions in countries, years in states.
+      A primer and your departure point for later work, and the one session that is not on the
+      take-home exam.
+    goals:
+      - "Identify hierarchical data and explain why treating grouped observations as independent understates uncertainty."
+      - "Describe the three-point spectrum of complete pooling, no pooling and partial pooling, and say when each is right."
+      - "Read the `(1 | group)` formula in `brms` and interpret the key output quantities."
   - week: 13
     topic: "Beyond the course: applying what you have learned"
     steps: [1, 2, 3, 4, 5, 6, 7, 8]
-    goals:
-      - "Run the full eight steps on a dataset you have not seen before."
-      - "Report a result with its uncertainty and its limitations."
-      - "Take the workflow into a thesis or a job after this course."
     content: |
-      Consolidation, and the exam in view. The whole workflow once more at full speed,
-      what to do when a real dataset does not cooperate, and where to go next. We also
-      revisit the AI disclosure convention with a term of commits behind us.
+      Synthesis and outlook rather than new methods.
+      We consolidate what you already have and hand you a clean runway into the exam.
+    goals:
+      - "Name what you learned across the three blocks, and why the course was built this way."
+      - "Read a classical regression table, since most of the literature you will meet reports one."
+      - "Use the tooling that makes the code and repository part of the exam grade straightforward."
+      - "Know exactly what the exam asks for, how it is graded, and how AI use is declared in it."

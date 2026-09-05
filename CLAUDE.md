@@ -125,7 +125,7 @@ day one, teach toward it deliberately:
 - **Single source for the workflow:** `website/slides/_workflow-8step.qmd` is included by every
   deck and by the solution template. Never copy-paste the table again.
 
-**The 8 steps** (canonical order): (1) DAG and estimand, (2) data summary, (3) formal model,
+**The 8 steps** (canonical order): (1) estimand, (2) data summary, (3) formal model,
 (4) prior predictive check, (5) fit (`brms`), (6a) MCMC diagnostics, (6b) posterior predictive
 check, (7) interpretation, (8) limitations.
 

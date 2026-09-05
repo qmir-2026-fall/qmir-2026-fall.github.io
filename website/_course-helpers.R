@@ -69,6 +69,28 @@ skipped_sessions <- function(cfg) {
   )
 }
 
+# --- workload ----------------------------------------------------------------
+# THE definition of what the course asks of a student, in hours. Derived, never
+# typed: an ECTS credit is worth ects_hours of total workload, contact time is the
+# sessions actually taught, and self-study is what is left. Printing a typed figure
+# instead is how the 2026 spring syllabus ended up claiming 11 homeworks and 10 in
+# the same document.
+workload <- function(cfg) {
+  total <- cfg$course$ects * cfg$course$ects_hours
+  contact <- cfg$sessions$count * cfg$sessions$minutes / 60
+  list(
+    total = total,
+    contact = contact,
+    self_study = total - contact,
+    per_week = (total - contact) / cfg$sessions$count
+  )
+}
+
+# Print an hours figure without a pointless trailing zero: 180, not 180.0.
+hrs <- function(x, digits = 1) {
+  format(round(x, digits), trim = TRUE, drop0trailing = TRUE, scientific = FALSE)
+}
+
 # --- blocks ------------------------------------------------------------------
 # Which of the three teaching blocks a week belongs to. Named ONCE in course.yml,
 # so the schedule, the syllabus and the glossary cannot drift apart.

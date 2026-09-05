@@ -1,5 +1,5 @@
 ---
-title: "Quantitative Methods in International Relations"
+title: "Quantitative Methods in IR/EU Politics: Learning from data"
 subtitle: "Learn to investigate global and European politics with real data, and build the skills to produce transparent, reproducible research."
 ---
 
@@ -49,6 +49,7 @@ cfg <- read_course()
 - {{< fa clock >}} `r shown(cfg$sessions$time)`
 - {{< fa location-dot >}} `r shown(cfg$sessions$room)`
 - {{< fa list-ol >}} `r cfg$sessions$count` sessions, one per week
+- {{< fa award >}} `r cfg$course$ects` ECTS
 
 :::
 
@@ -57,8 +58,6 @@ cfg <- read_course()
 ### Contacting me {#sec-contact}
 
 - {{< fa calendar-check >}} **Office hours:** `r shown(cfg$sessions$office_hours)`.
-- Email me to arrange a time, in person or online.
-  I aim to reply within 24 hours.
 
 :::
 
@@ -66,25 +65,20 @@ cfg <- read_course()
 
 :::
 
-## How this course works {#sec-how-it-works}
+## What this course is {#sec-what-this-is}
 
-- **Weekly slides**, linked from the [Schedule](schedule.qmd).
-- **Weekly homeworks**, distributed through the course GitHub org. Each one ships with a
-  **sample solution** published after the due date.
-- **A final take-home exam**: a complete 8-step Bayesian analysis. You see the target from
-  week 1, and every week builds toward it.
+An introduction to quantitative methods for international relations and European politics, taught with free and open source state of the art tools: R, Quarto, Git and GitHub, all inside Positron.
+You will learn regression as a way of describing relationships in data, and Bayesian inference as a way of saying how certain you are about them.
 
-New terminology arrives quickly in a course like this.
-The [Glossary](glossary.qmd) collects it in one place, grouped by the block where each term first
-comes up.
+The whole term runs toward one skill, an eight-step analysis taking you from a research question to an empirical answer with its uncertainty attached.
+You see that route in session 1, deepen one part of it each week, and run it end to end yourself in the take-home exam.
+No programming experience and no statistics beyond descriptives are assumed.
 
-Before the first session, work through the [Installation guide](installation.qmd).
-It sets up R, Positron, Quarto, Git and the packages we rely on, and doing it early leaves time
-to fix problems that are much easier to solve together.
+## Where to go next {#sec-where-next}
 
-## Feedback policy, please read {#sec-feedback-policy}
-
-> **A sample solution is published for every homework. Individual feedback is NOT provided by
-> default.** The only individual feedback available is the **optional AI feedback** you can opt
-> into by adding an open-source `license.md` to your submission repo. See the
-> [Syllabus](syllabus.qmd) for details.
+- **[Syllabus](syllabus.qmd)** for the full details: objectives, logistics, grading, the exam,
+  the policies, and what each session covers.
+- **[Schedule](schedule.qmd)** for dates, slides, homework and sample solutions.
+- **[Installation guide](installation.qmd)** for the software. Work through it **before the
+  first session**, so problems are easy to fix together rather than urgent.
+- **[Glossary](glossary.qmd)** for the terminology, which arrives quickly in a course like this.

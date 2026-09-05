@@ -29,10 +29,17 @@ due date, the sample solution.
 | | |
 |---|---|
 | {{< fa chalkboard >}} | **Slides.** The session's deck: concepts, theory, and the hands-on part. |
-| {{< fa laptop-code >}} | **Homework.** Opens GitHub's "use this template" page. Assigned at the end of class, due `r cfg$homework$due_offset_days` days later, before the next session. |
+| {{< fa laptop-code >}} | **Homework.** Opens GitHub's "use this template" page. |
 | {{< fa file-circle-check >}} | **Sample solution.** Published after the due date, for every homework. |
 | {{< fa book >}} | **Reading.** Further readings and online resources for the week. |
 | [{{< fa chalkboard >}}]{.schedule-tbd} | Greyed out means not published yet. |
+:::
+
+::: {.callout-note}
+**Every homework opens the moment its session ends, and is due `r cfg$homework$due_offset_days` days later.**
+So a homework assigned in one session is due before the next one starts.
+The {{< fa laptop-code >}} link appears here as soon as the homework is released, and the
+{{< fa file-circle-check >}} sample solution appears once the deadline has passed.
 :::
 
 The term runs in three blocks.
@@ -102,18 +109,17 @@ hw_meta <- function(i) {
   }
   tryCatch(yaml::read_yaml(f), error = function(e) NULL)
 }
+# The link is gated on `released:`, NOT on meta.yml merely existing. A meta.yml
+# committed ahead of time would otherwise advertise a distribution repo that
+# release-homework.ps1 has not created yet, and students would hit a 404.
+# The gate is evaluated at RENDER time, so release-homework.ps1 and publish-site.ps1
+# are run together at the end of the session.
 hw_of <- function(i) {
-  if (is.null(hw_meta(i))) {
+  m <- hw_meta(i)
+  if (is.null(m) || is.null(m$released) || as.Date(m$released) > Sys.Date()) {
     return(icon_off("laptop-code"))
   }
   icon_link("laptop-code", sprintf("https://github.com/%s/hw-%s/generate", org, pad(i)))
-}
-due_of <- function(i) {
-  m <- hw_meta(i)
-  if (is.null(m) || is.null(m$due)) {
-    return(tbd)
-  }
-  format(as.Date(m$due), "%d %b")
 }
 sol_of <- function(i) {
   m <- hw_meta(i)
@@ -139,24 +145,25 @@ res_of <- function(i) {
 
 row_of <- function(i) {
   sprintf(
-    "| %s | %s | %s | %s | %s | %s | %s | %s |",
+    "| %s | %s | %s | %s | %s | %s | %s |",
     pad(i), format(dates[i], "%d %b"), topic_of(i),
-    slides_of(i), hw_of(i), due_of(i), sol_of(i), res_of(i)
+    slides_of(i), hw_of(i), sol_of(i), res_of(i)
   )
 }
 
 # A cancelled date, printed where it falls so the gap in the dates is explained.
 skip_row <- function(d) {
   sprintf(
-    "| [--]{.schedule-tbd} | %s | %s | | | | | |",
+    "| [--]{.schedule-tbd} | %s | %s | | | | |",
     format(d, "%d %b"),
     planned("No session")
   )
 }
 
+# No Due column: the due date is the same rule every week and is stated once above.
 header <- c(
-  "| Week | Date | Topic | Slides | HW | Due | Solution | Reading |",
-  "|-----:|:-----|:------|:------:|:--:|:-----|:--------:|:-------:|"
+  "| Week | Date | Topic | Slides | HW | Solution | Reading |",
+  "|-----:|:-----|:------|:------:|:--:|:--------:|:-------:|"
 )
 
 skips <- skipped_sessions(cfg)
