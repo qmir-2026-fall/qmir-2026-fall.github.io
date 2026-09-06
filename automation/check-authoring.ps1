@@ -444,7 +444,10 @@ $targets = $targets | Where-Object {
 
 foreach ($t in $targets) { Test-File -File $t.FullName }
 
-$sorted = $script:Findings | Sort-Object File, Line, Code
+# @() is load-bearing. Windows PowerShell 5.1 unwraps a one-element pipeline result to a
+# bare PSCustomObject, whose .Count is $null, so a run with EXACTLY ONE finding printed no
+# finding at all and reported a blank count. A gate that hides findings is worse than no gate.
+$sorted = @($script:Findings | Sort-Object File, Line, Code)
 
 if (-not $Quiet) {
   if ($sorted.Count -gt 0) {
