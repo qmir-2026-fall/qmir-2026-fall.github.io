@@ -11,6 +11,16 @@ author: Tristan Muno
 date: last-modified
 date-format: MMMM D, YYYY
 
+# The Mannheim palace behind every deck's title slide. Path is relative to this file,
+# which sits in the same directory as the decks. This is a DOWNSCALED derivative of
+# images/uma_palace.png (2.8 MB): embed-resources inlines the background as base64 into
+# every deck, so the full-size original would cost roughly 3.7 MB per week.
+# The opacity is what keeps the dark blue title, author and date readable over the sky.
+title-slide-attributes:
+  data-background-image: images/uma-palace-title.jpg
+  data-background-size: cover
+  data-background-opacity: "0.35"
+
 format:
   revealjs:
     theme: theme.scss
