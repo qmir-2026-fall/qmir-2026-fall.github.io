@@ -219,46 +219,17 @@ two_panels <- bind_rows(
 )
 ```
 
-## Welcome {#sec-welcome}
+## Today {#sec-welcome}
 
-Quantitative Methods in International Relations.
+1. Introduction
+  - About me
+  - About you
+2. Statistics in a nutshell
+3. Applied example of Bayesian inference
+4. Course logistics
+5. First glance at Positron
 
-- One session a week, and one homework a week.
-- By the end you can take a dataset and a question and answer it responsibly, in code that
-  anyone else can rerun.
-- Today you see the whole thing once, end to end, on data about this room.
-
-::: notes
-Warm and short. The promise in the third bullet is the one to make out loud.
-:::
-
-## About me {#sec-about-me}
-
-- Tristan Muno, Department of Political Science.
-- I work on international relations, and I spend most of my time in R.
-- Office hours by appointment, and email gets a reply within a day.
-
-::: notes
-Two minutes maximum.
-:::
-
-## About you {#sec-about-you}
-
-I do not know any of that yet.
-
-- Which subjects you come from.
-- What you have already done with numbers, and what you have not.
-- How you feel about being in this room.
-
-. . .
-
-So the first thing we do today is measure it.
-
-::: notes
-Say the last line and go straight to the next slide. Do not elaborate.
-:::
-
-## The survey, now {#sec-survey}
+## Before we start {#sec-survey}
 
 Please fill this in now. It takes about five minutes.
 
@@ -272,494 +243,163 @@ Mention that it is anonymous and that the free-text box is read by you only.
 Then start the next section while they finish. Do not wait for the last person.
 :::
 
+# Introduction
 
-# While you fill that in {#sec-foundations}
-
-::: notes
-This whole section is simulated data. Nothing here waits on the survey.
-:::
-
-## Statistics is counting {#sec-counting .smaller}
-
-```{r}
-#| label: fig-counting
-#| fig-cap: "Forty invented people answering one yes-or-no question. Twenty six agreed, so
-#|   the proportion is 0.65, and that number is nothing more mysterious than one count
-#|   divided by another."
-#| fig-height: 3.2
-#| dpi: 500
-#| echo: false
-
-counting |>
-  count(answer) |>
-  ggplot(aes(x = answer, y = n)) +
-  geom_col(fill = "white", colour = col_1, width = 0.5) +
-  geom_text(aes(label = n), vjust = -0.4, colour = col_1, size = 7) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.18))) +
-  theme_pubr() +
-  labs(
-    x = NULL,
-    y = "How many people",
-    title = "Forty people, one question, two piles"
-  )
-```
-
-. . .
-
-Sort things into piles, count the piles, divide.
-Everything else in this course is built on top of that one move.
-
-::: notes
-Make the point that they can already do statistics. What they cannot yet do is the next
-slide.
-:::
-
-## The same world, twelve different rooms {#sec-noise .smaller}
-
-```{r}
-#| label: fig-noise
-#| fig-cap: "Twelve rooms of nine people, all drawn from one unchanging world in which
-#|   exactly half of everyone agrees. The counts run from 1 to 6 anyway. The dashed line is
-#|   the truth that generated all twelve."
-#| fig-height: 3.2
-#| dpi: 500
-#| echo: false
-
-ggplot(rooms, aes(x = factor(room), y = agree)) +
-  geom_col(fill = "white", colour = col_2, width = 0.6) +
-  geom_hline(
-    yintercept = 4.5,
-    linetype = "dashed",
-    colour = col_1,
-    linewidth = 0.8
-  ) +
-  annotate(
-    "text",
-    x = 0.7,
-    y = 8.4,
-    label = "the truth: half of everyone agrees",
-    colour = col_1,
-    hjust = 0,
-    size = 4.2
-  ) +
-  scale_y_continuous(breaks = 0:9, limits = c(0, 9)) +
-  theme_pubr() +
-  labs(
-    x = "Room",
-    y = "How many agree",
-    title = "Twelve rooms, nine people each, one world"
-  )
-```
-
-::: notes
-Point at room 11. One person in nine agreed, out of a world where half of everyone does.
-Ask what they would have concluded if room 11 were the only room they ever saw.
-:::
-
-## Signal and noise {#sec-signal-noise .smaller}
-
-The count moved.
-The world did not.
-
-. . .
-
-- **Noise** is everything that moves the number without the world changing.
-- **Signal** is what the world is actually doing.
-
-. . .
-
-You get **one** room.
-Telling the two apart from one room is the entire problem, and every technique in this
-course exists to attack it.
-
-::: notes
-This is the sentence the course hangs on. Say it slowly.
-:::
-
-## Which of these is real? {#sec-signal-or-noise .smaller}
-
-```{r}
-#| label: fig-signal-or-noise
-#| fig-cap: "Two invented cohorts of nine students each, confidence against semester. In one
-#|   panel confidence really does rise with semester, and in the other the true association
-#|   is exactly zero. The panels are shown before the answer is given."
-#| fig-height: 3.3
-#| dpi: 500
-#| echo: false
-
-ggplot(two_panels, aes(x = semester, y = confidence)) +
-  geom_point(colour = col_1, size = 3, alpha = 0.85) +
-  facet_wrap(~panel) +
-  scale_x_continuous(breaks = 3:8) +
-  scale_y_continuous(breaks = seq(2, 10, 2), limits = c(1, 10)) +
-  theme_pubr() +
-  labs(
-    x = "Semester",
-    y = "Confidence, 1 to 10",
-    title = "Nine students each, and one of these has a real trend in it"
-  )
-```
-
-Hands up for A.
-Hands up for B.
-
-::: notes
-Take the vote before clicking on. Most rooms pick B.
-:::
-
-## It was A {#sec-signal-reveal .smaller}
-
-- **Panel A** was built with a real rise of 0.45 scale points per semester.
-- **Panel B** was built with an association of exactly **zero**.
-
-. . .
-
-The panel that looks like a discovery is the one where nothing is happening.
-The panel with the real effect looks like a mess.
-
-. . .
-
-::: {.callout-important}
-**Nine observations are not enough for your eyes, and they are not enough for any method
-either.**
-No procedure can rescue information that the data does not contain.
-What a good procedure can do is tell you honestly how little you have.
-:::
-
-::: notes
-Do not soften this. It is the reason the interval at step 7 will be wide, and the reason a
-wide interval is the correct answer rather than a failed demo.
-:::
-
-## Inferring about the unknown {#sec-unknown .smaller}
-
-```{r}
-#| label: fig-many-lines
-#| fig-cap: "Panel B again, the nine students where the true association was zero, with 150
-#|   candidate lines that the data cannot rule out. The dashed line is the truth. It is
-#|   inside the fan, and so are a great many trends that are not there."
-#| fig-height: 3.3
-#| dpi: 500
-#| echo: false
-
-# Count the ways, on a grid. For every candidate line we ask how well it accounts for the
-# nine points, and then sample lines in proportion to that. Same move as the two piles on
-# the counting slide, one dimension up.
-set.seed(2026)
-candidates <- expand_grid(
-  alpha = seq(2, 10, length.out = 120),
-  beta = seq(-2, 2, length.out = 120)
-) |>
-  mutate(
-    weight = exp(map2_dbl(
-      alpha,
-      beta,
-      \(al, be) sum(dnorm(conf_b, al + be * (sem_sim - 5), 1.6, log = TRUE))
-    ))
-  )
-
-picked <- candidates |>
-  slice_sample(n = 150, weight_by = weight, replace = TRUE)
-
-ggplot(
-  tibble(semester = sem_sim, confidence = conf_b),
-  aes(x = semester, y = confidence)
-) +
-  geom_abline(
-    data = picked,
-    aes(intercept = alpha - beta * 5, slope = beta),
-    colour = col_3,
-    alpha = 0.12,
-    linewidth = 0.4
-  ) +
-  geom_hline(
-    yintercept = 5.5,
-    colour = col_2,
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  annotate(
-    "text",
-    x = 3,
-    y = 1.6,
-    label = "the truth, which you never get to see",
-    colour = col_2,
-    hjust = 0,
-    size = 4.2
-  ) +
-  geom_point(colour = col_1, size = 3) +
-  scale_x_continuous(breaks = 3:8) +
-  scale_y_continuous(breaks = seq(2, 10, 2), limits = c(1, 10)) +
-  theme_pubr() +
-  labs(
-    x = "Semester",
-    y = "Confidence, 1 to 10",
-    title = "Every line these nine points cannot rule out"
-  )
-```
-
-> "Given these nine people, anything from a slight decline to a steep rise is still on the
-> table."
-
-::: notes
-This picture is the whole course in one image, and it comes back as the posterior at
-step 7.
-The honest output of inference is the fan, not one line through the middle of it.
-:::
-
-# Who is in the room {#sec-room}
-
-```{r}
-#| label: fig-fields
-#| fig-cap: "Primary and secondary fields of study in the room. Most of you share a major,
-#|   which matters later: a group this homogeneous is not a sample of anything wider."
-#| fig-height: 4
-#| dpi: 500
-#| echo: false
-
-survey |>
-  select(Major = major, Minor = minor) |>
-  pivot_longer(everything(), names_to = "which", values_to = "field") |>
-  filter(!is.na(field)) |>
-  ggplot(aes(y = fct_rev(fct_infreq(field)))) +
-  geom_bar(fill = "white", colour = col_2, width = 0.6) +
-  facet_wrap(~which) +
-  theme_pubr() +
-  labs(x = "Count", y = NULL, title = "Fields of study")
-```
-
-## How far along, and what you have done before {#sec-background .smaller}
-
-```{r}
-#| label: fig-semester
-#| fig-cap: "Current semester and previous exposure to quantitative methods. The semester
-#|   panel is the predictor in the analysis we are about to run, so how much it varies
-#|   decides how much this data can possibly tell us."
-#| fig-height: 3.6
-#| dpi: 500
-#| echo: false
-
-p_sem <- survey |>
-  filter(!is.na(semester)) |>
-  ggplot(aes(x = factor(semester))) +
-  geom_bar(fill = "white", colour = col_1, width = 0.6) +
-  theme_pubr() +
-  labs(x = "Semester", y = "Count", title = "Which semester")
-
-p_prior <- survey |>
-  filter(!is.na(prior_courses)) |>
-  ggplot(aes(y = fct_rev(fct_infreq(prior_courses)))) +
-  geom_bar(fill = "white", colour = col_1, width = 0.6) +
-  theme_pubr() +
-  labs(x = "Count", y = NULL, title = "Methods courses before this one")
-
-ggarrange(p_sem, p_prior, ncol = 2)
-```
-
-::: notes
-Point at the semester panel and ask the room to notice how narrow it is.
-Do not resolve it yet. It comes back at step 8.
-:::
-
-## Why you are here, and how you feel about it {#sec-why-here .smaller}
-
-```{r}
-#| label: fig-why-feeling
-#| fig-cap: "Reasons for registering, and current feelings about quantitative methods.
-#|   Nervousness in the room is normal and it is information, not a verdict."
-#| fig-height: 3.6
-#| dpi: 500
-#| echo: false
-
-p_why <- survey |>
-  filter(!is.na(why_here)) |>
-  ggplot(aes(y = fct_rev(fct_infreq(why_here)))) +
-  geom_bar(fill = "white", colour = col_2, width = 0.6) +
-  theme_pubr() +
-  labs(x = "Count", y = NULL, title = "Why this course")
-
-p_feel <- survey |>
-  filter(!is.na(feeling)) |>
-  ggplot(aes(y = fct_rev(fct_infreq(feeling)))) +
-  geom_bar(fill = "white", colour = col_2, width = 0.6) +
-  theme_pubr() +
-  labs(x = "Count", y = NULL, title = "How you feel right now")
-
-ggarrange(p_why, p_feel, ncol = 2)
-```
-
-::: notes
-If the nervous bars are tall, say plainly that this is the normal starting point and that
-the course is built for it.
-:::
-
-## Tools {#sec-tools .smaller}
-
-```{r}
-#| label: fig-tools
-#| fig-cap: "Tools the room has heard of, against tools the room has actually used. The gap
-#|   between the two bars is roughly what this course is for."
-#| fig-height: 4
-#| dpi: 500
-#| echo: false
-
-tools_long |>
-  count(tool, level) |>
-  ggplot(aes(
-    x = n,
-    y = fct_rev(fct_reorder(tool, n, .fun = sum)),
-    fill = level
-  )) +
-  geom_col(position = position_dodge(width = 0.75), width = 0.7) +
-  scale_fill_manual(
-    values = c("Heard of it" = col_1, "Worked with it" = col_2)
-  ) +
-  theme_pubr() +
-  labs(
-    x = "Count",
-    y = NULL,
-    fill = NULL,
-    title = "Heard of, against worked with"
-  )
-```
-
-::: notes
-Find one tool nobody has used and say we will use it in week 2.
-:::
-
-## How confident do you feel? {#sec-confidence .smaller}
-
-```{r}
-#| label: fig-confidence
-#| fig-cap: "Self-rated confidence in reading statistical results and in working with code,
-#|   both on a 1 to 10 scale. The left panel is the outcome of the analysis that follows."
-#| fig-height: 3.6
-#| dpi: 500
-#| echo: false
-
-survey |>
-  select(Statistics = conf_stats, Code = conf_code) |>
-  pivot_longer(everything(), names_to = "domain", values_to = "confidence") |>
-  filter(!is.na(confidence)) |>
-  ggplot(aes(x = confidence)) +
-  geom_bar(fill = "white", colour = col_3, width = 0.6) +
-  facet_wrap(~domain) +
-  scale_x_continuous(breaks = 1:10, limits = c(0.5, 10.5)) +
-  theme_pubr() +
-  labs(
-    x = "Confidence, 1 to 10",
-    y = "Count",
-    title = "Where you think you are now"
-  )
-```
-
-::: notes
-Say that we will come back to this exact number at the end of term.
-:::
-
-## What you already think about evidence {#sec-beliefs .smaller}
-
-```{r}
-#| label: fig-beliefs
-#| fig-cap: "Agreement with six statements about what statistical evidence can do. These
-#|   are the questions the whole course is an answer to, so the split in the room is the
-#|   point rather than a problem."
-#| fig-height: 4
-#| dpi: 500
-#| echo: false
-
-ggplot(beliefs_long, aes(x = answer)) +
-  geom_bar(fill = "white", colour = col_4, width = 0.6) +
-  facet_wrap(~item, ncol = 3) +
-  scale_x_discrete(labels = function(x) str_wrap(x, width = 10), drop = FALSE) +
-  theme_pubr() +
-  theme(axis.text.x = element_text(size = 6)) +
-  labs(x = NULL, y = "Count", title = "What evidence can and cannot do")
-```
-
-::: notes
-Read out the "a single result can prove a theory" panel.
-That is the belief this course is going to take apart.
-:::
-
-## What you look for in a result {#sec-reading .smaller}
-
-```{r}
-#| label: fig-reading
-#| fig-cap: "What the room says it attends to when reading a quantitative claim. Keep an eye
-#|   on the significance panel against the uncertainty panel, because the next half hour is
-#|   an argument for the second one."
-#| fig-height: 4
-#| dpi: 500
-#| echo: false
-
-ggplot(reading_long, aes(x = answer)) +
-  geom_bar(fill = "white", colour = col_4, width = 0.6) +
-  facet_wrap(~item, ncol = 3) +
-  scale_x_discrete(labels = function(x) str_wrap(x, width = 10), drop = FALSE) +
-  theme_pubr() +
-  theme(axis.text.x = element_text(size = 6)) +
-  labs(x = NULL, y = "Count", title = "Reading a quantitative claim")
-```
-
-::: notes
-This is the bridge into the analysis. Whatever the room says here, the workflow answers with
-an interval rather than a verdict.
-:::
-
-# A whole analysis, in eight steps {#sec-analysis}
-
-## The 8-step workflow {#sec-workflow .smaller}
-
-{{< include _workflow-8step.qmd >}}
-
-::: notes
-Show the whole skeleton now.
-Do not explain the steps. Promise that we run all eight in the next half hour.
-Each later week deepens one or two of them.
-:::
-
-## This is the exam {#sec-this-is-the-exam}
-
-- The eight steps are not a checklist for today.
-- They are the shape of the take-home exam, and of every homework on the way there.
-- **This is the exam.** Not a surprise at the end, but the target, from day one.
-
-::: notes
-Say the last bullet out loud. It reframes everything that follows.
-:::
-
-## The question {#sec-question}
+## About me {#sec-about-me}
+
+## About you {#sec-about-you}
+
+- What name would you prefer us to call you?
+- What natural languages do you speak (or are currently learning)?
+- How do you like to spend time outside of university?
+- In what ways did you learn/come across statistics before?
+
+
+# Statistics in a nutshell
+
+## What is statistics?
+
+- In a nutshell, you may think of statistics as counting
+  - Counting values
+    - How many people are 20 years old? How many flips were heads? How many birds were observed?
+  - Counting how much you counted?
+    - How many observations do we have?
+  - Official counting
+    - Births, deaths, unemployment, crime, etc.
+  - Counting possible ways things could have happened
+    - How much could our count have varied by chance? How many heads would we expect assuming a fair coin?
+
+> Statistics can be thought of as counting and reasoning about counts and their possible variation
+
+## Why statistics?
+
+- Fundamentally, we want to learn about the world using observations
+- Put differently, we want to learn from data
+- Quantity we want to learn about: estimand (what we want)
+- Procedure (method/analysis/algorithm) by which we want to learn about our estimand: estimator (our method)
+- Result from that procedure about our estimand: estimate (what we get)
+- Inference: using *known* information to *infer* about something *unknown* 
+  - e.g. collecting measurements to infer the association between two variables
+  - collecting a random sample to infer about a greater population
+  - running randomized experiments to infer about a potential outcome  
+
+
+## Fundamental issue in statistics
+
+- We want to separate noise from signal
+- I.e. how certain can we be in our estimate?
+- out differently, how certain can we be that our (for instance) estimated association between two variables if a *real world* association and not the result of *random* variation during our measurement / data collection?
+- This is the fundamental challenge and task of quantitative methods in all science
+
+
+
+# Applied example of Bayesian inference {#sec-analysis}
+
+## A question {#sec-question}
 
 > Do students become more confident in statistics as they progress through their studies?
 
-We have exactly what we need to try: a **semester** for each of you, and a **confidence**
-score for each of you.
+You just filled out the survey containing, among others, questions about your current semester and your confidence in statistical literacy!
 
-::: notes
-Flag this as a deliberately small question, chosen because it fits in half an hour.
-The point is the procedure, not the finding.
-:::
+## Step 1: Clarify the estimand {#sec-estimand .smaller}
 
-## Step 1: name the quantity {#sec-estimand .smaller}
+What precisely do we want to learn (conduct inference) about?
 
-**The average difference in self-rated statistical confidence, in scale points, associated
-with being one semester further along.**
+-> Association between semester of study and reported confidence on a 10 point scale.
 
-. . .
+callout Warning: association != causal effect
 
-- It names a **quantity**, not a test, and it comes with a **unit**.
-- It is written down **before** any model exists.
-- It says **associated with**, not **caused by**.
+## Step 2: Data summary
 
-. . .
+- Semester as integer (number)
+- Confidence as number from 0 (not at all confident) to 10 (very confident)
 
-> "I want one number, in scale points per semester, and I am committing to that target
-> before I look at anything."
+3 figures: semester distribution, confidence distribution, scatter plot of both
 
-::: notes
-Insist on the unit. "More confident" is not an estimand. "0.4 scale points per semester" is.
-:::
+-> (nearly) continues outcome variable: justifies linear model
+
+## Step 3: Formal model
+
+Given our (approximately) continues outcome (and for the sake of simplicity), we will use a bivariate linear model:
+
+Outcome family:
+
+$$
+Confidence_i \sim \mathcal{N}(\mu, \sigma^2)
+$$
+
+collapsable callout note: Read as "We assume the outcome, the reported confidence of student $i$ to be normally distributed with mean $\mu$ and variance $\sigma^2$"
+
+Linear predictor:
+$$
+\mu = \alpha + \beta * Semester_i + e
+$$
+
+collapsable callout note: Read as: "We model the mean confidence score of as a function of the reported semester. $\alpha$ represents the baseline level of reported confidence for a hypothetical 0 semester student (intercept). $\beta$ represents the average change in reported confidence level per unit change in semester, and thus forms our estimand (slope). $e$ denotes the error term, the residual variance, everything not captured by the association between semester and confidence"
+
+Posterior notation:
+
+$$
+P(\alpha, \beta, \sigma^2 | Confidence_i, Semester_i) \propto \mathcal{L}(\alpha, \beta, \sigma | Confidence_i, Semester_i) * P(\alpha, \beta, \sigma^2)
+$$
+
+collapsable callout note: To be read as: "The probability of our model parameters (alpha beta sigma^2) *given* the data we collected on confidence and semester it proportional to the Likelihood (a function assessing the plausibility of different parameters given our data multiplied with the prior distributions of those parameters)"
+
+The posterior is a full probability distribution!
+
+## Step 3 continued:
+
+Priors: Probability distribution about the parameters before seeing the data.
+
+I chose:
+
+\alpha ~ N(5, 2) -> Read as: Before evaluating the observed data, the expected intercept is in the middle of the outcome scale (5) and with 95% probability it might be 5+-4
+\beta ~ N(0,2) -> Read as: My prior expectation is that there is *no association*, hence mean 0, but 95% certainty it is between -4 and +4 (which would be very large effects on a 10 point scale)
+\sigma ~ exp(1) -> Read as: before knowing anything from the data, I know variance must be positive, hence normal distribution does not work. Small variances are a priori more plausible than large variances.
+
+show small distr figure for each
+
+## Step 4: Prior predictive checks
+
+What data would our prior beliefs produce?
+
+-> figure, 
+
+## Step 5: Fit the model
+
+Show brms code
+
+We will learn in week 7 what is going on conceptually in detail.
+
+In short: We update our prior distributions of the parameters by conditioning on the observed data, computationally we simulate many different possible lines and rank them by their relative plausibilities, thus receiving a distribution of plausible regression lines
+
+## Step 6a: MCMC diagnostics
+
+- assessing the simulation algorithms, we'll learn that in week 7
+
+## Step 6b: Posterior predictive check
+
+- How well do I estimated parameters (rember, these are distributions!) combined with the predictor (semester) replicate our outcome, confidence?
+- Intuition: a model fits a dataset well if it can recover (predict) the outcomes well
+
+## Step 7: Interpretation
+
+show figure of posterior line cloud and figure of posterior beta
+
+## Step 8: Limitations
+
+- models are **always** wrong, but some are useful
+- it is always important to reflect on what we can learn and what we cannot learn
+
+## Outlook
+
+- In the next months, you will learn -- step by step -- to implement and interpret such analyses yourselves.
+
+# Course logistics
+
+can be taken from the current version
+
+
 
 ## Step 1: what this can never be {#sec-estimand-causal .smaller}
 
@@ -1232,12 +872,9 @@ failed demo.
 Being able to say why is the thing being graded on the exam.
 :::
 
-## That was all eight steps {#sec-recap}
+## The 8-step workflow {#sec-workflow .smaller}
 
-- We named a quantity, drew a model, checked it, fitted it, criticised it, and said what we
-  do not know.
-- Every week from here deepens one or two of those steps.
-- The exam is this, on a real dataset, written up properly.
+{{< include _workflow-8step.qmd >}}
 
 ::: notes
 Point back at the workflow table. Everything on the schedule now has somewhere to attach.
