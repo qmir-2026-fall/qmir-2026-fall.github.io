@@ -40,9 +40,9 @@ Thumbs.db
 /tracking/hw_status.csv
 /tracking/progress.html
 /tracking/progress_files/
-# Week 1 survey responses, fetched live from the Google Form response sheet. The snapshot
-# is a fallback for when the fetch fails mid-session, never something to publish: it holds
-# free-text answers from a cohort of nine.
+# Week 1 survey responses. The real export is dropped in by hand as week01-survey.local.csv
+# and overrides the committed week01-survey.csv, which holds test replies only. Never publish
+# the local one: it holds free-text answers from a cohort of nine.
 /website/slides/data/*.local.csv
 # The cached brms fit embeds the responses it was fitted to, so it is student data as well.
 /website/slides/data/*.rds
