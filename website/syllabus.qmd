@@ -504,10 +504,7 @@ What each session covers, and what you should be able to do afterwards.
 Dates, slides, homework and readings are on the [Schedule](schedule.qmd).
 
 ::: {.callout-note}
-**This is a plan, not a contract.**
-Pace is adjusted to the group.
-If a topic needs more time, it gets more time, and the schedule is updated rather than the plan
-silently abandoned.
+This is a preliminary plan and may be revised or updated throughout the semester.
 :::
 
 ```{r}
