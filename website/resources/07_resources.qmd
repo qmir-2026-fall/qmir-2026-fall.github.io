@@ -1,0 +1,23 @@
+---
+title: Week 7 Resources
+nocite: |
+  @gelman2013bda-ch10
+  @gelman2013bda-ch11
+  @gelman2013bda-ch12
+  @metropolis1949monte
+  @metropolis1953equation
+  @gelfand1990sampling
+  @gelfand1990illustration
+  @hoffman2014no
+  @carpenter2017stan
+  @burkner2017brms
+  @vehtari2021rank
+  @mcelreath2020rethinking-ch9
+  @mcelreath2026rethinking-A08
+  @mcelreath2026rethinking-B01
+  @montecarlo2021simulation
+  @gelman2026workflow
+---
+
+::: {#refs}
+:::

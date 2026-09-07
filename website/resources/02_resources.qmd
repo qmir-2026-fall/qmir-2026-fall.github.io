@@ -1,0 +1,13 @@
+---
+title: Week 2 Resources
+nocite: |
+  @positron-layout
+  @quarto-guide
+  @quarto-cheatsheet
+  @white2021git4dummies
+  @wickham2023r4ds-quarto
+  @knuth1984literate
+---
+
+::: {#refs}
+:::

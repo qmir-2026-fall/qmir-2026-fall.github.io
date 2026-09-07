@@ -1,0 +1,18 @@
+---
+title: Week 6 Resources
+nocite: |
+  @datacamp-foundations-probability
+  @veritasium-bayes
+  @3blue1brown-bayes
+  @gelman2013bda-ch1
+  @gelman2013bda-ch2
+  @mcelreath2020rethinking-ch2
+  @mcelreath2020rethinking-ch3
+  @mcelreath2026rethinking-A02
+  @mcelreath2026rethinking-A03
+  @kruschke2018bayesian
+  @hoekstra2014robust
+---
+
+::: {#refs}
+:::

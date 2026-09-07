@@ -1,0 +1,24 @@
+---
+title: Week 13 Resources
+nocite: |
+  @mcelreath2020statistical
+  @gelman2014bayesian
+  @kruschke2014doing
+  @gelman2026workflow
+  @gelman2026statistical
+  @mcelreath2026rethinking-course
+  @mcelreath2026rethinking-B04
+  @mcelreath2026rethinking-B05
+  @mcelreath2026rethinking-B06
+  @western1994bayesian
+  @king1989unifying
+  @humphreys2015mixing
+  @jackman2000estimation
+  @grimmer2010bayesian
+  @treier2008democracy
+  @fariss2014respect
+  @claassen2020support
+---
+
+::: {#refs}
+:::

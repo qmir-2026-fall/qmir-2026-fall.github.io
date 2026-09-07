@@ -1,0 +1,10 @@
+---
+title: Week 10 Resources
+nocite: |
+  @mcelreath2020rethinking-ch8
+  @brambor2006understanding
+  @vehtari2017practical
+---
+
+::: {#refs}
+:::

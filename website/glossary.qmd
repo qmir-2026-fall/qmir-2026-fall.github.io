@@ -25,8 +25,19 @@ entries <- yaml::read_yaml(here("website", "glossary.yml"))
 # adding a fifteenth near-synonym, which is how the previous course iteration ended
 # up with 20 ad-hoc slide font sizes. Widen this list deliberately or not at all.
 tag_vocab <- c(
-  "workflow", "quarto", "git", "r", "data", "probability", "model", "prior",
-  "mcmc", "diagnostics", "regression", "multilevel", "interpretation"
+  "workflow",
+  "quarto",
+  "git",
+  "r",
+  "data",
+  "probability",
+  "model",
+  "prior",
+  "mcmc",
+  "diagnostics",
+  "regression",
+  "multilevel",
+  "interpretation"
 )
 bad <- setdiff(unique(unlist(lapply(entries, function(e) e$tags))), tag_vocab)
 if (length(bad) > 0) {
@@ -80,15 +91,24 @@ alphabet <- LETTERS
 present <- alphabet %in% letters_of
 
 # --- the A to Z jump bar. Letters with no entries are greyed, not linked. ---
-jump <- vapply(seq_along(alphabet), function(i) {
-  if (present[i]) {
-    sprintf("[%s](#sec-glossary-%s)", alphabet[i], tolower(alphabet[i]))
-  } else {
-    sprintf("[%s]{.schedule-tbd}", alphabet[i])
-  }
-}, character(1))
+jump <- vapply(
+  seq_along(alphabet),
+  function(i) {
+    if (present[i]) {
+      sprintf("[%s](#sec-glossary-%s)", alphabet[i], tolower(alphabet[i]))
+    } else {
+      sprintf("[%s]{.schedule-tbd}", alphabet[i])
+    }
+  },
+  character(1)
+)
 
-cat("::: {.glossary-jump}\n", paste(jump, collapse = " "), "\n:::\n\n", sep = "")
+cat(
+  "::: {.glossary-jump}\n",
+  paste(jump, collapse = " "),
+  "\n:::\n\n",
+  sep = ""
+)
 
 # --- tag badges: the block tag first, then the topical tags ---
 badges <- function(e) {
@@ -112,7 +132,9 @@ for (e in entries) {
   lines <- strsplit(body, "\n", fixed = TRUE)[[1]]
   lines <- lines[nzchar(trimws(lines))]
   cat(":   ", lines[1], "\n", sep = "")
-  for (l in lines[-1]) cat("    ", trimws(l), "\n", sep = "")
+  for (l in lines[-1]) {
+    cat("    ", trimws(l), "\n", sep = "")
+  }
   cat("\n    ", badges(e), "\n\n", sep = "")
 }
 ```

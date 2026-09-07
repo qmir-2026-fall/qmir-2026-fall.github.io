@@ -1,0 +1,14 @@
+---
+title: Week 1 Resources
+nocite: |
+  @positron-layout
+  @mcelreath2026rethinking-course
+  @mcelreath2026rethinking-A01
+  @gelman2026statistical
+  @gelman2026workflow
+  @mcelreath2020rethinking-ch1
+  @kruschke2018bayesian
+---
+
+::: {#refs}
+:::

@@ -1,0 +1,13 @@
+---
+title: Week 4 Resources
+nocite: |
+  @datacamp-tidyverse
+  @wickham2023r4ds-whole-game
+  @ccetinkaya2021educator
+  @data-import-cheatsheet
+  @data-transformation-cheatsheet
+  @tidyr-cheatsheet
+---
+
+::: {#refs}
+:::

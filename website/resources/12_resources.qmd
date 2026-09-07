@@ -1,0 +1,17 @@
+---
+title: Week 12 Resources
+nocite: |
+  @gelman2013bda-ch5
+  @gelman2013bda-ch15
+  @mcelreath2020rethinking-ch13
+  @mcelreath2026rethinking-B02
+  @mcelreath2026rethinking-B03
+  @burkner2017advanced
+  @burkner2017brms
+  @stegmueller2013many
+  @park2004bayesian
+  @ess11multilevel2025
+---
+
+::: {#refs}
+:::

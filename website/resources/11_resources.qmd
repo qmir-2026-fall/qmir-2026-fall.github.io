@@ -1,0 +1,14 @@
+---
+title: Week 11 Resources
+nocite: |
+  @gelman2013bda-ch16
+  @gelman2013bda-ch6
+  @mcelreath2020rethinking-ch10
+  @mcelreath2020rethinking-ch11
+  @mcelreath2026rethinking-A07
+  @burkner2017brms
+  @esarey2012assessing
+---
+
+::: {#refs}
+:::
