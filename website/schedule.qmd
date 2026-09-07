@@ -141,7 +141,10 @@ hw_of <- function(i) {
   if (is.null(m) || is.null(m$released) || as.Date(m$released) > Sys.Date()) {
     return(icon_off("laptop-code"))
   }
-  icon_link("laptop-code", sprintf("https://github.com/%s/hw-%s/generate", org, pad(i)))
+  icon_link(
+    "laptop-code",
+    sprintf("https://github.com/%s/hw-%s/generate", org, pad(i))
+  )
 }
 sol_of <- function(i) {
   if (!has_hw(i)) {
@@ -155,7 +158,10 @@ sol_of <- function(i) {
   if (as.Date(m$due) >= Sys.Date() || !file.exists(pdf)) {
     return(icon_off("file-circle-check"))
   }
-  icon_link("file-circle-check", sprintf("resources/hw-%s-solution.pdf", pad(i)))
+  icon_link(
+    "file-circle-check",
+    sprintf("resources/hw-%s-solution.pdf", pad(i))
+  )
 }
 
 # --- resources: the week's resources page, NN_resources.qmd (see resources/README.md) ---
@@ -171,8 +177,13 @@ res_of <- function(i) {
 row_of <- function(i) {
   sprintf(
     "| %s | %s | %s | %s | %s | %s | %s |",
-    pad(i), format(dates[i], "%d %b"), topic_of(i),
-    slides_of(i), hw_of(i), sol_of(i), res_of(i)
+    pad(i),
+    format(dates[i], "%d %b"),
+    topic_of(i),
+    slides_of(i),
+    hw_of(i),
+    sol_of(i),
+    res_of(i)
   )
 }
 
@@ -207,7 +218,11 @@ emit_table <- function(weeks, caption, id) {
   cat("\n\n: ", caption, " {#", id, "}\n\n", sep = "")
 }
 
-emit_table(1, "Week 1, orientation. The whole 8-step workflow is shown up front, so every later week has somewhere to attach itself.", "tbl-schedule-week1")
+emit_table(
+  1,
+  "Week 1, orientation. The whole 8-step workflow is shown up front, so every later week has somewhere to attach itself.",
+  "tbl-schedule-week1"
+)
 
 for (k in seq_along(cfg$blocks)) {
   b <- cfg$blocks[[k]]
@@ -217,7 +232,8 @@ for (k in seq_along(cfg$blocks)) {
     weeks,
     sprintf(
       "Block %s of the term, %s. A link appears as soon as its source file exists, a greyed topic is the planned topic from course.yml rather than a published deck, and the sample solution appears once the due date has passed.",
-      block_numeral(k), tolower(b$name)
+      block_numeral(k),
+      tolower(b$name)
     ),
     sprintf("tbl-schedule-block%d", k)
   )
