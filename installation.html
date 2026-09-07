@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Installation Guide – QMIR — Quantitative Methods</title>
+<title>Getting started: installation guide – QMIR — Quantitative Methods</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -22,6 +22,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -272,6 +307,10 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./glossary.html"> 
+<span class="menu-text">Glossary</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="./installation.html" aria-current="page"> 
 <span class="menu-text">Installation</span></a>
   </li>  
@@ -291,11 +330,21 @@ ul.task-list li input[type="checkbox"] {
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
-  <ul>
-  <li><a href="#toolchain" id="toc-toolchain" class="nav-link active" data-scroll-target="#toolchain">Toolchain</a></li>
-  <li><a href="#submitting" id="toc-submitting" class="nav-link" data-scroll-target="#submitting">Submitting</a></li>
+  <ul class="collapse">
+  <li><a href="#sec-why-so-many-tools" id="toc-sec-why-so-many-tools" class="nav-link active" data-scroll-target="#sec-why-so-many-tools">Why so many tools?</a></li>
+  <li><a href="#sec-feeling-overwhelmed" id="toc-sec-feeling-overwhelmed" class="nav-link" data-scroll-target="#sec-feeling-overwhelmed">Feeling overwhelmed is normal</a></li>
+  <li><a href="#sec-tools-as-workflow" id="toc-sec-tools-as-workflow" class="nav-link" data-scroll-target="#sec-tools-as-workflow">Tools as part of a research workflow</a></li>
+  <li><a href="#sec-concepts-not-commands" id="toc-sec-concepts-not-commands" class="nav-link" data-scroll-target="#sec-concepts-not-commands">Learning concepts, not just commands</a></li>
+  <li><a href="#sec-pragmatism" id="toc-sec-pragmatism" class="nav-link" data-scroll-target="#sec-pragmatism">Pragmatism over dogmatism</a></li>
+  <li><a href="#sec-timeline" id="toc-sec-timeline" class="nav-link" data-scroll-target="#sec-timeline">Installation timeline</a></li>
+  <li><a href="#sec-vocabulary" id="toc-sec-vocabulary" class="nav-link" data-scroll-target="#sec-vocabulary">What the words mean</a></li>
+  <li><a href="#sec-why-positron" id="toc-sec-why-positron" class="nav-link" data-scroll-target="#sec-why-positron">Why Positron and not RStudio?</a></li>
+  <li><a href="#sec-install" id="toc-sec-install" class="nav-link" data-scroll-target="#sec-install">Install the toolchain</a></li>
+  <li><a href="#sec-install-packages" id="toc-sec-install-packages" class="nav-link" data-scroll-target="#sec-install-packages">Install the R packages</a></li>
+  <li><a href="#sec-done" id="toc-sec-done" class="nav-link" data-scroll-target="#sec-done">Great, you made it</a></li>
+  <li><a href="#sec-submitting" id="toc-sec-submitting" class="nav-link" data-scroll-target="#sec-submitting">Submitting your work</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/qmir-2026-fall/qmir-2026-fall.github.io/blob/main/installation.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/qmir-2026-fall/qmir-2026-fall.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul class="collapse"><li><a href="https://github.com/qmir-2026-fall/qmir-2026-fall.github.io/blob/main/website/installation.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/qmir-2026-fall/qmir-2026-fall.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -303,7 +352,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Installation Guide</h1>
+<h1 class="title">Getting started: installation guide</h1>
 </div>
 
 
@@ -320,30 +369,449 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>What you need to do the homeworks and the exam.</p>
-<section id="toolchain" class="level2">
-<h2 class="anchored" data-anchor-id="toolchain">Toolchain</h2>
+<p>Everything you need installed to do the homeworks and the exam. Work through it before the first session.</p>
+<section id="sec-why-so-many-tools" class="level2">
+<h2 class="anchored" data-anchor-id="sec-why-so-many-tools">Why so many tools?</h2>
+<p>This course introduces a range of software tools which, taken together, form a powerful and contemporary toolbox for transparent, reproducible and scalable empirical research. Rather than relying on a single piece of software, you will learn how different tools interact and complement one another, much as they do in real research workflows.</p>
+</section>
+<section id="sec-feeling-overwhelmed" class="level2">
+<h2 class="anchored" data-anchor-id="sec-feeling-overwhelmed">Feeling overwhelmed is normal</h2>
+<p>Meeting many tools at once can feel complex and, at times, overwhelming. That is entirely normal and an expected part of the learning process. Research environments evolve quickly, with new libraries, platforms and technologies (including AI-based ones) constantly emerging. So one of the central goals here is not just to teach specific tools, but to help you learn how to learn programming and computational methods, which is an essential and transferable skill for any data-driven career.</p>
+</section>
+<section id="sec-tools-as-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="sec-tools-as-workflow">Tools as part of a research workflow</h2>
+<p>These tools are not only for performing calculations or producing results. They also help you document decisions, record analytical steps, collaborate with others, and build workflows that can be extended, reproduced and scaled. In that sense the course aims to familiarise you with research practices that resemble how high-quality empirical work is actually done.</p>
+</section>
+<section id="sec-concepts-not-commands" class="level2">
+<h2 class="anchored" data-anchor-id="sec-concepts-not-commands">Learning concepts, not just commands</h2>
+<p>Given the scope of the course, we will only scratch the surface, the tip of the iceberg, of many of these tools. I will emphasise conceptual understanding instead: how the tools work in principle, why they are useful, and when they help. That foundation is what lets you work independently and confidently with these tools, and with future ones, beyond the course.</p>
+</section>
+<section id="sec-pragmatism" class="level2">
+<h2 class="anchored" data-anchor-id="sec-pragmatism">Pragmatism over dogmatism</h2>
+<p>The workflow and software stack presented here reflect my own experience and day-to-day research practice. They are not meant to be prescriptive or dogmatic. There is no single correct way to code or to structure an analysis, and many different approaches reach the same goal. Pragmatism matters, so tools should serve your research questions and not the other way around.</p>
+</section>
+<section id="sec-timeline" class="level2">
+<h2 class="anchored" data-anchor-id="sec-timeline">Installation timeline</h2>
+<p>This page lists all the software you are expected to install. Not every tool is used in the first week, but install everything as early as you can. That gives us time to troubleshoot, and it keeps technical setup from becoming a bottleneck once we move into substantive work.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Do the steps in the order given.</strong> R comes before Positron, and the C++ compiler comes before <code>brms</code>. Each step assumes the ones above it are done.</p>
+</div>
+</div>
+</section>
+<section id="sec-vocabulary" class="level2">
+<h2 class="anchored" data-anchor-id="sec-vocabulary">What the words mean</h2>
+<p>The instructions below say things like “run this in the Console” and “open a Terminal”. Those are two different places, and mixing them up is the single most common reason a step appears not to work. <a href="#fig-positron-layout" class="quarto-xref">Figure&nbsp;1</a> shows where each of them lives once Positron is installed.</p>
+<div id="fig-positron-layout" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-positron-layout-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://positron.posit.co/images/user-interface-for-rstudio-migration.jpeg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-positron-layout-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: The Positron interface. The <strong>Editor</strong> in the middle is where your <code>.qmd</code> and <code>.R</code> files are open. The <strong>Console</strong> (bottom) is where you type R commands and see their results. The <strong>Terminal</strong> sits next to the Console and is where you talk to your operating system rather than to R. Panes can be moved around, so yours may not look identical, but the names stay the same.
+</figcaption>
+</figure>
+</div>
+<p><strong>Console.</strong> An R session waiting for R commands. If an instruction shows R code, such as <code>install.packages("here")</code>, it goes here. You can tell it is an R console by the <code>&gt;</code> prompt at the start of the line.</p>
+<p><strong>Terminal.</strong> A place to type commands to your operating system, not to R. On Windows this is PowerShell, on macOS it is the Terminal app, and Positron has one built in. Commands such as <code>git --version</code> or <code>quarto install tinytex</code> go here, and running them in the Console instead will produce an error.</p>
+<p><strong>Editor.</strong> The main pane where files are open for editing. Writing code in the Editor and then running it is the normal way to work, because the Editor keeps a record and the Console does not.</p>
+<p><strong>Pane.</strong> One of the rectangular regions of the window. Positron lets you show, hide and rearrange them, which is worth doing once you know what each is for.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>A quick way to tell them apart.</strong> If the line starts with <code>&gt;</code> you are in the R Console. If it starts with your username, a folder name, or <code>PS C:\&gt;</code>, you are in a Terminal.</p>
+</div>
+</div>
+</section>
+<section id="sec-why-positron" class="level2">
+<h2 class="anchored" data-anchor-id="sec-why-positron">Why Positron and not RStudio?</h2>
+<p>If you have had any contact with R already, or know people who have, you may know that one of the most widespread IDEs for R is RStudio. I decided to teach Positron for a few reasons.</p>
 <ol type="1">
-<li><strong>R</strong> (recent release) and <strong>RStudio</strong> (or your editor of choice).</li>
-<li><strong>Quarto</strong> — <a href="https://quarto.org/docs/get-started/" class="uri">https://quarto.org/docs/get-started/</a>.</li>
-<li>A <strong>LaTeX</strong> engine for PDF output: <code>quarto install tinytex</code>.</li>
-<li><strong>Git</strong> and a <strong>GitHub account</strong> — all homeworks and the exam are distributed and submitted through the course GitHub org.</li>
-<li>Key R packages: <code>tidyverse</code>, <code>brms</code> (and its Stan backend), <code>posterior</code>, <code>bayesplot</code>, <code>marginaleffects</code>. Follow the in-class setup for the Stan toolchain.</li>
+<li>It is a modern and genuinely useful IDE for both programming and project management, with features that integrate coding in R and writing in Quarto well.</li>
+<li>It works neatly with R <em>and</em> Python. Although we learn R here, being able to add Python later is valuable, as many other scientific disciplines and private enterprises use Python.</li>
+<li>It has very good graphical integration of version control with Git.</li>
+<li>It is built on an open-source predecessor of VS Code, one of the most popular editors globally, so it is very similar to it.</li>
+<li>If you learn to work with Positron, you will have no problem adapting to RStudio.</li>
 </ol>
 </section>
-<section id="submitting" class="level2">
-<h2 class="anchored" data-anchor-id="submitting">Submitting</h2>
+<section id="sec-install" class="level2">
+<h2 class="anchored" data-anchor-id="sec-install">Install the toolchain</h2>
+<p>Pick your operating system once, below. The tab you choose stays selected for the whole guide, so work straight down it from step 1 to step 8.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Windows</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">macOS</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<section id="install-r" class="level4">
+<h4 class="anchored" data-anchor-id="install-r">1. Install R</h4>
+<p>R is a free and open-source programming language widely used for statistical analysis, data visualisation and reproducible research. R is our main tool, and you can think of it as the engine that does our calculations.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<ol type="1">
+<li>Go to the <a href="https://cran.r-project.org/">Comprehensive R Archive Network (CRAN) website</a>.</li>
+<li>Click “Download R for Windows”.</li>
+<li>Select <code>base</code> and download the installation file.</li>
+<li>Run the downloaded file to install R.</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Take the current release rather than a specific version number.</strong> CRAN always offers the latest release at the top of the download page, and that is the one to take. Note which version you installed, because Rtools in step 3 has to match it.</p>
+</div>
+</div>
+</section>
+<section id="install-positron" class="level4">
+<h4 class="anchored" data-anchor-id="install-positron">2. Install Positron</h4>
+<p>Positron is our integrated development environment (IDE), the program you actually sit in front of to write R. If R is the engine, Positron is the dashboard: it gives you a graphical interface to control, monitor and run R code. It is a free, source-available IDE designed specifically for data science with R and Python.</p>
+<ol type="1">
+<li>Navigate to <a href="https://positron.posit.co/install.html" class="uri">https://positron.posit.co/install.html</a>.</li>
+<li>Install all prerequisites listed for Windows. You can ignore the <code>Python setup</code> and <code>R setup</code> panes.</li>
+<li>Accept the license agreement by ticking the box.</li>
+<li>Click <code>Download Positron for Windows</code> and run the downloaded file.</li>
+</ol>
+<p>Once it opens, find the Console and the Terminal described in <a href="#sec-vocabulary" class="quarto-xref">Section&nbsp;7</a>.</p>
+</section>
+<section id="install-a-c-compiler-rtools" class="level4">
+<h4 class="anchored" data-anchor-id="install-a-c-compiler-rtools">3. Install a C++ compiler (Rtools)</h4>
+<p>Some R packages we use later rely internally on <strong>C++</strong>, a much more efficient language for computationally intensive tasks. For this to work, R needs access to a <strong>C++ compiler</strong> so it can compile and run C++ code behind the scenes. You will not usually interact with C++ directly, but the compiler is required to install and use certain packages, <code>brms</code> among them.</p>
+<ol type="1">
+<li>Go to the <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools page on CRAN</a>.</li>
+<li>Download and install the Rtools version that <strong>matches the R version you installed</strong> in step 1. The page lists one Rtools release per R release, so R 4.5.x takes Rtools45.</li>
+<li>Follow the installation instructions and keep the default settings unless told otherwise.</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>A mismatched Rtools version is the most common setup failure on Windows.</strong> If <code>brms</code> later fails to install with a compilation error, check the Rtools version against your R version first. Installing a newer R afterwards means installing the matching Rtools too.</p>
+</div>
+</div>
+</section>
+<section id="install-git" class="level4">
+<h4 class="anchored" data-anchor-id="install-git">4. Install Git</h4>
+<p><strong>Git</strong> is a free and open-source version control system, a tool that tracks changes in your files over time. It lets you see what changed, revert to earlier versions, and collaborate without overwriting other people’s work. <strong>GitHub</strong> is an online platform that hosts Git repositories and adds collaboration features such as pull requests, issues and automated workflows. Together they make it easier to write code, analyse data, and manage research projects <strong>transparently and reproducibly</strong>.</p>
+<ol type="1">
+<li>Go to the <a href="https://git-scm.com/install/windows">Git download page</a>.</li>
+<li>Press the <code>Click here to download</code> link.</li>
+<li>Open the downloaded <code>.exe</code> file and follow the installation instructions.</li>
+<li>Open a <strong>Terminal</strong> (PowerShell, or the Terminal pane in Positron) and type:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You should see a version number. If so, Git is installed correctly.</p>
+</section>
+<section id="configure-git" class="level4">
+<h4 class="anchored" data-anchor-id="configure-git">5. Configure Git</h4>
+<p>To use Git you need to set a <strong>name</strong> and an <strong>email address</strong>. These are attached to every change (commit) you make, acting like a digital signature. You do not have to use your full name, but it is recommended. Run both lines in the <strong>Terminal</strong>, substituting your own details.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">"Your Name"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">"your@mail.com"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Do not skip this step.</strong> It is easy to overlook, because nothing goes wrong until the first time you try to commit, and then Git refuses with an error message. Setting both values now saves you that error in week 2, when everybody is committing for the first time at once.</p>
+</div>
+</div>
+</section>
+<section id="create-a-github-account" class="level4">
+<h4 class="anchored" data-anchor-id="create-a-github-account">6. Create a GitHub account</h4>
+<p>If you do not already have one, <a href="https://github.com/join">create a free GitHub account</a>. GitHub lets you store repositories online, collaborate, and reach your work from anywhere. We use it to distribute all course materials.</p>
+</section>
+<section id="check-quarto" class="level4">
+<h4 class="anchored" data-anchor-id="check-quarto">7. Check Quarto</h4>
+<p><strong>Quarto</strong> is the publishing system that turns a <code>.qmd</code> file into HTML, PDF or slides, running your R code as it goes. Every artefact in this course, including this page, is a Quarto document.</p>
+<p>Positron ships with Quarto, so if you installed Positron in step 2 you already have it. Confirm it from the <strong>Terminal</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="install-tinytex" class="level4">
+<h4 class="anchored" data-anchor-id="install-tinytex">8. Install TinyTeX</h4>
+<p>To render <strong>PDF</strong> output, Quarto needs a LaTeX engine. Let Quarto install and manage a small one for you, from the <strong>Terminal</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> install tinytex</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now continue with <a href="#sec-install-packages" class="quarto-xref">Section&nbsp;10</a>, which is the same on every operating system.</p>
+</section>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<section id="install-r-1" class="level4">
+<h4 class="anchored" data-anchor-id="install-r-1">1. Install R</h4>
+<p>R is a free and open-source programming language widely used for statistical analysis, data visualisation and reproducible research. R is our main tool, and you can think of it as the engine that does our calculations.</p>
+<ol type="1">
+<li>Go to the <a href="https://cran.r-project.org/">Comprehensive R Archive Network (CRAN) website</a>.</li>
+<li>Click “Download R for macOS”.</li>
+<li>Take the <strong>current release</strong> offered at the top of the page, choosing the build for your chip: the <code>arm64</code> package for Apple silicon, or the <code>x86_64</code> package for older Intel Macs.</li>
+<li>Download and install it.</li>
+<li>Also <a href="https://www.xquartz.org/">download and install XQuartz</a>.</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Take the current release rather than a specific version number.</strong> CRAN always offers the latest release at the top of the download page, and that is the one to take.</p>
+</div>
+</div>
+</section>
+<section id="install-positron-1" class="level4">
+<h4 class="anchored" data-anchor-id="install-positron-1">2. Install Positron</h4>
+<p>Positron is our integrated development environment (IDE), the program you actually sit in front of to write R. If R is the engine, Positron is the dashboard: it gives you a graphical interface to control, monitor and run R code. It is a free, source-available IDE designed specifically for data science with R and Python.</p>
+<ol type="1">
+<li>Navigate to <a href="https://positron.posit.co/install.html" class="uri">https://positron.posit.co/install.html</a>.</li>
+<li>Install all prerequisites listed for macOS. You can ignore the <code>Python setup</code> and <code>R setup</code> panes.</li>
+<li>Accept the license agreement by ticking the box.</li>
+<li>Click <code>Download Positron for macOS</code> and run the downloaded file.</li>
+</ol>
+<p>Once it opens, find the Console and the Terminal described in <a href="#sec-vocabulary" class="quarto-xref">Section&nbsp;7</a>.</p>
+</section>
+<section id="install-a-c-compiler-xcode" class="level4">
+<h4 class="anchored" data-anchor-id="install-a-c-compiler-xcode">3. Install a C++ compiler (Xcode)</h4>
+<p>Some R packages we use later rely internally on <strong>C++</strong>, a much more efficient language for computationally intensive tasks. For this to work, R needs access to a <strong>C++ compiler</strong> so it can compile and run C++ code behind the scenes. You will not usually interact with C++ directly, but the compiler is required to install and use certain packages, <code>brms</code> among them.</p>
+<ol type="1">
+<li>Download and install <strong>Xcode</strong> from the <a href="https://developer.apple.com/xcode/resources/">Mac App Store</a>.</li>
+<li>Afterwards, open a <strong>Terminal</strong> and install the command-line tools as well:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">xcode-select</span> <span class="at">--install</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Once that is done, your system can compile the C++ code some R packages need.</p>
+</section>
+<section id="install-git-1" class="level4">
+<h4 class="anchored" data-anchor-id="install-git-1">4. Install Git</h4>
+<p><strong>Git</strong> is a free and open-source version control system, a tool that tracks changes in your files over time. It lets you see what changed, revert to earlier versions, and collaborate without overwriting other people’s work. <strong>GitHub</strong> is an online platform that hosts Git repositories and adds collaboration features such as pull requests, issues and automated workflows. Together they make it easier to write code, analyse data, and manage research projects <strong>transparently and reproducibly</strong>.</p>
+<p>Git comes with Xcode, which you installed in step 3. Open a <strong>Terminal</strong> and enter:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You should see a version number. If so, Git is installed correctly.</p>
+</section>
+<section id="configure-git-1" class="level4">
+<h4 class="anchored" data-anchor-id="configure-git-1">5. Configure Git</h4>
+<p>To use Git you need to set a <strong>name</strong> and an <strong>email address</strong>. These are attached to every change (commit) you make, acting like a digital signature. You do not have to use your full name, but it is recommended. Run both lines in the <strong>Terminal</strong>, substituting your own details.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">"Your Name"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">"your@mail.com"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Do not skip this step.</strong> It is easy to overlook, because nothing goes wrong until the first time you try to commit, and then Git refuses with a message like <code>Please tell me who you are</code>. Setting both values now saves you that error in week 2, when everybody is committing for the first time at once.</p>
+</div>
+</div>
+</section>
+<section id="create-a-github-account-1" class="level4">
+<h4 class="anchored" data-anchor-id="create-a-github-account-1">6. Create a GitHub account</h4>
+<p>If you do not already have one, <a href="https://github.com/join">create a free GitHub account</a>. GitHub lets you store repositories online, collaborate, and reach your work from anywhere. We use it to distribute all course materials.</p>
+</section>
+<section id="check-quarto-1" class="level4">
+<h4 class="anchored" data-anchor-id="check-quarto-1">7. Check Quarto</h4>
+<p><strong>Quarto</strong> is the publishing system that turns a <code>.qmd</code> file into HTML, PDF or slides, running your R code as it goes. Every artefact in this course, including this page, is a Quarto document.</p>
+<p>Positron ships with Quarto, so if you installed Positron in step 2 you already have it. Confirm it from the <strong>Terminal</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="install-tinytex-1" class="level4">
+<h4 class="anchored" data-anchor-id="install-tinytex-1">8. Install TinyTeX</h4>
+<p>To render <strong>PDF</strong> output, Quarto needs a LaTeX engine. Let Quarto install and manage a small one for you, from the <strong>Terminal</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> install tinytex</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now continue with <a href="#sec-install-packages" class="quarto-xref">Section&nbsp;10</a>, which is the same on every operating system.</p>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-install-packages" class="level2">
+<h2 class="anchored" data-anchor-id="sec-install-packages">Install the R packages</h2>
+<p>This step is identical on Windows and macOS.</p>
+<p>R packages are bundles of functions, data and documentation that extend R. You install a package once, and load it in each session where you need it. <a href="#tbl-packages" class="quarto-xref">Table&nbsp;1</a> lists what this course uses and why.</p>
+<div id="tbl-packages" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-packages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: The R packages this course uses, and what each one is for. Install them all before the first session. LaTeX is not on this list, because <code>quarto install tinytex</code> in step 8 already handled it.
+</figcaption>
+<div aria-describedby="tbl-packages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>What it is</th>
+<th>Why we use it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>tidyverse</code></td>
+<td>A collection of packages for data manipulation, visualisation and analysis, including <code>dplyr</code>, <code>ggplot2</code>, <code>tidyr</code> and <code>readr</code>.</td>
+<td>A consistent framework for cleaning, exploring and visualising data. The backbone of nearly every script in the course.</td>
+</tr>
+<tr class="even">
+<td><code>here</code></td>
+<td>Builds file paths from the project root.</td>
+<td>Makes a project run on any machine, not just the one it was written on. Used for every path in this course.</td>
+</tr>
+<tr class="odd">
+<td><code>brms</code></td>
+<td>Fits Bayesian regression models with familiar R formula syntax, on top of Stan.</td>
+<td>Our main modelling tool, from simple regression to multilevel models, without writing Stan code directly.</td>
+</tr>
+<tr class="even">
+<td><code>posterior</code></td>
+<td>Tools for handling and summarising posterior draws.</td>
+<td>Provides the convergence diagnostics we read after every fit.</td>
+</tr>
+<tr class="odd">
+<td><code>bayesplot</code></td>
+<td>Plots for Bayesian model checking and diagnostics.</td>
+<td>Trace plots and posterior predictive checks, steps 6a and 6b of the workflow.</td>
+</tr>
+<tr class="even">
+<td><code>marginaleffects</code></td>
+<td>Computes marginal effects and predictions from fitted models.</td>
+<td>How we turn coefficients into interpretable quantities of interest.</td>
+</tr>
+<tr class="odd">
+<td><code>ggpubr</code></td>
+<td>Publication-ready <code>ggplot2</code> themes.</td>
+<td>Supplies <code>theme_pubr()</code>, the default theme for every figure in the course.</td>
+</tr>
+<tr class="even">
+<td><code>patchwork</code></td>
+<td>Combines several plots into one figure.</td>
+<td>For multi-panel figures.</td>
+</tr>
+<tr class="odd">
+<td><code>modelsummary</code></td>
+<td>Formats model output into tables.</td>
+<td>Regression tables that can go straight into a report.</td>
+</tr>
+<tr class="even">
+<td><code>knitr</code></td>
+<td>The engine that runs the R code inside a Quarto document.</td>
+<td>Also provides <code>kable()</code> for computed tables.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><strong>How to install.</strong> In Positron, find the <strong>Console</strong> (see <a href="#fig-positron-layout" class="quarto-xref">Figure&nbsp;1</a>), start an R session if one is not running already, and run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidyverse"</span>, <span class="st">"here"</span>, <span class="st">"brms"</span>, <span class="st">"posterior"</span>, <span class="st">"bayesplot"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"marginaleffects"</span>, <span class="st">"ggpubr"</span>, <span class="st">"patchwork"</span>, <span class="st">"modelsummary"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"knitr"</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>This will take a while, and that is expected.</strong> <code>brms</code> compiles C++ code during installation, so it is much slower than the others. Start it when you have time to leave it running.</p>
+</div>
+</div>
+</section>
+<section id="sec-done" class="level2">
+<h2 class="anchored" data-anchor-id="sec-done">Great, you made it</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>That was a lot, and you got through it.</strong> You now have a research toolchain on your machine that is genuinely the same one used for published empirical work. Nothing more is required before the first session.</p>
+</div>
+</div>
+<p>If something did not work, do not spend an evening fighting it alone. Bring it to the first session, or email me beforehand with the exact error message, and we will sort it out together. Setup problems are common, they are almost always quick to fix once someone has seen them before, and this is precisely why the guide asks you to install early.</p>
+</section>
+<section id="sec-submitting" class="level2">
+<h2 class="anchored" data-anchor-id="sec-submitting">Submitting your work</h2>
 <ul>
-<li>Open the homework link on the <a href="./schedule.html">Schedule</a>. It opens GitHub’s <em>create from template</em> page — make your own copy of the starter repo.</li>
-<li><strong>Name it exactly <code>hw-NN-&lt;username&gt;</code></strong> (e.g.&nbsp;<code>hw-03-jdoe</code>, with your own GitHub username) and create it <strong>in the course organisation</strong>. The tracker finds submissions by that name; a repo named anything else is invisible to it.</li>
+<li>Open the homework link on the <a href="./schedule.html">Schedule</a>. It opens GitHub’s <em>create from template</em> page, where you make your own copy of the starter repo.</li>
+<li>Create it <strong>in the course organisation</strong>, named as described below.</li>
 <li>Do your work in that repo, commit, and push. <strong>Rendering the PDF and pushing is your submission.</strong></li>
-<li><strong>Opt-in feedback:</strong> add an open-source <code>license.md</code> to the repo to receive automated feedback (see <a href="./syllabus.html">Syllabus</a>).</li>
 </ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Name your submission repo exactly <code>hw-NN-&lt;username&gt;</code>.</strong> The tracker finds submissions by that name, so a repo called anything else is invisible to it. Use your own GitHub username and a zero-padded week number, for example <code>hw-03-jdoe</code>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Opt in to individual feedback with one file.</strong> Add an open-source <code>license.md</code> to your submission repo and an AI reads your work alongside the sample solution, then writes feedback back into the repo. See the <a href="./syllabus.html">Syllabus</a>.</p>
+</div>
+</div>
 
 
 </section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>The engine and dashboard analogy is borrowed from <a href="https://datavizf25.classes.andrewheiss.com/syllabus.html#r-and-rstudio">Andrew Heiss</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
@@ -766,9 +1234,9 @@ Content <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/qmir-2026-fall/qmir-2026-fall.github.io/blob/main/installation.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/qmir-2026-fall/qmir-2026-fall.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/qmir-2026-fall/qmir-2026-fall.github.io/blob/main/website/installation.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/qmir-2026-fall/qmir-2026-fall.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>Made with <a href="https://quarto.org/">Quarto</a></p>
+<p>Made with ♥ and <a href="https://quarto.org/">Quarto</a></p>
 </div>
   </div>
 </footer>

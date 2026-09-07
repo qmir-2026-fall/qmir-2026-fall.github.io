@@ -3,9 +3,95 @@
 /* Schedule table: keep it readable on narrow screens. */
 table { font-size: 0.95rem; }
 .schedule-tbd { color: var(--bs-secondary-color, #6c757d); }
+/* "not published yet" (.schedule-tbd) and "there is none" (.schedule-none) are
+   different claims, so they must not look the same. */
+.schedule-none {
+  color: var(--bs-secondary-color, #6c757d);
+  font-style: italic;
+  font-size: 0.85em;
+}
 
 /* Make the standing feedback-policy banner visually distinct wherever it appears. */
 blockquote {
   border-left: 4px solid #2a6f97;
   padding-left: 1rem;
+}
+
+/* About-page course-details grid. The previous iteration used .home and
+   .course-details as class hooks but never defined them, so the three columns sat
+   flush against each other. These are the missing rules. */
+.home {
+  margin-top: 1.5rem;
+}
+.course-details {
+  row-gap: 1.5rem;
+}
+.course-details h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+  padding-bottom: 0.4rem;
+}
+.course-details ul {
+  padding-left: 1.1rem;
+}
+/* The icons read as labels, so give them a fixed gutter and mute them slightly. */
+.course-details li > .fa-solid,
+.course-details li > .fa-regular {
+  width: 1.2em;
+  margin-right: 0.35rem;
+  opacity: 0.75;
+}
+
+/* The size-ladder classes from slides/theme.scss, so a partial that is included on
+   both a slide and an HTML page (notably _workflow-8step.qmd) renders sensibly in
+   both. See STYLE.md section 5.1. */
+.small  { font-size: 0.90rem; }
+.xsmall { font-size: 0.82rem; }
+
+/* --- Schedule ------------------------------------------------------------ */
+/* The icon legend above the block tables. Borderless, so it reads as a key
+   rather than as a fifth data table. */
+.schedule-legend table { border: none; margin-bottom: 1.5rem; }
+.schedule-legend td { border: none; padding: 0.15rem 0.6rem 0.15rem 0; }
+.schedule-legend td:first-child { text-align: center; width: 2.2rem; }
+.schedule-legend thead { display: none; }
+
+/* Block headings separate the per-block tables into readable units. */
+h4 { margin-top: 2.2rem; }
+
+/* --- Glossary ------------------------------------------------------------ */
+/* The A to Z jump bar. Letters with no entries are greyed by .schedule-tbd. */
+.glossary-jump {
+  font-family: var(--bs-font-monospace, monospace);
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  line-height: 2;
+  margin: 0.5rem 0 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+/* Tag badges under each entry. Muted on purpose: they are metadata, and must not
+   compete with the definition itself. */
+.glossary-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  padding: 0 0.5rem;
+  margin-right: 0.25rem;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 1rem;
+  color: var(--bs-secondary-color, #6c757d);
+  white-space: nowrap;
+}
+/* The block tag is the one that says WHERE you first meet the term, so it leads. */
+.glossary-block { border-color: #2a6f97; color: #2a6f97; }
+
+/* --- Syllabus ------------------------------------------------------------ */
+/* The date / block / workflow-step line under each session heading. */
+.session-meta {
+  font-size: 0.85rem;
+  color: var(--bs-secondary-color, #6c757d);
+  margin: -0.5rem 0 0.75rem;
 }
