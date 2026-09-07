@@ -486,28 +486,28 @@ What data would our prior beliefs produce?
 
 ```{r}
 #| label: fig-prior-predictive
-#| fig-cap: "Five hundred answers simulated from the priors alone, before any real answer was
-#|   used. The shaded band is the 1 to 10 scale the survey actually offers, so every point
-#|   outside it is an answer our priors think possible and no student could ever have given."
+#| fig-cap: "One hundred regression lines simulated from the priors alone, before any real answer
+#|   was used. The shaded band is the 1 to 10 scale the survey actually offers, so every line
+#|   leaving the band is a world our priors think possible and no student could ever report."
 #| fig-height: 2.8
 #| dpi: 500
 
 set.seed(2026)
-n_sim <- 500
+n_lines <- 100
 
-# One draw from each prior is one possible world. In each world, simulate the answer that one
-# student at one semester would give.
-prior_data <- tibble(
-  alpha = rnorm(n_sim, mean = 5, sd = 2),
-  beta = rnorm(n_sim, mean = 0, sd = 2),
-  sigma = rexp(n_sim, rate = 1),
-  semester = sample(1:10, size = n_sim, replace = TRUE)
+# One draw from each prior is one possible world. Each world implies a whole line: the average
+# answer it expects at every semester.
+prior_lines <- tibble(
+  draw = 1:n_lines,
+  alpha = rnorm(n_lines, mean = 5, sd = 2),
+  beta = rnorm(n_lines, mean = 0, sd = 2)
 ) |>
-  mutate(confidence = rnorm(n_sim, mean = alpha + beta * semester, sd = sigma))
+  expand_grid(semester = 1:10) |>
+  mutate(confidence = alpha + beta * semester)
 
-ggplot(prior_data, aes(x = semester, y = confidence)) +
+ggplot(prior_lines, aes(x = semester, y = confidence)) +
   annotate("rect", xmin = 0.5, xmax = 10.5, ymin = 1, ymax = 10, fill = col_2, alpha = 0.3) +
-  geom_point(colour = col_3, alpha = 0.4) +
+  geom_line(aes(group = draw), colour = col_3, alpha = 0.25, linewidth = 0.4) +
   scale_x_continuous(breaks = 1:10) +
   theme_pubr() +
   labs(x = "Semester", y = "Confidence", title = "Answers our priors consider possible")
@@ -515,7 +515,8 @@ ggplot(prior_data, aes(x = semester, y = confidence)) +
 
 ::: notes
 This is the step people skip and the step that catches a bad prior.
-Point at how far past 10 the simulated answers reach.
+Point at how far past 10 the lines run, and at how few of them stay inside the band at all.
+Say that this same picture comes back at step 7, once the data has had its say.
 :::
 
 ## Step 5: Fit the model {#sec-fit .smaller}
@@ -842,8 +843,28 @@ $$
 z_i = \frac{x_i - \mu}{\sigma}
 $$ {#eq-standardise}
 
+```{r}
+#| label: fig-standard-normal
+#| fig-cap: "The standard normal, mean 0 and standard deviation 1, shaded the same way as
+#|   @fig-normal-areas. The axis is no longer scale points but standard deviations, and the
+#|   dashed line marks z equal to 2, the edge of the 95 percent region."
+#| fig-height: 2.4
+#| dpi: 500
+
+standard_normal <- tibble(z = seq(-3.5, 3.5, by = 0.05), density = dnorm(z))
+
+ggplot(standard_normal, aes(x = z, y = density)) +
+  geom_area(data = filter(standard_normal, z >= -2, z <= 2), fill = col_1, alpha = 0.2) +
+  geom_area(data = filter(standard_normal, z >= -1, z <= 1), fill = col_1, alpha = 0.4) +
+  geom_line(colour = col_1, linewidth = 1) +
+  geom_vline(xintercept = 2, linetype = "dashed", colour = col_2) +
+  scale_x_continuous(breaks = -3:3) +
+  theme_pubr() +
+  labs(x = "z, standard deviations from the mean", y = "Density", title = "The reference curve")
+```
+
 Subtracting the mean and dividing by the standard deviation turns any normal variable into a
-standard normal one.
+standard normal one, which is the curve in @fig-standard-normal.
 A value of $z_i = 2$ then means the same thing everywhere: two standard deviations above the
 mean, which @fig-normal-areas puts at the edge of the 95 percent region.
 

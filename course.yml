@@ -124,15 +124,19 @@ weeks:
     topic: "Introduction"
     steps: [1, 2, 3, 4, 5, 6, 7, 8]
     content: |
-      An orientation session built around a short welcome survey we fill in together.
-      The responses give us a dataset of our own, and we run the whole eight-step workflow
-      over it before taking any single step apart.
+      An orientation session. We fill in a short welcome survey together, then work out what
+      statistics is doing at its core: counting, and asking how much a count could have varied
+      by chance. The survey answers become a dataset of our own, and we use it for a first
+      glance at Bayesian inference, running a whole analysis end to end before taking any
+      single step apart. We close on the normal distribution, the one piece of notation that
+      analysis leaned on throughout.
     goals:
-      - "Read a set of descriptive figures built from data the class produced minutes earlier."
-      - "Follow the eight steps of a Bayesian analysis end to end on a dataset we collected in the room."
-      - "Say how the course is structured, what the take-home exam asks for, and why the two match."
-      - "Find your way around the course site: schedule, syllabus, glossary and the homework flow."
-      - "Get started with the basics: files and folders, the terminal, working directories, and what Quarto does."
+      - "Say what statistics is doing at its core: counting, reasoning about how much a count could have varied by chance, and telling signal from noise."
+      - "Tell an estimand, an estimator and an estimate apart, and say what makes a claim an inference."
+      - "Get a first glance at Bayesian inference by following a worked analysis of a dataset we collected in the room."
+      - "Name the eight steps that analysis followed, which is also the shape of the take-home exam."
+      - "Read a normal distribution: what the mean and the standard deviation do to the curve, and where the 68 and 95 percent rule comes from."
+      - "Say how the course is structured, and find your way around the course site: schedule, syllabus, glossary and the homework flow."
   - week: 2
     topic: "Reproducible literate programming with Quarto and Git"
     steps: []
