@@ -7,7 +7,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 course:
-  title: "QMIR — Quantitative Methods"
+  title: "QMIR -- Quantitative Methods"
   term: "Fall 2026"
   instructor: "Tristan Muno"
   # Shown on the about page. Purely descriptive.
@@ -15,7 +15,7 @@ course:
   school: "School of Social Sciences"
   university: "University of Mannheim"
   email: "tristan.muno@uni-mannheim.de"
-  office: "A 5, 6 — Room A 351"
+  office: "A5, 6 -- Room A 351"
   # Module facts shown in the syllabus logistics section. PLACEHOLDER prints as an
   # honest "to be announced" via shown(), so fill these in HERE rather than in prose.
   #
@@ -61,7 +61,7 @@ sessions:
   skip_dates:
     - 2026-10-28 # instructor at a congress
   time: "13:45-15:15"
-  room: "A 5, 6 -- C 108"
+  room: "A5, 6 -- C 108"
   office_hours: "By appointment. Please email me to arrange a meeting (in person or online). I aim to reply within 24 hours."
 
 homework:
