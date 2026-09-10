@@ -76,18 +76,20 @@ raw <- read_csv(survey_csv, col_types = cols(.default = col_character()))
 #| include: false
 
 # Google Sheets uses the FULL QUESTION TEXT as each column header, so the first job is picking
-# the two columns this deck models and giving them names you can type. Match on a short
-# distinctive fragment rather than the whole sentence, so that rewording a question in the form
-# does not silently break the deck.
+# the columns this deck uses and giving them names you can type. Match on a short distinctive
+# fragment rather than the whole sentence, so that rewording a question in the form does not
+# silently break the deck.
 survey <- raw |>
   select(
     semester = matches("semester of your Bachelor"),
-    conf_stats = matches("confidence in reading")
+    conf_stats = matches("confidence in reading"),
+    free_text = matches("anything else you would like me to know")
   )
 
 # Fail loudly and early. A half-matched column would surface as an empty figure in front of the
-# room, which is the one failure mode worth spending five lines to prevent.
-missing_cols <- setdiff(c("semester", "conf_stats"), names(survey))
+# room, which is the one failure mode worth spending five lines to prevent. The free-text column
+# is in here too: losing it would not empty a figure, it would quietly put the test rows back in.
+missing_cols <- setdiff(c("semester", "conf_stats", "free_text"), names(survey))
 if (length(missing_cols) > 0) {
   stop(
     "Survey columns not found: ",
@@ -96,9 +98,22 @@ if (length(missing_cols) > 0) {
   )
 }
 
+# The form gets filled in a few times before the session to check that it works, and those dry
+# runs are marked by typing TEST into the free-text box. Match the WHOLE field, case-insensitively,
+# so a real answer that merely mentions a test ("nervous about the test") is never dropped.
+responses <- survey |>
+  filter(
+    !str_detect(
+      str_trim(coalesce(free_text, "")),
+      regex("^test$", ignore_case = TRUE)
+    )
+  )
+
+n_test <- nrow(survey) - nrow(responses)
+
 # The rows the applied example runs on. The confidence question is optional in the form, so
 # blank answers are dropped here, and that decision is named out loud on the step 2 slide.
-model_df <- survey |>
+model_df <- responses |>
   mutate(
     semester = as.integer(semester),
     conf_stats = as.integer(conf_stats)
@@ -320,6 +335,7 @@ Read the semester range out loud. If it is one or two values wide, promise the c
 step 8.
 The confidence question was the only optional one, so blank answers are dropped here, and that
 is a decision worth a sentence in any writeup.
+Test submissions, marked TEST in the free-text box, were dropped before any of this: `r n_test` of them.
 :::
 
 ## Step 3: Formal model {#sec-model .smaller}
@@ -472,7 +488,11 @@ ggplot(priors_drawn, aes(x = value, y = density)) +
   geom_line(colour = col_3, linewidth = 1) +
   facet_wrap(~parameter, scales = "free") +
   theme_pubr() +
-  labs(x = "Value", y = "Density", title = "What I believe before seeing any answer")
+  labs(
+    x = "Value",
+    y = "Density",
+    title = "What I believe before seeing any answer"
+  )
 ```
 
 ::: notes
@@ -506,11 +526,23 @@ prior_lines <- tibble(
   mutate(confidence = alpha + beta * semester)
 
 ggplot(prior_lines, aes(x = semester, y = confidence)) +
-  annotate("rect", xmin = 0.5, xmax = 10.5, ymin = 1, ymax = 10, fill = col_2, alpha = 0.3) +
+  annotate(
+    "rect",
+    xmin = 0.5,
+    xmax = 10.5,
+    ymin = 1,
+    ymax = 10,
+    fill = col_2,
+    alpha = 0.3
+  ) +
   geom_line(aes(group = draw), colour = col_3, alpha = 0.25, linewidth = 0.4) +
   scale_x_continuous(breaks = 1:10) +
   theme_pubr() +
-  labs(x = "Semester", y = "Confidence", title = "Answers our priors consider possible")
+  labs(
+    x = "Semester",
+    y = "Confidence",
+    title = "Answers our priors consider possible"
+  )
 ```
 
 ::: notes
@@ -593,7 +625,10 @@ Say it twice: this is a statement about the computer, not about whether the mode
 set.seed(2026)
 pp_check(fit, ndraws = 50) +
   theme_pubr() +
-  labs(x = "Confidence", title = "Observed answers against what the model predicts")
+  labs(
+    x = "Confidence",
+    title = "Observed answers against what the model predicts"
+  )
 ```
 
 - How well do the estimated parameters, remember that these are distributions, combined with the
@@ -636,7 +671,11 @@ line_cloud <- conditional_effects(fit, spaghetti = TRUE, ndraws = 100)
 
 plot(line_cloud, points = TRUE, plot = FALSE)[[1]] +
   theme_pubr() +
-  labs(x = "Semester", y = "Confidence", title = "Lines that survive contact with the data")
+  labs(
+    x = "Semester",
+    y = "Confidence",
+    title = "Lines that survive contact with the data"
+  )
 ```
 
 ::: notes
@@ -796,16 +835,33 @@ That distribution has two knobs, and nothing else.
 #| dpi: 500
 
 normal_curves <- bind_rows(
-  tibble(curve = "mean 5, sd 1", x = seq(-2, 12, by = 0.05), density = dnorm(x, 5, 1)),
-  tibble(curve = "mean 5, sd 2", x = seq(-2, 12, by = 0.05), density = dnorm(x, 5, 2)),
-  tibble(curve = "mean 8, sd 1", x = seq(-2, 12, by = 0.05), density = dnorm(x, 8, 1))
+  tibble(
+    curve = "mean 5, sd 1",
+    x = seq(-2, 12, by = 0.05),
+    density = dnorm(x, 5, 1)
+  ),
+  tibble(
+    curve = "mean 5, sd 2",
+    x = seq(-2, 12, by = 0.05),
+    density = dnorm(x, 5, 2)
+  ),
+  tibble(
+    curve = "mean 8, sd 1",
+    x = seq(-2, 12, by = 0.05),
+    density = dnorm(x, 8, 1)
+  )
 )
 
 ggplot(normal_curves, aes(x = x, y = density, colour = curve)) +
   geom_line(linewidth = 1) +
   scale_colour_manual(values = c(col_1, col_3, col_2)) +
   theme_pubr() +
-  labs(x = "Value", y = "Density", colour = NULL, title = "Two knobs, three curves")
+  labs(
+    x = "Value",
+    y = "Density",
+    colour = NULL,
+    title = "Two knobs, three curves"
+  )
 ```
 
 ## The 68 and 95 rule {#sec-68-95 .smaller}
@@ -824,8 +880,16 @@ the same way, whatever $\mu$ and $\sigma$ happen to be.
 normal_area <- tibble(x = seq(-3, 13, by = 0.05), density = dnorm(x, 5, 2))
 
 ggplot(normal_area, aes(x = x, y = density)) +
-  geom_area(data = filter(normal_area, x >= 1, x <= 9), fill = col_1, alpha = 0.2) +
-  geom_area(data = filter(normal_area, x >= 3, x <= 7), fill = col_1, alpha = 0.4) +
+  geom_area(
+    data = filter(normal_area, x >= 1, x <= 9),
+    fill = col_1,
+    alpha = 0.2
+  ) +
+  geom_area(
+    data = filter(normal_area, x >= 3, x <= 7),
+    fill = col_1,
+    alpha = 0.4
+  ) +
   geom_line(colour = col_1, linewidth = 1) +
   scale_x_continuous(breaks = c(1, 3, 5, 7, 9)) +
   theme_pubr() +
@@ -854,13 +918,25 @@ $$ {#eq-standardise}
 standard_normal <- tibble(z = seq(-3.5, 3.5, by = 0.05), density = dnorm(z))
 
 ggplot(standard_normal, aes(x = z, y = density)) +
-  geom_area(data = filter(standard_normal, z >= -2, z <= 2), fill = col_1, alpha = 0.2) +
-  geom_area(data = filter(standard_normal, z >= -1, z <= 1), fill = col_1, alpha = 0.4) +
+  geom_area(
+    data = filter(standard_normal, z >= -2, z <= 2),
+    fill = col_1,
+    alpha = 0.2
+  ) +
+  geom_area(
+    data = filter(standard_normal, z >= -1, z <= 1),
+    fill = col_1,
+    alpha = 0.4
+  ) +
   geom_line(colour = col_1, linewidth = 1) +
   geom_vline(xintercept = 2, linetype = "dashed", colour = col_2) +
   scale_x_continuous(breaks = -3:3) +
   theme_pubr() +
-  labs(x = "z, standard deviations from the mean", y = "Density", title = "The reference curve")
+  labs(
+    x = "z, standard deviations from the mean",
+    y = "Density",
+    title = "The reference curve"
+  )
 ```
 
 Subtracting the mean and dividing by the standard deviation turns any normal variable into a
