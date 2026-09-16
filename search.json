@@ -25,7 +25,7 @@
     "href": "syllabus.html#sec-logistics",
     "title": "Syllabus",
     "section": "Course logistics",
-    "text": "Course logistics\n\nGeneral information\nThe course meets on Wednesdays, 13:45-15:15, in A 5, 6 – C 108. Each session consists of an instructor-led part on concepts and theory, followed by hands-on exercises. Homework is assigned at the end of class and is due 7 days later, before the next session. Readings provide background, theory and context, and are linked per week from the Schedule.\n\n\n\n\n\n\nTip\n\n\n\nIf you have to miss a session, tell me beforehand. Email me before the session and I will set up a Zoom room so you can follow it remotely.\n\n\n\n\nPrerequisites\nTwo different things go by this name, and it is worth keeping them apart. The first is an administrative condition on taking the module. The second is what you need on day one to follow what happens in the room.\nFormally. The module requires the Basismodul Einführung in die Internationalen Beziehungen and the Basismodule in Methoden und Statistik. Whether you meet those is a question for the module catalogue and the Studienbüro, not for me.\nIn terms of what this course assumes: nothing. No programming experience is assumed, and no statistics beyond descriptive measures. Everything the course needs, it teaches.\nA basic grasp of statistics does help, and if you would like to shore that up before or during the term, Section 3.12 points at two free ways to do it.\n\n\nModule, credits and workload\n\nModule: Advanced Module: International Relations\nThis course: Methods exercise class (Übung)\nCredits: 6 ECTS, which is 180 hours of total workload\nRecommended semester: 5th Semester\nContact time: 19.5 hours, that is 13 sessions of 90 minutes\nSelf-study: 160.5 hours, about 12.3 hours a week across the 13 teaching weeks\n\nThat self-study figure is not decoration. It is where the weekly homework, the readings and your exam preparation actually live, and the course is paced on the assumption that you spend roughly that much time on it.\nFor comparison, the module catalogue budgets a nominal 30 hours of contact time and 150 hours of self-study for a 6 ECTS course. The difference is simply that this course meets for 90 minutes over 13 weeks rather than for the nominal figure, so a little more of the same total lands outside the room.\nThe authoritative version of all of these is the module catalogue and the examination regulations for the B.A. Political Science, not this page. Where the two disagree, the regulations win.\n\n\nAttendance policy\nActive participation (Mitarbeit) is a required component of the coursework (Studienleistung), on the basis of section 13b of the examination regulations. This course consists of 13 sessions. Successful participation is presumed if you attend at least 80% of sessions, that is at least 11 out of 13.\nIf attendance falls below 80% but stays at or above 60% (8 to 10 out of 13), successful participation is not presumed. In that case the possibility of fulfilling the participation requirement is assessed case by case.\nIf attendance falls below 60% (fewer than 8 out of 13), successful participation is normally considered impossible under the examination regulations.\nIf sessions are cancelled during the semester, the absolute number of required sessions is adjusted accordingly, while the percentage thresholds stay unchanged.\n\n\nGrading policy\nUnder the examination regulations, assessment consists of coursework (Studienleistung, pass or fail) and a final examination (Prüfungsleistung, graded).\nSuccessful completion of all coursework requirements is a prerequisite for admission to the final take-home exam.\n\nCoursework (Studienleistung, pass or fail)\nCoursework has two components, and both must be passed. This is the model the module catalogue provides for rather than a local invention: it names Mitarbeit and Hausaufgaben among the Studienleistungen for this course.\n1. Weekly homework assignments. There are 11 homework assignments over the term, one in every session except the first and the last. The first session is orientation and the last is synthesis and the exam briefing, so neither sets work, which leaves weeks 2 to 12. They are distributed through GitHub and assessed pass or fail. To fulfil this requirement you must pass at least 80% of them, that is 9 out of 11. Homework must show a serious and complete attempt at the tasks. A submission that is empty or clearly insufficient does not count as passed.\n2. Active participation (Mitarbeit). Active participation, as described in Section 3.4, is a required coursework component and is assessed pass or fail.\n\n\n\nThe take-home exam\nThe final examination (Prüfungsleistung) is a take-home exam, and it determines the whole course grade. In the module catalogue it goes by its formal name, a written term paper (schriftliche Hausarbeit). Those are two names for the same thing.\nWindow: 9 December 2026, 15:30 to 23 December 2026, 23:59.\nIt is distributed through the exam repository on the course GitHub organisation, the same template flow as the weekly homework. The last version pushed to your exam repository before the deadline is what gets graded. Late submissions are not accepted.\nWhat you receive. A dataset, the theoretical background you need, and a small number of stated hypotheses. You do not have to find a topic, a question or data of your own.\nWhat you produce. A short empirical research report that tests those hypotheses using the eight-step Bayesian workflow in Section 6. The rendered PDF follows the structure of an empirical political science paper: a data and methods (or research design) section, a results (or analysis) section, a discussion including limitations, and a brief conclusion. No introduction and no literature review are required, because the background and hypotheses are given to you.\n\nThe report may not exceed 6,000 words. That limit is set by the module catalogue, not by me. The reference list, the appendices and the statutory declaration do not count towards it, which is my clarification rather than the catalogue’s.\nUse figures and tables wherever they genuinely support the argument.\nDo not print raw code, warnings, messages or unformatted R output in the PDF.\nAppendices are welcome for diagnostics, robustness checks and supporting material that is not essential to the main text.\n\nWhat you submit.\n\nfirstname_lastname_exam.qmd and the rendered firstname_lastname_exam.pdf, at the root of your exam repository.\nThe whole repository, which is part of the submission. Any further notebooks or scripts are inspected and count towards the grade. Treat it as a research project.\nA signed statutory declaration on the final page of the PDF, following the university’s template. An electronic signature is fine. A PDF without one cannot be graded.\n\nHow it is graded. On the university scale, 1.0 (very good) to 5.0 (insufficient), across the four dimensions in Table 1. The full criterion-by-criterion scheme, which is what you should actually work from, is distributed together with the exam.\n\n\n\nTable 1: The four grading dimensions of the take-home exam and their weights. Argumentation, Interpretation and Formalities are assessed from the rendered PDF alone, so a justification that lives only in a code comment does not count. Code and repository is assessed from the repository as a whole.\n\n\n\n\n\n\n\n\n\n\nDimension\nWhat it asks\nPoints\n\n\n\n\nArgumentation\nAre your modelling choices reasoned and justified in the PDF, given the data and the hypotheses?\n30\n\n\nInterpretation\nAre your posterior results read correctly and used to evaluate the hypotheses?\n30\n\n\nFormalities\nDoes the PDF look and read like a section of a published paper?\n15\n\n\nCode and repository\nIs the workflow operationalised in a reproducible, traceable repository?\n25\n\n\nTotal\n\n100\n\n\n\n\n\n\n\n\n\n\n\n\nImportant\n\n\n\nA submission that does not render from a clean clone cannot reach top marks. The single largest criterion in the code and repository dimension is that the PDF rebuilds from your repository on another machine. Test that before the deadline, not after.\n\n\nEvery tool and workflow the exam needs is taught during the course. Session 12, the multilevel primer, is the one exception: it is not examined.\n\n\nRegistration and withdrawal\nRegistration for the Prüfungsleistung, deregistration, and the applicable deadlines are handled by the Studienbüro under the examination regulations, not by me. Check the dates there and keep to them, because responsibility for meeting them sits with you.\nIf a good reason, illness in particular, prevents you from completing the exam within the window, section 30 of the examination regulations applies. You must submit a written application to the Studienbüro without delay, with evidence. The examination board decides, and the burden of proof is on the applicant. Tell me as well, but telling me is not a substitute for the formal application.\nSection 5 additionally allows the deadlines for coursework and examinations to be extended on a timely written application, for instance for students with children or with dependants requiring care.\n\n\nDisability and chronic illness\nIf a disability or a chronic illness makes it harder for you to take an assessment in the form it is set, you are entitled to compensation that restores equal opportunity, under section 6 of the examination regulations. Applications are made in writing and in good time, and applications on grounds of disability or chronic illness go to the university’s representative for students with disabilities or chronic illness.\n\n\n\n\n\n\nTip\n\n\n\nTalk to me early, and tell me only what you want to. The formal route runs through the representative and the examination board, and I do not need to know the nature of your condition. What helps me is knowing early that an adjustment is coming, so it can be built in rather than improvised.\n\n\n\n\nLanguage and software policy\nThe course is taught entirely in English and is built around R, Quarto and Git or GitHub for data analysis, reproducible research and project management. Work with these tools, because the exercises and workflows are designed around them.\nFor the take-home exam you may use another script-based language such as Python or Stata, but this is not recommended and no guidance is provided for non-R workflows. The emphasis is on understanding the tools, practising them, and learning to find solutions independently.\n\n\nHardware\nYou need a computer available during class. A standard laptop is sufficient, and there are no particular requirements for RAM, an external GPU, or other advanced components.\nIf you do not own a suitable device, the University of Mannheim IT department offers a laptop rental service. Please make use of it if you need it.\n\n\nSoftware\nInstall all required software before the first session, following the separate installation guide. Doing it early means we can sort out any problems on day one and start the programming work properly in the following session.\n\n\nAdditional learning resources\nTwo external platforms are worth your time. Both are voluntary and neither is part of the requirements to pass, but each fills a gap this course cannot fill on its own in one session a week.\nDataCamp. Use the link to join the course group, which gives you six months of premium access. DataCamp offers in-depth, self-paced practical training in R, coding, data analytics and AI topics, so it is the right place to drill something until it is automatic, at whatever speed suits you. The introduction to R track is a good starting point.\n\n\n\n\n\n\nWarning\n\n\n\nRegister with your uni-mannheim.de address. Premium access is tied to the university account. If you sign up with a private address the group link will not grant it, and the fix is to start again with the right address.\n\n\nDuolingo Math. Freemium, and a good starting point if you would like to relaunch yourself into mathematics fundamentals or introductory statistics. No prior statistics is assumed in this course, so this is not a prerequisite. It is simply there if the maths behind a session feels shakier than you would like.\n\n\nMental health support\nLife and study at the University of Mannheim can sometimes feel complicated, challenging, or overwhelming. That is completely normal. You are not expected to understand or memorise course content on the first attempt.\nIf you ever feel mentally or emotionally strained, you may find useful advice on the university’s good mental health and studying page. The help in times of crisis page gives an overview of the counselling and support services available at the university."
+    "text": "Course logistics\n\nGeneral information\nThe course meets on Wednesdays, 13:45-15:15, in A5, 6 – C 108. Each session consists of an instructor-led part on concepts and theory, followed by hands-on exercises. Homework is assigned at the end of class and is due 7 days later, before the next session. Readings provide background, theory and context, and are linked per week from the Schedule.\n\n\n\n\n\n\nTip\n\n\n\nIf you have to miss a session, tell me beforehand. Email me before the session and I will set up a Zoom room so you can follow it remotely.\n\n\n\n\nPrerequisites\nTwo different things go by this name, and it is worth keeping them apart. The first is an administrative condition on taking the module. The second is what you need on day one to follow what happens in the room.\nFormally. The module requires the Basismodul Einführung in die Internationalen Beziehungen and the Basismodule in Methoden und Statistik. Whether you meet those is a question for the module catalogue and the Studienbüro, not for me.\nIn terms of what this course assumes: nothing. No programming experience is assumed, and no statistics beyond descriptive measures. Everything the course needs, it teaches.\nA basic grasp of statistics does help, and if you would like to shore that up before or during the term, Section 3.12 points at two free ways to do it.\n\n\nModule, credits and workload\n\nModule: Advanced Module: International Relations\nThis course: Methods exercise class (Übung)\nCredits: 6 ECTS, which is 180 hours of total workload\nRecommended semester: 5th Semester\nContact time: 19.5 hours, that is 13 sessions of 90 minutes\nSelf-study: 160.5 hours, about 12.3 hours a week across the 13 teaching weeks\n\nThat self-study figure is not decoration. It is where the weekly homework, the readings and your exam preparation actually live, and the course is paced on the assumption that you spend roughly that much time on it.\nFor comparison, the module catalogue budgets a nominal 30 hours of contact time and 150 hours of self-study for a 6 ECTS course. The difference is simply that this course meets for 90 minutes over 13 weeks rather than for the nominal figure, so a little more of the same total lands outside the room.\nThe authoritative version of all of these is the module catalogue and the examination regulations for the B.A. Political Science, not this page. Where the two disagree, the regulations win.\n\n\nAttendance policy\nActive participation (Mitarbeit) is a required component of the coursework (Studienleistung), on the basis of section 13b of the examination regulations. This course consists of 13 sessions. Successful participation is presumed if you attend at least 80% of sessions, that is at least 11 out of 13.\nIf attendance falls below 80% but stays at or above 60% (8 to 10 out of 13), successful participation is not presumed. In that case the possibility of fulfilling the participation requirement is assessed case by case.\nIf attendance falls below 60% (fewer than 8 out of 13), successful participation is normally considered impossible under the examination regulations.\nIf sessions are cancelled during the semester, the absolute number of required sessions is adjusted accordingly, while the percentage thresholds stay unchanged.\n\n\nGrading policy\nUnder the examination regulations, assessment consists of coursework (Studienleistung, pass or fail) and a final examination (Prüfungsleistung, graded).\nSuccessful completion of all coursework requirements is a prerequisite for admission to the final take-home exam.\n\nCoursework (Studienleistung, pass or fail)\nCoursework has two components, and both must be passed. This is the model the module catalogue provides for rather than a local invention: it names Mitarbeit and Hausaufgaben among the Studienleistungen for this course.\n1. Weekly homework assignments. There are 11 homework assignments over the term, one in every session except the first and the last. The first session is orientation and the last is synthesis and the exam briefing, so neither sets work, which leaves weeks 2 to 12. They are distributed through GitHub and assessed pass or fail. To fulfil this requirement you must pass at least 80% of them, that is 9 out of 11. Homework must show a serious and complete attempt at the tasks. A submission that is empty or clearly insufficient does not count as passed.\n2. Active participation (Mitarbeit). Active participation, as described in Section 3.4, is a required coursework component and is assessed pass or fail.\n\n\n\nThe take-home exam\nThe final examination (Prüfungsleistung) is a take-home exam, and it determines the whole course grade. In the module catalogue it goes by its formal name, a written term paper (schriftliche Hausarbeit). Those are two names for the same thing.\nWindow: 9 December 2026, 15:30 to 23 December 2026, 23:59.\nIt is distributed through the exam repository on the course GitHub organisation, the same template flow as the weekly homework. The last version pushed to your exam repository before the deadline is what gets graded. Late submissions are not accepted.\nWhat you receive. A dataset, the theoretical background you need, and a small number of stated hypotheses. You do not have to find a topic, a question or data of your own.\nWhat you produce. A short empirical research report that tests those hypotheses using the eight-step Bayesian workflow in Section 6. The rendered PDF follows the structure of an empirical political science paper: a data and methods (or research design) section, a results (or analysis) section, a discussion including limitations, and a brief conclusion. No introduction and no literature review are required, because the background and hypotheses are given to you.\n\nThe report may not exceed 6,000 words. That limit is set by the module catalogue, not by me. The reference list, the appendices and the statutory declaration do not count towards it, which is my clarification rather than the catalogue’s.\nUse figures and tables wherever they genuinely support the argument.\nDo not print raw code, warnings, messages or unformatted R output in the PDF.\nAppendices are welcome for diagnostics, robustness checks and supporting material that is not essential to the main text.\n\nWhat you submit.\n\nfirstname_lastname_exam.qmd and the rendered firstname_lastname_exam.pdf, at the root of your exam repository.\nThe whole repository, which is part of the submission. Any further notebooks or scripts are inspected and count towards the grade. Treat it as a research project.\nA signed statutory declaration on the final page of the PDF, following the university’s template. An electronic signature is fine. A PDF without one cannot be graded.\n\nHow it is graded. On the university scale, 1.0 (very good) to 5.0 (insufficient), across the four dimensions in Table 1. The full criterion-by-criterion scheme, which is what you should actually work from, is distributed together with the exam.\n\n\n\nTable 1: The four grading dimensions of the take-home exam and their weights. Argumentation, Interpretation and Formalities are assessed from the rendered PDF alone, so a justification that lives only in a code comment does not count. Code and repository is assessed from the repository as a whole.\n\n\n\n\n\n\n\n\n\n\nDimension\nWhat it asks\nPoints\n\n\n\n\nArgumentation\nAre your modelling choices reasoned and justified in the PDF, given the data and the hypotheses?\n30\n\n\nInterpretation\nAre your posterior results read correctly and used to evaluate the hypotheses?\n30\n\n\nFormalities\nDoes the PDF look and read like a section of a published paper?\n15\n\n\nCode and repository\nIs the workflow operationalised in a reproducible, traceable repository?\n25\n\n\nTotal\n\n100\n\n\n\n\n\n\n\n\n\n\n\n\nImportant\n\n\n\nA submission that does not render from a clean clone cannot reach top marks. The single largest criterion in the code and repository dimension is that the PDF rebuilds from your repository on another machine. Test that before the deadline, not after.\n\n\nEvery tool and workflow the exam needs is taught during the course. Session 12, the multilevel primer, is the one exception: it is not examined.\n\n\nRegistration and withdrawal\nRegistration for the Prüfungsleistung, deregistration, and the applicable deadlines are handled by the Studienbüro under the examination regulations, not by me. Check the dates there and keep to them, because responsibility for meeting them sits with you.\nIf a good reason, illness in particular, prevents you from completing the exam within the window, section 30 of the examination regulations applies. You must submit a written application to the Studienbüro without delay, with evidence. The examination board decides, and the burden of proof is on the applicant. Tell me as well, but telling me is not a substitute for the formal application.\nSection 5 additionally allows the deadlines for coursework and examinations to be extended on a timely written application, for instance for students with children or with dependants requiring care.\n\n\nDisability and chronic illness\nIf a disability or a chronic illness makes it harder for you to take an assessment in the form it is set, you are entitled to compensation that restores equal opportunity, under section 6 of the examination regulations. Applications are made in writing and in good time, and applications on grounds of disability or chronic illness go to the university’s representative for students with disabilities or chronic illness.\n\n\n\n\n\n\nTip\n\n\n\nTalk to me early, and tell me only what you want to. The formal route runs through the representative and the examination board, and I do not need to know the nature of your condition. What helps me is knowing early that an adjustment is coming, so it can be built in rather than improvised.\n\n\n\n\nLanguage and software policy\nThe course is taught entirely in English and is built around R, Quarto and Git or GitHub for data analysis, reproducible research and project management. Work with these tools, because the exercises and workflows are designed around them.\nFor the take-home exam you may use another script-based language such as Python or Stata, but this is not recommended and no guidance is provided for non-R workflows. The emphasis is on understanding the tools, practising them, and learning to find solutions independently.\n\n\nHardware\nYou need a computer available during class. A standard laptop is sufficient, and there are no particular requirements for RAM, an external GPU, or other advanced components.\nIf you do not own a suitable device, the University of Mannheim IT department offers a laptop rental service. Please make use of it if you need it.\n\n\nSoftware\nInstall all required software before the first session, following the separate installation guide. Doing it early means we can sort out any problems on day one and start the programming work properly in the following session.\n\n\nAdditional learning resources\nTwo external platforms are worth your time. Both are voluntary and neither is part of the requirements to pass, but each fills a gap this course cannot fill on its own in one session a week.\nDataCamp. Use the link to join the course group, which gives you six months of premium access. DataCamp offers in-depth, self-paced practical training in R, coding, data analytics and AI topics, so it is the right place to drill something until it is automatic, at whatever speed suits you. The introduction to R track is a good starting point.\n\n\n\n\n\n\nWarning\n\n\n\nRegister with your uni-mannheim.de address. Premium access is tied to the university account. If you sign up with a private address the group link will not grant it, and the fix is to start again with the right address.\n\n\nDuolingo Math. Freemium, and a good starting point if you would like to relaunch yourself into mathematics fundamentals or introductory statistics. No prior statistics is assumed in this course, so this is not a prerequisite. It is simply there if the maths behind a session feels shakier than you would like.\n\n\nMental health support\nLife and study at the University of Mannheim can sometimes feel complicated, challenging, or overwhelming. That is completely normal. You are not expected to understand or memorise course content on the first attempt.\nIf you ever feel mentally or emotionally strained, you may find useful advice on the university’s good mental health and studying page. The help in times of crisis page gives an overview of the counselling and support services available at the university."
   },
   {
     "objectID": "syllabus.html#sec-feedback-policy",
@@ -54,363 +54,6 @@
     "title": "Syllabus",
     "section": "Session plan",
     "text": "Session plan\nWhat each session covers, and what you should be able to do afterwards. Dates, slides, homework and readings are on the Schedule.\n\n\n\n\n\n\nNote\n\n\n\nThis is a preliminary plan and may be revised or updated throughout the semester.\n\n\n\nSession 1: Introduction\n\n09 September 2026 · workflow steps 1, 2, 3, 4, 5, 6, 7, 8\n\nAn orientation session. We fill in a short welcome survey together, then work out what statistics is doing at its core: counting, and asking how much a count could have varied by chance. The survey answers become a dataset of our own, and we use it for a first glance at Bayesian inference, running a whole analysis end to end before taking any single step apart. We close on the normal distribution, the one piece of notation that analysis leaned on throughout.\nAfterwards you will be able to:\n\nSay what statistics is doing at its core: counting, reasoning about how much a count could have varied by chance, and telling signal from noise.\nTell an estimand, an estimator and an estimate apart, and say what makes a claim an inference.\nGet a first glance at Bayesian inference by following a worked analysis of a dataset we collected in the room.\nName the eight steps that analysis followed, which is also the shape of the take-home exam.\nRead a normal distribution: what the mean and the standard deviation do to the curve, and where the 68 and 95 percent rule comes from.\nSay how the course is structured, and find your way around the course site: schedule, syllabus, glossary and the homework flow.\n\n\n\nSession 2: Reproducible literate programming with Quarto and Git\n\n16 September 2026 · Scientific programming fundamentals\n\nThe working environment, and the habits that make a result checkable by somebody else. Everything happens in Positron from this session onwards.\nAfterwards you will be able to:\n\nUnderstand how Quarto, R, Git and GitHub fit together.\nCreate a project under version control and render a Quarto document.\nPush your first reproducible document to GitHub, and generate your own homework repository from a template.\nWrite a commit message a later reader can follow, which is also where AI assistance gets declared.\n\n\n\nSession 3: R fundamentals: data structures, objects and functions\n\n23 September 2026 · Scientific programming fundamentals\n\nThe language itself, and the small vocabulary everything later is assembled from. Time is spent deliberately on reading errors, because that is the skill that makes independent work possible.\nAfterwards you will be able to:\n\nUnderstand the core concepts: objects, functions and pipes.\nKnow the main data types R uses to store information.\nKnow the main data structures R uses to organise information.\nAccess and explore data using [] and $.\nRead an error message and work out what R was actually asked to do.\n\n\n\nSession 4: The tidyverse\n\n30 September 2026 · Scientific programming fundamentals · workflow step 2\n\nGetting data into a shape that tools can work with, which is most of the work in most analyses. Step 2 of the workflow, the data summary, starts here.\nAfterwards you will be able to:\n\nUnderstand what the tidyverse is and why it exists.\nKnow what tidy data means and why it matters.\nImport data with readr and explore it with glimpse(), head() and summary().\nWrangle data with the core dplyr verbs, chained with the native pipe.\nUse Quarto cell options for labels, captions and execution control.\n\n\n\nSession 5: Data visualisation\n\n07 October 2026 · Scientific programming fundamentals · workflow step 2\n\nMoving from a plot that displays data to a figure that makes a point, plus the reshaping and joining that usually comes first. We close on probabilities and distributions, which is the bridge into the second block.\nAfterwards you will be able to:\n\nReshape data between wide and long form with pivot_longer() and pivot_wider().\nCombine datasets from several sources with left_join(), and verify the result.\nHandle missing values transparently, and understand the risks of imputation.\nBuild and customise ggplot2 figures through aesthetics, geoms, scales and themes.\nProduce publication-ready tables and embed computed results directly in prose with inline code.\nRead a distribution as a statement about how plausible each value is.\n\n\n\nSession 6: The logic of Bayesian inference\n\n14 October 2026 · The logic of Bayesian inference · workflow steps 3, 4\n\nThe conceptual core of the course, and a deliberate change of gear: the programming gets easier and the thinking gets harder. Probability as a description of uncertainty, and the single rule that combines what you believed beforehand with what you observed.\nAfterwards you will be able to:\n\nArticulate the distinction between frequentist and Bayesian interpretations of probability, and explain why each suits different questions.\nExplain why parameters are treated as uncertain quantities with distributions.\nName and interpret the three core ingredients: prior, likelihood and posterior.\nState Bayes’ theorem in full, identify each term, and explain the role of the normalising constant.\nDescribe how the posterior changes as the prior changes and as data accumulates.\nApply grid approximation in R to compute and visualise a posterior.\n\n\n\nSession 7: Markov chain Monte Carlo\n\n21 October 2026 · The logic of Bayesian inference · workflow steps 4, 5, 6\n\nThe computational implementation of everything session 6 established. The emphasis is on reading the diagnostics rather than on deriving the algorithms.\nAfterwards you will be able to:\n\nArticulate why grid approximation is intractable for realistic models.\nExplain the Monte Carlo idea: approximating integrals by random sampling and counting.\nDefine a Markov chain and explain what a stationary distribution is.\nState the Metropolis acceptance rule and show why the normalising constant cancels.\nExplain qualitatively how Hamiltonian Monte Carlo differs from random-walk Metropolis, and why it is more efficient.\nInterpret brms output: trace plots, R-hat, effective sample size and posterior distributions.\nUnderstand that convergence cannot be proven, only falsified, and recognise what non-convergence looks like.\n\n\n\nSession 8: Bivariate linear regression\n\n04 November 2026 · Applied modelling · workflow steps 1, 3, 4, 5, 6\n\nThe first full model, deliberately the simplest one: one outcome, one predictor, and the whole workflow run around it. Every later model extends this one rather than replacing it.\nAfterwards you will be able to:\n\nFrame a regression problem as estimand (what we want to know), estimator (the procedure) and estimate (the number we get).\nExplain what OLS assumes, and see where the classical and the Bayesian account of the same model meet.\nSpecify weakly informative priors for regression coefficients and defend them on principled grounds.\nUnderstand brms as sampling from the posterior: an estimator that returns a distribution rather than one number.\nInterpret brms output and extract quantities of interest, such as predictions and marginal effects.\n\n\n\nSession 9: Multivariate linear regression\n\n11 November 2026 · Applied modelling · workflow steps 1, 7\n\nMore than one predictor, and the questions that come with it. A set of controls is a claim about how the world works, not a way of being safe.\nAfterwards you will be able to:\n\nExplain omitted variable bias, and use a DAG to classify a control variable as a confounder, a mediator or a collider.\nExtend the Bayesian regression model to several predictors and interpret each coefficient as a partial effect.\nHandle categorical predictors using dummy variables.\nCompare competing models with Bayesian leave-one-out cross-validation (LOO-IC).\n\n\n\nSession 10: Interaction terms in linear regression\n\n18 November 2026 · Applied modelling · workflow step 7\n\nEffects that are not the same everywhere. Specification is the easy part, and interpretation is where interactions are usually got wrong, so most of the session goes there.\nAfterwards you will be able to:\n\nSpecify a multiplicative interaction model and interpret the conditional marginal effect of a predictor as a function of its moderator.\nExtract posterior marginal effects separately for each level of the moderator.\nCompare an interaction model against the additive model with LOO-IC.\nShow a conditional effect in a figure rather than asking a reader to combine coefficients.\n\n\n\nSession 11: Modelling binary outcomes: logit and probit\n\n25 November 2026 · Applied modelling · workflow steps 3, 7\n\nOutcomes that are yes or no. Nothing about the engine changes here: we are only swapping the likelihood, and then doing the work of getting back to a scale a reader can use.\nAfterwards you will be able to:\n\nExplain why linear models are structurally wrong for binary outcomes, and how a Bernoulli likelihood plus a link function resolves it.\nFit and interpret a Bayesian logistic regression in brms, including priors on the logit scale and predicted probability ribbons.\nSay how the probit link differs from the logit, and when the choice matters.\nAssess model quality with posterior predictive checks, a confusion matrix, ROC and AUC, and compare models with LOO.\n\n\n\nSession 12: Introduction to multilevel models\n\n02 December 2026 · Applied modelling · workflow steps 3, 5, 7\n\nData with structure: candidates in parties, regions in countries, years in states. A primer and your departure point for later work, and the one session that is not on the take-home exam.\nAfterwards you will be able to:\n\nIdentify hierarchical data and explain why treating grouped observations as independent understates uncertainty.\nDescribe the three-point spectrum of complete pooling, no pooling and partial pooling, and say when each is right.\nRead the (1 | group) formula in brms and interpret the key output quantities.\n\n\n\nSession 13: Beyond the course: applying what you have learned\n\n09 December 2026 · Applied modelling · workflow steps 1, 2, 3, 4, 5, 6, 7, 8\n\nSynthesis and outlook rather than new methods. We consolidate what you already have and hand you a clean runway into the exam.\nAfterwards you will be able to:\n\nName what you learned across the three blocks, and why the course was built this way.\nRead a classical regression table, since most of the literature you will meet reports one.\nUse the tooling that makes the code and repository part of the exam grade straightforward.\nKnow exactly what the exam asks for, how it is graded, and how AI use is declared in it."
-  },
-  {
-    "objectID": "schedule.html",
-    "href": "schedule.html",
-    "title": "Schedule",
-    "section": "",
-    "text": "Your roadmap for the term. One session per week, and each row links the slides, the homework starter repo, and, after the due date, the sample solution.\nThe term runs in three blocks. Week 1 sits outside them, because it shows the whole workflow up front."
-  },
-  {
-    "objectID": "schedule.html#sec-exam",
-    "href": "schedule.html#sec-exam",
-    "title": "Schedule",
-    "section": "Take-home exam",
-    "text": "Take-home exam\n\n\n\n\n\n\nNote\n\n\n\nThe exam is a complete 8-step Bayesian analysis. You see the target in week 1 and every week builds toward it.\nWindow: 9 December 2026, 15:30 to 23 December 2026, 23:59.\nDistribution: the exam repo on the course org, the same template flow as the weekly homework.\nSubmission: the state of your repository when the deadline passes is what gets graded.\nWhat to expect: a dataset, the background you need, and a research question. You run the analysis yourself, end to end, and submit a reproducible repository with a rendered PDF. Detailed grading criteria come with the exam."
-  },
-  {
-    "objectID": "resources/12_resources.html",
-    "href": "resources/12_resources.html",
-    "title": "Week 12 Resources",
-    "section": "",
-    "text": "Bürkner, Paul-Christian. 2017a. “Advanced Bayesian Multilevel Modeling with the r Package Brms.” arXiv Preprint arXiv:1705.11123.\n\n\nBürkner, Paul-Christian. 2017b. “Brms: An R Package for Bayesian Multilevel Models Using Stan.” Journal of Statistical Software 80: 1–28.\n\n\nEuropean Social Survey European Research Infrastructure (ESS ERIC). 2025. ESS11 Multilevel Data, Edition 1.2. Sikt – Norwegian Agency for Shared Services in Education; Research. https://doi.org/10.21338/ess11md_e01_2.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Hierarchical Linear Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Hierarchical Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nMcElreath, Richard. 2020. “Models with Memory.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026 Lecture B02: Hierarchical Models.” YouTube. https://www.youtube.com/watch?v=FdnMWdICdRs.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture B03: Multilevel Models.” YouTube. https://www.youtube.com/watch?v=0h9q0YhT0Q4.\n\n\nPark, David K., Andrew Gelman, and Joseph Bafumi. 2004. “Bayesian Multilevel Estimation with Poststratification: State-Level Estimates from National Polls.” Political Analysis 12 (4): 375–85. https://doi.org/10.1093/pan/mph024.\n\n\nStegmueller, Daniel. 2013. “How Many Countries for Multilevel Modeling? A Comparison of Frequentist and Bayesian Approaches.” American Journal of Political Science 57 (3): 748–61. https://doi.org/10.1111/ajps.12001."
-  },
-  {
-    "objectID": "resources/10_resources.html",
-    "href": "resources/10_resources.html",
-    "title": "Week 10 Resources",
-    "section": "",
-    "text": "Brambor, Thomas, William Roberts Clark, and Matt Golder. 2006. “Understanding Interaction Models: Improving Empirical Analyses.” Political Analysis 14 (1): 63–82. https://doi.org/10.1093/pan/mpi014.\n\n\nMcElreath, Richard. 2020. “Conditional Manatees.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nVehtari, Aki, Andrew Gelman, and Jonah Gabry. 2017. “Practical Bayesian Model Evaluation Using Leave-One-Out Cross-Validation and WAIC.” Statistics and Computing 27 (5): 1413–32. https://doi.org/10.1007/s11222-016-9696-4."
-  },
-  {
-    "objectID": "resources/08_resources.html",
-    "href": "resources/08_resources.html",
-    "title": "Week 8 Resources",
-    "section": "",
-    "text": "Bürkner, Paul-Christian. 2017. “Brms: An R Package for Bayesian Multilevel Models Using Stan.” Journal of Statistical Software 80: 1–28.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Introduction to Regression Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Model Checking.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, Aki Vehtari, Richard McElreath, et al. 2026. Bayesian Workflow. Chapman; Hall/CRC. https://doi.org/10.1201/9781003044024.\n\n\nMcElreath, Richard. 2020. “Geocentric Models.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026. “Statistical Rethinking 2026 Lecture A04: Linear Models.” YouTube. https://www.youtube.com/watch?v=6z4YxVYp9R8.\n\n\nWestern, Bruce, and Simon Jackman. 1994. “Bayesian Inference for Comparative Research.” American Political Science Review 88 (2): 412–23. https://doi.org/10.2307/2944713."
-  },
-  {
-    "objectID": "resources/06_resources.html",
-    "href": "resources/06_resources.html",
-    "title": "Week 6 Resources",
-    "section": "",
-    "text": "3blue1brown. 2019. “Bayes Theorem, the Geometry of Changing Beliefs.” YouTube. https://www.youtube.com/watch?v=HZGCoVF3YvM.\n\n\nDataCamp. 2022. Foundations of Probability in r. DataCamp. https://www.datacamp.com/courses/foundations-of-probability-in-r.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Probability and Inference.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Single-Parameter Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nHoekstra, Rink, Richard D Morey, Jeffrey N Rouder, and Eric-Jan Wagenmakers. 2014. “Robust Misinterpretation of Confidence Intervals.” Psychonomic Bulletin & Review 21 (5): 1157–64.\n\n\nKruschke, John K, and Torrin M Liddell. 2018. “Bayesian Data Analysis for Newcomers.” Psychonomic Bulletin & Review 25 (1): 155–77.\n\n\nMcElreath, Richard. 2020a. “Sampling the Imaginary.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2020b. “Small Worlds and Large Worlds.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026 Lecture A02: Building a Generative Model.” YouTube. https://www.youtube.com/watch?v=2nqGvV6K3kY.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture A03: Sampling and Simulation.” YouTube. https://www.youtube.com/watch?v=AdpYxM4K2Q0.\n\n\nVeritasium. 2017. “The Bayesian Trap.” YouTube. https://www.youtube.com/watch?v=R13BD8qKeTg."
-  },
-  {
-    "objectID": "resources/04_resources.html",
-    "href": "resources/04_resources.html",
-    "title": "Week 4 Resources",
-    "section": "",
-    "text": "Çetinkaya-Rundel, Mine, Johanna Hardin, Benjamin S Baumer, Amelia McNamara, Nicholas J Horton, and Colin Rundel. 2021. “An Educator’s Perspective of the Tidyverse.” arXiv Preprint arXiv:2108.03510, ahead of print. https://doi.org/10.48550/arXiv.2108.03510.\n\n\nDataCamp. 2026. Introduction to the Tidyverse. DataCamp. https://www.datacamp.com/courses/introduction-to-the-tidyverse.\n\n\nPosit Software, PBC. 2024. Data Tidying with Tidyr: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/tidyr.html.\n\n\nPosit Software, PBC. 2025. Data Transformation with Dplyr: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/data-transformation.html.\n\n\nPosit Software, PBC. n.d. Data Import with the Tidyverse: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/data-import.html.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. “Whole Game.” In R for Data Science: Import, Tidy, Transform, Visualize, and Model Data, 2nd ed., edited by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. O’Reilly. https://r4ds.hadley.nz/intro.html."
-  },
-  {
-    "objectID": "resources/02_resources.html",
-    "href": "resources/02_resources.html",
-    "title": "Week 2 Resources",
-    "section": "",
-    "text": "Knuth, Donald Ervin. 1984. “Literate Programming.” The Computer Journal 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97.\n\n\nNick White. 2021. Git Tutorial for Dummies. YouTube. https://www.youtube.com/watch?v=mJ-qvsxPHpY.\n\n\nPosit Software, PBC. 2025. Publish and Share with Quarto: Quarto Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/quarto.html.\n\n\nPosit Software, PBC. n.d.a. Positron Layout. Posit. https://positron.posit.co/layout.html.\n\n\nPosit Software, PBC. n.d.b. Quarto Guide. Posit. https://quarto.org/docs/guide/.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. “Quarto.” In R for Data Science: Import, Tidy, Transform, Visualize, and Model Data, 2nd ed., edited by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. O’Reilly. https://r4ds.hadley.nz/quarto.html."
-  },
-  {
-    "objectID": "installation.html",
-    "href": "installation.html",
-    "title": "Getting started: installation guide",
-    "section": "",
-    "text": "Everything you need installed to do the homeworks and the exam. Work through it before the first session."
-  },
-  {
-    "objectID": "installation.html#sec-why-so-many-tools",
-    "href": "installation.html#sec-why-so-many-tools",
-    "title": "Getting started: installation guide",
-    "section": "Why so many tools?",
-    "text": "Why so many tools?\nThis course introduces a range of software tools which, taken together, form a powerful and contemporary toolbox for transparent, reproducible and scalable empirical research. Rather than relying on a single piece of software, you will learn how different tools interact and complement one another, much as they do in real research workflows."
-  },
-  {
-    "objectID": "installation.html#sec-feeling-overwhelmed",
-    "href": "installation.html#sec-feeling-overwhelmed",
-    "title": "Getting started: installation guide",
-    "section": "Feeling overwhelmed is normal",
-    "text": "Feeling overwhelmed is normal\nMeeting many tools at once can feel complex and, at times, overwhelming. That is entirely normal and an expected part of the learning process. Research environments evolve quickly, with new libraries, platforms and technologies (including AI-based ones) constantly emerging. So one of the central goals here is not just to teach specific tools, but to help you learn how to learn programming and computational methods, which is an essential and transferable skill for any data-driven career."
-  },
-  {
-    "objectID": "installation.html#sec-tools-as-workflow",
-    "href": "installation.html#sec-tools-as-workflow",
-    "title": "Getting started: installation guide",
-    "section": "Tools as part of a research workflow",
-    "text": "Tools as part of a research workflow\nThese tools are not only for performing calculations or producing results. They also help you document decisions, record analytical steps, collaborate with others, and build workflows that can be extended, reproduced and scaled. In that sense the course aims to familiarise you with research practices that resemble how high-quality empirical work is actually done."
-  },
-  {
-    "objectID": "installation.html#sec-concepts-not-commands",
-    "href": "installation.html#sec-concepts-not-commands",
-    "title": "Getting started: installation guide",
-    "section": "Learning concepts, not just commands",
-    "text": "Learning concepts, not just commands\nGiven the scope of the course, we will only scratch the surface, the tip of the iceberg, of many of these tools. I will emphasise conceptual understanding instead: how the tools work in principle, why they are useful, and when they help. That foundation is what lets you work independently and confidently with these tools, and with future ones, beyond the course."
-  },
-  {
-    "objectID": "installation.html#sec-pragmatism",
-    "href": "installation.html#sec-pragmatism",
-    "title": "Getting started: installation guide",
-    "section": "Pragmatism over dogmatism",
-    "text": "Pragmatism over dogmatism\nThe workflow and software stack presented here reflect my own experience and day-to-day research practice. They are not meant to be prescriptive or dogmatic. There is no single correct way to code or to structure an analysis, and many different approaches reach the same goal. Pragmatism matters, so tools should serve your research questions and not the other way around."
-  },
-  {
-    "objectID": "installation.html#sec-timeline",
-    "href": "installation.html#sec-timeline",
-    "title": "Getting started: installation guide",
-    "section": "Installation timeline",
-    "text": "Installation timeline\nThis page lists all the software you are expected to install. Not every tool is used in the first week, but install everything as early as you can. That gives us time to troubleshoot, and it keeps technical setup from becoming a bottleneck once we move into substantive work.\n\n\n\n\n\n\nTip\n\n\n\nDo the steps in the order given. R comes before Positron, and the C++ compiler comes before brms. Each step assumes the ones above it are done."
-  },
-  {
-    "objectID": "installation.html#sec-vocabulary",
-    "href": "installation.html#sec-vocabulary",
-    "title": "Getting started: installation guide",
-    "section": "What the words mean",
-    "text": "What the words mean\nThe instructions below say things like “run this in the Console” and “open a Terminal”. Those are two different places, and mixing them up is the single most common reason a step appears not to work. Figure 1 shows where each of them lives once Positron is installed.\n\n\n\n\n\n\nFigure 1: The Positron interface. The Editor in the middle is where your .qmd and .R files are open. The Console (bottom) is where you type R commands and see their results. The Terminal sits next to the Console and is where you talk to your operating system rather than to R. Panes can be moved around, so yours may not look identical, but the names stay the same.\n\n\n\nConsole. An R session waiting for R commands. If an instruction shows R code, such as install.packages(\"here\"), it goes here. You can tell it is an R console by the &gt; prompt at the start of the line.\nTerminal. A place to type commands to your operating system, not to R. On Windows this is PowerShell, on macOS it is the Terminal app, and Positron has one built in. Commands such as git --version or quarto install tinytex go here, and running them in the Console instead will produce an error.\nEditor. The main pane where files are open for editing. Writing code in the Editor and then running it is the normal way to work, because the Editor keeps a record and the Console does not.\nPane. One of the rectangular regions of the window. Positron lets you show, hide and rearrange them, which is worth doing once you know what each is for.\n\n\n\n\n\n\nNote\n\n\n\nA quick way to tell them apart. If the line starts with &gt; you are in the R Console. If it starts with your username, a folder name, or PS C:\\&gt;, you are in a Terminal."
-  },
-  {
-    "objectID": "installation.html#sec-why-positron",
-    "href": "installation.html#sec-why-positron",
-    "title": "Getting started: installation guide",
-    "section": "Why Positron and not RStudio?",
-    "text": "Why Positron and not RStudio?\nIf you have had any contact with R already, or know people who have, you may know that one of the most widespread IDEs for R is RStudio. I decided to teach Positron for a few reasons.\n\nIt is a modern and genuinely useful IDE for both programming and project management, with features that integrate coding in R and writing in Quarto well.\nIt works neatly with R and Python. Although we learn R here, being able to add Python later is valuable, as many other scientific disciplines and private enterprises use Python.\nIt has very good graphical integration of version control with Git.\nIt is built on an open-source predecessor of VS Code, one of the most popular editors globally, so it is very similar to it.\nIf you learn to work with Positron, you will have no problem adapting to RStudio."
-  },
-  {
-    "objectID": "installation.html#sec-install",
-    "href": "installation.html#sec-install",
-    "title": "Getting started: installation guide",
-    "section": "Install the toolchain",
-    "text": "Install the toolchain\nPick your operating system once, below. The tab you choose stays selected for the whole guide, so work straight down it from step 1 to step 8.\n\nWindowsmacOS\n\n\n\n1. Install R\nR is a free and open-source programming language widely used for statistical analysis, data visualisation and reproducible research. R is our main tool, and you can think of it as the engine that does our calculations.1\n\nGo to the Comprehensive R Archive Network (CRAN) website.\nClick “Download R for Windows”.\nSelect base and download the installation file.\nRun the downloaded file to install R.\n\n\n\n\n\n\n\nNote\n\n\n\nTake the current release rather than a specific version number. CRAN always offers the latest release at the top of the download page, and that is the one to take. Note which version you installed, because Rtools in step 3 has to match it.\n\n\n\n\n2. Install Positron\nPositron is our integrated development environment (IDE), the program you actually sit in front of to write R. If R is the engine, Positron is the dashboard: it gives you a graphical interface to control, monitor and run R code. It is a free, source-available IDE designed specifically for data science with R and Python.\n\nNavigate to https://positron.posit.co/install.html.\nInstall all prerequisites listed for Windows. You can ignore the Python setup and R setup panes.\nAccept the license agreement by ticking the box.\nClick Download Positron for Windows and run the downloaded file.\n\nOnce it opens, find the Console and the Terminal described in Section 7.\n\n\n3. Install a C++ compiler (Rtools)\nSome R packages we use later rely internally on C++, a much more efficient language for computationally intensive tasks. For this to work, R needs access to a C++ compiler so it can compile and run C++ code behind the scenes. You will not usually interact with C++ directly, but the compiler is required to install and use certain packages, brms among them.\n\nGo to the Rtools page on CRAN.\nDownload and install the Rtools version that matches the R version you installed in step 1. The page lists one Rtools release per R release, so R 4.5.x takes Rtools45.\nFollow the installation instructions and keep the default settings unless told otherwise.\n\n\n\n\n\n\n\nWarning\n\n\n\nA mismatched Rtools version is the most common setup failure on Windows. If brms later fails to install with a compilation error, check the Rtools version against your R version first. Installing a newer R afterwards means installing the matching Rtools too.\n\n\n\n\n4. Install Git\nGit is a free and open-source version control system, a tool that tracks changes in your files over time. It lets you see what changed, revert to earlier versions, and collaborate without overwriting other people’s work. GitHub is an online platform that hosts Git repositories and adds collaboration features such as pull requests, issues and automated workflows. Together they make it easier to write code, analyse data, and manage research projects transparently and reproducibly.\n\nGo to the Git download page.\nPress the Click here to download link.\nOpen the downloaded .exe file and follow the installation instructions.\nOpen a Terminal (PowerShell, or the Terminal pane in Positron) and type:\n\ngit --version\nYou should see a version number. If so, Git is installed correctly.\n\n\n5. Configure Git\nTo use Git you need to set a name and an email address. These are attached to every change (commit) you make, acting like a digital signature. You do not have to use your full name, but it is recommended. Run both lines in the Terminal, substituting your own details.\ngit config --global user.name \"Your Name\"\ngit config --global user.email \"your@mail.com\"\n\n\n\n\n\n\nWarning\n\n\n\nDo not skip this step. It is easy to overlook, because nothing goes wrong until the first time you try to commit, and then Git refuses with an error message. Setting both values now saves you that error in week 2, when everybody is committing for the first time at once.\n\n\n\n\n6. Create a GitHub account\nIf you do not already have one, create a free GitHub account. GitHub lets you store repositories online, collaborate, and reach your work from anywhere. We use it to distribute all course materials.\n\n\n7. Check Quarto\nQuarto is the publishing system that turns a .qmd file into HTML, PDF or slides, running your R code as it goes. Every artefact in this course, including this page, is a Quarto document.\nPositron ships with Quarto, so if you installed Positron in step 2 you already have it. Confirm it from the Terminal:\nquarto --version\n\n\n8. Install TinyTeX\nTo render PDF output, Quarto needs a LaTeX engine. Let Quarto install and manage a small one for you, from the Terminal:\nquarto install tinytex\nNow continue with Section 10, which is the same on every operating system.\n\n\n\n\n1. Install R\nR is a free and open-source programming language widely used for statistical analysis, data visualisation and reproducible research. R is our main tool, and you can think of it as the engine that does our calculations.\n\nGo to the Comprehensive R Archive Network (CRAN) website.\nClick “Download R for macOS”.\nTake the current release offered at the top of the page, choosing the build for your chip: the arm64 package for Apple silicon, or the x86_64 package for older Intel Macs.\nDownload and install it.\nAlso download and install XQuartz.\n\n\n\n\n\n\n\nNote\n\n\n\nTake the current release rather than a specific version number. CRAN always offers the latest release at the top of the download page, and that is the one to take.\n\n\n\n\n2. Install Positron\nPositron is our integrated development environment (IDE), the program you actually sit in front of to write R. If R is the engine, Positron is the dashboard: it gives you a graphical interface to control, monitor and run R code. It is a free, source-available IDE designed specifically for data science with R and Python.\n\nNavigate to https://positron.posit.co/install.html.\nInstall all prerequisites listed for macOS. You can ignore the Python setup and R setup panes.\nAccept the license agreement by ticking the box.\nClick Download Positron for macOS and run the downloaded file.\n\nOnce it opens, find the Console and the Terminal described in Section 7.\n\n\n3. Install a C++ compiler (Xcode)\nSome R packages we use later rely internally on C++, a much more efficient language for computationally intensive tasks. For this to work, R needs access to a C++ compiler so it can compile and run C++ code behind the scenes. You will not usually interact with C++ directly, but the compiler is required to install and use certain packages, brms among them.\n\nDownload and install Xcode from the Mac App Store.\nAfterwards, open a Terminal and install the command-line tools as well:\n\nxcode-select --install\nOnce that is done, your system can compile the C++ code some R packages need.\n\n\n4. Install Git\nGit is a free and open-source version control system, a tool that tracks changes in your files over time. It lets you see what changed, revert to earlier versions, and collaborate without overwriting other people’s work. GitHub is an online platform that hosts Git repositories and adds collaboration features such as pull requests, issues and automated workflows. Together they make it easier to write code, analyse data, and manage research projects transparently and reproducibly.\nGit comes with Xcode, which you installed in step 3. Open a Terminal and enter:\ngit --version\nYou should see a version number. If so, Git is installed correctly.\n\n\n5. Configure Git\nTo use Git you need to set a name and an email address. These are attached to every change (commit) you make, acting like a digital signature. You do not have to use your full name, but it is recommended. Run both lines in the Terminal, substituting your own details.\ngit config --global user.name \"Your Name\"\ngit config --global user.email \"your@mail.com\"\n\n\n\n\n\n\nWarning\n\n\n\nDo not skip this step. It is easy to overlook, because nothing goes wrong until the first time you try to commit, and then Git refuses with a message like Please tell me who you are. Setting both values now saves you that error in week 2, when everybody is committing for the first time at once.\n\n\n\n\n6. Create a GitHub account\nIf you do not already have one, create a free GitHub account. GitHub lets you store repositories online, collaborate, and reach your work from anywhere. We use it to distribute all course materials.\n\n\n7. Check Quarto\nQuarto is the publishing system that turns a .qmd file into HTML, PDF or slides, running your R code as it goes. Every artefact in this course, including this page, is a Quarto document.\nPositron ships with Quarto, so if you installed Positron in step 2 you already have it. Confirm it from the Terminal:\nquarto --version\n\n\n8. Install TinyTeX\nTo render PDF output, Quarto needs a LaTeX engine. Let Quarto install and manage a small one for you, from the Terminal:\nquarto install tinytex\nNow continue with Section 10, which is the same on every operating system."
-  },
-  {
-    "objectID": "installation.html#sec-install-packages",
-    "href": "installation.html#sec-install-packages",
-    "title": "Getting started: installation guide",
-    "section": "Install the R packages",
-    "text": "Install the R packages\nThis step is identical on Windows and macOS.\nR packages are bundles of functions, data and documentation that extend R. You install a package once, and load it in each session where you need it. Table 1 lists what this course uses and why.\n\n\n\nTable 1: The R packages this course uses, and what each one is for. Install them all before the first session. LaTeX is not on this list, because quarto install tinytex in step 8 already handled it.\n\n\n\n\n\n\n\n\n\n\nPackage\nWhat it is\nWhy we use it\n\n\n\n\ntidyverse\nA collection of packages for data manipulation, visualisation and analysis, including dplyr, ggplot2, tidyr and readr.\nA consistent framework for cleaning, exploring and visualising data. The backbone of nearly every script in the course.\n\n\nhere\nBuilds file paths from the project root.\nMakes a project run on any machine, not just the one it was written on. Used for every path in this course.\n\n\nbrms\nFits Bayesian regression models with familiar R formula syntax, on top of Stan.\nOur main modelling tool, from simple regression to multilevel models, without writing Stan code directly.\n\n\nposterior\nTools for handling and summarising posterior draws.\nProvides the convergence diagnostics we read after every fit.\n\n\nbayesplot\nPlots for Bayesian model checking and diagnostics.\nTrace plots and posterior predictive checks, steps 6a and 6b of the workflow.\n\n\nmarginaleffects\nComputes marginal effects and predictions from fitted models.\nHow we turn coefficients into interpretable quantities of interest.\n\n\nggpubr\nPublication-ready ggplot2 themes.\nSupplies theme_pubr(), the default theme for every figure in the course.\n\n\npatchwork\nCombines several plots into one figure.\nFor multi-panel figures.\n\n\nmodelsummary\nFormats model output into tables.\nRegression tables that can go straight into a report.\n\n\nknitr\nThe engine that runs the R code inside a Quarto document.\nAlso provides kable() for computed tables.\n\n\n\n\n\n\nHow to install. In Positron, find the Console (see Figure 1), start an R session if one is not running already, and run:\ninstall.packages(c(\n  \"tidyverse\", \"here\", \"brms\", \"posterior\", \"bayesplot\",\n  \"marginaleffects\", \"ggpubr\", \"patchwork\", \"modelsummary\",\n  \"knitr\"\n))\n\n\n\n\n\n\nNote\n\n\n\nThis will take a while, and that is expected. brms compiles C++ code during installation, so it is much slower than the others. Start it when you have time to leave it running."
-  },
-  {
-    "objectID": "installation.html#sec-done",
-    "href": "installation.html#sec-done",
-    "title": "Getting started: installation guide",
-    "section": "Great, you made it",
-    "text": "Great, you made it\n\n\n\n\n\n\nTip\n\n\n\nThat was a lot, and you got through it. You now have a research toolchain on your machine that is genuinely the same one used for published empirical work. Nothing more is required before the first session.\n\n\nIf something did not work, do not spend an evening fighting it alone. Bring it to the first session, or email me beforehand with the exact error message, and we will sort it out together. Setup problems are common, they are almost always quick to fix once someone has seen them before, and this is precisely why the guide asks you to install early."
-  },
-  {
-    "objectID": "installation.html#sec-submitting",
-    "href": "installation.html#sec-submitting",
-    "title": "Getting started: installation guide",
-    "section": "Submitting your work",
-    "text": "Submitting your work\n\nOpen the homework link on the Schedule. It opens GitHub’s create from template page, where you make your own copy of the starter repo.\nCreate it in the course organisation, named as described below.\nDo your work in that repo, commit, and push. Rendering the PDF and pushing is your submission.\n\n\n\n\n\n\n\nImportant\n\n\n\nName your submission repo exactly hw-NN-&lt;username&gt;. The tracker finds submissions by that name, so a repo called anything else is invisible to it. Use your own GitHub username and a zero-padded week number, for example hw-03-jdoe.\n\n\n\n\n\n\n\n\nTip\n\n\n\nOpt in to individual feedback with one file. Add an open-source license.md to your submission repo and an AI reads your work alongside the sample solution, then writes feedback back into the repo. See the Syllabus."
-  },
-  {
-    "objectID": "installation.html#footnotes",
-    "href": "installation.html#footnotes",
-    "title": "Getting started: installation guide",
-    "section": "Footnotes",
-    "text": "Footnotes\n\n\nThe engine and dashboard analogy is borrowed from Andrew Heiss.↩︎"
-  },
-  {
-    "objectID": "glossary.html",
-    "href": "glossary.html",
-    "title": "Glossary",
-    "section": "",
-    "text": "The vocabulary of the course, collected in one place and sorted alphabetically. Every entry is tagged with the block in which you first meet it, so you can still read this page in the same order as the Schedule if you want to.\nNothing here replaces the slides. A glossary entry is the short version you can check quickly, not the explanation."
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-b",
-    "href": "glossary.html#sec-glossary-b",
-    "title": "Glossary",
-    "section": "B",
-    "text": "B\n\nBayes’ theorem\n\nThe rule that combines prior and likelihood into a posterior. Read as a proportionality, the posterior is the likelihood times the prior, up to a constant.\nThe logic of Bayesian inference probability\n\nBranch\n\nA named line of development inside a repository, so work in progress does not disturb the main version. This course uses main for sources and gh-pages for the rendered website.\nScientific programming fundamentals git\n\nbrms\n\nThe R package used throughout this course to fit Bayesian regression models with familiar formula syntax. Every model call here sets its priors explicitly.\nApplied modelling r model"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-c",
-    "href": "glossary.html#sec-glossary-c",
-    "title": "Glossary",
-    "section": "C",
-    "text": "C\n\nChain\n\nOne run of the sampler, producing a sequence of draws. Several chains are run from different starting points so their agreement can be checked.\nThe logic of Bayesian inference mcmc\n\nClone\n\nMaking a local copy of a remote repository, including its history.\nScientific programming fundamentals git\n\nCode chunk\n\nA block of executable code inside a .qmd. Every chunk in this course carries a label, so it can be referred to and so an error points somewhere specific.\nScientific programming fundamentals quarto r\n\nCoefficient\n\nA parameter multiplying a predictor, describing how the expected outcome changes as that predictor changes. In a Bayesian model a coefficient has a full posterior, not a single value.\nApplied modelling regression interpretation\n\nCommit\n\nOne recorded snapshot of the project, with a message saying what changed. A commit is the unit of history, so its message is written for the next reader.\nScientific programming fundamentals git\n\nConfounder\n\nA variable that influences both the presumed cause and the outcome, so leaving it out distorts the relationship you are trying to measure. Whether a variable is a confounder is a claim about the DAG, not something the data can tell you.\nThe logic of Bayesian inference model interpretation\n\nCounterfactual prediction\n\nA model-based prediction of the outcome under a specified, possibly unobserved, setting of the predictors. It is how a fitted model answers a substantive question.\nApplied modelling interpretation model\n\nCredible interval\n\nA range containing a stated share of the posterior probability, for example 90 percent. It is a direct statement about the parameter given the data and the model, which is what makes it straightforward to interpret. A frequentist confidence interval is a different object, describing the long-run behaviour of the procedure rather than the parameter.\nThe logic of Bayesian inference interpretation probability"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-d",
-    "href": "glossary.html#sec-glossary-d",
-    "title": "Glossary",
-    "section": "D",
-    "text": "D\n\nData frame and tibble\n\nA rectangular table of data in R, with one column per variable. A tibble is the tidyverse version of a data frame, with friendlier printing and fewer surprises.\nScientific programming fundamentals data r\n\nDirected acyclic graph\n\nA diagram of assumed causal relationships, drawn as arrows between variables with no cycles. Usually called a DAG, it makes explicit which variables must be adjusted for and which must not.\nThe logic of Bayesian inference workflow model\n\nDivergent transition\n\nA warning that the sampler failed to explore part of the posterior faithfully. Divergences are not cosmetic, so they are understood rather than silenced.\nThe logic of Bayesian inference mcmc diagnostics\n\nDraw\n\nA single sample from the posterior. A posterior is represented in practice as a large collection of draws, and every summary is computed from them.\nThe logic of Bayesian inference mcmc"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-e",
-    "href": "glossary.html#sec-glossary-e",
-    "title": "Glossary",
-    "section": "E",
-    "text": "E\n\nEffective sample size\n\nHow many independent draws the correlated MCMC draws are worth. A low value means a summary rests on less information than the raw number of draws suggests.\nThe logic of Bayesian inference mcmc diagnostics\n\nEstimand\n\nThe quantity you actually want to know, stated precisely, before any model is fitted. Naming it first is step 1 of the workflow, and it is what keeps a model answerable to a question.\nThe logic of Bayesian inference workflow interpretation"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-f",
-    "href": "glossary.html#sec-glossary-f",
-    "title": "Glossary",
-    "section": "F",
-    "text": "F\n\nFreeze\n\nQuarto’s cache of already-computed results, stored in _freeze/, so a rebuild does not re-run expensive code. It is committed deliberately, so the site rebuilds identically anywhere.\nScientific programming fundamentals quarto workflow\n\nFunction and argument\n\nA function is a named, reusable piece of code, and its arguments are the inputs you give it. Naming arguments explicitly makes code readable a month later.\nScientific programming fundamentals r"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-g",
-    "href": "glossary.html#sec-glossary-g",
-    "title": "Glossary",
-    "section": "G",
-    "text": "G\n\nGenerative model\n\nA model complete enough to simulate fake data that looks like the real thing. If you can simulate from it, you can check it before it ever touches your data.\nThe logic of Bayesian inference model\n\nGit\n\nA version control system that records the history of a project as a series of snapshots. It answers what changed, when, and why, and it lets you go back.\nScientific programming fundamentals git\n\nGitHub\n\nThe platform that hosts repositories and adds collaboration features such as issues and automated checks. Course materials are distributed and homework submitted through it.\nScientific programming fundamentals git"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-h",
-    "href": "glossary.html#sec-glossary-h",
-    "title": "Glossary",
-    "section": "H",
-    "text": "H\n\nhere()\n\nThe function from the here package that builds a path from the project root rather than from whatever the current working directory happens to be. Use it for every path, always.\nScientific programming fundamentals r workflow"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-i",
-    "href": "glossary.html#sec-glossary-i",
-    "title": "Glossary",
-    "section": "I",
-    "text": "I\n\nInteraction\n\nA term letting the effect of one predictor depend on the value of another. An interaction is a claim that an effect is conditional, so it is interpreted jointly and not term by term.\nApplied modelling regression interpretation\n\nIntercept\n\nThe expected outcome when every predictor is zero. It is only interpretable when zero is a meaningful value, which is one reason predictors are often centred.\nApplied modelling regression interpretation"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-l",
-    "href": "glossary.html#sec-glossary-l",
-    "title": "Glossary",
-    "section": "L",
-    "text": "L\n\nLikelihood\n\nHow probable the observed data would be, for each candidate value of the parameters. It is the part of the model that lets the data speak.\nThe logic of Bayesian inference probability model\n\nLinear regression\n\nA model in which the expected outcome is a straight-line function of the predictors. The foundation the later models extend rather than replace.\nApplied modelling regression\n\nLink function\n\nThe transformation connecting a linear predictor to the scale of the outcome. It lets a linear model describe outcomes that are bounded, such as probabilities.\nApplied modelling regression model\n\nLiterate programming\n\nWriting code and the prose that explains it in a single document, so the reasoning and the computation cannot drift apart. Quarto is the tool we use for it.\nScientific programming fundamentals workflow quarto\n\nLog-odds\n\nThe scale a logistic regression’s coefficients live on, the logarithm of the odds. Coefficients are additive here but not on the probability scale, which is why results are converted before interpretation.\nApplied modelling regression interpretation\n\nLogistic regression\n\nA model for a binary outcome, using the logit link to keep predicted probabilities between zero and one.\nApplied modelling regression"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-m",
-    "href": "glossary.html#sec-glossary-m",
-    "title": "Glossary",
-    "section": "M",
-    "text": "M\n\nMarginal effect\n\nHow the expected outcome changes with a predictor, after averaging over the others. It is often the form in which a result becomes reportable.\nApplied modelling interpretation\n\nMarkov chain Monte Carlo\n\nA family of algorithms, usually shortened to MCMC, that explore the posterior by taking a long, dependent random walk through it. We need it because most interesting posteriors cannot be written down in closed form.\nThe logic of Bayesian inference mcmc\n\nMultilevel model\n\nA model with parameters that vary by group, where the group-level variation is itself estimated. Also called a hierarchical model.\nApplied modelling multilevel"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-n",
-    "href": "glossary.html#sec-glossary-n",
-    "title": "Glossary",
-    "section": "N",
-    "text": "N\n\nNative pipe\n\nThe |&gt; operator, which passes the result on its left into the first argument of the function on its right, so a sequence of steps reads left to right. This course uses |&gt; throughout and not the older %&gt;%.\nScientific programming fundamentals r\n\nNormalising constant\n\nThe quantity that rescales the posterior so it integrates to one. It does not depend on the parameters, which is why we can usually ignore it and work with the unnormalised posterior.\nThe logic of Bayesian inference probability"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-p",
-    "href": "glossary.html#sec-glossary-p",
-    "title": "Glossary",
-    "section": "P",
-    "text": "P\n\nPackage\n\nA bundle of functions, data and documentation that extends R. Installed once with install.packages(), loaded per session with library().\nScientific programming fundamentals r\n\nParameter\n\nAn unknown quantity in a model that we want to learn about, such as a slope or an average. Bayesian inference gives a parameter a distribution rather than one fixed number.\nThe logic of Bayesian inference probability model\n\nPartial pooling\n\nThe compromise a multilevel model strikes between one estimate for all groups and a separate, independent estimate per group. Groups with little data are pulled towards the overall pattern, and groups with plenty are left largely alone.\nApplied modelling multilevel\n\nPopulation-level and group-level effects\n\nPopulation-level effects apply across all observations, and group-level effects vary by group. brms uses these names for what are elsewhere called fixed and random effects.\nApplied modelling multilevel model\n\nPosterior\n\nThe distribution of the parameters after conditioning on the data. This is what Bayes’ theorem returns, and every quantity of interest is computed from it.\nThe logic of Bayesian inference probability model\n\nPosterior predictive check\n\nSimulating data from the fitted model and comparing it against the observed data. It asks whether the model can reproduce the features of the data you care about.\nThe logic of Bayesian inference diagnostics model\n\nPosterior predictive distribution\n\nThe distribution of new outcomes implied by the fitted model, accounting for both parameter uncertainty and outcome variability. Predictions come from it rather than from point estimates alone.\nApplied modelling interpretation model\n\nPrior\n\nThe distribution expressing what is plausible about a parameter before seeing the data. A prior is a philosophical commitment, so it is defended on principled grounds rather than chosen for convenience.\nThe logic of Bayesian inference prior model\n\nPrior predictive check\n\nSimulating data from the priors alone, before fitting, to see what outcomes the model considers plausible. It catches priors that imply impossible values, such as a turnout rate above 100 percent.\nThe logic of Bayesian inference prior diagnostics\n\nProbability distribution\n\nA description of how plausible each possible value of a quantity is. Here, distributions describe both data and parameters, which is the central move of the Bayesian approach.\nThe logic of Bayesian inference probability\n\nProject root\n\nThe top directory of a project, the fixed point every other path is expressed relative to. Anchoring paths to it is what makes a project work on a machine other than yours.\nScientific programming fundamentals workflow r\n\nPush and pull\n\nSending your local commits to the remote (push), and fetching other people’s commits from it (pull).\nScientific programming fundamentals git"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-q",
-    "href": "glossary.html#sec-glossary-q",
-    "title": "Glossary",
-    "section": "Q",
-    "text": "Q\n\nQuantity of interest\n\nThe specific, interpretable number a reader should take away, computed from the posterior. Deciding it in advance is what stops an analysis becoming a table of coefficients with no conclusion.\nApplied modelling interpretation\n\nQuarto\n\nThe publishing system that turns a .qmd file into HTML, PDF or slides, running the embedded code as it goes. Everything in this course, including this page, is a Quarto document.\nScientific programming fundamentals quarto"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-r",
-    "href": "glossary.html#sec-glossary-r",
-    "title": "Glossary",
-    "section": "R",
-    "text": "R\n\nR-hat\n\nA convergence diagnostic comparing variation between chains against variation within them. Values near 1 are consistent with convergence, and clearly larger values mean the chains do not agree.\nThe logic of Bayesian inference mcmc diagnostics\n\nRemote\n\nA copy of the repository hosted elsewhere, normally on GitHub, that you push to and pull from. The remote is what makes the work shared rather than local.\nScientific programming fundamentals git\n\nRender\n\nThe act of turning a source .qmd into its output document. A submission that does not render is not a submission, because nobody else can reproduce it.\nScientific programming fundamentals quarto workflow\n\nRepository\n\nA project under version control, together with its full history. Usually shortened to “repo”.\nScientific programming fundamentals git\n\nReproducible research\n\nResearch whose results can be regenerated from the raw data and the code alone, by someone else, on another machine. The practical test is whether one command rebuilds every number and figure in the output.\nScientific programming fundamentals workflow"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-s",
-    "href": "glossary.html#sec-glossary-s",
-    "title": "Glossary",
-    "section": "S",
-    "text": "S\n\nset.seed()\n\nFixes the starting point of R’s random number generator, so anything involving randomness gives the same result on every run. Required wherever this course simulates or samples.\nScientific programming fundamentals r workflow\n\nShrinkage\n\nThe pull of a group’s estimate towards the overall mean under partial pooling. It is a feature, because it stops small groups producing extreme estimates on thin evidence.\nApplied modelling multilevel\n\nStan\n\nThe probabilistic programming language and sampler that brms compiles models down to and runs. You will rarely write Stan code directly, but its diagnostics are the ones you read.\nApplied modelling mcmc model"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-t",
-    "href": "glossary.html#sec-glossary-t",
-    "title": "Glossary",
-    "section": "T",
-    "text": "T\n\nTemplate repository\n\nA repository GitHub can copy to make a fresh, independent repository with no shared history. Every homework starter is distributed this way, which is why your submission repo is yours alone.\nScientific programming fundamentals git\n\nTidy data\n\nData arranged so that each variable is a column, each observation is a row, and each cell holds one value. Most of the work in an analysis is getting data into this shape, and most tools assume it.\nScientific programming fundamentals data\n\nTrace plot\n\nA plot of drawn values against iteration, one line per chain. Well-mixed chains overlap and look stationary, like noise around a stable level.\nThe logic of Bayesian inference mcmc diagnostics"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-w",
-    "href": "glossary.html#sec-glossary-w",
-    "title": "Glossary",
-    "section": "W",
-    "text": "W\n\nWarmup\n\nThe initial draws a chain uses to adapt and find the posterior, discarded before inference. They describe the sampler getting started, not the posterior.\nThe logic of Bayesian inference mcmc\n\nWorking directory\n\nThe directory R currently treats as “here” when it resolves a relative path. It changes depending on how code is run, which is exactly why we do not rely on it.\nScientific programming fundamentals r workflow"
-  },
-  {
-    "objectID": "glossary.html#sec-glossary-y",
-    "href": "glossary.html#sec-glossary-y",
-    "title": "Glossary",
-    "section": "Y",
-    "text": "Y\n\nYAML front matter\n\nThe block between the two --- lines at the top of a .qmd, which sets the document title, output format and options. It is configuration, not content.\nScientific programming fundamentals quarto"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Quantitative Methods in IR/EU Politics: Learning from data",
-    "section": "",
-    "text": "Fall 2026 Department of Political Science School of Social Sciences University of Mannheim"
-  },
-  {
-    "objectID": "index.html#sec-what-this-is",
-    "href": "index.html#sec-what-this-is",
-    "title": "Quantitative Methods in IR/EU Politics: Learning from data",
-    "section": "What this course is",
-    "text": "What this course is\nAn introduction to quantitative methods for international relations and European politics, taught with free and open source state of the art tools: R, Quarto, Git and GitHub, all inside Positron. You will learn regression as a way of describing relationships in data, and Bayesian inference as a way of saying how certain you are about them.\nThe whole term runs toward one skill, an eight-step analysis taking you from a research question to an empirical answer with its uncertainty attached. You see that route in session 1, deepen one part of it each week, and run it end to end yourself in the take-home exam. No programming experience and no statistics beyond descriptives are assumed."
-  },
-  {
-    "objectID": "index.html#sec-where-next",
-    "href": "index.html#sec-where-next",
-    "title": "Quantitative Methods in IR/EU Politics: Learning from data",
-    "section": "Where to go next",
-    "text": "Where to go next\n\nSyllabus for the full details: objectives, logistics, grading, the exam, the policies, and what each session covers.\nSchedule for dates, slides, homework and sample solutions.\nInstallation guide for the software. Work through it before the first session, so problems are easy to fix together rather than urgent.\nGlossary for the terminology, which arrives quickly in a course like this."
-  },
-  {
-    "objectID": "resources/01_resources.html",
-    "href": "resources/01_resources.html",
-    "title": "Week 1 Resources",
-    "section": "",
-    "text": "Gelman, Andrew, Aki Vehtari, Richard McElreath, Daniel Simpson, et al. 2026. Bayesian Workflow. Chapman; Hall/CRC. https://doi.org/10.1201/9781003044024.\n\n\nGelman, Andrew, Aki Vehtari, and Richard McElreath. 2026. “Statistical Workflow.” Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences 384 (2321): 20250293. https://doi.org/10.1098/rsta.2025.0293.\n\n\nKruschke, John K, and Torrin M Liddell. 2018. “Bayesian Data Analysis for Newcomers.” Psychonomic Bulletin & Review 25 (1): 155–77.\n\n\nMcElreath, Richard. 2020. “The Golem of Prague.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026.” YouTube. https://www.youtube.com/playlist?list=PLDcUM9US4XdPMtSV81e1R_4B6NugQBvTP.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture A01: Introduction to Bayesian Workflow.” YouTube. https://www.youtube.com/watch?v=ztbYkBPDOgU.\n\n\nPosit Software, PBC. n.d. Positron Layout. Posit. https://positron.posit.co/layout.html."
-  },
-  {
-    "objectID": "resources/03_resources.html",
-    "href": "resources/03_resources.html",
-    "title": "Week 3 Resources",
-    "section": "",
-    "text": "DataCamp. 2022. Getting Started with R Cheat Sheet. DataCamp. https://www.datacamp.com/cheat-sheet/getting-started-r.\n\n\nDataCamp. 2026. Introduction to R. DataCamp. https://www.datacamp.com/courses/free-introduction-to-r.\n\n\nMcNeill, Mhairi. 2015. Base R: Cheatsheet. IQSS, Harvard University. https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023a. “Introduction.” In R for Data Science: Import, Tidy, Transform, Visualize, and Model Data, 2nd ed., edited by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. O’Reilly. https://r4ds.hadley.nz/intro.html.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023b. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd ed. O’Reilly. https://r4ds.hadley.nz/."
-  },
-  {
-    "objectID": "resources/05_resources.html",
-    "href": "resources/05_resources.html",
-    "title": "Week 5 Resources",
-    "section": "",
-    "text": "DataCamp. 2024. Intermediate Data Visualization with Ggplot2. DataCamp. https://app.datacamp.com/learn/courses/intermediate-data-visualization-with-ggplot2.\n\n\nDataCamp. 2025. Introduction to Data Visualization with Ggplot2. DataCamp. https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2.\n\n\nPosit Software, PBC. 2024a. Dates and Times with Lubridate: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/lubridate.html.\n\n\nPosit Software, PBC. 2024b. Factors with Forcats: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/factors.html.\n\n\nPosit Software, PBC. 2025a. Data Visualization with Ggplot2: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/data-visualization.html.\n\n\nPosit Software, PBC. 2025b. String Manipulation with Stringr: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/strings.html.\n\n\nWickham, Hadley, Danielle Navarro, and Thomas Lin Pedersen. 2023. Ggplot2: Elegant Graphics for Data Analysis. 3rd ed. https://ggplot2-book.org/."
-  },
-  {
-    "objectID": "resources/07_resources.html",
-    "href": "resources/07_resources.html",
-    "title": "Week 7 Resources",
-    "section": "",
-    "text": "Bürkner, Paul-Christian. 2017. “Brms: An R Package for Bayesian Multilevel Models Using Stan.” Journal of Statistical Software 80: 1–28.\n\n\nCarpenter, Bob, Andrew Gelman, Matthew D. Hoffman, et al. 2017. “Stan: A Probabilistic Programming Language.” Journal of Statistical Software 76: 1–32. https://doi.org/10.18637/jss.v076.i01.\n\n\nGelfand, Alan E., Susan E. Hills, Amy Racine-Poon, and Adrian FM Smith. 1990. “Illustration of Bayesian Inference in Normal Data Models Using Gibbs Sampling.” Journal of the American Statistical Association 85 (412): 972–85. https://doi.org/10.1080/01621459.1990.10474968.\n\n\nGelfand, Alan E., and Adrian FM Smith. 1990. “Sampling-Based Approaches to Calculating Marginal Densities.” Journal of the American Statistical Association 85 (410): 398–409. https://doi.org/10.1080/01621459.1990.10476213.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Basics of Markov Chain Simulation.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Computationally Efficient Markov Chain Simulation.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013c. “Introduction to Bayesian Computation.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, Aki Vehtari, Richard McElreath, et al. 2026. Bayesian Workflow. Chapman; Hall/CRC. https://doi.org/10.1201/9781003044024.\n\n\nHoffman, Matthew D., and Andrew Gelman. 2014. “The No-u-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo.” Journal of Machine Learning Research 15 (47): 1593–623. http://jmlr.org/papers/v15/hoffman14a.html.\n\n\nMarbleScience. 2021. “Monte Carlo Simulation.” YouTube. https://www.youtube.com/watch?v=7ESK5SaP-bc.\n\n\nMcElreath, Richard. 2020. “Markov Chain Monte Carlo.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026 Lecture A08: MCMC and Item Response Models.” YouTube. https://www.youtube.com/watch?v=N_LRQUrdHag.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture B01: Hamiltonian Monte Carlo.” YouTube. https://www.youtube.com/watch?v=7JHkq0l9p2M.\n\n\nMetropolis, Nicholas, Arianna W. Rosenbluth, Marshall N. Rosenbluth, Augusta H. Teller, and Edward Teller. 1953. “Equation of State Calculations by Fast Computing Machines.” The Journal of Chemical Physics 21 (6): 1087–92. https://doi.org/10.1063/1.1699114.\n\n\nMetropolis, Nicholas, and Stanislaw Ulam. 1949. “The Monte Carlo Method.” Journal of the American Statistical Association 44 (247): 335–41. https://doi.org/10.1080/01621459.1949.10483310.\n\n\nVehtari, Aki, Andrew Gelman, Daniel Simpson, Bob Carpenter, and Paul-Christian Bürkner. 2021. “Rank-Normalization, Folding, and Localization: An Improved \\(\\hat{R}\\) for Assessing Convergence of MCMC (with Discussion).” Bayesian Analysis 16 (2): 667–718. https://doi.org/10.1214/20-BA1221."
-  },
-  {
-    "objectID": "resources/09_resources.html",
-    "href": "resources/09_resources.html",
-    "title": "Week 9 Resources",
-    "section": "",
-    "text": "Gelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013. “Evaluating, Comparing, and Expanding Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nMcElreath, Richard. 2020a. “The Haunted DAG and the Causal Terror.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2020b. “The Many Variables and the Spurious Waffles.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2020c. “Ulysses’ Compass.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026 Lecture A05: Causal Models and DAGs.” YouTube. https://www.youtube.com/watch?v=7H9xkQp0m8U.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture A06: Multivariate Models.” YouTube. https://www.youtube.com/watch?v=5x4M5Zc1lPQ.\n\n\nPearl, Judea, Madelyn Glymour, and Nicholas P Jewell. 2016. Causal Inference in Statistics: A Primer. John Wiley & Sons.\n\n\nVehtari, Aki, Andrew Gelman, and Jonah Gabry. 2017. “Practical Bayesian Model Evaluation Using Leave-One-Out Cross-Validation and WAIC.” Statistics and Computing 27 (5): 1413–32. https://doi.org/10.1007/s11222-016-9696-4."
-  },
-  {
-    "objectID": "resources/11_resources.html",
-    "href": "resources/11_resources.html",
-    "title": "Week 11 Resources",
-    "section": "",
-    "text": "Bürkner, Paul-Christian. 2017. “Brms: An R Package for Bayesian Multilevel Models Using Stan.” Journal of Statistical Software 80: 1–28.\n\n\nEsarey, Justin, and Andrew Pierce. 2012. “Assessing Fit Quality and Testing for Misspecification in Binary-Dependent Variable Models.” Political Analysis 20 (4): 480–500. https://doi.org/10.1093/pan/mpr039.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Generalized Linear Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Model Checking.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nMcElreath, Richard. 2020a. “Big Entropy and the Generalized Linear Model.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2020b. “God Spiked the Integers.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026. “Statistical Rethinking 2026 Lecture A07: Maximum Entropy and GLMs.” YouTube. https://www.youtube.com/watch?v=GL1xPtH5yXQ."
-  },
-  {
-    "objectID": "resources/13_resources.html",
-    "href": "resources/13_resources.html",
-    "title": "Week 13 Resources",
-    "section": "",
-    "text": "Claassen, Christopher. 2020. “Does Public Support Help Democracy Survive?” American Journal of Political Science 64 (1): 18–35. https://doi.org/10.1111/ajps.12452.\n\n\nFariss, Christopher J. 2014. “Respect for Human Rights Has Improved over Time: Modeling the Changing Standard of Accountability.” American Political Science Review 108 (2): 297–318. https://doi.org/10.1017/S0003055414000070.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2014. Bayesian Data Analysis. Texts in Statistical Science. CRC Press.\n\n\nGelman, Andrew, Aki Vehtari, Richard McElreath, Daniel Simpson, et al. 2026. Bayesian Workflow. Chapman; Hall/CRC. https://doi.org/10.1201/9781003044024.\n\n\nGelman, Andrew, Aki Vehtari, and Richard McElreath. 2026. “Statistical Workflow.” Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences 384 (2321): 20250293. https://doi.org/10.1098/rsta.2025.0293.\n\n\nGrimmer, Justin. 2010. “A Bayesian Hierarchical Topic Model for Political Texts: Measuring Expressed Agendas in Senate Press Releases.” Political Analysis 18 (1): 1–35. https://doi.org/10.1093/pan/mpp034.\n\n\nHumphreys, Macartan, and Alan M. Jacobs. 2015. “Mixing Methods: A Bayesian Approach.” American Political Science Review 109 (4): 653–73. https://doi.org/10.1017/S0003055415000453.\n\n\nJackman, Simon. 2000. “Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation.” Political Analysis 8 (4): 307–32. https://doi.org/10.1093/oxfordjournals.pan.a029818.\n\n\nKing, Gary. 1989. Unifying Political Methodology: The Likelihood Theory of Statistical Inference. Cambridge.\n\n\nKruschke, John. 2014. Doing Bayesian Data Analysis: A Tutorial with r, JAGS, and STAN.\n\n\nMcElreath, Richard. 2020. Statistical Rethinking: A Bayesian Course with Examples in r and STAN. 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026.” YouTube. https://www.youtube.com/playlist?list=PLDcUM9US4XdPMtSV81e1R_4B6NugQBvTP.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture B04: Measurement Models.” YouTube. https://www.youtube.com/watch?v=F3xQqG7C1kE.\n\n\nMcElreath, Richard. 2026c. “Statistical Rethinking 2026 Lecture B05: Gaussian Processes.” YouTube. https://www.youtube.com/watch?v=QyWvJ0Y6H8g.\n\n\nMcElreath, Richard. 2026d. “Statistical Rethinking 2026 Lecture B06: Mixture Models.” YouTube. https://www.youtube.com/watch?v=U5yY1zQqz8c.\n\n\nTreier, Shawn, and Simon Jackman. 2008. “Democracy as a Latent Variable.” American Journal of Political Science 52 (1): 201–17. https://doi.org/10.1111/j.1540-5907.2007.00308.x.\n\n\nWestern, Bruce, and Simon Jackman. 1994. “Bayesian Inference for Comparative Research.” American Political Science Review 88 (2): 412–23. https://doi.org/10.2307/2944713."
   },
   {
     "objectID": "slides/week01.html#sec-today",
@@ -642,5 +285,586 @@
     "title": "Week 1: Introduction",
     "section": "Next week",
     "text": "Next week\n\nInstall everything from the Installation page before the session.\nSend me your GitHub username.\nWeek 2: Quarto, Git, and your first reproducible document.\n\n\nEnd here. Repeat the installation ask, it is the one thing that blocks week 2."
+  },
+  {
+    "objectID": "resources/13_resources.html",
+    "href": "resources/13_resources.html",
+    "title": "Week 13 Resources",
+    "section": "",
+    "text": "Claassen, Christopher. 2020. “Does Public Support Help Democracy Survive?” American Journal of Political Science 64 (1): 18–35. https://doi.org/10.1111/ajps.12452.\n\n\nFariss, Christopher J. 2014. “Respect for Human Rights Has Improved over Time: Modeling the Changing Standard of Accountability.” American Political Science Review 108 (2): 297–318. https://doi.org/10.1017/S0003055414000070.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2014. Bayesian Data Analysis. Texts in Statistical Science. CRC Press.\n\n\nGelman, Andrew, Aki Vehtari, Richard McElreath, Daniel Simpson, et al. 2026. Bayesian Workflow. Chapman; Hall/CRC. https://doi.org/10.1201/9781003044024.\n\n\nGelman, Andrew, Aki Vehtari, and Richard McElreath. 2026. “Statistical Workflow.” Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences 384 (2321): 20250293. https://doi.org/10.1098/rsta.2025.0293.\n\n\nGrimmer, Justin. 2010. “A Bayesian Hierarchical Topic Model for Political Texts: Measuring Expressed Agendas in Senate Press Releases.” Political Analysis 18 (1): 1–35. https://doi.org/10.1093/pan/mpp034.\n\n\nHumphreys, Macartan, and Alan M. Jacobs. 2015. “Mixing Methods: A Bayesian Approach.” American Political Science Review 109 (4): 653–73. https://doi.org/10.1017/S0003055415000453.\n\n\nJackman, Simon. 2000. “Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation.” Political Analysis 8 (4): 307–32. https://doi.org/10.1093/oxfordjournals.pan.a029818.\n\n\nKing, Gary. 1989. Unifying Political Methodology: The Likelihood Theory of Statistical Inference. Cambridge.\n\n\nKruschke, John. 2014. Doing Bayesian Data Analysis: A Tutorial with r, JAGS, and STAN.\n\n\nMcElreath, Richard. 2020. Statistical Rethinking: A Bayesian Course with Examples in r and STAN. 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026.” YouTube. https://www.youtube.com/playlist?list=PLDcUM9US4XdPMtSV81e1R_4B6NugQBvTP.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture B04: Measurement Models.” YouTube. https://www.youtube.com/watch?v=F3xQqG7C1kE.\n\n\nMcElreath, Richard. 2026c. “Statistical Rethinking 2026 Lecture B05: Gaussian Processes.” YouTube. https://www.youtube.com/watch?v=QyWvJ0Y6H8g.\n\n\nMcElreath, Richard. 2026d. “Statistical Rethinking 2026 Lecture B06: Mixture Models.” YouTube. https://www.youtube.com/watch?v=U5yY1zQqz8c.\n\n\nTreier, Shawn, and Simon Jackman. 2008. “Democracy as a Latent Variable.” American Journal of Political Science 52 (1): 201–17. https://doi.org/10.1111/j.1540-5907.2007.00308.x.\n\n\nWestern, Bruce, and Simon Jackman. 1994. “Bayesian Inference for Comparative Research.” American Political Science Review 88 (2): 412–23. https://doi.org/10.2307/2944713."
+  },
+  {
+    "objectID": "resources/11_resources.html",
+    "href": "resources/11_resources.html",
+    "title": "Week 11 Resources",
+    "section": "",
+    "text": "Bürkner, Paul-Christian. 2017. “Brms: An R Package for Bayesian Multilevel Models Using Stan.” Journal of Statistical Software 80: 1–28.\n\n\nEsarey, Justin, and Andrew Pierce. 2012. “Assessing Fit Quality and Testing for Misspecification in Binary-Dependent Variable Models.” Political Analysis 20 (4): 480–500. https://doi.org/10.1093/pan/mpr039.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Generalized Linear Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Model Checking.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nMcElreath, Richard. 2020a. “Big Entropy and the Generalized Linear Model.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2020b. “God Spiked the Integers.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026. “Statistical Rethinking 2026 Lecture A07: Maximum Entropy and GLMs.” YouTube. https://www.youtube.com/watch?v=GL1xPtH5yXQ."
+  },
+  {
+    "objectID": "resources/09_resources.html",
+    "href": "resources/09_resources.html",
+    "title": "Week 9 Resources",
+    "section": "",
+    "text": "Gelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013. “Evaluating, Comparing, and Expanding Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nMcElreath, Richard. 2020a. “The Haunted DAG and the Causal Terror.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2020b. “The Many Variables and the Spurious Waffles.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2020c. “Ulysses’ Compass.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026 Lecture A05: Causal Models and DAGs.” YouTube. https://www.youtube.com/watch?v=7H9xkQp0m8U.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture A06: Multivariate Models.” YouTube. https://www.youtube.com/watch?v=5x4M5Zc1lPQ.\n\n\nPearl, Judea, Madelyn Glymour, and Nicholas P Jewell. 2016. Causal Inference in Statistics: A Primer. John Wiley & Sons.\n\n\nVehtari, Aki, Andrew Gelman, and Jonah Gabry. 2017. “Practical Bayesian Model Evaluation Using Leave-One-Out Cross-Validation and WAIC.” Statistics and Computing 27 (5): 1413–32. https://doi.org/10.1007/s11222-016-9696-4."
+  },
+  {
+    "objectID": "resources/07_resources.html",
+    "href": "resources/07_resources.html",
+    "title": "Week 7 Resources",
+    "section": "",
+    "text": "Bürkner, Paul-Christian. 2017. “Brms: An R Package for Bayesian Multilevel Models Using Stan.” Journal of Statistical Software 80: 1–28.\n\n\nCarpenter, Bob, Andrew Gelman, Matthew D. Hoffman, et al. 2017. “Stan: A Probabilistic Programming Language.” Journal of Statistical Software 76: 1–32. https://doi.org/10.18637/jss.v076.i01.\n\n\nGelfand, Alan E., Susan E. Hills, Amy Racine-Poon, and Adrian FM Smith. 1990. “Illustration of Bayesian Inference in Normal Data Models Using Gibbs Sampling.” Journal of the American Statistical Association 85 (412): 972–85. https://doi.org/10.1080/01621459.1990.10474968.\n\n\nGelfand, Alan E., and Adrian FM Smith. 1990. “Sampling-Based Approaches to Calculating Marginal Densities.” Journal of the American Statistical Association 85 (410): 398–409. https://doi.org/10.1080/01621459.1990.10476213.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Basics of Markov Chain Simulation.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Computationally Efficient Markov Chain Simulation.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013c. “Introduction to Bayesian Computation.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, Aki Vehtari, Richard McElreath, et al. 2026. Bayesian Workflow. Chapman; Hall/CRC. https://doi.org/10.1201/9781003044024.\n\n\nHoffman, Matthew D., and Andrew Gelman. 2014. “The No-u-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo.” Journal of Machine Learning Research 15 (47): 1593–623. http://jmlr.org/papers/v15/hoffman14a.html.\n\n\nMarbleScience. 2021. “Monte Carlo Simulation.” YouTube. https://www.youtube.com/watch?v=7ESK5SaP-bc.\n\n\nMcElreath, Richard. 2020. “Markov Chain Monte Carlo.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026 Lecture A08: MCMC and Item Response Models.” YouTube. https://www.youtube.com/watch?v=N_LRQUrdHag.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture B01: Hamiltonian Monte Carlo.” YouTube. https://www.youtube.com/watch?v=7JHkq0l9p2M.\n\n\nMetropolis, Nicholas, Arianna W. Rosenbluth, Marshall N. Rosenbluth, Augusta H. Teller, and Edward Teller. 1953. “Equation of State Calculations by Fast Computing Machines.” The Journal of Chemical Physics 21 (6): 1087–92. https://doi.org/10.1063/1.1699114.\n\n\nMetropolis, Nicholas, and Stanislaw Ulam. 1949. “The Monte Carlo Method.” Journal of the American Statistical Association 44 (247): 335–41. https://doi.org/10.1080/01621459.1949.10483310.\n\n\nVehtari, Aki, Andrew Gelman, Daniel Simpson, Bob Carpenter, and Paul-Christian Bürkner. 2021. “Rank-Normalization, Folding, and Localization: An Improved \\(\\hat{R}\\) for Assessing Convergence of MCMC (with Discussion).” Bayesian Analysis 16 (2): 667–718. https://doi.org/10.1214/20-BA1221."
+  },
+  {
+    "objectID": "resources/05_resources.html",
+    "href": "resources/05_resources.html",
+    "title": "Week 5 Resources",
+    "section": "",
+    "text": "DataCamp. 2024. Intermediate Data Visualization with Ggplot2. DataCamp. https://app.datacamp.com/learn/courses/intermediate-data-visualization-with-ggplot2.\n\n\nDataCamp. 2025. Introduction to Data Visualization with Ggplot2. DataCamp. https://app.datacamp.com/learn/courses/introduction-to-data-visualization-with-ggplot2.\n\n\nPosit Software, PBC. 2024a. Dates and Times with Lubridate: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/lubridate.html.\n\n\nPosit Software, PBC. 2024b. Factors with Forcats: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/factors.html.\n\n\nPosit Software, PBC. 2025a. Data Visualization with Ggplot2: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/data-visualization.html.\n\n\nPosit Software, PBC. 2025b. String Manipulation with Stringr: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/strings.html.\n\n\nWickham, Hadley, Danielle Navarro, and Thomas Lin Pedersen. 2023. Ggplot2: Elegant Graphics for Data Analysis. 3rd ed. https://ggplot2-book.org/."
+  },
+  {
+    "objectID": "resources/03_resources.html",
+    "href": "resources/03_resources.html",
+    "title": "Week 3 Resources",
+    "section": "",
+    "text": "DataCamp. 2022. Getting Started with R Cheat Sheet. DataCamp. https://www.datacamp.com/cheat-sheet/getting-started-r.\n\n\nDataCamp. 2026. Introduction to R. DataCamp. https://www.datacamp.com/courses/free-introduction-to-r.\n\n\nMcNeill, Mhairi. 2015. Base R: Cheatsheet. IQSS, Harvard University. https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023a. “Introduction.” In R for Data Science: Import, Tidy, Transform, Visualize, and Model Data, 2nd ed., edited by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. O’Reilly. https://r4ds.hadley.nz/intro.html.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023b. R for Data Science: Import, Tidy, Transform, Visualize, and Model Data. 2nd ed. O’Reilly. https://r4ds.hadley.nz/."
+  },
+  {
+    "objectID": "resources/01_resources.html",
+    "href": "resources/01_resources.html",
+    "title": "Week 1 Resources",
+    "section": "",
+    "text": "Gelman, Andrew, Aki Vehtari, Richard McElreath, Daniel Simpson, et al. 2026. Bayesian Workflow. Chapman; Hall/CRC. https://doi.org/10.1201/9781003044024.\n\n\nGelman, Andrew, Aki Vehtari, and Richard McElreath. 2026. “Statistical Workflow.” Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences 384 (2321): 20250293. https://doi.org/10.1098/rsta.2025.0293.\n\n\nKruschke, John K, and Torrin M Liddell. 2018. “Bayesian Data Analysis for Newcomers.” Psychonomic Bulletin & Review 25 (1): 155–77.\n\n\nMcElreath, Richard. 2020. “The Golem of Prague.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026.” YouTube. https://www.youtube.com/playlist?list=PLDcUM9US4XdPMtSV81e1R_4B6NugQBvTP.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture A01: Introduction to Bayesian Workflow.” YouTube. https://www.youtube.com/watch?v=ztbYkBPDOgU.\n\n\nPosit Software, PBC. n.d. Positron Layout. Posit. https://positron.posit.co/layout.html."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Quantitative Methods in IR/EU Politics: Learning from data",
+    "section": "",
+    "text": "Fall 2026 Department of Political Science School of Social Sciences University of Mannheim"
+  },
+  {
+    "objectID": "index.html#sec-what-this-is",
+    "href": "index.html#sec-what-this-is",
+    "title": "Quantitative Methods in IR/EU Politics: Learning from data",
+    "section": "What this course is",
+    "text": "What this course is\nAn introduction to quantitative methods for international relations and European politics, taught with free and open source state of the art tools: R, Quarto, Git and GitHub, all inside Positron. You will learn regression as a way of describing relationships in data, and Bayesian inference as a way of saying how certain you are about them.\nThe whole term runs toward one skill, an eight-step analysis taking you from a research question to an empirical answer with its uncertainty attached. You see that route in session 1, deepen one part of it each week, and run it end to end yourself in the take-home exam. No programming experience and no statistics beyond descriptives are assumed."
+  },
+  {
+    "objectID": "index.html#sec-where-next",
+    "href": "index.html#sec-where-next",
+    "title": "Quantitative Methods in IR/EU Politics: Learning from data",
+    "section": "Where to go next",
+    "text": "Where to go next\n\nSyllabus for the full details: objectives, logistics, grading, the exam, the policies, and what each session covers.\nSchedule for dates, slides, homework and sample solutions.\nInstallation guide for the software. Work through it before the first session, so problems are easy to fix together rather than urgent.\nGlossary for the terminology, which arrives quickly in a course like this."
+  },
+  {
+    "objectID": "glossary.html",
+    "href": "glossary.html",
+    "title": "Glossary",
+    "section": "",
+    "text": "The vocabulary of the course, collected in one place and sorted alphabetically. Every entry is tagged with the block in which you first meet it, so you can still read this page in the same order as the Schedule if you want to.\nNothing here replaces the slides. A glossary entry is the short version you can check quickly, not the explanation."
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-b",
+    "href": "glossary.html#sec-glossary-b",
+    "title": "Glossary",
+    "section": "B",
+    "text": "B\n\nBayes’ theorem\n\nThe rule that combines prior and likelihood into a posterior. Read as a proportionality, the posterior is the likelihood times the prior, up to a constant.\nThe logic of Bayesian inference probability\n\nBranch\n\nA named line of development inside a repository, so work in progress does not disturb the main version. This course uses main for sources and gh-pages for the rendered website.\nScientific programming fundamentals git\n\nbrms\n\nThe R package used throughout this course to fit Bayesian regression models with familiar formula syntax. Every model call here sets its priors explicitly.\nApplied modelling r model"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-c",
+    "href": "glossary.html#sec-glossary-c",
+    "title": "Glossary",
+    "section": "C",
+    "text": "C\n\nChain\n\nOne run of the sampler, producing a sequence of draws. Several chains are run from different starting points so their agreement can be checked.\nThe logic of Bayesian inference mcmc\n\nClone\n\nMaking a local copy of a remote repository, including its history.\nScientific programming fundamentals git\n\nCode chunk\n\nA block of executable code inside a .qmd. Every chunk in this course carries a label, so it can be referred to and so an error points somewhere specific.\nScientific programming fundamentals quarto r\n\nCoefficient\n\nA parameter multiplying a predictor, describing how the expected outcome changes as that predictor changes. In a Bayesian model a coefficient has a full posterior, not a single value.\nApplied modelling regression interpretation\n\nCommit\n\nOne recorded snapshot of the project, with a message saying what changed. A commit is the unit of history, so its message is written for the next reader.\nScientific programming fundamentals git\n\nConfounder\n\nA variable that influences both the presumed cause and the outcome, so leaving it out distorts the relationship you are trying to measure. Whether a variable is a confounder is a claim about the DAG, not something the data can tell you.\nThe logic of Bayesian inference model interpretation\n\nCounterfactual prediction\n\nA model-based prediction of the outcome under a specified, possibly unobserved, setting of the predictors. It is how a fitted model answers a substantive question.\nApplied modelling interpretation model\n\nCredible interval\n\nA range containing a stated share of the posterior probability, for example 90 percent. It is a direct statement about the parameter given the data and the model, which is what makes it straightforward to interpret. A frequentist confidence interval is a different object, describing the long-run behaviour of the procedure rather than the parameter.\nThe logic of Bayesian inference interpretation probability"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-d",
+    "href": "glossary.html#sec-glossary-d",
+    "title": "Glossary",
+    "section": "D",
+    "text": "D\n\nData frame and tibble\n\nA rectangular table of data in R, with one column per variable. A tibble is the tidyverse version of a data frame, with friendlier printing and fewer surprises.\nScientific programming fundamentals data r\n\nDirected acyclic graph\n\nA diagram of assumed causal relationships, drawn as arrows between variables with no cycles. Usually called a DAG, it makes explicit which variables must be adjusted for and which must not.\nThe logic of Bayesian inference workflow model\n\nDivergent transition\n\nA warning that the sampler failed to explore part of the posterior faithfully. Divergences are not cosmetic, so they are understood rather than silenced.\nThe logic of Bayesian inference mcmc diagnostics\n\nDraw\n\nA single sample from the posterior. A posterior is represented in practice as a large collection of draws, and every summary is computed from them.\nThe logic of Bayesian inference mcmc"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-e",
+    "href": "glossary.html#sec-glossary-e",
+    "title": "Glossary",
+    "section": "E",
+    "text": "E\n\nEffective sample size\n\nHow many independent draws the correlated MCMC draws are worth. A low value means a summary rests on less information than the raw number of draws suggests.\nThe logic of Bayesian inference mcmc diagnostics\n\nEstimand\n\nThe quantity you actually want to know, stated precisely, before any model is fitted. Naming it first is step 1 of the workflow, and it is what keeps a model answerable to a question.\nThe logic of Bayesian inference workflow interpretation"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-f",
+    "href": "glossary.html#sec-glossary-f",
+    "title": "Glossary",
+    "section": "F",
+    "text": "F\n\nFreeze\n\nQuarto’s cache of already-computed results, stored in _freeze/, so a rebuild does not re-run expensive code. It is committed deliberately, so the site rebuilds identically anywhere.\nScientific programming fundamentals quarto workflow\n\nFunction and argument\n\nA function is a named, reusable piece of code, and its arguments are the inputs you give it. Naming arguments explicitly makes code readable a month later.\nScientific programming fundamentals r"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-g",
+    "href": "glossary.html#sec-glossary-g",
+    "title": "Glossary",
+    "section": "G",
+    "text": "G\n\nGenerative model\n\nA model complete enough to simulate fake data that looks like the real thing. If you can simulate from it, you can check it before it ever touches your data.\nThe logic of Bayesian inference model\n\nGit\n\nA version control system that records the history of a project as a series of snapshots. It answers what changed, when, and why, and it lets you go back.\nScientific programming fundamentals git\n\nGitHub\n\nThe platform that hosts repositories and adds collaboration features such as issues and automated checks. Course materials are distributed and homework submitted through it.\nScientific programming fundamentals git"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-h",
+    "href": "glossary.html#sec-glossary-h",
+    "title": "Glossary",
+    "section": "H",
+    "text": "H\n\nhere()\n\nThe function from the here package that builds a path from the project root rather than from whatever the current working directory happens to be. Use it for every path, always.\nScientific programming fundamentals r workflow"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-i",
+    "href": "glossary.html#sec-glossary-i",
+    "title": "Glossary",
+    "section": "I",
+    "text": "I\n\nInteraction\n\nA term letting the effect of one predictor depend on the value of another. An interaction is a claim that an effect is conditional, so it is interpreted jointly and not term by term.\nApplied modelling regression interpretation\n\nIntercept\n\nThe expected outcome when every predictor is zero. It is only interpretable when zero is a meaningful value, which is one reason predictors are often centred.\nApplied modelling regression interpretation"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-l",
+    "href": "glossary.html#sec-glossary-l",
+    "title": "Glossary",
+    "section": "L",
+    "text": "L\n\nLikelihood\n\nHow probable the observed data would be, for each candidate value of the parameters. It is the part of the model that lets the data speak.\nThe logic of Bayesian inference probability model\n\nLinear regression\n\nA model in which the expected outcome is a straight-line function of the predictors. The foundation the later models extend rather than replace.\nApplied modelling regression\n\nLink function\n\nThe transformation connecting a linear predictor to the scale of the outcome. It lets a linear model describe outcomes that are bounded, such as probabilities.\nApplied modelling regression model\n\nLiterate programming\n\nWriting code and the prose that explains it in a single document, so the reasoning and the computation cannot drift apart. Quarto is the tool we use for it.\nScientific programming fundamentals workflow quarto\n\nLog-odds\n\nThe scale a logistic regression’s coefficients live on, the logarithm of the odds. Coefficients are additive here but not on the probability scale, which is why results are converted before interpretation.\nApplied modelling regression interpretation\n\nLogistic regression\n\nA model for a binary outcome, using the logit link to keep predicted probabilities between zero and one.\nApplied modelling regression"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-m",
+    "href": "glossary.html#sec-glossary-m",
+    "title": "Glossary",
+    "section": "M",
+    "text": "M\n\nMarginal effect\n\nHow the expected outcome changes with a predictor, after averaging over the others. It is often the form in which a result becomes reportable.\nApplied modelling interpretation\n\nMarkov chain Monte Carlo\n\nA family of algorithms, usually shortened to MCMC, that explore the posterior by taking a long, dependent random walk through it. We need it because most interesting posteriors cannot be written down in closed form.\nThe logic of Bayesian inference mcmc\n\nMultilevel model\n\nA model with parameters that vary by group, where the group-level variation is itself estimated. Also called a hierarchical model.\nApplied modelling multilevel"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-n",
+    "href": "glossary.html#sec-glossary-n",
+    "title": "Glossary",
+    "section": "N",
+    "text": "N\n\nNative pipe\n\nThe |&gt; operator, which passes the result on its left into the first argument of the function on its right, so a sequence of steps reads left to right. This course uses |&gt; throughout and not the older %&gt;%.\nScientific programming fundamentals r\n\nNormalising constant\n\nThe quantity that rescales the posterior so it integrates to one. It does not depend on the parameters, which is why we can usually ignore it and work with the unnormalised posterior.\nThe logic of Bayesian inference probability"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-p",
+    "href": "glossary.html#sec-glossary-p",
+    "title": "Glossary",
+    "section": "P",
+    "text": "P\n\nPackage\n\nA bundle of functions, data and documentation that extends R. Installed once with install.packages(), loaded per session with library().\nScientific programming fundamentals r\n\nParameter\n\nAn unknown quantity in a model that we want to learn about, such as a slope or an average. Bayesian inference gives a parameter a distribution rather than one fixed number.\nThe logic of Bayesian inference probability model\n\nPartial pooling\n\nThe compromise a multilevel model strikes between one estimate for all groups and a separate, independent estimate per group. Groups with little data are pulled towards the overall pattern, and groups with plenty are left largely alone.\nApplied modelling multilevel\n\nPopulation-level and group-level effects\n\nPopulation-level effects apply across all observations, and group-level effects vary by group. brms uses these names for what are elsewhere called fixed and random effects.\nApplied modelling multilevel model\n\nPosterior\n\nThe distribution of the parameters after conditioning on the data. This is what Bayes’ theorem returns, and every quantity of interest is computed from it.\nThe logic of Bayesian inference probability model\n\nPosterior predictive check\n\nSimulating data from the fitted model and comparing it against the observed data. It asks whether the model can reproduce the features of the data you care about.\nThe logic of Bayesian inference diagnostics model\n\nPosterior predictive distribution\n\nThe distribution of new outcomes implied by the fitted model, accounting for both parameter uncertainty and outcome variability. Predictions come from it rather than from point estimates alone.\nApplied modelling interpretation model\n\nPrior\n\nThe distribution expressing what is plausible about a parameter before seeing the data. A prior is a philosophical commitment, so it is defended on principled grounds rather than chosen for convenience.\nThe logic of Bayesian inference prior model\n\nPrior predictive check\n\nSimulating data from the priors alone, before fitting, to see what outcomes the model considers plausible. It catches priors that imply impossible values, such as a turnout rate above 100 percent.\nThe logic of Bayesian inference prior diagnostics\n\nProbability distribution\n\nA description of how plausible each possible value of a quantity is. Here, distributions describe both data and parameters, which is the central move of the Bayesian approach.\nThe logic of Bayesian inference probability\n\nProject root\n\nThe top directory of a project, the fixed point every other path is expressed relative to. Anchoring paths to it is what makes a project work on a machine other than yours.\nScientific programming fundamentals workflow r\n\nPush and pull\n\nSending your local commits to the remote (push), and fetching other people’s commits from it (pull).\nScientific programming fundamentals git"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-q",
+    "href": "glossary.html#sec-glossary-q",
+    "title": "Glossary",
+    "section": "Q",
+    "text": "Q\n\nQuantity of interest\n\nThe specific, interpretable number a reader should take away, computed from the posterior. Deciding it in advance is what stops an analysis becoming a table of coefficients with no conclusion.\nApplied modelling interpretation\n\nQuarto\n\nThe publishing system that turns a .qmd file into HTML, PDF or slides, running the embedded code as it goes. Everything in this course, including this page, is a Quarto document.\nScientific programming fundamentals quarto"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-r",
+    "href": "glossary.html#sec-glossary-r",
+    "title": "Glossary",
+    "section": "R",
+    "text": "R\n\nR-hat\n\nA convergence diagnostic comparing variation between chains against variation within them. Values near 1 are consistent with convergence, and clearly larger values mean the chains do not agree.\nThe logic of Bayesian inference mcmc diagnostics\n\nRemote\n\nA copy of the repository hosted elsewhere, normally on GitHub, that you push to and pull from. The remote is what makes the work shared rather than local.\nScientific programming fundamentals git\n\nRender\n\nThe act of turning a source .qmd into its output document. A submission that does not render is not a submission, because nobody else can reproduce it.\nScientific programming fundamentals quarto workflow\n\nRepository\n\nA project under version control, together with its full history. Usually shortened to “repo”.\nScientific programming fundamentals git\n\nReproducible research\n\nResearch whose results can be regenerated from the raw data and the code alone, by someone else, on another machine. The practical test is whether one command rebuilds every number and figure in the output.\nScientific programming fundamentals workflow"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-s",
+    "href": "glossary.html#sec-glossary-s",
+    "title": "Glossary",
+    "section": "S",
+    "text": "S\n\nset.seed()\n\nFixes the starting point of R’s random number generator, so anything involving randomness gives the same result on every run. Required wherever this course simulates or samples.\nScientific programming fundamentals r workflow\n\nShrinkage\n\nThe pull of a group’s estimate towards the overall mean under partial pooling. It is a feature, because it stops small groups producing extreme estimates on thin evidence.\nApplied modelling multilevel\n\nStan\n\nThe probabilistic programming language and sampler that brms compiles models down to and runs. You will rarely write Stan code directly, but its diagnostics are the ones you read.\nApplied modelling mcmc model"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-t",
+    "href": "glossary.html#sec-glossary-t",
+    "title": "Glossary",
+    "section": "T",
+    "text": "T\n\nTemplate repository\n\nA repository GitHub can copy to make a fresh, independent repository with no shared history. Every homework starter is distributed this way, which is why your submission repo is yours alone.\nScientific programming fundamentals git\n\nTidy data\n\nData arranged so that each variable is a column, each observation is a row, and each cell holds one value. Most of the work in an analysis is getting data into this shape, and most tools assume it.\nScientific programming fundamentals data\n\nTrace plot\n\nA plot of drawn values against iteration, one line per chain. Well-mixed chains overlap and look stationary, like noise around a stable level.\nThe logic of Bayesian inference mcmc diagnostics"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-w",
+    "href": "glossary.html#sec-glossary-w",
+    "title": "Glossary",
+    "section": "W",
+    "text": "W\n\nWarmup\n\nThe initial draws a chain uses to adapt and find the posterior, discarded before inference. They describe the sampler getting started, not the posterior.\nThe logic of Bayesian inference mcmc\n\nWorking directory\n\nThe directory R currently treats as “here” when it resolves a relative path. It changes depending on how code is run, which is exactly why we do not rely on it.\nScientific programming fundamentals r workflow"
+  },
+  {
+    "objectID": "glossary.html#sec-glossary-y",
+    "href": "glossary.html#sec-glossary-y",
+    "title": "Glossary",
+    "section": "Y",
+    "text": "Y\n\nYAML front matter\n\nThe block between the two --- lines at the top of a .qmd, which sets the document title, output format and options. It is configuration, not content.\nScientific programming fundamentals quarto"
+  },
+  {
+    "objectID": "installation.html",
+    "href": "installation.html",
+    "title": "Getting started: installation guide",
+    "section": "",
+    "text": "Everything you need installed to do the homeworks and the exam. Work through it before the first session."
+  },
+  {
+    "objectID": "installation.html#sec-why-so-many-tools",
+    "href": "installation.html#sec-why-so-many-tools",
+    "title": "Getting started: installation guide",
+    "section": "Why so many tools?",
+    "text": "Why so many tools?\nThis course introduces a range of software tools which, taken together, form a powerful and contemporary toolbox for transparent, reproducible and scalable empirical research. Rather than relying on a single piece of software, you will learn how different tools interact and complement one another, much as they do in real research workflows."
+  },
+  {
+    "objectID": "installation.html#sec-feeling-overwhelmed",
+    "href": "installation.html#sec-feeling-overwhelmed",
+    "title": "Getting started: installation guide",
+    "section": "Feeling overwhelmed is normal",
+    "text": "Feeling overwhelmed is normal\nMeeting many tools at once can feel complex and, at times, overwhelming. That is entirely normal and an expected part of the learning process. Research environments evolve quickly, with new libraries, platforms and technologies (including AI-based ones) constantly emerging. So one of the central goals here is not just to teach specific tools, but to help you learn how to learn programming and computational methods, which is an essential and transferable skill for any data-driven career."
+  },
+  {
+    "objectID": "installation.html#sec-tools-as-workflow",
+    "href": "installation.html#sec-tools-as-workflow",
+    "title": "Getting started: installation guide",
+    "section": "Tools as part of a research workflow",
+    "text": "Tools as part of a research workflow\nThese tools are not only for performing calculations or producing results. They also help you document decisions, record analytical steps, collaborate with others, and build workflows that can be extended, reproduced and scaled. In that sense the course aims to familiarise you with research practices that resemble how high-quality empirical work is actually done."
+  },
+  {
+    "objectID": "installation.html#sec-concepts-not-commands",
+    "href": "installation.html#sec-concepts-not-commands",
+    "title": "Getting started: installation guide",
+    "section": "Learning concepts, not just commands",
+    "text": "Learning concepts, not just commands\nGiven the scope of the course, we will only scratch the surface, the tip of the iceberg, of many of these tools. I will emphasise conceptual understanding instead: how the tools work in principle, why they are useful, and when they help. That foundation is what lets you work independently and confidently with these tools, and with future ones, beyond the course."
+  },
+  {
+    "objectID": "installation.html#sec-pragmatism",
+    "href": "installation.html#sec-pragmatism",
+    "title": "Getting started: installation guide",
+    "section": "Pragmatism over dogmatism",
+    "text": "Pragmatism over dogmatism\nThe workflow and software stack presented here reflect my own experience and day-to-day research practice. They are not meant to be prescriptive or dogmatic. There is no single correct way to code or to structure an analysis, and many different approaches reach the same goal. Pragmatism matters, so tools should serve your research questions and not the other way around."
+  },
+  {
+    "objectID": "installation.html#sec-timeline",
+    "href": "installation.html#sec-timeline",
+    "title": "Getting started: installation guide",
+    "section": "Installation timeline",
+    "text": "Installation timeline\nThis page lists all the software you are expected to install. Not every tool is used in the first week, but install everything as early as you can. That gives us time to troubleshoot, and it keeps technical setup from becoming a bottleneck once we move into substantive work.\n\n\n\n\n\n\nTip\n\n\n\nDo the steps in the order given. R comes before Positron, and the C++ compiler comes before brms. Each step assumes the ones above it are done."
+  },
+  {
+    "objectID": "installation.html#sec-vocabulary",
+    "href": "installation.html#sec-vocabulary",
+    "title": "Getting started: installation guide",
+    "section": "What the words mean",
+    "text": "What the words mean\nThe instructions below say things like “run this in the Console” and “open a Terminal”. Those are two different places, and mixing them up is the single most common reason a step appears not to work. Figure 1 shows where each of them lives once Positron is installed.\n\n\n\n\n\n\nFigure 1: The Positron interface. The Editor in the middle is where your .qmd and .R files are open. The Console (bottom) is where you type R commands and see their results. The Terminal sits next to the Console and is where you talk to your operating system rather than to R. Panes can be moved around, so yours may not look identical, but the names stay the same.\n\n\n\nConsole. An R session waiting for R commands. If an instruction shows R code, such as install.packages(\"here\"), it goes here. You can tell it is an R console by the &gt; prompt at the start of the line.\nTerminal. A place to type commands to your operating system, not to R. On Windows this is PowerShell, on macOS it is the Terminal app, and Positron has one built in. Commands such as git --version or quarto install tinytex go here, and running them in the Console instead will produce an error.\nEditor. The main pane where files are open for editing. Writing code in the Editor and then running it is the normal way to work, because the Editor keeps a record and the Console does not.\nPane. One of the rectangular regions of the window. Positron lets you show, hide and rearrange them, which is worth doing once you know what each is for.\n\n\n\n\n\n\nNote\n\n\n\nA quick way to tell them apart. If the line starts with &gt; you are in the R Console. If it starts with your username, a folder name, or PS C:\\&gt;, you are in a Terminal."
+  },
+  {
+    "objectID": "installation.html#sec-why-positron",
+    "href": "installation.html#sec-why-positron",
+    "title": "Getting started: installation guide",
+    "section": "Why Positron and not RStudio?",
+    "text": "Why Positron and not RStudio?\nIf you have had any contact with R already, or know people who have, you may know that one of the most widespread IDEs for R is RStudio. I decided to teach Positron for a few reasons.\n\nIt is a modern and genuinely useful IDE for both programming and project management, with features that integrate coding in R and writing in Quarto well.\nIt works neatly with R and Python. Although we learn R here, being able to add Python later is valuable, as many other scientific disciplines and private enterprises use Python.\nIt has very good graphical integration of version control with Git.\nIt is built on an open-source predecessor of VS Code, one of the most popular editors globally, so it is very similar to it.\nIf you learn to work with Positron, you will have no problem adapting to RStudio."
+  },
+  {
+    "objectID": "installation.html#sec-install",
+    "href": "installation.html#sec-install",
+    "title": "Getting started: installation guide",
+    "section": "Install the toolchain",
+    "text": "Install the toolchain\nPick your operating system once, below. The tab you choose stays selected for the whole guide, so work straight down it from step 1 to step 8.\n\nWindowsmacOS\n\n\n\n1. Install R\nR is a free and open-source programming language widely used for statistical analysis, data visualisation and reproducible research. R is our main tool, and you can think of it as the engine that does our calculations.1\n\nGo to the Comprehensive R Archive Network (CRAN) website.\nClick “Download R for Windows”.\nSelect base and download the installation file.\nRun the downloaded file to install R.\n\n\n\n\n\n\n\nNote\n\n\n\nTake the current release rather than a specific version number. CRAN always offers the latest release at the top of the download page, and that is the one to take. Note which version you installed, because Rtools in step 3 has to match it.\n\n\n\n\n2. Install Positron\nPositron is our integrated development environment (IDE), the program you actually sit in front of to write R. If R is the engine, Positron is the dashboard: it gives you a graphical interface to control, monitor and run R code. It is a free, source-available IDE designed specifically for data science with R and Python.\n\nNavigate to https://positron.posit.co/install.html.\nInstall all prerequisites listed for Windows. You can ignore the Python setup and R setup panes.\nAccept the license agreement by ticking the box.\nClick Download Positron for Windows and run the downloaded file.\n\nOnce it opens, find the Console and the Terminal described in Section 7.\n\n\n3. Install a C++ compiler (Rtools)\nSome R packages we use later rely internally on C++, a much more efficient language for computationally intensive tasks. For this to work, R needs access to a C++ compiler so it can compile and run C++ code behind the scenes. You will not usually interact with C++ directly, but the compiler is required to install and use certain packages, brms among them.\n\nGo to the Rtools page on CRAN.\nDownload and install the Rtools version that matches the R version you installed in step 1. The page lists one Rtools release per R release, so R 4.5.x takes Rtools45.\nFollow the installation instructions and keep the default settings unless told otherwise.\n\n\n\n\n\n\n\nWarning\n\n\n\nA mismatched Rtools version is the most common setup failure on Windows. If brms later fails to install with a compilation error, check the Rtools version against your R version first. Installing a newer R afterwards means installing the matching Rtools too.\n\n\n\n\n4. Install Git\nGit is a free and open-source version control system, a tool that tracks changes in your files over time. It lets you see what changed, revert to earlier versions, and collaborate without overwriting other people’s work. GitHub is an online platform that hosts Git repositories and adds collaboration features such as pull requests, issues and automated workflows. Together they make it easier to write code, analyse data, and manage research projects transparently and reproducibly.\n\nGo to the Git download page.\nPress the Click here to download link.\nOpen the downloaded .exe file and follow the installation instructions.\nOpen a Terminal (PowerShell, or the Terminal pane in Positron) and type:\n\ngit --version\nYou should see a version number. If so, Git is installed correctly.\n\n\n5. Configure Git\nTo use Git you need to set a name and an email address. These are attached to every change (commit) you make, acting like a digital signature. You do not have to use your full name, but it is recommended. Run both lines in the Terminal, substituting your own details.\ngit config --global user.name \"Your Name\"\ngit config --global user.email \"your@mail.com\"\n\n\n\n\n\n\nWarning\n\n\n\nDo not skip this step. It is easy to overlook, because nothing goes wrong until the first time you try to commit, and then Git refuses with an error message. Setting both values now saves you that error in week 2, when everybody is committing for the first time at once.\n\n\n\n\n6. Create a GitHub account\nIf you do not already have one, create a free GitHub account. GitHub lets you store repositories online, collaborate, and reach your work from anywhere. We use it to distribute all course materials.\n\n\n7. Check Quarto\nQuarto is the publishing system that turns a .qmd file into HTML, PDF or slides, running your R code as it goes. Every artefact in this course, including this page, is a Quarto document.\nPositron ships with Quarto, so if you installed Positron in step 2 you already have it. Confirm it from the Terminal:\nquarto --version\n\n\n8. Install TinyTeX\nTo render PDF output, Quarto needs a LaTeX engine. Let Quarto install and manage a small one for you, from the Terminal:\nquarto install tinytex\nNow continue with Section 10, which is the same on every operating system.\n\n\n\n\n1. Install R\nR is a free and open-source programming language widely used for statistical analysis, data visualisation and reproducible research. R is our main tool, and you can think of it as the engine that does our calculations.\n\nGo to the Comprehensive R Archive Network (CRAN) website.\nClick “Download R for macOS”.\nTake the current release offered at the top of the page, choosing the build for your chip: the arm64 package for Apple silicon, or the x86_64 package for older Intel Macs.\nDownload and install it.\nAlso download and install XQuartz.\n\n\n\n\n\n\n\nNote\n\n\n\nTake the current release rather than a specific version number. CRAN always offers the latest release at the top of the download page, and that is the one to take.\n\n\n\n\n2. Install Positron\nPositron is our integrated development environment (IDE), the program you actually sit in front of to write R. If R is the engine, Positron is the dashboard: it gives you a graphical interface to control, monitor and run R code. It is a free, source-available IDE designed specifically for data science with R and Python.\n\nNavigate to https://positron.posit.co/install.html.\nInstall all prerequisites listed for macOS. You can ignore the Python setup and R setup panes.\nAccept the license agreement by ticking the box.\nClick Download Positron for macOS and run the downloaded file.\n\nOnce it opens, find the Console and the Terminal described in Section 7.\n\n\n3. Install a C++ compiler (Xcode)\nSome R packages we use later rely internally on C++, a much more efficient language for computationally intensive tasks. For this to work, R needs access to a C++ compiler so it can compile and run C++ code behind the scenes. You will not usually interact with C++ directly, but the compiler is required to install and use certain packages, brms among them.\n\nDownload and install Xcode from the Mac App Store.\nAfterwards, open a Terminal and install the command-line tools as well:\n\nxcode-select --install\nOnce that is done, your system can compile the C++ code some R packages need.\n\n\n4. Install Git\nGit is a free and open-source version control system, a tool that tracks changes in your files over time. It lets you see what changed, revert to earlier versions, and collaborate without overwriting other people’s work. GitHub is an online platform that hosts Git repositories and adds collaboration features such as pull requests, issues and automated workflows. Together they make it easier to write code, analyse data, and manage research projects transparently and reproducibly.\nGit comes with Xcode, which you installed in step 3. Open a Terminal and enter:\ngit --version\nYou should see a version number. If so, Git is installed correctly.\n\n\n5. Configure Git\nTo use Git you need to set a name and an email address. These are attached to every change (commit) you make, acting like a digital signature. You do not have to use your full name, but it is recommended. Run both lines in the Terminal, substituting your own details.\ngit config --global user.name \"Your Name\"\ngit config --global user.email \"your@mail.com\"\n\n\n\n\n\n\nWarning\n\n\n\nDo not skip this step. It is easy to overlook, because nothing goes wrong until the first time you try to commit, and then Git refuses with a message like Please tell me who you are. Setting both values now saves you that error in week 2, when everybody is committing for the first time at once.\n\n\n\n\n6. Create a GitHub account\nIf you do not already have one, create a free GitHub account. GitHub lets you store repositories online, collaborate, and reach your work from anywhere. We use it to distribute all course materials.\n\n\n7. Check Quarto\nQuarto is the publishing system that turns a .qmd file into HTML, PDF or slides, running your R code as it goes. Every artefact in this course, including this page, is a Quarto document.\nPositron ships with Quarto, so if you installed Positron in step 2 you already have it. Confirm it from the Terminal:\nquarto --version\n\n\n8. Install TinyTeX\nTo render PDF output, Quarto needs a LaTeX engine. Let Quarto install and manage a small one for you, from the Terminal:\nquarto install tinytex\nNow continue with Section 10, which is the same on every operating system."
+  },
+  {
+    "objectID": "installation.html#sec-install-packages",
+    "href": "installation.html#sec-install-packages",
+    "title": "Getting started: installation guide",
+    "section": "Install the R packages",
+    "text": "Install the R packages\nThis step is identical on Windows and macOS.\nR packages are bundles of functions, data and documentation that extend R. You install a package once, and load it in each session where you need it. Table 1 lists what this course uses and why.\n\n\n\nTable 1: The R packages this course uses, and what each one is for. Install them all before the first session. LaTeX is not on this list, because quarto install tinytex in step 8 already handled it.\n\n\n\n\n\n\n\n\n\n\nPackage\nWhat it is\nWhy we use it\n\n\n\n\ntidyverse\nA collection of packages for data manipulation, visualisation and analysis, including dplyr, ggplot2, tidyr and readr.\nA consistent framework for cleaning, exploring and visualising data. The backbone of nearly every script in the course.\n\n\nhere\nBuilds file paths from the project root.\nMakes a project run on any machine, not just the one it was written on. Used for every path in this course.\n\n\nbrms\nFits Bayesian regression models with familiar R formula syntax, on top of Stan.\nOur main modelling tool, from simple regression to multilevel models, without writing Stan code directly.\n\n\nposterior\nTools for handling and summarising posterior draws.\nProvides the convergence diagnostics we read after every fit.\n\n\nbayesplot\nPlots for Bayesian model checking and diagnostics.\nTrace plots and posterior predictive checks, steps 6a and 6b of the workflow.\n\n\nmarginaleffects\nComputes marginal effects and predictions from fitted models.\nHow we turn coefficients into interpretable quantities of interest.\n\n\nggpubr\nPublication-ready ggplot2 themes.\nSupplies theme_pubr(), the default theme for every figure in the course.\n\n\npatchwork\nCombines several plots into one figure.\nFor multi-panel figures.\n\n\nmodelsummary\nFormats model output into tables.\nRegression tables that can go straight into a report.\n\n\nknitr\nThe engine that runs the R code inside a Quarto document.\nAlso provides kable() for computed tables.\n\n\n\n\n\n\nHow to install. In Positron, find the Console (see Figure 1), start an R session if one is not running already, and run:\ninstall.packages(c(\n  \"tidyverse\", \"here\", \"brms\", \"posterior\", \"bayesplot\",\n  \"marginaleffects\", \"ggpubr\", \"patchwork\", \"modelsummary\",\n  \"knitr\"\n))\n\n\n\n\n\n\nNote\n\n\n\nThis will take a while, and that is expected. brms compiles C++ code during installation, so it is much slower than the others. Start it when you have time to leave it running."
+  },
+  {
+    "objectID": "installation.html#sec-done",
+    "href": "installation.html#sec-done",
+    "title": "Getting started: installation guide",
+    "section": "Great, you made it",
+    "text": "Great, you made it\n\n\n\n\n\n\nTip\n\n\n\nThat was a lot, and you got through it. You now have a research toolchain on your machine that is genuinely the same one used for published empirical work. Nothing more is required before the first session.\n\n\nIf something did not work, do not spend an evening fighting it alone. Bring it to the first session, or email me beforehand with the exact error message, and we will sort it out together. Setup problems are common, they are almost always quick to fix once someone has seen them before, and this is precisely why the guide asks you to install early."
+  },
+  {
+    "objectID": "installation.html#sec-submitting",
+    "href": "installation.html#sec-submitting",
+    "title": "Getting started: installation guide",
+    "section": "Submitting your work",
+    "text": "Submitting your work\n\nOpen the homework link on the Schedule. It opens GitHub’s create from template page, where you make your own copy of the starter repo.\nCreate it in the course organisation, named as described below.\nDo your work in that repo, commit, and push. Rendering the PDF and pushing is your submission.\n\n\n\n\n\n\n\nImportant\n\n\n\nName your submission repo exactly hw-NN-&lt;username&gt;. The tracker finds submissions by that name, so a repo called anything else is invisible to it. Use your own GitHub username and a zero-padded week number, for example hw-03-jdoe.\n\n\n\n\n\n\n\n\nTip\n\n\n\nOpt in to individual feedback with one file. Add an open-source license.md to your submission repo and an AI reads your work alongside the sample solution, then writes feedback back into the repo. See the Syllabus."
+  },
+  {
+    "objectID": "installation.html#footnotes",
+    "href": "installation.html#footnotes",
+    "title": "Getting started: installation guide",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nThe engine and dashboard analogy is borrowed from Andrew Heiss.↩︎"
+  },
+  {
+    "objectID": "resources/02_resources.html",
+    "href": "resources/02_resources.html",
+    "title": "Week 2 Resources",
+    "section": "",
+    "text": "Knuth, Donald Ervin. 1984. “Literate Programming.” The Computer Journal 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97.\n\n\nNick White. 2021. Git Tutorial for Dummies. YouTube. https://www.youtube.com/watch?v=mJ-qvsxPHpY.\n\n\nPosit Software, PBC. 2025. Publish and Share with Quarto: Quarto Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/quarto.html.\n\n\nPosit Software, PBC. n.d.a. Positron Layout. Posit. https://positron.posit.co/layout.html.\n\n\nPosit Software, PBC. n.d.b. Quarto Guide. Posit. https://quarto.org/docs/guide/.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. “Quarto.” In R for Data Science: Import, Tidy, Transform, Visualize, and Model Data, 2nd ed., edited by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. O’Reilly. https://r4ds.hadley.nz/quarto.html."
+  },
+  {
+    "objectID": "resources/04_resources.html",
+    "href": "resources/04_resources.html",
+    "title": "Week 4 Resources",
+    "section": "",
+    "text": "Çetinkaya-Rundel, Mine, Johanna Hardin, Benjamin S Baumer, Amelia McNamara, Nicholas J Horton, and Colin Rundel. 2021. “An Educator’s Perspective of the Tidyverse.” arXiv Preprint arXiv:2108.03510, ahead of print. https://doi.org/10.48550/arXiv.2108.03510.\n\n\nDataCamp. 2026. Introduction to the Tidyverse. DataCamp. https://www.datacamp.com/courses/introduction-to-the-tidyverse.\n\n\nPosit Software, PBC. 2024. Data Tidying with Tidyr: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/tidyr.html.\n\n\nPosit Software, PBC. 2025. Data Transformation with Dplyr: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/data-transformation.html.\n\n\nPosit Software, PBC. n.d. Data Import with the Tidyverse: Cheatsheet. Posit. https://rstudio.github.io/cheatsheets/html/data-import.html.\n\n\nWickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. “Whole Game.” In R for Data Science: Import, Tidy, Transform, Visualize, and Model Data, 2nd ed., edited by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. O’Reilly. https://r4ds.hadley.nz/intro.html."
+  },
+  {
+    "objectID": "resources/06_resources.html",
+    "href": "resources/06_resources.html",
+    "title": "Week 6 Resources",
+    "section": "",
+    "text": "3blue1brown. 2019. “Bayes Theorem, the Geometry of Changing Beliefs.” YouTube. https://www.youtube.com/watch?v=HZGCoVF3YvM.\n\n\nDataCamp. 2022. Foundations of Probability in r. DataCamp. https://www.datacamp.com/courses/foundations-of-probability-in-r.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Probability and Inference.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Single-Parameter Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nHoekstra, Rink, Richard D Morey, Jeffrey N Rouder, and Eric-Jan Wagenmakers. 2014. “Robust Misinterpretation of Confidence Intervals.” Psychonomic Bulletin & Review 21 (5): 1157–64.\n\n\nKruschke, John K, and Torrin M Liddell. 2018. “Bayesian Data Analysis for Newcomers.” Psychonomic Bulletin & Review 25 (1): 155–77.\n\n\nMcElreath, Richard. 2020a. “Sampling the Imaginary.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2020b. “Small Worlds and Large Worlds.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026 Lecture A02: Building a Generative Model.” YouTube. https://www.youtube.com/watch?v=2nqGvV6K3kY.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture A03: Sampling and Simulation.” YouTube. https://www.youtube.com/watch?v=AdpYxM4K2Q0.\n\n\nVeritasium. 2017. “The Bayesian Trap.” YouTube. https://www.youtube.com/watch?v=R13BD8qKeTg."
+  },
+  {
+    "objectID": "resources/08_resources.html",
+    "href": "resources/08_resources.html",
+    "title": "Week 8 Resources",
+    "section": "",
+    "text": "Bürkner, Paul-Christian. 2017. “Brms: An R Package for Bayesian Multilevel Models Using Stan.” Journal of Statistical Software 80: 1–28.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Introduction to Regression Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Model Checking.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, Aki Vehtari, Richard McElreath, et al. 2026. Bayesian Workflow. Chapman; Hall/CRC. https://doi.org/10.1201/9781003044024.\n\n\nMcElreath, Richard. 2020. “Geocentric Models.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026. “Statistical Rethinking 2026 Lecture A04: Linear Models.” YouTube. https://www.youtube.com/watch?v=6z4YxVYp9R8.\n\n\nWestern, Bruce, and Simon Jackman. 1994. “Bayesian Inference for Comparative Research.” American Political Science Review 88 (2): 412–23. https://doi.org/10.2307/2944713."
+  },
+  {
+    "objectID": "resources/10_resources.html",
+    "href": "resources/10_resources.html",
+    "title": "Week 10 Resources",
+    "section": "",
+    "text": "Brambor, Thomas, William Roberts Clark, and Matt Golder. 2006. “Understanding Interaction Models: Improving Empirical Analyses.” Political Analysis 14 (1): 63–82. https://doi.org/10.1093/pan/mpi014.\n\n\nMcElreath, Richard. 2020. “Conditional Manatees.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nVehtari, Aki, Andrew Gelman, and Jonah Gabry. 2017. “Practical Bayesian Model Evaluation Using Leave-One-Out Cross-Validation and WAIC.” Statistics and Computing 27 (5): 1413–32. https://doi.org/10.1007/s11222-016-9696-4."
+  },
+  {
+    "objectID": "resources/12_resources.html",
+    "href": "resources/12_resources.html",
+    "title": "Week 12 Resources",
+    "section": "",
+    "text": "Bürkner, Paul-Christian. 2017a. “Advanced Bayesian Multilevel Modeling with the r Package Brms.” arXiv Preprint arXiv:1705.11123.\n\n\nBürkner, Paul-Christian. 2017b. “Brms: An R Package for Bayesian Multilevel Models Using Stan.” Journal of Statistical Software 80: 1–28.\n\n\nEuropean Social Survey European Research Infrastructure (ESS ERIC). 2025. ESS11 Multilevel Data, Edition 1.2. Sikt – Norwegian Agency for Shared Services in Education; Research. https://doi.org/10.21338/ess11md_e01_2.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013a. “Hierarchical Linear Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nGelman, Andrew, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin. 2013b. “Hierarchical Models.” In Bayesian Data Analysis, 3rd ed. Chapman; Hall/CRC. https://sites.stat.columbia.edu/gelman/book/BDA3.pdf.\n\n\nMcElreath, Richard. 2020. “Models with Memory.” In Statistical Rethinking: A Bayesian Course with Examples in r and STAN, 2nd ed. Chapman; Hall/CRC. https://doi.org/10.1201/9780429029608.\n\n\nMcElreath, Richard. 2026a. “Statistical Rethinking 2026 Lecture B02: Hierarchical Models.” YouTube. https://www.youtube.com/watch?v=FdnMWdICdRs.\n\n\nMcElreath, Richard. 2026b. “Statistical Rethinking 2026 Lecture B03: Multilevel Models.” YouTube. https://www.youtube.com/watch?v=0h9q0YhT0Q4.\n\n\nPark, David K., Andrew Gelman, and Joseph Bafumi. 2004. “Bayesian Multilevel Estimation with Poststratification: State-Level Estimates from National Polls.” Political Analysis 12 (4): 375–85. https://doi.org/10.1093/pan/mph024.\n\n\nStegmueller, Daniel. 2013. “How Many Countries for Multilevel Modeling? A Comparison of Frequentist and Bayesian Approaches.” American Journal of Political Science 57 (3): 748–61. https://doi.org/10.1111/ajps.12001."
+  },
+  {
+    "objectID": "schedule.html",
+    "href": "schedule.html",
+    "title": "Schedule",
+    "section": "",
+    "text": "Your roadmap for the term. One session per week, and each row links the slides, the homework starter repo, and, after the due date, the sample solution.\nThe term runs in three blocks. Week 1 sits outside them, because it shows the whole workflow up front."
+  },
+  {
+    "objectID": "schedule.html#sec-exam",
+    "href": "schedule.html#sec-exam",
+    "title": "Schedule",
+    "section": "Take-home exam",
+    "text": "Take-home exam\n\n\n\n\n\n\nNote\n\n\n\nThe exam is a complete 8-step Bayesian analysis. You see the target in week 1 and every week builds toward it.\nWindow: 9 December 2026, 15:30 to 23 December 2026, 23:59.\nDistribution: the exam repo on the course org, the same template flow as the weekly homework.\nSubmission: the state of your repository when the deadline passes is what gets graded.\nWhat to expect: a dataset, the background you need, and a research question. You run the analysis yourself, end to end, and submit a reproducible repository with a rendered PDF. Detailed grading criteria come with the exam."
+  },
+  {
+    "objectID": "slides/week02.html#week-2-goals",
+    "href": "slides/week02.html#week-2-goals",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Week 2 Goals",
+    "text": "Week 2 Goals\nBy the end of today, you will be able to:\n\nExplain how Quarto, Git, and GitHub work together.\nCreate a Quarto document and explain the basic logic of Git version control.\nConnect a local Git repository to a remote GitHub repository.\nWrite clear commit messages that help future readers understand what changed and why."
+  },
+  {
+    "objectID": "slides/week02.html#sec-today",
+    "href": "slides/week02.html#sec-today",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Today",
+    "text": "Today\n\nGetting oriented in Positron\n\nTerminal, Console, folders, and working directories\n\nQuarto and literate programming\n\nFrom plain text to a reproducible document\n\nVersion control with Git\n\nTracking, reviewing, and committing changes\n\nGitHub\n\nSharing and syncing your work\n\nLooking ahead\n\nCode cells and programming\n\nWrap-up and practice"
+  },
+  {
+    "objectID": "slides/week02.html#sec-positron-tour",
+    "href": "slides/week02.html#sec-positron-tour",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "A quick tour of Positron",
+    "text": "A quick tour of Positron\n\n\nFigure 1: Source: positron.posit.co/layout\n\nEditor: write and edit files\nTerminal: interact with your computer using commands\nConsole: run R code\nExplorer: navigate files and folders\nSource Control: see and commit changes"
+  },
+  {
+    "objectID": "slides/week02.html#sec-terminal-console",
+    "href": "slides/week02.html#sec-terminal-console",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Terminal and Console are different",
+    "text": "Terminal and Console are different\n\n\nTerminal\nTalks to your computer.\n$ ls\n$ cd ..\n$ clear\n\nConsole\nTalks to R.\n1 + 1\n\nmean(c(2, 4, 6))\n\nKey idea: the terminal and the R console do different jobs."
+  },
+  {
+    "objectID": "slides/week02.html#sec-working-directory",
+    "href": "slides/week02.html#sec-working-directory",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Where am I?",
+    "text": "Where am I?\nYour computer is organised into folders.\nThe terminal always has a current working directory.\nR/\n└── Course/\n    ├── week01/\n    ├── week02/\n    └── homework/\nCommands act on files relative to where you are."
+  },
+  {
+    "objectID": "slides/week02.html#sec-terminal-commands",
+    "href": "slides/week02.html#sec-terminal-commands",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "A few terminal commands",
+    "text": "A few terminal commands\n\n\n\nCommand\nWhat it does\n\n\n\n\nls\nlist files and folders\n\n\ncd folder\nmove into a folder\n\n\ncd ..\nmove up one folder\n\n\ncd .\nrefer to the current folder\n\n\nclear\nclear the terminal\n\n\n\nThe exact commands can differ slightly between operating systems."
+  },
+  {
+    "objectID": "slides/week02.html#sec-practice-terminal",
+    "href": "slides/week02.html#sec-practice-terminal",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Practice: Find your course folder",
+    "text": "Practice: Find your course folder\nDo this now.\n\nCreate a new folder called R or Course.\nPut it somewhere on your computer that is not synced by iCloud, OneDrive, Dropbox, or another cloud service.\nOpen a terminal or PowerShell.\nNavigate to your new folder manually.\nPractise:\n\nls\ncd ..\ncd .\nclear\n\n\nGoal: know where you are before you start working."
+  },
+  {
+    "objectID": "slides/week02.html#sec-positron-folders",
+    "href": "slides/week02.html#sec-positron-folders",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Positron can take care of this",
+    "text": "Positron can take care of this\nYou do not always need to navigate manually.\nWhen you open a folder in Positron, Positron can use that folder as the context for your work.\n\n\n\n\n\n\nTip\n\n\nFor this course, think in terms of folders as projects.\nOpen the folder you are working in, then work from there."
+  },
+  {
+    "objectID": "slides/week02.html#sec-literate-programming",
+    "href": "slides/week02.html#sec-literate-programming",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "What is literate programming?",
+    "text": "What is literate programming?\nTraditional programming separates:\n\ncode\ndocumentation\nresults\n\nLiterate programming (Knuth 1984) brings them together.\n\nExplain what you are doing, show the code, and include the result in the same document.\n\nThis makes the analysis easier to read, reproduce, and revise."
+  },
+  {
+    "objectID": "slides/week02.html#sec-quarto-concept",
+    "href": "slides/week02.html#sec-quarto-concept",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Quarto: a document that can be rendered",
+    "text": "Quarto: a document that can be rendered\nA Quarto document combines:\n\nprose\nformatting\ncode\nfigures\ntables\nreferences\n\nA .qmd file is the source.\nQuarto turns the source into a rendered document, for example HTML, PDF or Word documents"
+  },
+  {
+    "objectID": "slides/week02.html#sec-quarto-workflow",
+    "href": "slides/week02.html#sec-quarto-workflow",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "From source to output",
+    "text": "From source to output\n\nOne source, different outputs.\nExtensive documentation at quarto.org\n\n\n\n\n\n\nTip\n\n\nLearn to search the documentation. When you get stuck, checking the official documentation is often the best place to start."
+  },
+  {
+    "objectID": "slides/week02.html#sec-quarto-glance",
+    "href": "slides/week02.html#sec-quarto-glance",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "A first look at .qmd structure",
+    "text": "A first look at .qmd structure\n\n\n---\nformat: html\n---\n\n# Section header\n\n## A subsection\n\n*This sentence is written in italics.*\n**This one is bold.**\nUsing backticks formats text to `look like code`.\n\n[This is a hyperlink](www.uni-mannheim.de)\n\nA Section\nA subsection\nThis sentence is written in italics. This one is bold. Using backticks formats text to look like code.\nThis is a hyperlink\n\n\nQuarto Markdown (.qmd) files have two main parts:\n\nYAML header: Contains metadata and controls how Quarto processes the document. It appears at the top of the file and is enclosed by ---.\nDocument body: Contains the main content of the document."
+  },
+  {
+    "objectID": "slides/week02.html#sec-quarto-practice",
+    "href": "slides/week02.html#sec-quarto-practice",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Practice: Build your first .qmd",
+    "text": "Practice: Build your first .qmd\nCreate a new Quarto document.\n\n\nYour document should contain:\n\na title\nyour name as author\ntoday’s date\na table of contents\n\n\nThen add some content:\n\na short paragraph\nitalic text\nbold text\na block quote\na bullet list\na Markdown table"
+  },
+  {
+    "objectID": "slides/week02.html#sec-quarto-figure",
+    "href": "slides/week02.html#sec-quarto-figure",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Practice: Add a figure",
+    "text": "Practice: Add a figure\nFind an image on the web and save it into your course folder.\nAdd it to your Quarto document.\nGive it:\n\na caption\na label\n\nThen refer to it somewhere in your text.\nFor example:\nAs shown in @fig-example, ..."
+  },
+  {
+    "objectID": "slides/week02.html#sec-quarto-format",
+    "href": "slides/week02.html#sec-quarto-format",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Practice: Change the output format",
+    "text": "Practice: Change the output format\nTry rendering your document as:\n\nHTML\nPDF\n\nWhat changes?\nWhat stays the same?"
+  },
+  {
+    "objectID": "slides/week02.html#sec-quarto-render",
+    "href": "slides/week02.html#sec-quarto-render",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Two ways to render",
+    "text": "Two ways to render\nYou can render from Positron:\nPreview\nOr from the terminal:\nquarto render\nTry both.\nWhat is the relationship between these two ways of working?"
+  },
+  {
+    "objectID": "slides/week02.html#sec-git-concept",
+    "href": "slides/week02.html#sec-git-concept",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Git: a change tracker",
+    "text": "Git: a change tracker\nGit keeps track of changes to your files.\nThink of it as a history of your work:\nversion 1\n    |\n    v\nversion 2\n    |\n    v\nversion 3\n    |\n    v\nversion 4\nYou can inspect what changed and return to earlier versions."
+  },
+  {
+    "objectID": "slides/week02.html#sec-git-diff",
+    "href": "slides/week02.html#sec-git-diff",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "What does Git actually track?",
+    "text": "What does Git actually track?\nGit compares versions of your files.\n\nThis is called a diff.\n\nA diff shows:\n\nwhat was removed\nwhat was added\nwhat has changed and where"
+  },
+  {
+    "objectID": "slides/week02.html#sec-git-positron",
+    "href": "slides/week02.html#sec-git-positron",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Live demo: Positron’s Source Control pane",
+    "text": "Live demo: Positron’s Source Control pane\nLet’s look at Git inside Positron.\nWe will:\n\nOpen the Source Control pane.\nInitialize a repo\nChange the .qmd file.\nInspect the diff.\nCommit the change.\nLook at the history."
+  },
+  {
+    "objectID": "slides/week02.html#sec-git-commit",
+    "href": "slides/week02.html#sec-git-commit",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "What is a commit?",
+    "text": "What is a commit?\nA commit records a set of changes in the history of your repository.\nA commit has:\n\nthe changes\nwho made them\nwhen they were made\na commit message\n\nThink of a commit as a meaningful checkpoint – a snapshot of your project at a specific point in time."
+  },
+  {
+    "objectID": "slides/week02.html#sec-commit-messages",
+    "href": "slides/week02.html#sec-commit-messages",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Commit messages",
+    "text": "Commit messages\nCommit messages are for future readers (most importantly future you!)\nA useful commit message answers:\nWhat changed?\nGood:\nAdd figure and cross-reference to introduction\nLess useful:\nChanges\nOr:\nUpdate\nWrite the message for someone who may read the history later.\n\n\n\n\n\n\nNote\n\n\nThis also provides a transparent way to communicate which changes were made with the help of AI. More on this in the coming weeks."
+  },
+  {
+    "objectID": "slides/week02.html#sec-git-practice",
+    "href": "slides/week02.html#sec-git-practice",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Practice: Make some changes",
+    "text": "Practice: Make some changes\nGo back to your .qmd document.\n\nAdd or change some content.\nInspect the diff.\nCommit your changes.\nMake another change.\nCommit again.\nInspect the history.\n\nNotice how your document now has a record of its development."
+  },
+  {
+    "objectID": "slides/week02.html#sec-one-sentence",
+    "href": "slides/week02.html#sec-one-sentence",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "One sentence per line",
+    "text": "One sentence per line\nWhen writing prose in a .qmd file, consider putting one sentence on each line.\nInstead of:\nThis is one sentence. This is another sentence. Here is a third sentence.\nwrite:\nThis is one sentence.\nThis is another sentence.\nHere is a third sentence.\nThe rendered document looks the same.\nBut Git can now show changes at the sentence level.\n\n\n\n\n\n\nTip\n\n\nOne sentence per line makes Git diffs much easier to read when you are revising prose."
+  },
+  {
+    "objectID": "slides/week02.html#sec-git-github",
+    "href": "slides/week02.html#sec-git-github",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Git and GitHub are not the same thing",
+    "text": "Git and GitHub are not the same thing\nGit is the version control system.\nGitHub is a service for hosting and collaborating on Git repositories.\nA useful mental model:\nyour computer                  GitHub\n-------------                  ------\nlocal repository   &lt;------&gt;    remote repository\n                     sync"
+  },
+  {
+    "objectID": "slides/week02.html#sec-git-push",
+    "href": "slides/week02.html#sec-git-push",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Push: send your commits to GitHub",
+    "text": "Push: send your commits to GitHub\nYour commits initially live in your local repository.\ngit push sends your commits to the remote repository on GitHub.\nlocal repository\n       |\n       | git push\n       v\nremote repository\n       |\n     GitHub\nThe reverse operation, git pull, brings changes from the remote repository into your local repository.\nIn Positron, the Sync button can help you perform this workflow.\n\n\n\n\n\n\nNote\n\n\ngit push won’t work right away in a new setup. You first need to connect your GitHub account to Git once. Then, for each project, connect the local repository to its remote repository on GitHub once."
+  },
+  {
+    "objectID": "slides/week02.html#sec-github-demo",
+    "href": "slides/week02.html#sec-github-demo",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Live demo: Local to GitHub",
+    "text": "Live demo: Local to GitHub\nWe will:\n\nLook at the local Git repository.\nConnect it to a GitHub repository.\nMake a commit.\nPush the commit.\nLook at the result on GitHub.\n\nThe important idea is the relationship between local and remote."
+  },
+  {
+    "objectID": "slides/week02.html#sec-quarto-code",
+    "href": "slides/week02.html#sec-quarto-code",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Quarto can contain code",
+    "text": "Quarto can contain code\nSo far, we have used Quarto mainly for writing.\nBut a .qmd document can also contain executable code.\n\n\nView source\n2 + 2\n\n\n[1] 4\n\n\nQuarto can run the code and include the result in the document."
+  },
+  {
+    "objectID": "slides/week02.html#sec-code-literate-programming",
+    "href": "slides/week02.html#sec-code-literate-programming",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Back to literate programming",
+    "text": "Back to literate programming\nNow we can bring the pieces together:\nprose\n  +\ncode\n  +\nresults\n  +\nfigures\n  +\ntables\n  =\none reproducible document\nNext week, we start using R inside our Quarto documents."
+  },
+  {
+    "objectID": "slides/week02.html#sec-big-picture",
+    "href": "slides/week02.html#sec-big-picture",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "The big picture",
+    "text": "The big picture\n             Quarto\n        write + render\n              =\n        reproducible\n          document\n              |\n              v\n             Git\n       track the changes\n              |\n              v\n           GitHub\n        share + sync\nThe three tools solve different parts of the same workflow."
+  },
+  {
+    "objectID": "slides/week02.html#if-you-have-time-today",
+    "href": "slides/week02.html#if-you-have-time-today",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "If you have time today",
+    "text": "If you have time today\nStart the Introduction to R course on DataCamp.\nFocus on getting comfortable with the basic R environment and syntax."
+  },
+  {
+    "objectID": "slides/week02.html#sec-homework",
+    "href": "slides/week02.html#sec-homework",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Homework",
+    "text": "Homework\nPractise creating and rendering a Quarto document.\nMake sure you can:\n\ncreate a .qmd file\nadd metadata\nuse basic Markdown\nadd a table\nadd and label a figure\nrender to HTML and PDF\nmake and inspect a Git commit"
+  },
+  {
+    "objectID": "slides/week02.html#sec-next-week",
+    "href": "slides/week02.html#sec-next-week",
+    "title": "Week 2: Quarto, Git and GitHub",
+    "section": "Next week",
+    "text": "Next week\nIntroduction to R\nWe will start putting code into our Quarto documents.\n\n\n\n\nKnuth, Donald Ervin. 1984. “Literate Programming.” The Computer Journal 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
   }
 ]
