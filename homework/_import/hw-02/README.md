@@ -1,4 +1,4 @@
-# Homework 03
+# Homework 02
 ## Practicing the Reproducible Workflow
 
 > **A note on AI tools:** Yes, ChatGPT, Claude, and similar tools can solve every exercise in this homework in seconds. Please don't let them. The point of this assignment is not the output — it is the practice. Use AI the smart way: to understand what a function does, to explain an error message, or to check your reasoning. Don't use it to generate answers you then copy in. That helps no one, least of all you.
@@ -83,7 +83,6 @@ Keep it simple.
 Write one short paragraph, in your own words, explaining:
 
 - What is Quarto?  
-- What is R?  
 - What is Git?  
 - What is GitHub?  
 
@@ -92,53 +91,19 @@ Include some basic markdown formatting (e.g., bold text, italics, or a list).
 🔁 Render to see how your markdown appears in the output.  
 💡 Commit after completing this step.
 
----
+# Exercise 4 — Advanced Quarto
 
-# Exercise 4 — Practicing R: Data Types, Structures, and Subsetting
+Enhance your document by adding an image and a table.
 
-This exercise gives you hands-on practice with the core concepts from Week 3. Add a clearly labeled section to your `hw02.qmd` for each sub-task below. Write **at least one sentence of prose** below each code cell explaining what you did and what the output shows — this is the literate programming habit we are building.
+1. Include an image in your document.
+2. Add an informative caption to the image.
+3. Write one sentence in your text that refers to the image using a cross-reference.
+4. Add a table of your choice.
+5. Give the table an informative caption and refer to it in your text using a cross-reference.
 
----
+🔁 Render your document to check that the image, table, captions, and cross-references appear correctly.
 
-## 4.1 — Vectors and Data Types
-
-Create three vectors of **different types** that relate to a political science topic of your choice (e.g., countries, election results, party membership). Your vectors should include at least one `character`, one `numeric`, and one `logical` vector.
-
-For each vector:
-- Print it
-- Check its type using `class()`
-
-Then: try mixing types in a single vector and report in prose what happens and why.
-
-🔁 Render after completing this section.
-
----
-
-## 4.2 — Building a Data Frame
-
-Using your vectors from 4.1 (or new ones), build a small **data frame** with at least 4 rows and 3 columns.
-
-Then:
-- Check the number of rows and columns using `nrow()` and `ncol()`
-- Inspect the structure using `str()`
-- Print the first few rows using `head()`
-
-🔁 Render to check output.
-
----
-
-## 4.3 — Accessing and Subsetting Data
-
-Using the data frame you created:
-
-1. Extract a single column using `$`
-2. Access one specific cell using `[row, column]` notation
-3. Filter rows using a logical condition (e.g., return only rows where population exceeds a threshold, or where a country is an EU member)
-
-🔁 Render after completing this section.  
-💡 Commit after completing Exercise 4.
-
----
+💡 Commit after completing this step.
 
 # Exercise 5 — Reflection
 
@@ -148,7 +113,7 @@ At the end of your document, add a section titled:
 
 Briefly answer:
 
-> What did you find confusing or difficult — either about the reproducible workflow or about working with R data types and structures?
+> What did you find confusing or difficult while working with Quarto, Git/GitHub, or Positron? Was there anything about the workflow that you are still unsure about?
 
 Be honest — this helps improve the course.
 
@@ -181,8 +146,18 @@ Your work is considered submitted if:
 
 ## Feedback policy
 
-> **A sample solution is published for this homework after the due date. Individual feedback is
-> NOT provided by default.** The only individual feedback available is **optional AI feedback**:
-> add an open-source `license.md` to this repo to opt in, and an AI will read your submission
-> alongside the sample solution and write a `FEEDBACK.pdf` back into your repo. No `license.md`,
-> no processing.
+> **A sample solution will be published after the due date and will be available to everyone, regardless of whether you opt in to AI feedback.**
+> **Optional AI feedback:** If you would like to receive automated AI feedback on your submission, you can voluntarily opt in by adding a file named `license.md` to your repository. The file must contain the MIT License text provided below.
+> If `license.md` is present, your submission may be processed by an AI system, which will compare your work with the sample solution and add a `FEEDBACK.pdf` to your repository.
+
+> **This is completely optional.** If you do not add `license.md`, your submission will not be processed for AI feedback. You will still have access to the sample solution after the due date.
+
+### `license.md`
+
+To opt in to AI feedback, create a file named `license.md` in the root of your repository and add the following text:
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

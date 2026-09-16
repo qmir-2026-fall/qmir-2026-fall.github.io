@@ -316,33 +316,31 @@ version 4
 
 You can inspect what changed and return to earlier versions.
 
-## What does Git actually track? {#sec-git-diff}
+## What does Git actually track? {#sec-git-diff .smaller}
 
 Git compares versions of your files.
 
-```diff
-- This sentence was here before.
-+ This sentence has changed.
-```
+![](images/git-diff-example.png)
 
 This is called a **diff**.
 
-A diff shows:
+- A diff shows:
+  - what was removed
+  - what was added
+  - what has changed and where
 
-- what was removed
-- what was added
-
-## Live demo: Positron's Source Control pane {#sec-git-positron}
+## Live demo: Positron's Source Control pane {#sec-git-positron .smaller}
 
 Let's look at Git inside Positron.
 
 We will:
 
 1. Open the Source Control pane.
-2. Change the `.qmd` file.
-3. Inspect the diff.
-4. Commit the change.
-5. Look at the history.
+2. Initialize a repo
+3. Change the `.qmd` file.
+4. Inspect the diff.
+5. Commit the change.
+6. Look at the history.
 
 ## What is a commit? {#sec-git-commit}
 
@@ -355,9 +353,11 @@ A commit has:
 - when they were made
 - a commit message
 
-Think of a commit as a meaningful checkpoint.
+Think of a commit as a meaningful checkpoint -- a snapshot of your project at a specific point in time.
 
-## Commit messages are for future readers {#sec-commit-messages}
+## Commit messages {#sec-commit-messages .smaller}
+
+Commit messages are for future readers (most importantly future you!)
 
 A useful commit message answers:
 
@@ -383,6 +383,12 @@ Update
 
 Write the message for someone who may read the history later.
 
+
+::: {.callout-note}
+This also provides a transparent way to communicate which changes were made with the help of AI. More on this in the coming weeks.
+:::
+
+
 ## Practice: Make some changes {#sec-git-practice}
 
 Go back to your `.qmd` document.
@@ -396,7 +402,7 @@ Go back to your `.qmd` document.
 
 Notice how your document now has a record of its development.
 
-## One sentence per line {#sec-one-sentence}
+## One sentence per line {#sec-one-sentence .smaller}
 
 When writing prose in a `.qmd` file, consider putting **one sentence on each line**.
 
@@ -437,10 +443,10 @@ A useful mental model:
 your computer                  GitHub
 -------------                  ------
 local repository   <------>    remote repository
-                         sync
+                     sync
 ```
 
-## Push: send your commits to GitHub {#sec-git-push}
+## Push: send your commits to GitHub {#sec-git-push .smaller}
 
 Your commits initially live in your **local repository**.
 
@@ -456,7 +462,17 @@ remote repository
      GitHub
 ```
 
+The reverse operation, `git pull`, brings changes from the remote repository into your local repository.
+
 In Positron, the **Sync** button can help you perform this workflow.
+
+
+::: {.callout-note}
+`git push` won’t work right away in a new setup.
+You first need to connect your GitHub account to Git once.
+Then, for each project, connect the local repository to its remote repository on GitHub once.
+:::
+
 
 ## Live demo: Local to GitHub {#sec-github-demo}
 
@@ -504,7 +520,7 @@ one reproducible document
 
 Next week, we start using **R** inside our Quarto documents.
 
-# Summary {#sec-summary}
+# Summary {#sec-summary .smaller}
 
 Today we:
 
@@ -523,8 +539,7 @@ Today we:
 ```text
              Quarto
         write + render
-              |
-              v
+              =
         reproducible
           document
               |
