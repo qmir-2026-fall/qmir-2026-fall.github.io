@@ -2,7 +2,7 @@
 title: "Week 2: Quarto, Git and GitHub"
 ---
 
-## Week 2 Goals
+## Week 2 Goals {#sec-week02-goals}
 
 By the end of today, you will be able to:
 
@@ -183,7 +183,7 @@ When you get stuck, checking the official documentation is often the best place 
 
 ## A first look at `.qmd` structure {#sec-quarto-glance .smaller}
 
-::::: columns
+:::: {.columns}
 ::: {.column width="50%"}
 ``` markdown
 ---
@@ -203,7 +203,7 @@ Using backticks formats text to `look like code`.
 :::
 
 ::: {.column width="50%"}
-### A Section {.unlisted}
+### A Section {#sec-week02-demo-heading .unlisted}
 
 #### A subsection {.unlisted}
 
@@ -211,7 +211,7 @@ Using backticks formats text to `look like code`.
 
 [This is a hyperlink](https://www.uni-mannheim.de)
 :::
-:::::
+::::
 
 - **Q**uarto **M**ark**d**own (**`.qmd`**) files have two main parts:
   - **YAML header**: Contains metadata and controls how Quarto processes the document. It appears at the top of the file and is enclosed by `---`.
@@ -221,7 +221,7 @@ Using backticks formats text to `look like code`.
 
 **Create a new Quarto document.**
 
-::::: columns
+:::: {.columns}
 ::: {.column width="50%"}
 
 Your document should contain:
@@ -245,7 +245,7 @@ Then add some content:
 - a Markdown table
 
 :::
-:::::
+::::
 
 ## Practice: Add a figure {#sec-quarto-figure}
 
@@ -495,6 +495,7 @@ So far, we have used Quarto mainly for writing.
 But a `.qmd` document can also contain executable code.
 
 ```{r}
+#| label: demo-arithmetic
 2 + 2
 ```
 
@@ -556,7 +557,7 @@ The three tools solve **different parts of the same workflow**.
 
 # Practice and homework {#sec-practice-homework}
 
-## If you have time today
+## If you have time today {#sec-week02-datacamp}
 
 Start the **Introduction to R** course on DataCamp.
 

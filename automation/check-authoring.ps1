@@ -159,6 +159,28 @@ function Get-ChunkRanges {
   return , $ranges
 }
 
+# EVERY fenced block, whatever its language, including ``` markdown and bare ```.
+# Get-ChunkRanges above is R-only on purpose, so the code rules can look inside an
+# R chunk. The MARKUP rules need the opposite: anything fenced is displayed code and
+# must not be read as document markup.
+function Get-FenceRanges {
+  param([string[]]$Lines)
+  $ranges = @()
+  $start = -1
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    if ($start -lt 0) {
+      if ($Lines[$i] -match '^\s*(`{3,}|~{3,})') { $start = $i }
+      continue
+    }
+    if ($Lines[$i] -match '^\s*(`{3,}|~{3,})\s*$') {
+      $ranges += , @($start, $i)
+      $start = -1
+    }
+  }
+  # Unary comma, for the same reason as in Get-ChunkRanges.
+  return , $ranges
+}
+
 # Display-math block ranges, so an opening $$ is never mistaken for a closing one.
 function Get-MathRanges {
   param([string[]]$Lines)
@@ -195,6 +217,7 @@ function Test-File {
   if ($lines.Count -eq 0) { return }
   $prose = Get-ProseLines -Lines $lines
   $chunks = Get-ChunkRanges -Lines $lines
+  $fences = Get-FenceRanges -Lines $lines
   $maths = Get-MathRanges -Lines $lines
 
   $name = Split-Path $File -Leaf
@@ -228,6 +251,8 @@ function Test-File {
     $n = $i + 1
     $inChunk = $false
     foreach ($r in $chunks) { if ($i -gt $r[0] -and $i -lt $r[1]) { $inChunk = $true; break } }
+    $inShownCode = $false
+    foreach ($r in $fences) { if ($i -gt $r[0] -and $i -lt $r[1]) { $inShownCode = $true; break } }
 
     if ($inChunk) {
       if ($l -match '%>%') { Add-Finding $File $n 'E010' 'use the native pipe |> instead of %>%' }
@@ -244,6 +269,12 @@ function Test-File {
       }
       continue
     }
+
+    # A deck that TEACHES markdown shows markdown. Everything inside a fenced block is
+    # displayed code, not document markup, so the markup rules below must not read it:
+    # week02 quotes `## A subsection` on a slide about headings, and that is the lesson,
+    # not an unlabelled heading. R chunks already returned above.
+    if ($inShownCode) { continue }
 
     # Markup rules run on the line with inline code spans blanked, so an example
     # of a violation quoted in backticks is documentation, not a violation.
