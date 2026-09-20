@@ -249,7 +249,7 @@
     "href": "slides/week01.html#sec-homework",
     "title": "Week 1: Introduction",
     "section": "Homework",
-    "text": "Homework\n\nEleven assignments, one in every session except this one and the last.\nEach opens when its session ends and is due seven days later.\nThe schedule links a template repo. Generate yours and name it exactly hw-NN-&lt;username&gt;.\n\n\n\n\n\n\n\n\n\nImportant\n\n\nA sample solution is published for every homework. Individual feedback is NOT provided by default. The only individual feedback available is the optional AI feedback you can opt into by adding an open-source license.md to your submission repo."
+    "text": "Homework\n\nEleven assignments, one in every session except this one and the last.\nEach opens when its session ends and is due seven days later.\nThe schedule links a template repo. Create yours in the qmir-2026-fall organisation, named exactly hw-NN-&lt;username&gt;.\n\n\n\n\n\n\n\n\n\nImportant\n\n\nA sample solution is published for every homework. Individual feedback is NOT provided by default. The only individual feedback available is the optional AI feedback you can opt into by adding an open-source license.md to your submission repo."
   },
   {
     "objectID": "slides/week01.html#sec-exam",
@@ -578,7 +578,7 @@
     "href": "installation.html#sec-submitting",
     "title": "Getting started: installation guide",
     "section": "Submitting your work",
-    "text": "Submitting your work\n\nOpen the homework link on the Schedule. It opens GitHub’s create from template page, where you make your own copy of the starter repo.\nCreate it in the course organisation, named as described below.\nDo your work in that repo, commit, and push. Rendering the PDF and pushing is your submission.\n\n\n\n\n\n\n\nImportant\n\n\n\nName your submission repo exactly hw-NN-&lt;username&gt;. The tracker finds submissions by that name, so a repo called anything else is invisible to it. Use your own GitHub username and a zero-padded week number, for example hw-03-jdoe.\n\n\n\n\n\n\n\n\nTip\n\n\n\nOpt in to individual feedback with one file. Add an open-source license.md to your submission repo and an AI reads your work alongside the sample solution, then writes feedback back into the repo. See the Syllabus."
+    "text": "Submitting your work\n\nOpen the homework link on the Schedule. It opens GitHub’s new-repository page, already filled in from the week’s template repo.\nCheck the Owner dropdown before you create anything. It must read qmir-2026-fall.\nReplace USERNAME in the repository name with your own GitHub username, and leave the rest of the name as it is.\nDo your work in that repo, commit, and push. Rendering the PDF and pushing is your submission.\n\n\n\n\n\n\n\nImportant\n\n\n\nTwo fields decide whether your work counts: Owner and name.\nThe Owner must be the course organisation qmir-2026-fall. The link pre-selects it, but the dropdown is editable and GitHub’s own default is your personal account. A repo created on your personal account is invisible to the tracker, no matter what is in it.\nThe name must be exactly hw-NN-&lt;username&gt;, with your own GitHub username and a zero-padded week number, for example hw-03-jdoe.\n\n\n\n\n\n\n\n\nNote\n\n\n\nThe organisation only shows up in the Owner dropdown once you have joined it. You get an email invitation at the start of the term. Accept it before the first homework is due, and reload the page if the dropdown still offers only your own account.\n\n\n\n\n\n\n\n\nTip\n\n\n\nOpt in to individual feedback with one file. Add an open-source license.md to your submission repo and an AI reads your work alongside the sample solution, then writes feedback back into the repo. See the Syllabus."
   },
   {
     "objectID": "installation.html#footnotes",
@@ -644,8 +644,8 @@
     "text": "Take-home exam\n\n\n\n\n\n\nNote\n\n\n\nThe exam is a complete 8-step Bayesian analysis. You see the target in week 1 and every week builds toward it.\nWindow: 9 December 2026, 15:30 to 23 December 2026, 23:59.\nDistribution: the exam repo on the course org, the same template flow as the weekly homework.\nSubmission: the state of your repository when the deadline passes is what gets graded.\nWhat to expect: a dataset, the background you need, and a research question. You run the analysis yourself, end to end, and submit a reproducible repository with a rendered PDF. Detailed grading criteria come with the exam."
   },
   {
-    "objectID": "slides/week02.html#week-2-goals",
-    "href": "slides/week02.html#week-2-goals",
+    "objectID": "slides/week02.html#sec-week02-goals",
+    "href": "slides/week02.html#sec-week02-goals",
     "title": "Week 2: Quarto, Git and GitHub",
     "section": "Week 2 Goals",
     "text": "Week 2 Goals\nBy the end of today, you will be able to:\n\nExplain how Quarto, Git, and GitHub work together.\nCreate a Quarto document and explain the basic logic of Git version control.\nConnect a local Git repository to a remote GitHub repository.\nWrite clear commit messages that help future readers understand what changed and why."
@@ -847,8 +847,8 @@
     "text": "The big picture\n             Quarto\n        write + render\n              =\n        reproducible\n          document\n              |\n              v\n             Git\n       track the changes\n              |\n              v\n           GitHub\n        share + sync\nThe three tools solve different parts of the same workflow."
   },
   {
-    "objectID": "slides/week02.html#if-you-have-time-today",
-    "href": "slides/week02.html#if-you-have-time-today",
+    "objectID": "slides/week02.html#sec-week02-datacamp",
+    "href": "slides/week02.html#sec-week02-datacamp",
     "title": "Week 2: Quarto, Git and GitHub",
     "section": "If you have time today",
     "text": "If you have time today\nStart the Introduction to R course on DataCamp.\nFocus on getting comfortable with the basic R environment and syntax."
