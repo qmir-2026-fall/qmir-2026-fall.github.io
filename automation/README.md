@@ -6,7 +6,7 @@ destructive happens without an explicit run). Run them from the repo root.
 | Script | Does |
 |---|---|
 | `publish-site.ps1` | Render `website/` and publish it to this repo's own `gh-pages` branch, which GitHub Pages serves at <https://qmir-2026-fall.github.io/>. Refuses to publish from a dirty tree. |
-| `release-homework.ps1 -Week NN` | Create/refresh the public distribution repo `hw-NN` from `homework/hw-NN/` and mark it a **template repo**. Prints the "use this template" link. |
+| `release-homework.ps1 -Week NN` | Create/refresh the public distribution repo `hw-NN` from `homework/hw-NN/` and mark it a **template repo**. Prints the student link, which pre-selects the org as owner (see `CLAUDE.md` section 6). |
 | `release-solution.ps1 -Week NN` | After the due date, render `solutions/hw-NN/solution.qmd` (private submodule) to `website/resources/hw-NN-solution.pdf`. The schedule links it automatically once `due` has passed. |
 | `tracking.ps1` | Enumerate `hw-NN-<username>` repos on the org via `gh`, derive submission status, write `tracking/hw_status.csv` (git-ignored). |
 | `ai-feedback/run-feedback.ps1 -Week NN` | For opted-in student repos (those containing `license.md`), invoke Claude to draft `FEEDBACK.qmd`, render to PDF, and push into the student repo. |

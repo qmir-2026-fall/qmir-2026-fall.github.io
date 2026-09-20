@@ -27,7 +27,7 @@ authoring or editing any `.qmd`.** Everything in it is enforced by
 | **This repo** | `qmir-2026-fall/qmir-2026-fall.github.io`, **public**. Website sources, slides, homework starters, automation, tracking. `main` = sources, `gh-pages` = rendered site. |
 | **Live site** | <https://qmir-2026-fall.github.io/>, GitHub Pages serving `gh-pages` at `/`. Published by `automation/publish-site.ps1` (`quarto publish gh-pages` from `website/`). |
 | **`solutions/`** | **Private submodule** (`qmir-2026-fall/solutions`): every `hw-NN/solution.qmd` **and the entire exam**. Checked out with `git submodule update --init`. |
-| **Distribution** | Public template repos `hw-NN` in the org. Students generate `hw-NN-<username>`. |
+| **Distribution** | Public template repos `hw-NN` in the org. Students create `hw-NN-<username>` **in the org**, never on their personal account (§6). |
 
 Because this repo is public, a leak is permanent. Two guards exist and both must stay:
 `automation/hooks/pre-commit` (blocks staging solutions, exam, or student data. Install once
@@ -90,8 +90,8 @@ with `automation/hooks/install-hooks.ps1`) and the payload assertion inside
 2. `automation/release-homework.ps1 -Week NN` creates or refreshes the **public distribution repo
    `hw-NN`** in the org (starter, data, and the mechanical check workflow) and marks it a
    template.
-3. The schedule links the "use this template" flow automatically once `meta.yml` exists.
-   Students work in `hw-NN-<username>`.
+3. The schedule links the create-from-template flow automatically once `meta.yml` exists.
+   Students work in `hw-NN-<username>` **on the org** (§6 has the canonical link shape).
 4. **After the due date:** `automation/release-solution.ps1 -Week NN` renders the sample solution
    to `website/resources/hw-NN-solution.pdf`, and the schedule starts linking it by itself.
 5. **Opt-in feedback:** `automation/ai-feedback/run-feedback.ps1 -Week NN` (§4).
@@ -218,8 +218,29 @@ export window has **closed**, and last term's roster survives only as the local
 **Decision (2026-09-04): plain GitHub, no classroom service.**
 
 - `release-homework.ps1` creates the public repo `hw-NN`, pushes the starter payload, and marks
-  it a **template repo**. The schedule links `.../hw-NN/generate`, students click "use this
-  template" and name their repo `hw-NN-<username>`.
+  it a **template repo**.
+
+- **The canonical student link.** Never `.../hw-NN/generate`. That page defaults the **Owner**
+  dropdown to the student's personal account, and in week 2 of this term every student duly
+  landed there, off the org and invisible to `tracking.ps1`, which only enumerates
+  `gh repo list $Org`. Use GitHub's query parameters on `/new` instead:
+
+  ```
+  https://github.com/new?template_owner=<org>&template_name=hw-NN&owner=<org>&name=hw-NN-USERNAME&visibility=private
+  ```
+
+  Built in exactly two places, which must stay in step: `hw_of()` in `website/schedule.qmd` and
+  `$templateUrl` in `automation/release-homework.ps1`. `owner` only pre-selects for someone who
+  may create repos in the org, so **every student must be an org member** and
+  `members_can_create_repositories` must stay `true`. The dropdown is still editable, so the
+  schedule and `website/installation.qmd` say the rule in prose as well.
+
+- **Org permissions are part of the design, not a detail.** Student repos live in the org, so the
+  org default must be `default_repository_permission: none`. At `read`, which is GitHub's
+  default, **every org member can read every org repo including the private `solutions`**, exam
+  and all. That was live from 2026-09-04 until it was caught on 2026-09-20 (traffic showed no
+  student fetch). `none` costs nothing: a member who creates a repo is its admin, so students keep
+  full access to their own submission.
 - Tracking is `tracking.ps1` plus `progress.qmd` (§5), the primary path rather than a fallback.
 - Autograding stays **mechanical only**. `homework/_template/.github/workflows/hw-check.yml`
   ships inside each distribution repo and only checks that the submission renders. Substantive

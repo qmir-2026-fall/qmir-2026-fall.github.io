@@ -29,7 +29,7 @@ due date, the sample solution.
 | | |
 |---|---|
 | {{< fa chalkboard >}} | **Slides.** The session's deck: concepts, theory, and the hands-on part. |
-| {{< fa laptop-code >}} | **Homework.** Opens GitHub's "use this template" page. |
+| {{< fa laptop-code >}} | **Homework.** Opens GitHub's new-repository page with the course organisation already selected. |
 | {{< fa file-circle-check >}} | **Sample solution.** Published after the due date, for every homework. |
 | {{< fa book >}} | **Resources.** Further readings and online learning resources for the week. |
 | [{{< fa chalkboard >}}]{.schedule-tbd} | Greyed out means not published yet. |
@@ -141,9 +141,23 @@ hw_of <- function(i) {
   if (is.null(m) || is.null(m$released) || as.Date(m$released) > Sys.Date()) {
     return(icon_off("laptop-code"))
   }
+  # The Owner dropdown on GitHub's template page defaults to the student's PERSONAL
+  # account, which is how the week 02 repos ended up off the org and invisible to
+  # tracking.ps1. These query parameters pre-select the org and ask for a private
+  # repo. Owner stays editable, so schedule.qmd also says the rule in prose below.
+  # Canonical URL shape: CLAUDE.md section 6. Kept in step with release-homework.ps1.
   icon_link(
     "laptop-code",
-    sprintf("https://github.com/%s/hw-%s/generate", org, pad(i))
+    sprintf(
+      paste0(
+        "https://github.com/new?template_owner=%s&template_name=hw-%s",
+        "&owner=%s&name=hw-%s-USERNAME&visibility=private"
+      ),
+      org,
+      pad(i),
+      org,
+      pad(i)
+    )
   )
 }
 sol_of <- function(i) {
@@ -240,12 +254,25 @@ for (k in seq_along(cfg$blocks)) {
 }
 ```
 
-The **{{< fa laptop-code >}}** links open GitHub's "create from template" page, which makes your
-own `hw-NN-<username>` repo.
+The **{{< fa laptop-code >}}** links open GitHub's new-repository page, already filled in from
+the week's template repo, and make your own `hw-NN-<username>` repo.
 
 ::: {.callout-important}
-**Name that repo exactly `hw-NN-<username>`.**
-The tracker looks for it by name, so anything else will not be counted as a submission.
+**Check two fields before you click "Create repository".**
+
+**Owner must stay `qmir-2026-fall`.**
+The link pre-selects it, but the dropdown is editable and GitHub's own default is your personal
+account.
+A repo created on your personal account is invisible to the tracker and will not be counted as a
+submission, no matter what is in it.
+
+**Repository name must be exactly `hw-NN-<username>`,** with your own GitHub username.
+The name is pre-filled as `hw-NN-USERNAME`, and `USERNAME` is a placeholder you replace.
+The tracker looks the repo up by that exact name.
+
+If the organisation does not appear in the Owner dropdown, you have not accepted your invitation
+to the course organisation yet.
+Check your email, accept it, and reload the page.
 :::
 
 ## Take-home exam {#sec-exam}

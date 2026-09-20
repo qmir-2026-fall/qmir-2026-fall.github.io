@@ -64,3 +64,10 @@ This repository is public and its history is permanent.
   **AI-tools warning** above the banner. That text predates this term's AI policy, which declares
   AI assistance in commit messages instead. Reconcile the two when you convert the week.
 - `hw-04` and `hw-06` still carry a `QMIR 2026` subtitle from the spring term.
+- **`hw-02/hw-02.qmd` is a filled-in worked answer, not a starter**, and its YAML title reads
+  `"Homework 03: Practicing the Reproducible Workflow"`. Week 02 went live as README-only on
+  purpose (students author the `.qmd` from scratch), so `homework/hw-02/` deliberately does not
+  carry this file. Fix or delete it before it can ever be promoted.
+- **`hw-02/README.md` Exercise 1 tells students to confirm `hw02.qmd` is present.** Nothing ships
+  it, and the convention is `hw-02.qmd` anyway. Not patched during the live assignment, because
+  every student had already created their repo from the template and the edit would reach nobody.

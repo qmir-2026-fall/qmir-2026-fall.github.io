@@ -442,16 +442,32 @@ and this is precisely why the guide asks you to install early.
 
 ## Submitting your work {#sec-submitting}
 
-- Open the homework link on the [Schedule](schedule.qmd). It opens GitHub's *create from
-  template* page, where you make your own copy of the starter repo.
-- Create it **in the course organisation**, named as described below.
+- Open the homework link on the [Schedule](schedule.qmd).
+  It opens GitHub's new-repository page, already filled in from the week's template repo.
+- Check the **Owner** dropdown before you create anything.
+  It must read `qmir-2026-fall`.
+- Replace `USERNAME` in the repository name with your own GitHub username, and leave the rest of
+  the name as it is.
 - Do your work in that repo, commit, and push.
   **Rendering the PDF and pushing is your submission.**
 
 ::: {.callout-important}
-**Name your submission repo exactly `hw-NN-<username>`.**
-The tracker finds submissions by that name, so a repo called anything else is invisible to it.
-Use your own GitHub username and a zero-padded week number, for example `hw-03-jdoe`.
+**Two fields decide whether your work counts: Owner and name.**
+
+The **Owner** must be the course organisation `qmir-2026-fall`.
+The link pre-selects it, but the dropdown is editable and GitHub's own default is your personal
+account.
+A repo created on your personal account is invisible to the tracker, no matter what is in it.
+
+The **name** must be exactly `hw-NN-<username>`, with your own GitHub username and a zero-padded
+week number, for example `hw-03-jdoe`.
+:::
+
+::: {.callout-note}
+**The organisation only shows up in the Owner dropdown once you have joined it.**
+You get an email invitation at the start of the term.
+Accept it before the first homework is due, and reload the page if the dropdown still offers only
+your own account.
 :::
 
 ::: {.callout-tip}

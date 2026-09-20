@@ -1,0 +1,24 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 02 and the +7 day offset from course.yml.
+#
+# PROVENANCE: the distribution repo qmir-2026-fall/hw-02 was created BY HAND on
+# 2026-09-16, not by release-homework.ps1. It holds README.md and nothing else,
+# because week 02 asks students to author the .qmd from scratch, so no starter ships.
+#
+# Do NOT run release-homework.ps1 -Week 02 while the assignment is open. It force-pushes
+# the distribution repo, and its payload is not what is live: it also adds
+# _template/.github/workflows/hw-check.yml, whose `quarto render hw-*.qmd` would fail on
+# a week whose whole point is that the student names the file, plus _template/.gitignore.
+#
+# KNOWN DRIFT: README.md here has had its em and en dashes replaced per STYLE.md E001,
+# which the live copy has not. Cosmetic, and it reaches students whenever this week is
+# next released for real.
+slug: hw-02
+week: "02"
+title: "Homework 02: Practising the reproducible workflow"
+released: 2026-09-16
+due: 2026-09-23
+# Which of the 8 workflow steps this homework exercises, seeded from the
+# matching session in course.yml. Revisit when you convert the week.
+steps: []
+data: []

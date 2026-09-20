@@ -63,7 +63,13 @@ $copied | ForEach-Object { Write-Host "  $_" }
 $leaked = $copied | Where-Object { $_ -like "*solution*" }
 if ($leaked) { throw "ABORT: solution file in payload: $($leaked -join ', ')" }
 
-$templateUrl = "https://github.com/$Org/$slug/generate"
+# The canonical student link (CLAUDE.md section 6). NOT .../$slug/generate: that page
+# defaults the Owner dropdown to the student's personal account, which puts the submission
+# repo off the org where tracking.ps1 cannot see it. These query parameters pre-select the
+# org and ask for a private repo. schedule.qmd's hw_of() builds the same URL, so if you
+# change the shape here, change it there too.
+$templateUrl = "https://github.com/new?template_owner=$Org&template_name=$slug" +
+               "&owner=$Org&name=$slug-USERNAME&visibility=private"
 if ($DryRun) {
   Write-Host "[DryRun] Would push the above to $Org/$slug and mark it a template." -ForegroundColor Yellow
   Write-Host "[DryRun] Accept link for schedule.qmd: $templateUrl" -ForegroundColor Yellow
@@ -86,7 +92,7 @@ try {
 
   if (-not $exists) {
     gh repo create "$Org/$slug" --public --source . --push --disable-wiki `
-      --description "QMIR $($slug.ToUpper()) - starter repo. Use this template to create your submission repo."
+      --description "QMIR $($slug.ToUpper()) - starter repo. Create your submission repo from this template, in the $Org organisation, named $slug-<username>."
   } else {
     Invoke-NativeQuiet { git remote remove origin }
     git remote add origin "https://github.com/$Org/$slug.git"

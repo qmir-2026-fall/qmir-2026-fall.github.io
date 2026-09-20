@@ -40,7 +40,9 @@ closing session-info and execution-time chunks. Run `automation/check-authoring.
 ## Convention
 
 - Distribution repo name: **`hw-NN`** (zero-padded, no day suffix). Student repos:
-  `hw-NN-<username>`, and the tracker finds submissions by that exact name.
+  `hw-NN-<username>`, **on the org**, and the tracker finds submissions by that exact name.
+  The schedule link pre-selects the org as the owner, because GitHub's template page otherwise
+  defaults to the student's personal account, where `tracking.ps1` cannot see the repo at all.
 - `_template/.github/workflows/hw-check.yml` and `_template/.gitignore` ship with every
   distribution repo. The release script adds them if a week's folder does not already carry them.
 - Keep starter files free of solution content. Anything named `solution.*` is excluded from the
