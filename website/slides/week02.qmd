@@ -207,14 +207,17 @@ Using backticks formats text to `look like code`.
 
 #### A subsection {.unlisted}
 
-*This sentence is written in italics.* **This one is bold.** Using backticks formats text to `look like code`.
+*This sentence is written in italics.*
+**This one is bold.**
+Using backticks formats text to `look like code`.
 
 [This is a hyperlink](https://www.uni-mannheim.de)
 :::
 ::::
 
 - **Q**uarto **M**ark**d**own (**`.qmd`**) files have two main parts:
-  - **YAML header**: Contains metadata and controls how Quarto processes the document. It appears at the top of the file and is enclosed by `---`.
+  - **YAML header**: Contains metadata and controls how Quarto processes the document.
+    It appears at the top of the file and is enclosed by `---`.
   - **Document body**: Contains the main content of the document.
 
 ## Practice: Build your first `.qmd` {#sec-quarto-practice}
@@ -385,7 +388,8 @@ Write the message for someone who may read the history later.
 
 
 ::: {.callout-note}
-This also provides a transparent way to communicate which changes were made with the help of AI. More on this in the coming weeks.
+This also provides a transparent way to communicate which changes were made with the help of AI.
+More on this in the coming weeks.
 :::
 
 

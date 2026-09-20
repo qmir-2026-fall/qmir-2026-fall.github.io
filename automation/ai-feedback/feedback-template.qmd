@@ -11,8 +11,10 @@ format:
      Keep it to about one page. No grade or score, this is formative feedback only.
      House style applies: no em dashes, no semicolons, one sentence per line (STYLE.md). -->
 
-*Automated feedback. You opted in via `license.md`. It compares your submission to the sample
-solution and is organized by the 8-step Bayesian workflow. It is not a grade or a regrade channel.*
+*Automated feedback.
+You opted in via `license.md`.
+It compares your submission to the sample solution and is organized by the 8-step Bayesian workflow.
+It is not a grade or a regrade channel.*
 
 **Overall:** <one or two encouraging, specific sentences>
 
@@ -26,4 +28,5 @@ solution and is organized by the 8-step Bayesian workflow. It is not a grade or 
 
 ---
 
-Keep going. Every homework is practice for the same 8-step workflow you will run on the exam.
+Keep going.
+Every homework is practice for the same 8-step workflow you will run on the exam.

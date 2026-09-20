@@ -56,14 +56,10 @@ Through weekly assignments and a cumulative take-home exam, you will develop the
 
 ### General information {#sec-general-information}
 
-The course meets on `r cfg$sessions$weekday`s, `r shown(cfg$sessions$time)`, in
-`r shown(cfg$sessions$room)`.
-Each session consists of an instructor-led part on concepts and theory, followed by hands-on
-exercises.
-Homework is assigned at the end of class and is due `r cfg$homework$due_offset_days` days later,
-before the next session.
-Readings provide background, theory and context, and are linked per week from the
-[Schedule](schedule.qmd).
+The course meets on `r cfg$sessions$weekday`s, `r shown(cfg$sessions$time)`, in `r shown(cfg$sessions$room)`.
+Each session consists of an instructor-led part on concepts and theory, followed by hands-on exercises.
+Homework is assigned at the end of class and is due `r cfg$homework$due_offset_days` days later, before the next session.
+Readings provide background, theory and context, and are linked per week from the [Schedule](schedule.qmd).
 
 ::: {.callout-tip}
 **If you have to miss a session, tell me beforehand.**
@@ -77,16 +73,14 @@ The first is an administrative condition on taking the module.
 The second is what you need on day one to follow what happens in the room.
 
 **Formally.**
-The module requires the Basismodul *Einführung in die Internationalen Beziehungen* and the
-Basismodule in *Methoden und Statistik*.
+The module requires the Basismodul *Einführung in die Internationalen Beziehungen* and the Basismodule in *Methoden und Statistik*.
 Whether you meet those is a question for the module catalogue and the Studienbüro, not for me.
 
 **In terms of what this course assumes: nothing.**
 No programming experience is assumed, and no statistics beyond descriptive measures.
 Everything the course needs, it teaches.
 
-A basic grasp of statistics does help, and if you would like to shore that up before or during
-the term, @sec-practice-materials points at two free ways to do it.
+A basic grasp of statistics does help, and if you would like to shore that up before or during the term, @sec-practice-materials points at two free ways to do it.
 
 ### Module, credits and workload {#sec-module}
 
@@ -102,92 +96,64 @@ wl <- workload(cfg)
 - **This course:** `r shown(cfg$course$course_type)`
 - **Credits:** `r cfg$course$ects` ECTS, which is `r hrs(wl$total)` hours of total workload
 - **Recommended semester:** `r shown(cfg$course$target_semester)`
-- **Contact time:** `r hrs(wl$contact)` hours, that is `r n_sessions` sessions of
-  `r cfg$sessions$minutes` minutes
-- **Self-study:** `r hrs(wl$self_study)` hours, about **`r hrs(wl$per_week)` hours a week** across
-  the `r n_sessions` teaching weeks
+- **Contact time:** `r hrs(wl$contact)` hours, that is `r n_sessions` sessions of `r cfg$sessions$minutes` minutes
+- **Self-study:** `r hrs(wl$self_study)` hours, about **`r hrs(wl$per_week)` hours a week** across the `r n_sessions` teaching weeks
 
 That self-study figure is not decoration.
-It is where the weekly homework, the readings and your exam preparation actually live, and the
-course is paced on the assumption that you spend roughly that much time on it.
+It is where the weekly homework, the readings and your exam preparation actually live, and the course is paced on the assumption that you spend roughly that much time on it.
 
-For comparison, the module catalogue budgets a nominal
-`r hrs(cfg$course$nominal_contact_hours)` hours of contact time and
-`r hrs(cfg$course$nominal_self_study_hours)` hours of self-study for a `r cfg$course$ects` ECTS
-course.
-The difference is simply that this course meets for `r cfg$sessions$minutes` minutes over
-`r n_sessions` weeks rather than for the nominal figure, so a little more of the same total lands
-outside the room.
+For comparison, the module catalogue budgets a nominal `r hrs(cfg$course$nominal_contact_hours)` hours of contact time and `r hrs(cfg$course$nominal_self_study_hours)` hours of self-study for a `r cfg$course$ects` ECTS course.
+The difference is simply that this course meets for `r cfg$sessions$minutes` minutes over `r n_sessions` weeks rather than for the nominal figure, so a little more of the same total lands outside the room.
 
-The authoritative version of all of these is the
-[module catalogue](https://www.sowi.uni-mannheim.de/studium/im-studium/pruefungen-und-ordnungen/)
-and the
-[examination regulations](https://www.sowi.uni-mannheim.de/studium/im-studium/pruefungen-und-ordnungen/)
-for the B.A. Political Science, not this page.
+The authoritative version of all of these is the [module catalogue](https://www.sowi.uni-mannheim.de/studium/im-studium/pruefungen-und-ordnungen/) and the [examination regulations](https://www.sowi.uni-mannheim.de/studium/im-studium/pruefungen-und-ordnungen/) for the B.A. Political Science, not this page.
 Where the two disagree, the regulations win.
 
 ### Attendance policy {#sec-attendance}
 
-Active participation (*Mitarbeit*) is a required component of the coursework
-(*Studienleistung*), on the basis of section 13b of the examination regulations.
+Active participation (*Mitarbeit*) is a required component of the coursework (*Studienleistung*), on the basis of section 13b of the examination regulations.
 This course consists of `r n_sessions` sessions.
-Successful participation is presumed if you attend at least
-**`r pct(att_frac)` of sessions, that is at least `r att_min` out of `r n_sessions`**.
+Successful participation is presumed if you attend at least **`r pct(att_frac)` of sessions, that is at least `r att_min` out of `r n_sessions`**.
 
-If attendance falls below `r pct(att_frac)` but stays at or above `r pct(att_lo_frac)`
-(**`r att_lo` to `r att_min - 1` out of `r n_sessions`**), successful participation is not
-presumed.
-In that case the possibility of fulfilling the participation requirement is assessed case by
-case.
+If attendance falls below `r pct(att_frac)` but stays at or above `r pct(att_lo_frac)` (**`r att_lo` to `r att_min - 1` out of `r n_sessions`**), successful participation is not presumed.
+In that case the possibility of fulfilling the participation requirement is assessed case by case.
 
-If attendance falls below `r pct(att_lo_frac)` (**fewer than `r att_lo` out of
-`r n_sessions`**), successful participation is normally considered impossible under the
-examination regulations.
+If attendance falls below `r pct(att_lo_frac)` (**fewer than `r att_lo` out of `r n_sessions`**), successful participation is normally considered impossible under the examination regulations.
 
-If sessions are cancelled during the semester, the absolute number of required sessions is
-adjusted accordingly, while the percentage thresholds stay unchanged.
+If sessions are cancelled during the semester, the absolute number of required sessions is adjusted accordingly, while the percentage thresholds stay unchanged.
 
 ### Grading policy {#sec-grading}
 
-Under the examination regulations, assessment consists of **coursework (*Studienleistung*,
-pass or fail)** and a **final examination (*Prüfungsleistung*, graded)**.
+Under the examination regulations, assessment consists of **coursework (*Studienleistung*, pass or fail)** and a **final examination (*Prüfungsleistung*, graded)**.
 
-Successful completion of all coursework requirements is a prerequisite for admission to the final
-take-home exam.
+Successful completion of all coursework requirements is a prerequisite for admission to the final take-home exam.
 
 #### Coursework (*Studienleistung*, pass or fail)
 
 Coursework has two components, and both must be passed.
-This is the model the module catalogue provides for rather than a local invention: it names
-*Mitarbeit* and *Hausaufgaben* among the Studienleistungen for this course.
+This is the model the module catalogue provides for rather than a local invention: it names *Mitarbeit* and *Hausaufgaben* among the Studienleistungen for this course.
 
-**1. Weekly homework assignments.**
-There are **`r n_hw` homework assignments** over the term, one in every session except the first
-and the last.
-The first session is orientation and the last is synthesis and the exam briefing, so neither sets
-work, which leaves weeks `r cfg$homework$first_week` to `r cfg$homework$last_week`.
+**1.
+Weekly homework assignments.**
+There are **`r n_hw` homework assignments** over the term, one in every session except the first and the last.
+The first session is orientation and the last is synthesis and the exam briefing, so neither sets work, which leaves weeks `r cfg$homework$first_week` to `r cfg$homework$last_week`.
 They are distributed through GitHub and assessed pass or fail.
-To fulfil this requirement you must pass at least **`r pct(hw_frac)` of them, that is `r hw_min`
-out of `r n_hw`**.
+To fulfil this requirement you must pass at least **`r pct(hw_frac)` of them, that is `r hw_min` out of `r n_hw`**.
 Homework must show a serious and complete attempt at the tasks.
 A submission that is empty or clearly insufficient does not count as passed.
 
-**2. Active participation (*Mitarbeit*).**
-Active participation, as described in @sec-attendance, is a required coursework component and is
-assessed pass or fail.
+**2.
+Active participation (*Mitarbeit*).**
+Active participation, as described in @sec-attendance, is a required coursework component and is assessed pass or fail.
 
 ### The take-home exam {#sec-exam}
 
-The final examination (*Prüfungsleistung*) is a **take-home exam**, and it determines the whole
-course grade.
-In the module catalogue it goes by its formal name, a written term paper
-(*schriftliche Hausarbeit*).
+The final examination (*Prüfungsleistung*) is a **take-home exam**, and it determines the whole course grade.
+In the module catalogue it goes by its formal name, a written term paper (*schriftliche Hausarbeit*).
 Those are two names for the same thing.
 
 **Window:** `r exam_window(cfg)`.
 
-It is distributed through the `exam` repository on the course GitHub organisation, the same
-template flow as the weekly homework.
+It is distributed through the `exam` repository on the course GitHub organisation, the same template flow as the weekly homework.
 The last version pushed to your exam repository before the deadline is what gets graded.
 Late submissions are not accepted.
 
@@ -196,37 +162,30 @@ A dataset, the theoretical background you need, and a small number of stated hyp
 You do not have to find a topic, a question or data of your own.
 
 **What you produce.**
-A short empirical research report that tests those hypotheses using the eight-step Bayesian
-workflow in @sec-backbone.
-The rendered PDF follows the structure of an empirical political science paper: a data and
-methods (or research design) section, a results (or analysis) section, a discussion including
-limitations, and a brief conclusion.
-No introduction and no literature review are required, because the background and hypotheses are
-given to you.
+A short empirical research report that tests those hypotheses using the eight-step Bayesian workflow in @sec-backbone.
+The rendered PDF follows the structure of an empirical political science paper: a data and methods (or research design) section, a results (or analysis) section, a discussion including limitations, and a brief conclusion.
+No introduction and no literature review are required, because the background and hypotheses are given to you.
 
-- The report may not exceed **`r format(cfg$exam$max_words, big.mark = ",")` words**. That limit
-  is set by the module catalogue, not by me. The reference list, the appendices and the statutory
-  declaration do not count towards it, which is my clarification rather than the catalogue's.
+- The report may not exceed **`r format(cfg$exam$max_words, big.mark = ",")` words**.
+  That limit is set by the module catalogue, not by me.
+  The reference list, the appendices and the statutory declaration do not count towards it, which is my clarification rather than the catalogue's.
 - Use figures and tables wherever they genuinely support the argument.
 - Do **not** print raw code, warnings, messages or unformatted R output in the PDF.
-- **Appendices are welcome** for diagnostics, robustness checks and supporting material that is
-  not essential to the main text.
+- **Appendices are welcome** for diagnostics, robustness checks and supporting material that is not essential to the main text.
 
 **What you submit.**
 
-- `firstname_lastname_exam.qmd` and the rendered `firstname_lastname_exam.pdf`, at the root of
-  your exam repository.
-- The **whole repository**, which is part of the submission. Any further notebooks or scripts are
-  inspected and count towards the grade. Treat it as a research project.
-- A **signed statutory declaration** on the final page of the PDF, following the
-  [university's template](https://www.sowi.uni-mannheim.de/media/Fakultaeten/sowi/Dokumente/Studiengangsmanagement/Eigenstaendigkeitserklaerung_Statutory_Declaration.pdf).
-  An electronic signature is fine. A PDF without one cannot be graded.
+- `firstname_lastname_exam.qmd` and the rendered `firstname_lastname_exam.pdf`, at the root of your exam repository.
+- The **whole repository**, which is part of the submission.
+  Any further notebooks or scripts are inspected and count towards the grade.
+  Treat it as a research project.
+- A **signed statutory declaration** on the final page of the PDF, following the [university's template](https://www.sowi.uni-mannheim.de/media/Fakultaeten/sowi/Dokumente/Studiengangsmanagement/Eigenstaendigkeitserklaerung_Statutory_Declaration.pdf).
+  An electronic signature is fine.
+  A PDF without one cannot be graded.
 
 **How it is graded.**
-On the university scale, 1.0 (very good) to 5.0 (insufficient), across the four dimensions in
-@tbl-exam-grading.
-The full criterion-by-criterion scheme, which is what you should actually work from, is
-distributed together with the exam.
+On the university scale, 1.0 (very good) to 5.0 (insufficient), across the four dimensions in @tbl-exam-grading.
+The full criterion-by-criterion scheme, which is what you should actually work from, is distributed together with the exam.
 
 | Dimension | What it asks | Points |
 |:---|:---|---:|
@@ -240,8 +199,7 @@ distributed together with the exam.
 
 ::: {.callout-important}
 **A submission that does not render from a clean clone cannot reach top marks.**
-The single largest criterion in the code and repository dimension is that the PDF rebuilds from
-your repository on another machine.
+The single largest criterion in the code and repository dimension is that the PDF rebuilds from your repository on another machine.
 Test that before the deadline, not after.
 :::
 
@@ -250,133 +208,102 @@ Session 12, the multilevel primer, is the one exception: it is not examined.
 
 ### Registration and withdrawal {#sec-registration}
 
-Registration for the *Prüfungsleistung*, deregistration, and the applicable deadlines are handled
-by the **Studienbüro** under the examination regulations, not by me.
+Registration for the *Prüfungsleistung*, deregistration, and the applicable deadlines are handled by the **Studienbüro** under the examination regulations, not by me.
 Check the dates there and keep to them, because responsibility for meeting them sits with you.
 
-If a good reason, illness in particular, prevents you from completing the exam within the window,
-section 30 of the examination regulations applies.
+If a good reason, illness in particular, prevents you from completing the exam within the window, section 30 of the examination regulations applies.
 You must submit a **written application to the Studienbüro without delay**, with evidence.
 The examination board decides, and the burden of proof is on the applicant.
 Tell me as well, but telling me is not a substitute for the formal application.
 
-Section 5 additionally allows the deadlines for coursework and examinations to be extended on a
-timely written application, for instance for students with children or with dependants requiring
-care.
+Section 5 additionally allows the deadlines for coursework and examinations to be extended on a timely written application, for instance for students with children or with dependants requiring care.
 
 ### Disability and chronic illness {#sec-accommodations}
 
-If a disability or a chronic illness makes it harder for you to take an assessment in the form it
-is set, you are entitled to compensation that restores equal opportunity, under section 6 of the
-examination regulations.
-Applications are made in writing and in good time, and applications on grounds of disability or
-chronic illness go to the university's
-[representative for students with disabilities or chronic illness](https://www.uni-mannheim.de/en/academics/during-your-studies/studying-with-a-disability-or-chronic-illness/).
+If a disability or a chronic illness makes it harder for you to take an assessment in the form it is set, you are entitled to compensation that restores equal opportunity, under section 6 of the examination regulations.
+Applications are made in writing and in good time, and applications on grounds of disability or chronic illness go to the university's [representative for students with disabilities or chronic illness](https://www.uni-mannheim.de/en/academics/during-your-studies/studying-with-a-disability-or-chronic-illness/).
 
 ::: {.callout-tip}
 **Talk to me early, and tell me only what you want to.**
-The formal route runs through the representative and the examination board, and I do not need to
-know the nature of your condition.
-What helps me is knowing early that an adjustment is coming, so it can be built in rather than
-improvised.
+The formal route runs through the representative and the examination board, and I do not need to know the nature of your condition.
+What helps me is knowing early that an adjustment is coming, so it can be built in rather than improvised.
 :::
 
 ### Language and software policy {#sec-language-software}
 
-The course is taught entirely in English and is built around R, Quarto and Git or GitHub for data
-analysis, reproducible research and project management.
+The course is taught entirely in English and is built around R, Quarto and Git or GitHub for data analysis, reproducible research and project management.
 Work with these tools, because the exercises and workflows are designed around them.
 
-For the take-home exam you may use another script-based language such as Python or Stata, but this
-is not recommended and no guidance is provided for non-R workflows.
-The emphasis is on understanding the tools, practising them, and learning to find solutions
-independently.
+For the take-home exam you may use another script-based language such as Python or Stata, but this is not recommended and no guidance is provided for non-R workflows.
+The emphasis is on understanding the tools, practising them, and learning to find solutions independently.
 
 ### Hardware {#sec-hardware}
 
 You need a computer available during class.
-A standard laptop is sufficient, and there are no particular requirements for RAM, an external
-GPU, or other advanced components.
+A standard laptop is sufficient, and there are no particular requirements for RAM, an external GPU, or other advanced components.
 
-If you do not own a suitable device, the University of Mannheim IT department offers a
-[laptop rental service](https://www.uni-mannheim.de/en/it/students/borrowing-laptops/).
+If you do not own a suitable device, the University of Mannheim IT department offers a [laptop rental service](https://www.uni-mannheim.de/en/it/students/borrowing-laptops/).
 Please make use of it if you need it.
 
 ### Software {#sec-software}
 
-Install all required software before the first session, following the separate
-[installation guide](installation.qmd).
-Doing it early means we can sort out any problems on day one and start the programming work
-properly in the following session.
+Install all required software before the first session, following the separate [installation guide](installation.qmd).
+Doing it early means we can sort out any problems on day one and start the programming work properly in the following session.
 
 ### Additional learning resources {#sec-practice-materials}
 
 Two external platforms are worth your time.
-Both are voluntary and neither is part of the requirements to pass, but each fills a gap this
-course cannot fill on its own in one session a week.
+Both are voluntary and neither is part of the requirements to pass, but each fills a gap this course cannot fill on its own in one session a week.
 
 **[DataCamp](https://www.datacamp.com/groups/shared_links/bfecde68ebfcd9af2db396c17af1267ab74165318bfda32072373d1d1ded1a47).**
 Use the link to join the course group, which gives you **six months of premium access**.
-DataCamp offers in-depth, self-paced practical training in R, coding, data analytics and AI
-topics, so it is the right place to drill something until it is automatic, at whatever speed
-suits you.
+DataCamp offers in-depth, self-paced practical training in R, coding, data analytics and AI topics, so it is the right place to drill something until it is automatic, at whatever speed suits you.
 The introduction to R track is a good starting point.
 
 ::: {.callout-warning}
 **Register with your `uni-mannheim.de` address.**
 Premium access is tied to the university account.
-If you sign up with a private address the group link will not grant it, and the fix is to start
-again with the right address.
+If you sign up with a private address the group link will not grant it, and the fix is to start again with the right address.
 :::
 
 **[Duolingo Math](https://www.duolingo.com/math).**
-Freemium, and a good starting point if you would like to relaunch yourself into mathematics
-fundamentals or introductory statistics.
+Freemium, and a good starting point if you would like to relaunch yourself into mathematics fundamentals or introductory statistics.
 No prior statistics is assumed in this course, so this is not a prerequisite.
 It is simply there if the maths behind a session feels shakier than you would like.
 
 ### Mental health support {#sec-mental-health}
 
-Life and study at the University of Mannheim can sometimes feel complicated, challenging, or
-overwhelming.
+Life and study at the University of Mannheim can sometimes feel complicated, challenging, or overwhelming.
 That is completely normal.
 You are not expected to understand or memorise course content on the first attempt.
 
-If you ever feel mentally or emotionally strained, you may find useful advice on the university's
-[good mental health and studying page](https://www.uni-mannheim.de/en/academics/studying-the-healthy-way/good-mental-health/).
-The [help in times of crisis page](https://www.uni-mannheim.de/en/academics/studying-the-healthy-way/help-in-times-of-crisis/)
-gives an overview of the counselling and support services available at the university.
+If you ever feel mentally or emotionally strained, you may find useful advice on the university's [good mental health and studying page](https://www.uni-mannheim.de/en/academics/studying-the-healthy-way/good-mental-health/).
+The [help in times of crisis page](https://www.uni-mannheim.de/en/academics/studying-the-healthy-way/help-in-times-of-crisis/) gives an overview of the counselling and support services available at the university.
 
 ## Homework and feedback policy {#sec-feedback-policy}
 
-> **A sample solution is published for every homework. Individual feedback is NOT provided by
-> default.** The only individual feedback available is the **optional AI feedback** you can opt
-> into by adding an open-source `license.md` to your submission repo.
+> **A sample solution is published for every homework.
+> Individual feedback is NOT provided by default.**
+> The only individual feedback available is the **optional AI feedback** you can opt into by adding an open-source `license.md` to your submission repo.
 
 **What that means in practice.**
-A sample solution is published for every homework after its due date, and it is the standard
-against which you should read your own work.
+A sample solution is published for every homework after its due date, and it is the standard against which you should read your own work.
 Individual comments on individual submissions are not part of this course by default.
 
 **Opting in to AI feedback.**
-If you add an open-source `license.md` to your submission repository, you opt in to automated,
-individualised feedback.
-An AI reads your submission alongside the sample solution and writes a `FEEDBACK.qmd` and
-`FEEDBACK.pdf` back into your repository, organised by the eight workflow steps.
+If you add an open-source `license.md` to your submission repository, you opt in to automated, individualised feedback.
+An AI reads your submission alongside the sample solution and writes a `FEEDBACK.qmd` and `FEEDBACK.pdf` back into your repository, organised by the eight workflow steps.
 No `license.md` means no processing at all.
-This is entirely optional, and opting out costs you nothing beyond the individual feedback
-itself.
+This is entirely optional, and opting out costs you nothing beyond the individual feedback itself.
 
 ### Late work policy {#sec-late-work}
 
 Late submissions are not accepted.
-If you anticipate any difficulty in meeting a deadline, discuss it with me **before** the
-deadline, not after.
+If you anticipate any difficulty in meeting a deadline, discuss it with me **before** the deadline, not after.
 
 ## AI policy {#sec-ai-policy}
 
-All submissions are checked for plagiarism, and violations of the code of conduct may result in
-failing the course or in expulsion.
+All submissions are checked for plagiarism, and violations of the code of conduct may result in failing the course or in expulsion.
 
 ### AI is encouraged {#sec-ai-encouraged}
 
@@ -392,13 +319,9 @@ You take final responsibility for everything you submit.
 :::
 
 Two honest caveats.
-First, AI is more reliable on formal logic, programming and well-covered general topics than on
-narrow substantive questions in international relations, so treat narrow factual claims
-sceptically and check the source.
-Second, leaning on it *before* you understand the material does hinder learning:
-[research suggests AI helps most those who already understand the topic](https://arxiv.org/abs/2306.03102).
-For a fuller explanation of why AI can undermine learning, see
-[this piece by Andrew Heiss](https://governancef25.classes.andrewheiss.com/syllabus.html#ai-large-language-models-and-bullshit).
+First, AI is more reliable on formal logic, programming and well-covered general topics than on narrow substantive questions in international relations, so treat narrow factual claims sceptically and check the source.
+Second, leaning on it *before* you understand the material does hinder learning: [research suggests AI helps most those who already understand the topic](https://arxiv.org/abs/2306.03102).
+For a fuller explanation of why AI can undermine learning, see [this piece by Andrew Heiss](https://governancef25.classes.andrewheiss.com/syllabus.html#ai-large-language-models-and-bullshit).
 Do the thinking first, then let the tool help.
 
 ### Say so in the commit message {#sec-ai-rule}
@@ -408,12 +331,10 @@ This course asks for one thing in return, and it is a habit rather than a paperw
 ::: {.callout-important}
 **When a commit contains work an AI helped with, say so in the commit message.**
 That is the whole rule.
-You do not have to separate your work from AI-assisted work into different commits, and you do
-not have to submit transcripts.
+You do not have to separate your work from AI-assisted work into different commits, and you do not have to submit transcripts.
 :::
 
-This is the convention open-source software development already uses, so you are learning a real
-practice rather than a classroom one.
+This is the convention open-source software development already uses, so you are learning a real practice rather than a classroom one.
 The canonical form is a trailer line at the end of the message:
 
 ```
@@ -430,73 +351,57 @@ Rewrite the prior justification
 Wording tidied up with AI. The choice of prior and the argument for it are mine.
 ```
 
-Short messages can simply name it: `Fix the join, AI helped debug it` or
-`Reformat code with AI`.
+Short messages can simply name it: `Fix the join, AI helped debug it` or `Reformat code with AI`.
 Say what the assistance did where that is not obvious, and be proportionate.
 A whole section drafted with AI is worth a sentence.
 A spell check is worth four words.
 
 ### Why this instead of a chat transcript {#sec-ai-why}
 
-A blanket declaration that "generative AI was used to improve the language of this manuscript"
-cannot be checked by anyone.
+A blanket declaration that "generative AI was used to improve the language of this manuscript" cannot be checked by anyone.
 It is a claim about a process that left no trace.
-Submitting chat transcripts does not work either, because a transcript cannot be matched to the
-passages it actually shaped.
+Submitting chat transcripts does not work either, because a transcript cannot be matched to the passages it actually shaped.
 
 Version control solves this, and you are learning it anyway.
 Your repository already records every change, who made it, when, and exactly what changed.
-Marking where AI entered turns that ordinary record into the disclosure, produced at the moment
-the work happens rather than reconstructed weeks later.
-It is honest about how mixed this work really is, because a sentence you drafted and a model
-tightened belongs to neither pile, and it rests on the same voluntary integrity that scientific
-standards have always rested on.
+Marking where AI entered turns that ordinary record into the disclosure, produced at the moment the work happens rather than reconstructed weeks later.
+It is honest about how mixed this work really is, because a sentence you drafted and a model tightened belongs to neither pile, and it rests on the same voluntary integrity that scientific standards have always rested on.
 
 **Where the line is.**
-Asking AI to explain a concept, proofread your draft, clean up code you wrote, or help debug an
-error message: all fine, all encouraged, all easy to attribute.
-Generating an analysis from scratch and submitting it as your own, or systematically hiding AI
-involvement so the record shows none: not fine.
+Asking AI to explain a concept, proofread your draft, clean up code you wrote, or help debug an error message: all fine, all encouraged, all easy to attribute.
+Generating an analysis from scratch and submitting it as your own, or systematically hiding AI involvement so the record shows none: not fine.
 The common thread is the same in both directions.
 The history must not misrepresent how the work came about.
 
 ::: {.callout-important}
 **You do not need to know any of this yet.**
-Git, commits and commit messages are taught in session 2, and you will practise this convention
-in every homework from then on.
+Git, commits and commit messages are taught in session 2, and you will practise this convention in every homework from then on.
 By the time the exam arrives it is a habit rather than a rule to memorise.
 Nobody is expected to arrive already knowing how to do it.
 :::
 
 ::: {.callout-note}
 **Two different things, both involving AI.**
-The policy above is about AI *you* use while doing your own work, which is disclosed in your
-commit messages.
-The opt-in feedback described in @sec-feedback-policy is different: it is run by me, on an
-explicit `license.md` opt-in, and it comments on work you have already submitted.
+The policy above is about AI *you* use while doing your own work, which is disclosed in your commit messages.
+The opt-in feedback described in @sec-feedback-policy is different: it is run by me, on an explicit `license.md` opt-in, and it comments on work you have already submitted.
 Using the feedback pipeline is never something you need to declare.
 :::
 
 ## The backbone: from research question to empirical answer {#sec-backbone}
 
-Everything in this course builds toward one skill: getting from a question about the world to an
-answer you can defend, with its uncertainty attached.
+Everything in this course builds toward one skill: getting from a question about the world to an answer you can defend, with its uncertainty attached.
 That route has eight steps, shown in @tbl-workflow, and they are the same eight steps every time.
-The **take-home exam is exactly this route**, run end to end on a dataset you meet at the end of
-the term.
+The **take-home exam is exactly this route**, run end to end on a dataset you meet at the end of the term.
 
 {{< include slides/_workflow-8step.qmd >}}
 
 **Several of the words in that table probably mean nothing to you yet.**
 That is expected, and it is the honest starting point.
-Estimand, prior predictive check, R-hat: learning what these are, why each step exists, and what
-goes wrong when you skip one, is what the term is for.
-You see the whole route in session 1, before you can walk any of it, so that every later session
-has somewhere to attach itself.
+Estimand, prior predictive check, R-hat: learning what these are, why each step exists, and what goes wrong when you skip one, is what the term is for.
+You see the whole route in session 1, before you can walk any of it, so that every later session has somewhere to attach itself.
 By session 13 you will have run all eight steps yourself, more than once.
 
-The [Glossary](glossary.qmd) holds the short version of every term, and each session's slides
-hold the long version.
+The [Glossary](glossary.qmd) holds the short version of every term, and each session's slides hold the long version.
 
 ## Session plan {#sec-session-plan}
 

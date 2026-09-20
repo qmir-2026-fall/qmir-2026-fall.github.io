@@ -22,8 +22,7 @@ cfg <- read_course()
 ```
 
 Your roadmap for the term.
-One session per week, and each row links the slides, the homework starter repo, and, after the
-due date, the sample solution.
+One session per week, and each row links the slides, the homework starter repo, and, after the due date, the sample solution.
 
 ::: {.schedule-legend}
 | | |
@@ -41,33 +40,26 @@ due date, the sample solution.
 Everything below decides whether your work is found and counted.
 
 **There are `r cfg$homework$count` homework assignments, one in every session except the first and the last.**
-The first session is orientation and the last is synthesis and the exam briefing, so neither sets
-work.
-Every session from week `r cfg$homework$first_week` to week `r cfg$homework$last_week` has exactly
-one.
+The first session is orientation and the last is synthesis and the exam briefing, so neither sets work.
+Every session from week `r cfg$homework$first_week` to week `r cfg$homework$last_week` has exactly one.
 Week 1 and week `r cfg$sessions$count` are marked [none]{.schedule-none} in the tables below.
 
 **Every homework opens the moment its session ends, and is due `r cfg$homework$due_offset_days` days later.**
 So a homework assigned in one session is due before the next one starts.
-The {{< fa laptop-code >}} link appears as soon as the homework is released, and the
-{{< fa file-circle-check >}} sample solution appears once the deadline has passed.
+The {{< fa laptop-code >}} link appears as soon as the homework is released, and the {{< fa file-circle-check >}} sample solution appears once the deadline has passed.
 
-**The {{< fa laptop-code >}} link opens GitHub's new-repository page, already filled in from the
-week's template repo.**
+**The {{< fa laptop-code >}} link opens GitHub's new-repository page, already filled in from the week's template repo.**
 Check two fields before you click "Create repository".
 
 **Owner must stay `qmir-2026-fall`.**
-The link pre-selects it, but the dropdown is editable and GitHub's own default is your personal
-account.
-A repo created on your personal account is invisible to the tracker and will not be counted as a
-submission, no matter what is in it.
+The link pre-selects it, but the dropdown is editable and GitHub's own default is your personal account.
+A repo created on your personal account is invisible to the tracker and will not be counted as a submission, no matter what is in it.
 
 **Repository name must be exactly `hw-NN-<username>`,** with your own GitHub username.
 The name is pre-filled as `hw-NN-USERNAME`, and `USERNAME` is a placeholder you replace.
 The tracker looks the repo up by that exact name.
 
-If the organisation does not appear in the Owner dropdown, you have not accepted your invitation
-to the course organisation yet.
+If the organisation does not appear in the Owner dropdown, you have not accepted your invitation to the course organisation yet.
 Check your email, accept it, and reload the page.
 :::
 
@@ -281,13 +273,11 @@ You see the target in week 1 and every week builds toward it.
 
 **Window:** `r exam_window(cfg)`.
 
-**Distribution:** the `exam` repo on the course org, the same template flow as the weekly
-homework.
+**Distribution:** the `exam` repo on the course org, the same template flow as the weekly homework.
 
 **Submission:** the state of your repository when the deadline passes is what gets graded.
 
 **What to expect:** a dataset, the background you need, and a research question.
-You run the analysis yourself, end to end, and submit a reproducible repository with a rendered
-PDF.
+You run the analysis yourself, end to end, and submit a reproducible repository with a rendered PDF.
 Detailed grading criteria come with the exam.
 :::

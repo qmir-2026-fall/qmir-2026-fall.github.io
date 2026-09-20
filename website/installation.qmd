@@ -9,53 +9,40 @@ Work through it before the first session.
 
 ## Why so many tools? {#sec-why-so-many-tools}
 
-This course introduces a range of software tools which, taken together, form a powerful and
-contemporary toolbox for transparent, reproducible and scalable empirical research.
-Rather than relying on a single piece of software, you will learn how different tools interact and
-complement one another, much as they do in real research workflows.
+This course introduces a range of software tools which, taken together, form a powerful and contemporary toolbox for transparent, reproducible and scalable empirical research.
+Rather than relying on a single piece of software, you will learn how different tools interact and complement one another, much as they do in real research workflows.
 
 ## Feeling overwhelmed is normal {#sec-feeling-overwhelmed}
 
 Meeting many tools at once can feel complex and, at times, overwhelming.
 That is entirely normal and an expected part of the learning process.
-Research environments evolve quickly, with new libraries, platforms and technologies (including
-AI-based ones) constantly emerging.
-So one of the central goals here is not just to teach specific tools, but to help you learn how to
-learn programming and computational methods, which is an essential and transferable skill for any
-data-driven career.
+Research environments evolve quickly, with new libraries, platforms and technologies (including AI-based ones) constantly emerging.
+So one of the central goals here is not just to teach specific tools, but to help you learn how to learn programming and computational methods, which is an essential and transferable skill for any data-driven career.
 
 ## Tools as part of a research workflow {#sec-tools-as-workflow}
 
 These tools are not only for performing calculations or producing results.
-They also help you document decisions, record analytical steps, collaborate with others, and build
-workflows that can be extended, reproduced and scaled.
-In that sense the course aims to familiarise you with research practices that resemble how
-high-quality empirical work is actually done.
+They also help you document decisions, record analytical steps, collaborate with others, and build workflows that can be extended, reproduced and scaled.
+In that sense the course aims to familiarise you with research practices that resemble how high-quality empirical work is actually done.
 
 ## Learning concepts, not just commands {#sec-concepts-not-commands}
 
-Given the scope of the course, we will only scratch the surface, the tip of the iceberg, of many
-of these tools.
-I will emphasise conceptual understanding instead: how the tools work in principle, why they are
-useful, and when they help.
-That foundation is what lets you work independently and confidently with these tools, and with
-future ones, beyond the course.
+Given the scope of the course, we will only scratch the surface, the tip of the iceberg, of many of these tools.
+I will emphasise conceptual understanding instead: how the tools work in principle, why they are useful, and when they help.
+That foundation is what lets you work independently and confidently with these tools, and with future ones, beyond the course.
 
 ## Pragmatism over dogmatism {#sec-pragmatism}
 
-The workflow and software stack presented here reflect my own experience and day-to-day research
-practice.
+The workflow and software stack presented here reflect my own experience and day-to-day research practice.
 They are not meant to be prescriptive or dogmatic.
-There is no single correct way to code or to structure an analysis, and many different approaches
-reach the same goal.
+There is no single correct way to code or to structure an analysis, and many different approaches reach the same goal.
 Pragmatism matters, so tools should serve your research questions and not the other way around.
 
 ## Installation timeline {#sec-timeline}
 
 This page lists all the software you are expected to install.
 Not every tool is used in the first week, but install everything as early as you can.
-That gives us time to troubleshoot, and it keeps technical setup from becoming a bottleneck once
-we move into substantive work.
+That gives us time to troubleshoot, and it keeps technical setup from becoming a bottleneck once we move into substantive work.
 
 ::: {.callout-tip}
 **Do the steps in the order given.**
@@ -66,15 +53,10 @@ Each step assumes the ones above it are done.
 ## What the words mean {#sec-vocabulary}
 
 The instructions below say things like "run this in the Console" and "open a Terminal".
-Those are two different places, and mixing them up is the single most common reason a step
-appears not to work.
+Those are two different places, and mixing them up is the single most common reason a step appears not to work.
 @fig-positron-layout shows where each of them lives once Positron is installed.
 
-![The Positron interface. The **Editor** in the middle is where your `.qmd` and `.R` files are
-open. The **Console** (bottom) is where you type R commands and see their results. The
-**Terminal** sits next to the Console and is where you talk to your operating system rather than
-to R. Panes can be moved around, so yours may not look identical, but the names stay the
-same.](https://positron.posit.co/images/user-interface-for-rstudio-migration.jpeg){#fig-positron-layout}
+![The Positron interface. The **Editor** in the middle is where your `.qmd` and `.R` files are open. The **Console** (bottom) is where you type R commands and see their results. The **Terminal** sits next to the Console and is where you talk to your operating system rather than to R. Panes can be moved around, so yours may not look identical, but the names stay the same.](https://positron.posit.co/images/user-interface-for-rstudio-migration.jpeg){#fig-positron-layout}
 
 **Console.**
 An R session waiting for R commands.
@@ -82,20 +64,16 @@ If an instruction shows R code, such as `install.packages("here")`, it goes here
 You can tell it is an R console by the `>` prompt at the start of the line.
 
 **Terminal.**
-A place to type commands to your operating system, not to R.
-On Windows this is PowerShell, on macOS it is the Terminal app, and Positron has one built in.
-Commands such as `git --version` or `quarto install tinytex` go here, and running them in the
-Console instead will produce an error.
+A place to type commands to your operating system, not to R. On Windows this is PowerShell, on macOS it is the Terminal app, and Positron has one built in.
+Commands such as `git --version` or `quarto install tinytex` go here, and running them in the Console instead will produce an error.
 
 **Editor.**
 The main pane where files are open for editing.
-Writing code in the Editor and then running it is the normal way to work, because the Editor
-keeps a record and the Console does not.
+Writing code in the Editor and then running it is the normal way to work, because the Editor keeps a record and the Console does not.
 
 **Pane.**
 One of the rectangular regions of the window.
-Positron lets you show, hide and rearrange them, which is worth doing once you know what each is
-for.
+Positron lets you show, hide and rearrange them, which is worth doing once you know what each is for.
 
 ::: {.callout-note}
 **A quick way to tell them apart.**
@@ -105,24 +83,20 @@ If it starts with your username, a folder name, or `PS C:\>`, you are in a Termi
 
 ## Why Positron and not RStudio? {#sec-why-positron}
 
-If you have had any contact with R already, or know people who have, you may know that one of the
-most widespread IDEs for R is RStudio.
+If you have had any contact with R already, or know people who have, you may know that one of the most widespread IDEs for R is RStudio.
 I decided to teach Positron for a few reasons.
 
-1. It is a modern and genuinely useful IDE for both programming and project management, with
-   features that integrate coding in R and writing in Quarto well.
-2. It works neatly with R *and* Python. Although we learn R here, being able to add Python later
-   is valuable, as many other scientific disciplines and private enterprises use Python.
+1. It is a modern and genuinely useful IDE for both programming and project management, with features that integrate coding in R and writing in Quarto well.
+2. It works neatly with R *and* Python.
+   Although we learn R here, being able to add Python later is valuable, as many other scientific disciplines and private enterprises use Python.
 3. It has very good graphical integration of version control with Git.
-4. It is built on an open-source predecessor of VS Code, one of the most popular editors globally,
-   so it is very similar to it.
+4. It is built on an open-source predecessor of VS Code, one of the most popular editors globally, so it is very similar to it.
 5. If you learn to work with Positron, you will have no problem adapting to RStudio.
 
 ## Install the toolchain {#sec-install}
 
 Pick your operating system once, below.
-The tab you choose stays selected for the whole guide, so work straight down it from step 1 to
-step 8.
+The tab you choose stays selected for the whole guide, so work straight down it from step 1 to step 8.
 
 ::: {.panel-tabset}
 
@@ -130,8 +104,7 @@ step 8.
 
 #### 1. Install R
 
-R is a free and open-source programming language widely used for statistical analysis, data
-visualisation and reproducible research.
+R is a free and open-source programming language widely used for statistical analysis, data visualisation and reproducible research.
 R is our main tool, and you can think of it as the engine that does our calculations.[^rengine]
 
 [^rengine]: The engine and dashboard analogy is borrowed from [Andrew Heiss](https://datavizf25.classes.andrewheiss.com/syllabus.html#r-and-rstudio).
@@ -143,22 +116,18 @@ R is our main tool, and you can think of it as the engine that does our calculat
 
 ::: {.callout-note}
 **Take the current release rather than a specific version number.**
-CRAN always offers the latest release at the top of the download page, and that is the one to
-take.
+CRAN always offers the latest release at the top of the download page, and that is the one to take.
 Note which version you installed, because Rtools in step 3 has to match it.
 :::
 
 #### 2. Install Positron
 
-Positron is our integrated development environment (IDE), the program you actually sit in front
-of to write R.
-If R is the engine, Positron is the dashboard: it gives you a graphical interface to control,
-monitor and run R code.
+Positron is our integrated development environment (IDE), the program you actually sit in front of to write R. If R is the engine, Positron is the dashboard: it gives you a graphical interface to control, monitor and run R code.
 It is a free, source-available IDE designed specifically for data science with R and Python.
 
 1. Navigate to <https://positron.posit.co/install.html>.
-2. Install all prerequisites listed for Windows. You can ignore the `Python setup` and `R setup`
-   panes.
+2. Install all prerequisites listed for Windows.
+   You can ignore the `Python setup` and `R setup` panes.
 3. Accept the license agreement by ticking the box.
 4. Click `Download Positron for Windows` and run the downloaded file.
 
@@ -166,12 +135,9 @@ Once it opens, find the Console and the Terminal described in @sec-vocabulary.
 
 #### 3. Install a C++ compiler (Rtools)
 
-Some R packages we use later rely internally on **C++**, a much more efficient language for
-computationally intensive tasks.
-For this to work, R needs access to a **C++ compiler** so it can compile and run C++ code behind
-the scenes.
-You will not usually interact with C++ directly, but the compiler is required to install and use
-certain packages, `brms` among them.
+Some R packages we use later rely internally on **C++**, a much more efficient language for computationally intensive tasks.
+For this to work, R needs access to a **C++ compiler** so it can compile and run C++ code behind the scenes.
+You will not usually interact with C++ directly, but the compiler is required to install and use certain packages, `brms` among them.
 
 1. Go to the [Rtools page on CRAN](https://cran.r-project.org/bin/windows/Rtools/).
 2. Download and install the Rtools version that **matches the R version you installed** in step 1.
@@ -180,21 +146,16 @@ certain packages, `brms` among them.
 
 ::: {.callout-warning}
 **A mismatched Rtools version is the most common setup failure on Windows.**
-If `brms` later fails to install with a compilation error, check the Rtools version against your R
-version first.
+If `brms` later fails to install with a compilation error, check the Rtools version against your R version first.
 Installing a newer R afterwards means installing the matching Rtools too.
 :::
 
 #### 4. Install Git
 
-**Git** is a free and open-source version control system, a tool that tracks changes in your files
-over time.
-It lets you see what changed, revert to earlier versions, and collaborate without overwriting
-other people's work.
-**GitHub** is an online platform that hosts Git repositories and adds collaboration features such
-as pull requests, issues and automated workflows.
-Together they make it easier to write code, analyse data, and manage research projects
-**transparently and reproducibly**.
+**Git** is a free and open-source version control system, a tool that tracks changes in your files over time.
+It lets you see what changed, revert to earlier versions, and collaborate without overwriting other people's work.
+**GitHub** is an online platform that hosts Git repositories and adds collaboration features such as pull requests, issues and automated workflows.
+Together they make it easier to write code, analyse data, and manage research projects **transparently and reproducibly**.
 
 1. Go to the [Git download page](https://git-scm.com/install/windows).
 2. Press the `Click here to download` link.
@@ -234,8 +195,7 @@ We use it to distribute all course materials.
 
 #### 7. Check Quarto
 
-**Quarto** is the publishing system that turns a `.qmd` file into HTML, PDF or slides, running
-your R code as it goes.
+**Quarto** is the publishing system that turns a `.qmd` file into HTML, PDF or slides, running your R code as it goes.
 Every artefact in this course, including this page, is a Quarto document.
 
 Positron ships with Quarto, so if you installed Positron in step 2 you already have it.
@@ -260,34 +220,28 @@ Now continue with @sec-install-packages, which is the same on every operating sy
 
 #### 1. Install R
 
-R is a free and open-source programming language widely used for statistical analysis, data
-visualisation and reproducible research.
+R is a free and open-source programming language widely used for statistical analysis, data visualisation and reproducible research.
 R is our main tool, and you can think of it as the engine that does our calculations.
 
 1. Go to the [Comprehensive R Archive Network (CRAN) website](https://cran.r-project.org/).
 2. Click "Download R for macOS".
-3. Take the **current release** offered at the top of the page, choosing the build for your chip:
-   the `arm64` package for Apple silicon, or the `x86_64` package for older Intel Macs.
+3. Take the **current release** offered at the top of the page, choosing the build for your chip: the `arm64` package for Apple silicon, or the `x86_64` package for older Intel Macs.
 4. Download and install it.
 5. Also [download and install XQuartz](https://www.xquartz.org/).
 
 ::: {.callout-note}
 **Take the current release rather than a specific version number.**
-CRAN always offers the latest release at the top of the download page, and that is the one to
-take.
+CRAN always offers the latest release at the top of the download page, and that is the one to take.
 :::
 
 #### 2. Install Positron
 
-Positron is our integrated development environment (IDE), the program you actually sit in front
-of to write R.
-If R is the engine, Positron is the dashboard: it gives you a graphical interface to control,
-monitor and run R code.
+Positron is our integrated development environment (IDE), the program you actually sit in front of to write R. If R is the engine, Positron is the dashboard: it gives you a graphical interface to control, monitor and run R code.
 It is a free, source-available IDE designed specifically for data science with R and Python.
 
 1. Navigate to <https://positron.posit.co/install.html>.
-2. Install all prerequisites listed for macOS. You can ignore the `Python setup` and `R setup`
-   panes.
+2. Install all prerequisites listed for macOS.
+   You can ignore the `Python setup` and `R setup` panes.
 3. Accept the license agreement by ticking the box.
 4. Click `Download Positron for macOS` and run the downloaded file.
 
@@ -295,12 +249,9 @@ Once it opens, find the Console and the Terminal described in @sec-vocabulary.
 
 #### 3. Install a C++ compiler (Xcode)
 
-Some R packages we use later rely internally on **C++**, a much more efficient language for
-computationally intensive tasks.
-For this to work, R needs access to a **C++ compiler** so it can compile and run C++ code behind
-the scenes.
-You will not usually interact with C++ directly, but the compiler is required to install and use
-certain packages, `brms` among them.
+Some R packages we use later rely internally on **C++**, a much more efficient language for computationally intensive tasks.
+For this to work, R needs access to a **C++ compiler** so it can compile and run C++ code behind the scenes.
+You will not usually interact with C++ directly, but the compiler is required to install and use certain packages, `brms` among them.
 
 1. Download and install **Xcode** from the [Mac App Store](https://developer.apple.com/xcode/resources/).
 2. Afterwards, open a **Terminal** and install the command-line tools as well:
@@ -313,14 +264,10 @@ Once that is done, your system can compile the C++ code some R packages need.
 
 #### 4. Install Git
 
-**Git** is a free and open-source version control system, a tool that tracks changes in your files
-over time.
-It lets you see what changed, revert to earlier versions, and collaborate without overwriting
-other people's work.
-**GitHub** is an online platform that hosts Git repositories and adds collaboration features such
-as pull requests, issues and automated workflows.
-Together they make it easier to write code, analyse data, and manage research projects
-**transparently and reproducibly**.
+**Git** is a free and open-source version control system, a tool that tracks changes in your files over time.
+It lets you see what changed, revert to earlier versions, and collaborate without overwriting other people's work.
+**GitHub** is an online platform that hosts Git repositories and adds collaboration features such as pull requests, issues and automated workflows.
+Together they make it easier to write code, analyse data, and manage research projects **transparently and reproducibly**.
 
 Git comes with Xcode, which you installed in step 3.
 Open a **Terminal** and enter:
@@ -346,10 +293,8 @@ git config --global user.email "your@mail.com"
 
 ::: {.callout-warning}
 **Do not skip this step.**
-It is easy to overlook, because nothing goes wrong until the first time you try to commit, and
-then Git refuses with a message like `Please tell me who you are`.
-Setting both values now saves you that error in week 2, when everybody is committing for the
-first time at once.
+It is easy to overlook, because nothing goes wrong until the first time you try to commit, and then Git refuses with a message like `Please tell me who you are`.
+Setting both values now saves you that error in week 2, when everybody is committing for the first time at once.
 :::
 
 #### 6. Create a GitHub account
@@ -360,8 +305,7 @@ We use it to distribute all course materials.
 
 #### 7. Check Quarto
 
-**Quarto** is the publishing system that turns a `.qmd` file into HTML, PDF or slides, running
-your R code as it goes.
+**Quarto** is the publishing system that turns a `.qmd` file into HTML, PDF or slides, running your R code as it goes.
 Every artefact in this course, including this page, is a Quarto document.
 
 Positron ships with Quarto, so if you installed Positron in step 2 you already have it.
@@ -388,8 +332,7 @@ Now continue with @sec-install-packages, which is the same on every operating sy
 
 This step is identical on Windows and macOS.
 
-R packages are bundles of functions, data and documentation that extend R.
-You install a package once, and load it in each session where you need it.
+R packages are bundles of functions, data and documentation that extend R. You install a package once, and load it in each session where you need it.
 @tbl-packages lists what this course uses and why.
 
 | Package | What it is | Why we use it |
@@ -408,8 +351,7 @@ You install a package once, and load it in each session where you need it.
 : The R packages this course uses, and what each one is for. Install them all before the first session. LaTeX is not on this list, because `quarto install tinytex` in step 8 already handled it. {#tbl-packages}
 
 **How to install.**
-In Positron, find the **Console** (see @fig-positron-layout), start an R session if one is not
-running already, and run:
+In Positron, find the **Console** (see @fig-positron-layout), start an R session if one is not running already, and run:
 
 ```r
 install.packages(c(
@@ -420,8 +362,7 @@ install.packages(c(
 ```
 
 ::: {.callout-note}
-**This will take a while, and that is expected.**
-`brms` compiles C++ code during installation, so it is much slower than the others.
+**This will take a while, and that is expected.** `brms` compiles C++ code during installation, so it is much slower than the others.
 Start it when you have time to leave it running.
 :::
 
@@ -429,16 +370,13 @@ Start it when you have time to leave it running.
 
 ::: {.callout-tip}
 **That was a lot, and you got through it.**
-You now have a research toolchain on your machine that is genuinely the same one used for
-published empirical work.
+You now have a research toolchain on your machine that is genuinely the same one used for published empirical work.
 Nothing more is required before the first session.
 :::
 
 If something did not work, do not spend an evening fighting it alone.
-Bring it to the first session, or email me beforehand with the exact error message, and we will
-sort it out together.
-Setup problems are common, they are almost always quick to fix once someone has seen them before,
-and this is precisely why the guide asks you to install early.
+Bring it to the first session, or email me beforehand with the exact error message, and we will sort it out together.
+Setup problems are common, they are almost always quick to fix once someone has seen them before, and this is precisely why the guide asks you to install early.
 
 ## Submitting your work {#sec-submitting}
 
@@ -446,8 +384,7 @@ and this is precisely why the guide asks you to install early.
   It opens GitHub's new-repository page, already filled in from the week's template repo.
 - Check the **Owner** dropdown before you create anything.
   It must read `qmir-2026-fall`.
-- Replace `USERNAME` in the repository name with your own GitHub username, and leave the rest of
-  the name as it is.
+- Replace `USERNAME` in the repository name with your own GitHub username, and leave the rest of the name as it is.
 - Do your work in that repo, commit, and push.
   **Rendering the PDF and pushing is your submission.**
 
@@ -455,23 +392,20 @@ and this is precisely why the guide asks you to install early.
 **Two fields decide whether your work counts: Owner and name.**
 
 The **Owner** must be the course organisation `qmir-2026-fall`.
-The link pre-selects it, but the dropdown is editable and GitHub's own default is your personal
-account.
+The link pre-selects it, but the dropdown is editable and GitHub's own default is your personal account.
 A repo created on your personal account is invisible to the tracker, no matter what is in it.
 
-The **name** must be exactly `hw-NN-<username>`, with your own GitHub username and a zero-padded
-week number, for example `hw-03-jdoe`.
+The **name** must be exactly `hw-NN-<username>`, with your own GitHub username and a zero-padded week number, for example `hw-03-jdoe`.
 :::
 
 ::: {.callout-note}
 **The organisation only shows up in the Owner dropdown once you have joined it.**
 You get an email invitation at the start of the term.
-Accept it before the first homework is due, and reload the page if the dropdown still offers only
-your own account.
+Accept it before the first homework is due, and reload the page if the dropdown still offers only your own account.
 :::
 
 ::: {.callout-tip}
 **Opt in to individual feedback with one file.**
-Add an open-source `license.md` to your submission repo and an AI reads your work alongside the
-sample solution, then writes feedback back into the repo. See the [Syllabus](syllabus.qmd).
+Add an open-source `license.md` to your submission repo and an AI reads your work alongside the sample solution, then writes feedback back into the repo.
+See the [Syllabus](syllabus.qmd).
 :::

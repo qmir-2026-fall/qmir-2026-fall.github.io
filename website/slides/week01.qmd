@@ -132,12 +132,14 @@ model_df <- responses |>
 5. Recap: the normal distribution
 
 ::: notes
-Keep this short. The survey slide is next and the room needs to be typing within two minutes.
+Keep this short.
+The survey slide is next and the room needs to be typing within two minutes.
 :::
 
 ## Before we start {#sec-survey}
 
-Please fill this in now. It takes about five minutes.
+Please fill this in now.
+It takes about five minutes.
 
 [forms.gle/kkvtRQXW5UJMoWq1A](https://forms.gle/kkvtRQXW5UJMoWq1A)
 
@@ -146,7 +148,8 @@ Please fill this in now. It takes about five minutes.
 ::: notes
 Say nothing else until most people are typing.
 Mention that it is anonymous and that the free-text box is read by you only.
-Then start the next section while they finish. Do not wait for the last person.
+Then start the next section while they finish.
+Do not wait for the last person.
 :::
 
 # Introduction {#sec-introduction}
@@ -167,7 +170,8 @@ Fill this slide in before the session.
 - In what ways did you learn or come across statistics before?
 
 ::: notes
-Go round the room. Nine people, so about a minute each.
+Go round the room.
+Nine people, so about a minute each.
 :::
 
 # Statistics in a nutshell {#sec-nutshell}
@@ -177,21 +181,24 @@ Go round the room. Nine people, so about a minute each.
 In a nutshell, you may think of statistics as counting.
 
 - **Counting values.**
-  How many people are 20 years old? How many flips were heads? How many birds were observed?
+  How many people are 20 years old?
+  How many flips were heads?
+  How many birds were observed?
 - **Counting how much you counted.**
   How many observations do we have?
 - **Official counting.**
   Births, deaths, unemployment, crime.
 - **Counting the ways things could have happened.**
-  How much could our count have varied by chance? How many heads would a fair coin give us?
+  How much could our count have varied by chance?
+  How many heads would a fair coin give us?
 
 . . .
 
-> Statistics can be thought of as counting, and as reasoning about counts and their possible
-> variation.
+> Statistics can be thought of as counting, and as reasoning about counts and their possible variation.
 
 ::: notes
-The fourth bullet is the one that carries the rest of the term. Say it slowly.
+The fourth bullet is the one that carries the rest of the term.
+Say it slowly.
 :::
 
 ## Why statistics? {#sec-why-statistics .smaller}
@@ -212,20 +219,20 @@ Put differently, we want to learn from data.
 - Running randomised experiments to infer a potential outcome.
 
 ::: notes
-Estimand, estimator, estimate. Three words they will hear every week.
+Estimand, estimator, estimate.
+Three words they will hear every week.
 :::
 
 ## Fundamental issue in statistics {#sec-signal-noise .smaller}
 
 - We want to separate **noise** from **signal**.
 - That is, how certain can we be in our estimate?
-- Put differently: how certain can we be that an estimated association between two variables is
-  a *real world* association, rather than the result of *random* variation during our
-  measurement or data collection?
+- Put differently: how certain can we be that an estimated association between two variables is a *real world* association, rather than the result of *random* variation during our measurement or data collection?
 - This is the fundamental challenge and task of quantitative methods in all science.
 
 ::: notes
-This is the hinge of the whole course. Everything from week 3 onward is machinery for it.
+This is the hinge of the whole course.
+Everything from week 3 onward is machinery for it.
 :::
 
 # Applied example of Bayesian inference {#sec-analysis}
@@ -240,11 +247,11 @@ Watch the shape of the argument rather than the code.
 
 > Do students become more confident in statistics as they progress through their studies?
 
-You just filled out the survey, which asked, among other things, for your current semester and
-your confidence in reading statistical results.
+You just filled out the survey, which asked, among other things, for your current semester and your confidence in reading statistical results.
 
 ::: notes
-Re-render the deck now if the local CSV has arrived. Everything from here on is the room.
+Re-render the deck now if the local CSV has arrived.
+Everything from here on is the room.
 :::
 
 ## Step 1: Clarify the estimand {#sec-estimand .smaller}
@@ -257,13 +264,13 @@ What precisely do we want to learn about?
 
 ::: {.callout-warning}
 **An association is not a causal effect.**
-Nobody was assigned a semester, so we are comparing different people rather than following one
-person through their degree.
+Nobody was assigned a semester, so we are comparing different people rather than following one person through their degree.
 Causal identification is a separate course.
 :::
 
 ::: notes
-Students reach for the causal sentence by reflex. Correct it here, once, hard.
+Students reach for the causal sentence by reflex.
+Correct it here, once, hard.
 :::
 
 ## Step 2: Data summary {#sec-data-summary .smaller}
@@ -331,17 +338,15 @@ ggplot(model_df, aes(x = semester, y = conf_stats)) +
 The outcome is (nearly) continuous, which is what justifies a linear model.
 
 ::: notes
-Read the semester range out loud. If it is one or two values wide, promise the consequence at
-step 8.
-The confidence question was the only optional one, so blank answers are dropped here, and that
-is a decision worth a sentence in any writeup.
+Read the semester range out loud.
+If it is one or two values wide, promise the consequence at step 8.
+The confidence question was the only optional one, so blank answers are dropped here, and that is a decision worth a sentence in any writeup.
 Test submissions, marked TEST in the free-text box, were dropped before any of this: `r n_test` of them.
 :::
 
 ## Step 3: Formal model {#sec-model .smaller}
 
-Given our approximately continuous outcome, and for the sake of simplicity, we use a bivariate
-linear model.
+Given our approximately continuous outcome, and for the sake of simplicity, we use a bivariate linear model.
 
 <!-- The whole derivation is one dense block, sized at ladder step 2 (STYLE.md section 5.1) so
      that the slide still fits the canvas with both readings opened. -->
@@ -377,9 +382,7 @@ $$ {#eq-linear-predictor}
 
 ::: {.callout-note}
 **@eq-linear-predictor in words.**
-We model the mean confidence score as a function of the reported semester.
-$\alpha$ is the baseline level of reported confidence for a hypothetical semester 0 student, the intercept.
-$\beta$ is the average change in reported confidence per unit change in semester, and it is therefore our estimand, the slope.
+We model the mean confidence score as a function of the reported semester. $\alpha$ is the baseline level of reported confidence for a hypothetical semester 0 student, the intercept. $\beta$ is the average change in reported confidence per unit change in semester, and it is therefore our estimand, the slope.
 Everything the semester does not account for is the residual spread, which is the $\sigma$ of @eq-likelihood.
 :::
 
@@ -408,7 +411,8 @@ The probability of our model parameters ($\alpha$, $\beta$, $\sigma$) *given* th
 The posterior is a full probability distribution, not a single number.
 
 ::: notes
-This equation is the whole course in one line. They meet it again in week 3 and week 7.
+This equation is the whole course in one line.
+They meet it again in week 3 and week 7.
 :::
 
 ## Step 3: The priors {#sec-priors .smaller}
@@ -496,8 +500,8 @@ ggplot(priors_drawn, aes(x = value, y = density)) +
 ```
 
 ::: notes
-Priors are commitments, not conveniences. Centring beta on zero is the honest starting point,
-not a trick to get a null.
+Priors are commitments, not conveniences.
+Centring beta on zero is the honest starting point, not a trick to get a null.
 :::
 
 ## Step 4: Prior predictive check {#sec-prior-predictive .smaller}
@@ -581,14 +585,13 @@ We will learn in week 7 what is going on here in detail.
 
 . . .
 
-In short: we update our prior distributions of the parameters by conditioning on the observed
-data.
-Computationally we simulate many different possible lines and rank them by their relative
-plausibility, and what comes back is a distribution of plausible regression lines.
+In short: we update our prior distributions of the parameters by conditioning on the observed data.
+Computationally we simulate many different possible lines and rank them by their relative plausibility, and what comes back is a distribution of plausible regression lines.
 
 ::: notes
-Run this live and talk over the compile. R writes Stan, Stan writes C++, the compiler builds a
-sampler specific to this model. That wait is the reason week 7 exists.
+Run this live and talk over the compile.
+R writes Stan, Stan writes C++, the compiler builds a sampler specific to this model.
+That wait is the reason week 7 exists.
 :::
 
 ## Step 6a: MCMC diagnostics {#sec-diagnostics .smaller}
@@ -631,13 +634,13 @@ pp_check(fit, ndraws = 50) +
   )
 ```
 
-- How well do the estimated parameters, remember that these are distributions, combined with the
-  predictor, replicate our outcome?
+- How well do the estimated parameters, remember that these are distributions, combined with the predictor, replicate our outcome?
 - Intuition: a model fits a dataset well if it can recover the outcomes well.
 
 ::: notes
 Expect over-smoothing: the model predicts a continuous bell where the data is ten whole numbers.
-Name that. It is honest and it previews week 11.
+Name that.
+It is honest and it previews week 11.
 :::
 
 ## Step 7: Interpretation {#sec-interpretation .smaller}
@@ -655,8 +658,7 @@ beta_hi <- round(beta_summary[["Q95"]], 2)
 beta_above_zero <- round(100 * mean(as_draws_df(fit)$b_semester > 0))
 ```
 
-Each additional semester is associated with a change of **`r beta_est`** scale points of
-confidence, with a 90 percent credible interval from **`r beta_lo`** to **`r beta_hi`**.
+Each additional semester is associated with a change of **`r beta_est`** scale points of confidence, with a 90 percent credible interval from **`r beta_lo`** to **`r beta_hi`**.
 The posterior puts **`r beta_above_zero` percent** of its mass above zero.
 
 ```{r}
@@ -679,7 +681,8 @@ plot(line_cloud, points = TRUE, plot = FALSE)[[1]] +
 ```
 
 ::: notes
-Read the sentence verbatim. Never "proves", never "there is no effect", never "significant".
+Read the sentence verbatim.
+Never "proves", never "there is no effect", never "significant".
 :::
 
 ## Step 7: The estimand itself {#sec-interpretation-beta .smaller}
@@ -717,15 +720,13 @@ Name the concrete ones out loud rather than putting them on the slide.
 There are nine of us, which is a class and not a sample of any population.
 Almost everyone here is in the same semester, and no method fixes that.
 Nobody was assigned a semester, so this compares people, not one person over time.
-Self-reported confidence is not skill, and it may even move the other way as you learn how much
-there is to know.
+Self-reported confidence is not skill, and it may even move the other way as you learn how much there is to know.
 The normal likelihood ignores the scale, which is what steps 4 and 6b both showed.
 :::
 
 ## Outlook {#sec-outlook}
 
-- In the next months, you will learn, step by step, to implement and interpret such analyses
-  yourselves.
+- In the next months, you will learn, step by step, to implement and interpret such analyses yourselves.
 
 ## The 8-step workflow {#sec-workflow .smaller}
 
@@ -733,18 +734,21 @@ The normal likelihood ignores the scale, which is what steps 4 and 6b both showe
 
 ::: notes
 Say it plainly: this table is the exam.
-Every later week deepens one or two of these steps, and every homework runs the steps introduced
-so far.
+Every later week deepens one or two of these steps, and every homework runs the steps introduced so far.
 :::
 
 # Course logistics {#sec-course}
 
 ## Everything lives on the website {#sec-website .smaller}
 
-- **Schedule.** Every session, its slides, its homework, its solution, its reading.
-- **Syllabus.** Goals per session, the workload arithmetic, and the exam rules.
-- **Glossary.** Terms as they get introduced.
-- **Installation.** Do this before week 2.
+- **Schedule.**
+  Every session, its slides, its homework, its solution, its reading.
+- **Syllabus.**
+  Goals per session, the workload arithmetic, and the exam rules.
+- **Glossary.**
+  Terms as they get introduced.
+- **Installation.**
+  Do this before week 2.
 
 . . .
 
@@ -755,20 +759,19 @@ There is no second channel, no handouts and no shared drive.
 
 ## What you will learn {#sec-learn .smaller}
 
-- How to build a reproducible, open-source research workflow, integrating data, code,
-  analysis and writing into one transparent process.
-- How to use statistical models to learn from data: what they assume, what they estimate,
-  and how to interpret them responsibly.
-- How to communicate empirical results clearly, through structured reports, figures and
-  reproducible documents.
+- How to build a reproducible, open-source research workflow, integrating data, code, analysis and writing into one transparent process.
+- How to use statistical models to learn from data: what they assume, what they estimate, and how to interpret them responsibly.
+- How to communicate empirical results clearly, through structured reports, figures and reproducible documents.
 
 ## What this course does not cover {#sec-not-cover .smaller}
 
-- **Data collection and research design.** We work with existing datasets. The university has
-  dedicated courses for survey design and measurement.
-- **Causal inference.** We analyse and interpret associations rather than identify causes,
-  which you saw me insist on at step 1.
-- **Political theory.** The examples are political, but the training is methodological.
+- **Data collection and research design.**
+  We work with existing datasets.
+  The university has dedicated courses for survey design and measurement.
+- **Causal inference.**
+  We analyse and interpret associations rather than identify causes, which you saw me insist on at step 1.
+- **Political theory.**
+  The examples are political, but the training is methodological.
 
 ## Why the course is built this way {#sec-why-built}
 
@@ -786,17 +789,17 @@ There is no second channel, no handouts and no shared drive.
 
 - Eleven assignments, one in every session except this one and the last.
 - Each opens when its session ends and is due seven days later.
-- The schedule links a template repo. Create yours in the **`qmir-2026-fall`** organisation,
-  named exactly `hw-NN-<username>`.
+- The schedule links a template repo.
+  Create yours in the **`qmir-2026-fall`** organisation, named exactly `hw-NN-<username>`.
 
 . . .
 
 <!-- The feedback-policy banner is reproduced VERBATIM wherever it appears
      (CLAUDE.md section 2, STYLE.md section 7). Do not reword it here. -->
 ::: {.callout-important}
-**A sample solution is published for every homework. Individual feedback is NOT provided by
-default.** The only individual feedback available is the **optional AI feedback** you can opt
-into by adding an open-source `license.md` to your submission repo.
+**A sample solution is published for every homework.
+Individual feedback is NOT provided by default.**
+The only individual feedback available is the **optional AI feedback** you can opt into by adding an open-source `license.md` to your submission repo.
 :::
 
 ## The exam {#sec-exam .smaller}
@@ -815,7 +818,8 @@ Nothing on the exam is a step this course did not spend a week on.
 # Recap: the normal distribution {#sec-recap}
 
 ::: notes
-This section is the buffer. If the clock has beaten you, stop here and open week 3 with it.
+This section is the buffer.
+If the clock has beaten you, stop here and open week 3 with it.
 Nothing earlier in the deck depends on it.
 :::
 
@@ -866,8 +870,7 @@ ggplot(normal_curves, aes(x = x, y = density, colour = curve)) +
 
 ## The 68 and 95 rule {#sec-68-95 .smaller}
 
-The area under the curve is probability, and for a normal distribution that area always splits
-the same way, whatever $\mu$ and $\sigma$ happen to be.
+The area under the curve is probability, and for a normal distribution that area always splits the same way, whatever $\mu$ and $\sigma$ happen to be.
 
 ```{r}
 #| label: fig-normal-areas
@@ -939,13 +942,12 @@ ggplot(standard_normal, aes(x = z, y = density)) +
   )
 ```
 
-Subtracting the mean and dividing by the standard deviation turns any normal variable into a
-standard normal one, which is the curve in @fig-standard-normal.
-A value of $z_i = 2$ then means the same thing everywhere: two standard deviations above the
-mean, which @fig-normal-areas puts at the edge of the 95 percent region.
+Subtracting the mean and dividing by the standard deviation turns any normal variable into a standard normal one, which is the curve in @fig-standard-normal.
+A value of $z_i = 2$ then means the same thing everywhere: two standard deviations above the mean, which @fig-normal-areas puts at the edge of the 95 percent region.
 
 ::: notes
-Do not derive anything. The point is only that a standard deviation is a unit of distance.
+Do not derive anything.
+The point is only that a standard deviation is a unit of distance.
 :::
 
 ## Next week {#sec-next-week}
@@ -955,7 +957,8 @@ Do not derive anything. The point is only that a standard deviation is a unit of
 - Week 2: Quarto, Git, and your first reproducible document.
 
 ::: notes
-End here. Repeat the installation ask, it is the one thing that blocks week 2.
+End here.
+Repeat the installation ask, it is the one thing that blocks week 2.
 :::
 
 ```{r}

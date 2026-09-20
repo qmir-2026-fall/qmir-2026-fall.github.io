@@ -49,8 +49,8 @@ set.seed(2026)
 
 # Your analysis {#sec-analysis}
 
-<Scaffold the expected structure with empty sections matching the steps this homework
-exercises. Add sections as the term introduces more steps.>
+<Scaffold the expected structure with empty sections matching the steps this homework exercises.
+Add sections as the term introduces more steps.>
 
 ## Estimand and DAG {#sec-estimand}
 

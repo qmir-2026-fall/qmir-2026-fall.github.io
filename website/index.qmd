@@ -22,10 +22,7 @@ source(here("website", "_course-helpers.R"))
 cfg <- read_course()
 ```
 
-`r cfg$course$term`<br>
-`r cfg$course$department`<br>
-`r cfg$course$school`<br>
-`r cfg$course$university`
+`r cfg$course$term`<br> `r cfg$course$department`<br> `r cfg$course$school`<br> `r cfg$course$university`
 
 ::: {.home}
 
@@ -78,9 +75,8 @@ No programming experience and no statistics beyond descriptives are assumed.
 
 ## Where to go next {#sec-where-next}
 
-- **[Syllabus](syllabus.qmd)** for the full details: objectives, logistics, grading, the exam,
-  the policies, and what each session covers.
+- **[Syllabus](syllabus.qmd)** for the full details: objectives, logistics, grading, the exam, the policies, and what each session covers.
 - **[Schedule](schedule.qmd)** for dates, slides, homework and sample solutions.
-- **[Installation guide](installation.qmd)** for the software. Work through it **before the
-  first session**, so problems are easy to fix together rather than urgent.
+- **[Installation guide](installation.qmd)** for the software.
+  Work through it **before the first session**, so problems are easy to fix together rather than urgent.
 - **[Glossary](glossary.qmd)** for the terminology, which arrives quickly in a course like this.

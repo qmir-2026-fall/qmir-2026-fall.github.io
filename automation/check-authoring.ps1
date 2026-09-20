@@ -210,6 +210,37 @@ $DashPattern = "[$([char]0x2014)$([char]0x2013)]"
 $CalloutTypes = @('note', 'warning', 'important', 'tip')
 $ColumnWidths = @('50', '55', '45', '60', '40', '33', '34')
 
+# Abbreviations whose period is not the end of a sentence (E004). Case-sensitive on
+# purpose: lowercase "no." really does end a sentence, "No. 4" does not.
+$Abbreviations = @(
+  'e\.g\.', 'i\.e\.', 'etc\.', 'vs\.', 'cf\.', 'approx\.', 'ca\.', 'et al\.',
+  'No\.', 'Nos\.', 'Dr\.', 'Prof\.', 'Mr\.', 'Ms\.', 'St\.', 'Fig\.', 'Tab\.',
+  'pp\.', 'p\.'
+)
+
+# One sentence per line (E003 and E004), the two halves of the same rule.
+# Returns the line reduced to the sentence text: leading blockquote markers and list
+# markers removed, trailing whitespace gone. Inline code, math, links and attributes
+# are already blanked by Get-ProseLines.
+function Get-SentenceText {
+  param([string]$Line)
+  $t = $Line -replace '^\s+', ''
+  while ($t -match '^>\s?') { $t = $t -replace '^>\s?', '' }
+  # Emphasis can open before the list marker: "**1. Weekly homework.**" is a numbered
+  # item in bold, and its "1." is a marker, not the end of a sentence.
+  $t = $t -replace '^[*_]{1,2}\s*', ''
+  $t = $t -replace '^([-*+]|\d+[.)])\s+', ''
+  return $t.TrimEnd()
+}
+
+# A line that opens a block of its own is never the continuation of the previous
+# sentence: a heading, a fenced div, a table row, display math, a list item, or the
+# ": caption" line that follows a Markdown table.
+function Test-OpensBlock {
+  param([string]$Text)
+  return ($Text -match '^\s*(#|:{3,}|\||\$\$|[-*+]\s|\d+[.)]\s|:\s)')
+}
+
 function Test-File {
   param([string]$File)
 
@@ -224,6 +255,13 @@ function Test-File {
   $isQmd = $name -match '\.qmd$'
   $isDeck = $File -match '[\\/]website[\\/]slides[\\/]'
   $isRenderedDeck = $name -match '^week\d{2}\.qmd$'
+
+  # One sentence per line applies to prose a student reads: every rendered .qmd, plus
+  # the README.md that ships inside a homework distribution repo. The repo's own
+  # manuals (CLAUDE.md, STYLE.md, notes.md, the automation and folder READMEs) are
+  # hard-wrapped at 95 columns on purpose, and STYLE.md section 1 says so.
+  $slash = $File -replace '\\', '/'
+  $isStudentFacing = $isQmd -or ($slash -match '/homework/(hw-\d+|_template)/README\.md$')
 
   # Display equations need a label on the CLOSING $$ (E022).
   foreach ($m in $maths) {
@@ -241,6 +279,43 @@ function Test-File {
     }
     if ($p -match ';') {
       Add-Finding $File ($i + 1) 'E002' 'semicolon in prose, split the sentence'
+    }
+
+    if (-not $isStudentFacing) { continue }
+
+    $t = Get-SentenceText -Line $p
+    if ($t -eq '') { continue }
+    # Headings, fenced divs, table rows and the reveal separator ". . ." are markup,
+    # not sentences. A table cell is the one place prose cannot be split.
+    if ($t -match '^(#|:{3,}|\|)' -or $t -match '^\.(\s*\.){2}\s*$') { continue }
+
+    # E003: does this line finish its sentence? Trailing emphasis, brackets and
+    # quotes sit after the full stop, so strip them before looking.
+    $tail = $t -replace '[*`"''\)\]\s]+$', ''
+    if ($tail -ne '' -and $tail -notmatch '[.!?:]$') {
+      $nx = ''
+      if ($i + 1 -lt $prose.Count) { $nx = Get-SentenceText -Line $prose[$i + 1] }
+      if ($nx -ne '' -and -not (Test-OpensBlock -Text $prose[$i + 1])) {
+        Add-Finding $File ($i + 1) 'E003' 'sentence continues on the next line, one sentence per line'
+      }
+    }
+
+    # E004: the other half. A full stop followed by the start of a new sentence means
+    # two sentences share one line. Decimals, ellipses, initials and the abbreviations
+    # above are periods that end nothing. A Markdown table caption is exempt: Pandoc
+    # reads it as one block, and splitting it risks the caption rather than the prose.
+    #
+    # -creplace and -cmatch throughout. PowerShell's -match is CASE-INSENSITIVE, so
+    # [A-Z] happily matched a lowercase word and every second line came back flagged.
+    if ($t -match '^:\s' -or $t -match '^!\[') { continue }
+    $s = $t -creplace '\d\.\d', ' '
+    $s = $s -creplace '\.\.\.', ' '
+    $s = $s -creplace '\b([A-Z]\.)+', ' '
+    # \b matters: without it "p\." also blanks the full stop in "setup.", and every
+    # sentence ending in one of these letter pairs stops being a sentence end.
+    foreach ($a in $Abbreviations) { $s = $s -creplace ('\b' + $a), ' ' }
+    if ($s -cmatch '[.!?]["*)`]{0,3}\s+[*_]{0,2}[A-Z(@]') {
+      Add-Finding $File ($i + 1) 'E004' 'more than one sentence on this line, split it'
     }
   }
 

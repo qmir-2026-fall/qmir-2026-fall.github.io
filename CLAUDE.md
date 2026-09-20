@@ -105,9 +105,9 @@ with `automation/hooks/install-hooks.ps1`) and the payload assertion inside
 
 ### Feedback policy: state it everywhere, verbatim
 
-> **A sample solution is published for every homework. Individual feedback is NOT provided by
-> default.** The only individual feedback available is the **optional AI feedback** you can opt
-> into by adding an open-source `license.md` to your submission repo.
+> **A sample solution is published for every homework.
+> Individual feedback is NOT provided by default.**
+> The only individual feedback available is the **optional AI feedback** you can opt into by adding an open-source `license.md` to your submission repo.
 
 This banner appears in `website/syllabus.qmd`, every homework `README.md`, and the schedule page.
 Consistency is the point. No student should be surprised.
@@ -314,7 +314,14 @@ The full guide is `STYLE.md`. These are the rules that break something silently 
 they are repeated here where they will always be in context.
 
 **Prose.** No em dashes or en dashes, and no semicolons, in prose (`E001`, `E002`). Use a comma,
-a colon, parentheses, or `--`. Code, YAML, SCSS and URLs are exempt. One sentence per line.
+a colon, parentheses, or `--`. Code, YAML, SCSS and URLs are exempt.
+
+**One sentence per line, both halves of it.** Never hard-wrap a sentence at a column (`E003`),
+never put two sentences on one line (`E004`). Lines run long, and that is correct: Markdown
+joins soft breaks, so this changes the diff and never the output. It binds every `.qmd` and the
+`README.md` that ships to students. The manuals you are reading (this file, `STYLE.md`,
+`notes.md`, the folder READMEs) stay hard-wrapped at 95 columns and the checker exempts them,
+which is why the file in front of you does not look like the rule it states.
 
 **Cross-references.** Every figure, table, equation and heading is labelled and referenced by
 label: `#| label: fig-x` **with** `#| fig-cap:`, `#| label: tbl-x` with `#| tbl-cap:`,

@@ -42,8 +42,37 @@ The rule is about *prose*. Code, YAML mechanics, SCSS, URLs, file paths and the 
 banners in comments are all exempt, and the checker strips fenced code blocks, inline code spans,
 raw HTML and math before it looks.
 
-**One sentence per line.** Diffs stay readable, and a reworded sentence shows up as one changed
-line instead of a reflowed paragraph.
+### One sentence per line
+
+**A sentence occupies exactly one source line.** Do not hard-wrap a sentence at some column
+(`E003`), and do not put two sentences on one line (`E004`). Diffs stay readable, and a reworded
+sentence shows up as one changed line instead of a reflowed paragraph.
+
+```markdown
+Bad:   This week has no right answer, because what is
+       practised is the workflow. A complete submission is a repository.
+Good:  This week has no right answer, because what is practised is the workflow.
+       A complete submission is a repository.
+```
+
+Lines therefore run long, and that is correct. **Never reflow a paragraph to fit a column.**
+
+Splitting is safe: Markdown joins soft line breaks inside a paragraph, so the rendered output is
+byte-identical either way. Split a bold lead sentence off from what follows it in the same way,
+even when the emphasis then spans the break.
+
+**Where it applies.** Every `.qmd`, plus the `README.md` that ships inside a homework
+distribution repo, which is everything a student reads. The repo's own manuals (`CLAUDE.md`,
+this file, `notes.md`, the folder and `automation/` READMEs) are hard-wrapped at 95 columns
+instead, and the checker exempts them. Those are read as documents, they are not rendered, and
+rewrapping them would churn the two files that are re-read most.
+
+Two exceptions inside a file in scope, both because the unit is not a paragraph:
+
+- A **caption** is one line, however long, and may hold several sentences: a Markdown table
+  caption (`: ... {#tbl-x}`) and an image caption (`![...](...)`). Pandoc reads the caption as
+  one block, so a line break there risks the caption rather than the prose.
+- A **table cell** is the one place a sentence cannot be moved to a line of its own.
 
 Other prose rules:
 

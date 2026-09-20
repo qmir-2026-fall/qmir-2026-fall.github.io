@@ -114,12 +114,14 @@ tibble(x = rnorm(200)) |>
 {{< include _workflow-8step.qmd >}}
 
 ::: notes
-Always include the partial. Never paste the table into a deck (E042).
+Always include the partial.
+Never paste the table into a deck (E042).
 :::
 
 ## Homework {#sec-homework}
 
-- `hw-NN`: <one line>, due <date>. Linked from the Schedule.
+- `hw-NN`: <one line>, due <date>.
+  Linked from the Schedule.
 - A sample solution is published after the due date.
 
 ::: {.callout-important}

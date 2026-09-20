@@ -50,8 +50,7 @@ if (length(bad) > 0) {
 ```
 
 The vocabulary of the course, collected in one place and sorted alphabetically.
-Every entry is tagged with the block in which you first meet it, so you can still read this page
-in the same order as the [Schedule](schedule.qmd) if you want to.
+Every entry is tagged with the block in which you first meet it, so you can still read this page in the same order as the [Schedule](schedule.qmd) if you want to.
 
 Nothing here replaces the slides.
 A glossary entry is the short version you can check quickly, not the explanation.
