@@ -384,6 +384,12 @@ function Test-File {
       Add-Finding $File $n 'E031' 'inline font-size, use the {.small} / {.xsmall} ladder'
     }
 
+    # Math notation (STYLE.md section 9). Math survives in $lc, which only blanks code
+    # spans, so a macro quoted in backticks is documentation and is not flagged.
+    if ($lc -match '\\(bm|vec)\s*\{' -or $lc -match '\\boldsymbol\s*\{\s*[A-Za-z]') {
+      Add-Finding $File $n 'E050' 'bold Latin with \mathbf, bold Greek with \boldsymbol, never \bm or \vec'
+    }
+
     if ($lc -match '^\s*:{4,}\s*columns\s*$') {
       Add-Finding $File $n 'E032' 'use the :::: {.columns} idiom, not the bare columns fence'
     }

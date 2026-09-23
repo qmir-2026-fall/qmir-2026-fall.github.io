@@ -1,0 +1,328 @@
+---
+title: "Homework 03: R fundamentals"
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+<!-- STUDENT-FACING STARTER. No solution content here. Files named solution.* are stripped on
+     release, but this file ships as-is, so keep it clean.
+
+     Base R only this week: no packages are loaded, so the document renders anywhere R does.
+     Section 1 is a worked demo of code cells. The exercises start at section 2. -->
+
+```{r}
+#| label: setup
+#| include: false
+
+start_time <- Sys.time()
+```
+
+# Code cells in Quarto {#sec-code-cells}
+
+This section is a demonstration, not an exercise.
+Read it, render the document once, and compare the PDF with the source.
+
+## What a code cell looks like {#sec-cell-anatomy}
+
+A code cell starts with three backticks followed by `{r}`, and ends with three backticks.
+Everything in between is R code.
+Lines starting with `#|` are **cell options**, and they tell Quarto how to treat the cell.
+Each option goes on its own `#|` line at the top of the cell.
+In the source, a cell looks like this:
+
+```{{r}}
+#| label: first-cell
+
+1 + 1
+```
+
+And this is the same cell, run for real, with its own label because labels must be unique.
+When you render, Quarto runs the code and puts the result directly underneath it:
+
+```{r}
+#| label: first-cell-run
+
+1 + 1
+```
+
+## Cell options you will use {#sec-cell-options}
+
+| Option | What it does |
+|---|---|
+| `label: my-name` | Names the cell. Every cell gets a label, and labels must be unique. |
+| `echo: false` | Runs the code but hides it, so only the result appears. |
+| `eval: false` | Shows the code but does not run it. |
+| `error: true` | Lets the render continue when the cell produces an error, and prints the error message. |
+
+: The four code cell options this homework uses. {#tbl-cell-options}
+
+The next cell has `eval: false`, so the code appears in the PDF but produces no output:
+
+```{r}
+#| label: not-run
+#| eval: false
+
+sqrt(16)
+```
+
+The next cell has `error: true`.
+Without it, the error would stop the whole render.
+
+```{r}
+#| label: an-error
+#| error: true
+
+sqrt("sixteen")
+```
+
+## Running cells versus rendering {#sec-run-vs-render}
+
+In Positron you can run a single cell with the **Run Cell** button above it, or run the current line with Ctrl+Enter (Cmd+Enter on a Mac).
+The result appears in the console, which is how you try things out while you work.
+
+**Rendering** is different: Quarto starts a fresh R session and runs every cell from top to bottom.
+
+::: {.callout-important}
+**Your document must work from top to bottom in a fresh session.**
+An object you created only in the console does not exist when Quarto renders.
+If the render fails with `object not found` while your console works fine, this is almost always the reason.
+:::
+
+## Code inside a sentence {#sec-inline-code}
+
+You can also put a result inside your prose with inline code: a backtick, the letter `r`, a space, the code, and a closing backtick.
+Written that way, `2 + 2` becomes `r 2 + 2` in the rendered document, and it stays correct if the code changes.
+
+# Objects {#sec-objects}
+
+1. Create three objects: one holding a number, one holding a piece of text, and one holding `TRUE` or `FALSE`.
+   Choose meaningful names.
+2. Print all three.
+3. Assign a new value of a different type to one of them, and print it again.
+
+```{r}
+#| label: ex-objects
+```
+
+In one sentence, describe what happened to the object in step 3:
+
+<!-- Your answer here. -->
+
+# Functions {#sec-functions}
+
+1. Create a vector of five numbers of your choice.
+   Compute its `mean()`, `min()` and `max()`, and round the mean to two decimal places with `round()`, naming the `digits` argument.
+
+```{r}
+#| label: ex-functions-builtin
+```
+
+2. Write a function `km_to_miles()` that converts kilometres to miles (1 km is 0.621371 miles).
+   Test it on a single value and on a vector of three distances.
+
+```{r}
+#| label: ex-functions-km
+```
+
+3. Write a function `percent()` that takes a proportion `x` and returns it as a percentage, rounded to `digits` decimal places.
+   Give `digits` a default value of 1.
+   Call it once with and once without the `digits` argument.
+
+```{r}
+#| label: ex-functions-percent
+```
+
+# Reading errors {#sec-errors}
+
+Each line in the next cell produces an error.
+The cell has `error: true`, so the document still renders and shows each message.
+
+```{r}
+#| label: ex-errors-broken
+#| error: true
+
+countrie <- c("Germany", "France")
+country_count <- length(countries)
+Sum(c(1, 2, 3))
+"10" * 2
+```
+
+1. For each of the three error messages, write one sentence saying **where** it broke and **what** went wrong.
+
+<!-- Your answer here. -->
+
+2. Write a fixed version of all four lines in the next cell, which does not have `error: true`.
+
+```{r}
+#| label: ex-errors-fixed
+```
+
+# The pipe {#sec-pipe}
+
+The next cell computes something in one nested call.
+
+```{r}
+#| label: ex-pipe-nested
+
+distances <- c(4.2, 10, 21.1, 42.2)
+round(sum(distances), digits = 0)
+```
+
+1. Describe in one sentence what the nested call computes.
+2. Rewrite it with the native pipe `|>`, and show that both versions give the same result.
+3. Extend the pipe so that it first converts `distances` to miles with your `km_to_miles()` function.
+
+```{r}
+#| label: ex-pipe
+```
+
+<!-- Your answer to question 1 here. -->
+
+# Data types {#sec-types}
+
+1. **Before running anything**, write down which class you expect for each value: `42`, `42L`, `"42"`, `FALSE`, `"FALSE"`, `10 > 5`, `as.Date("2026-09-30")`.
+
+<!-- Your predictions here. -->
+
+2. Now check each one with `class()`.
+   Which of your predictions were wrong, and why?
+
+```{r}
+#| label: ex-types-class
+```
+
+<!-- Your answer here. -->
+
+3. Convert `"2026"` to a number and add 1 to it.
+   Then try `as.numeric("twenty")`.
+   What comes back, and what does it mean?
+
+```{r}
+#| label: ex-types-convert
+#| warning: true
+```
+
+<!-- Your answer here. -->
+
+4. Create a factor `size` from the values `"small"`, `"large"`, `"medium"`, `"small"`, with the levels in the order small, medium, large.
+   Print it and its `levels()`.
+
+```{r}
+#| label: ex-types-factor
+```
+
+# Data structures {#sec-structures}
+
+## Vectors and matrices {#sec-ex-vectors}
+
+1. Create a vector with the names of four cities, and check its `length()`.
+2. Create a numeric vector with their populations in thousands, and use one line of code to convert all of them to plain numbers of inhabitants.
+3. **Predict first**, then check: what does `c(3, "four", 5)` return, and what is its class?
+4. Create a matrix with 2 rows and 3 columns holding the numbers 1 to 6.
+
+```{r}
+#| label: ex-vectors
+```
+
+## A small dataset {#sec-ex-dataset}
+
+The next cell builds the data frame `europe`, which the rest of this homework uses.
+Run it, but do not change it.
+Populations are in millions for 2024, rounded, and `eu_joined` is the year the country joined the EU or its predecessor.
+
+```{r}
+#| label: europe-data
+
+europe <- data.frame(
+  country = c(
+    "Germany", "France", "Italy", "Spain", "Poland",
+    "Sweden", "Norway", "Switzerland", "Turkey"
+  ),
+  population = c(83.4, 68.4, 59.0, 48.6, 36.6, 10.6, 5.6, 9.0, 85.4),
+  eu_member = c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE),
+  eu_joined = c(1958, 1958, 1958, 1986, 2004, 1995, NA, NA, NA),
+  region = c(
+    "Western Europe", "Western Europe", "Southern Europe", "Southern Europe",
+    "Eastern Europe", "Northern Europe", "Northern Europe", "Western Europe",
+    "Western Asia"
+  )
+)
+```
+
+1. Look at `europe` with `str()`.
+   How many rows and columns does it have, and what type is each column?
+
+```{r}
+#| label: ex-dataset-str
+```
+
+<!-- Your answer here. -->
+
+2. `NA` appears in `eu_joined`.
+   In one sentence, what does it stand for here, and why is it a better choice than 0?
+
+<!-- Your answer here. -->
+
+## A list {#sec-ex-list}
+
+Create a list `me` holding your name, the number of semesters you have studied, and a vector of two courses you are taking this term.
+Print it, then print only the courses.
+
+```{r}
+#| label: ex-list
+```
+
+# Accessing and exploring data {#sec-access}
+
+All questions use `europe`.
+
+1. Print the third row.
+2. Print the `population` column as a vector, using `$`.
+3. Print the names of all countries with more than 50 million inhabitants.
+4. How many of the nine countries are EU members?
+   Answer with code, not by counting.
+5. Which countries joined after 2000?
+6. Compute the average population with `summary()`.
+7. Compute the average accession year with `mean()`.
+   The first attempt returns `NA`.
+   Use `?mean` to find the argument that fixes it.
+
+```{r}
+#| label: ex-access
+```
+
+# Reflection {#sec-reflection .unnumbered}
+
+What did you find confusing or difficult in this homework?
+Is there anything about objects, functions, types or structures you are still unsure about?
+
+<!-- Your answer here. -->
+
+# Session info and execution time {#sec-session .unnumbered}
+
+```{r}
+#| label: session-info
+
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+
+end_time <- Sys.time()
+cat(
+  "Total execution time:",
+  round(difftime(end_time, start_time, units = "mins"), 1),
+  "minutes\n"
+)
+```

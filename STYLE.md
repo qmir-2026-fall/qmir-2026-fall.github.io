@@ -393,3 +393,30 @@ Recorded so the decisions are not relitigated.
 - No hand-typed schedule, roster or homework status. All of it is built from `course.yml`,
   `meta.yml` and the GitHub API.
 - No per-deck duplication of shared YAML, colours, or the workflow table.
+
+---
+
+## 9. Mathematical notation
+
+One notation for the whole course, fixed in week 3 (`@tbl-structures` in
+`website/slides/week03.qmd`) and followed everywhere after. It is the standard linear-algebra
+convention. The shapes are told apart by **bold**, not by italics: every letter in math mode is
+already italic, so italics cannot carry the distinction.
+
+| Concept | Symbol | LaTeX |
+|---|---|---|
+| Scalar | $x$, italic lowercase | `x` |
+| Vector | $\mathbf{x}$, bold lowercase | `\mathbf{x}` |
+| Matrix | $\mathbf{X}$, bold uppercase | `\mathbf{X}` |
+| Tensor (order 3 or more) | $\mathcal{X}$, calligraphic | `\mathcal{X}` |
+
+Consequences for the rest of the term:
+
+- The outcome is the vector $\mathbf{y}$ and the predictors are the matrix $\mathbf{X}$. The
+  staged decks from weeks 8 to 11 write $\mathbf{Y}$, so rewrite it as $\mathbf{y}$ when you
+  convert them.
+- A single entry is a scalar, so it is italic with a subscript: $y_i$, $x_{ij}$.
+- Bold Latin letters use `\mathbf`. Bold Greek letters (a parameter vector such as
+  $\boldsymbol{\beta}$) use `\boldsymbol`, because `\mathbf` cannot bold Greek. `\bm` and `\vec`
+  are not used (`E050`).
+- R has no scalars: a single value is a vector of length 1. Say so wherever the two meet.
