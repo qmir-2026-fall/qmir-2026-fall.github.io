@@ -6,9 +6,15 @@ project:
     - "slides/*.qmd"
     - "resources/*.qmd"
 
-# Keep expensive renders cached. _freeze/ IS COMMITTED (see CLAUDE.md §7) so a fresh clone
-# and any machine reproduce the same site without re-running every model.
-freeze: auto
+# Pages are NOT frozen. schedule.qmd, syllabus.qmd, index.qmd and glossary.qmd are built from
+# files and dates their own source does not contain (weekNN.qmd existing, meta.yml, course.yml,
+# today's date), and freeze: auto only re-runs a page when its own source changes. Frozen, the
+# schedule silently stopped at week 2. They are cheap, so they re-execute on every render.
+#
+# The decks ARE frozen: slides/_metadata.yml sets execute: freeze: auto, which overrides this
+# for slides/. _freeze/ IS COMMITTED (see CLAUDE.md §7) so any machine reproduces the decks
+# without re-running their models.
+freeze: false
 
 website:
   title: "QMIR — Quantitative Methods"

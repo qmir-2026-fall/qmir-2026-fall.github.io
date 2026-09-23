@@ -273,7 +273,7 @@ repo) `qmir-2026-fall.github.io`, the private solutions repo `solutions`.
 | `website/slides/_deck-template.qmd` | Copy this to start a week's deck. It is also the worked example of every slide convention. |
 | `website/slides/_weekNN.qmd` | **Staging.** The 2026 spring deck for that week, ported verbatim, not yet converted to `STYLE.md`. See below. |
 | `website/slides/images/`, `website/slides/data/` | Deck assets, carried over from the spring course. The paths a `_weekNN.qmd` body already expects. |
-| `website/_freeze/` | **Committed on purpose.** Frozen renders so the site rebuilds identically anywhere without re-running models. |
+| `website/_freeze/` | **Committed on purpose.** Frozen deck renders so the site rebuilds identically anywhere without re-running models. **Decks only**: pages always re-render, because they read files and dates their own source does not contain, and a frozen schedule silently stops updating. |
 | `homework/_template/` | Skeleton copied to start each `hw-NN`, including the `.github/workflows/hw-check.yml` that ships to students. |
 | `homework/_import/hw-NN/` | **Staging.** Ported spring homework in `hw-NN` shape. Provenance and known gaps are in `homework/_import/README.md`. |
 | `homework/hw-NN/` | Per-week **student-facing** sources (starter, README, meta.yml, data). No solutions here. |
