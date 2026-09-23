@@ -54,4 +54,4 @@ New-Item -ItemType Directory -Path (Split-Path $out) -Force | Out-Null
 Copy-Item (Join-Path $work "solution.pdf") $out -Force
 
 Write-Host "Published solution PDF: $out" -ForegroundColor Green
-Write-Host "schedule.qmd links it automatically once due < today. Run publish-site.ps1 to push." -ForegroundColor Green
+Write-Host "schedule.qmd links it automatically from the due date on. Run publish-site.ps1 to push." -ForegroundColor Green

@@ -180,7 +180,9 @@ sol_of <- function(i) {
     return(icon_off("file-circle-check"))
   }
   pdf <- here("website", "resources", sprintf("hw-%s-solution.pdf", pad(i)))
-  if (as.Date(m$due) >= Sys.Date() || !file.exists(pdf)) {
+  # Due means "before the due-day session", so the solution may link from the due date on,
+  # which is also what release-solution.ps1 allows.
+  if (as.Date(m$due) > Sys.Date() || !file.exists(pdf)) {
     return(icon_off("file-circle-check"))
   }
   icon_link(
