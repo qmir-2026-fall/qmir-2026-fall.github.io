@@ -4,29 +4,33 @@ format:
   pdf:
     toc: false
     number-sections: false
-    geometry: margin=1in
+    papersize: a4
+    geometry: margin=2.5cm
 ---
 
-<!-- Claude fills this in. One block per step this homework exercised. Delete unused blocks.
+<!-- Claude fills this in. One block per exercise (programming weeks) or per workflow step
+     (applied weeks), as the run header says. Delete unused blocks. Every block id is unique.
      Keep it to about one page. No grade or score, this is formative feedback only.
      House style applies: no em dashes, no semicolons, one sentence per line (STYLE.md). -->
 
 *Automated feedback.
 You opted in via `license.md`.
-It compares your submission to the sample solution and is organized by the 8-step Bayesian workflow.
+It reads your submission against the sample solution and what was covered in the session.
 It is not a grade or a regrade channel.*
 
-**Overall:** <one or two encouraging, specific sentences>
+**Overall:** <what works, specifically, in one or two sentences, then the one thing that would help most>
 
-### <step name, for example "3. Formal model"> {#sec-step}
+### <section name, for example "Objects"> {#sec-first}
 
-- **Well done:** <specific>
-- **To fix:** <specific>
+- **What works well:** <specific, quoting your work where it helps>
+- **What to improve:** <specific gap, and why it matters>
 - **Try this:** <one concrete improvement>
 
-<!-- repeat per relevant step -->
+<!-- repeat per relevant section, each with its own unique {#sec-...} id -->
+
+**Next steps:** <one or two concrete things to carry into the next homework>
 
 ---
 
 Keep going.
-Every homework is practice for the same 8-step workflow you will run on the exam.
+The published sample solution is worth reading next to this, now that you know where to look.

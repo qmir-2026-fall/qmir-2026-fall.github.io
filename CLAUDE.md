@@ -165,7 +165,11 @@ those containing `license.md` (matched case-insensitively).
 - (a) the student's submission, `hw-NN.qmd` and the rendered PDF if present.
 - (b) the instructor sample solution, `solutions/hw-NN/solution.qmd` (private submodule).
 - (c) the homework prompt, `homework/hw-NN/README.md`.
-- (d) the 8-step rubric, `website/slides/_workflow-8step.qmd`.
+- (d) the week's deck, `website/slides/weekNN.qmd`, so the work is judged against what was
+  taught.
+- (e) the 8-step rubric, `website/slides/_workflow-8step.qmd`, **only from the "Applied
+  modelling" block of `course.yml` onward**. Earlier weeks are organized by the homework's own
+  exercises, and the runner says which structure applies in a run header appended to the prompt.
 
 **Output.** Claude writes **`FEEDBACK.qmd`** into the case dir (from `feedback-template.qmd`), the
 job renders it to **`FEEDBACK.pdf`**, and both are committed and pushed to the student's own repo.
@@ -175,10 +179,12 @@ inside `submission/` was modified** before pushing, and stages only `FEEDBACK.*`
 touched anything else, the run aborts for that student.
 
 **The prompt** lives in `automation/ai-feedback/FEEDBACK-PROMPT.md` (edit there, not here). In
-short: a supportive TA reads the submission and the sample solution and writes about one page of
-specific, actionable feedback **organized by the 8 steps**. Per relevant step: what went well,
-what is missing or wrong, one concrete improvement. Reference the solution as the standard and
-never paste it. Write **only** `FEEDBACK.qmd` and touch nothing else. The feedback obeys
+short: a supportive but rigorous TA writes about one page of specific, actionable feedback,
+organized by exercise (early weeks) or by the 8 steps (applied weeks). The philosophy is carried
+over from the qmir-2026 exam grading: judge the reasoning rather than resemblance to the
+solution, judge against what was taught, strengths first and meant, every critique concrete
+(the exact thing, then the fix), honest rather than inflated, no grade. Never paste the
+solution. Write **only** `FEEDBACK.qmd` and touch nothing else. The feedback obeys
 `STYLE.md` §1 as well, since it is student-facing prose.
 
 ---
