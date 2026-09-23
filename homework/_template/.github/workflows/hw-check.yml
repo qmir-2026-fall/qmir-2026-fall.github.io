@@ -3,13 +3,17 @@
 # the root of the course repo on purpose: at the root it would fire on every course commit
 # and fail, since there is no hw-*.qmd here.
 #
-# It checks only that the submission is HEALTHY — not whether the analysis is correct.
-# Substantive assessment is always the sample solution + opt-in AI feedback.
+# It checks only that the submission is HEALTHY (it renders), not whether the analysis is
+# correct. Substantive assessment is always the sample solution plus the opt-in AI feedback.
+# GitHub emails the student only when a run FAILS, so a failure email means "your homework
+# does not render from a clean checkout".
 name: hw-check
 
 on:
   push:
     branches: [main]
+    # The AI feedback runner pushes only these two files. Never re-render for that.
+    paths-ignore: [FEEDBACK.qmd, FEEDBACK.pdf]
   workflow_dispatch: {}
 
 jobs:
@@ -17,14 +21,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # The homework renders to PDF, so TinyTeX is required.
       - uses: quarto-dev/quarto-actions/setup@v2
+        with: { tinytex: true }
       - uses: r-lib/actions/setup-r@v2
         with: { use-public-rspm: true }
-      # Render the homework — the single most useful mechanical check.
+      # Install whatever the homework loads, read from its library() calls, so this file
+      # never needs editing per week (base R in week 3, tidyverse and brms later).
+      - name: Find packages
+        id: deps
+        run: |
+          # `|| true`: a base-R homework has no library() calls, and grep then exits 1.
+          pkgs=$( { grep -ohE '^\s*library\(([A-Za-z0-9.]+)\)' hw-*.qmd || true; } \
+                 | sed -E 's/.*library\(([A-Za-z0-9.]+)\).*/any::\1/' | sort -u | tr '\n' ' ')
+          echo "Packages: $pkgs"
+          echo "pkgs=$pkgs" >> "$GITHUB_OUTPUT"
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: any::knitr any::rmarkdown ${{ steps.deps.outputs.pkgs }}
+      # Render the homework, the single most useful mechanical check.
       - name: Render submission
         run: quarto render hw-*.qmd
       # Emit a tiny status artifact (green = rendered).
       - name: Mark rendered
-        run: echo '{"rendered": true}' > check-result.json
+        run: |
+          echo '{"rendered": true}' > check-result.json
       - uses: actions/upload-artifact@v4
         with: { name: check-result, path: check-result.json }
