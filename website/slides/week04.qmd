@@ -1,0 +1,1031 @@
+---
+title: "Week 4: The tidyverse"
+---
+
+<!-- Shared format options live in _metadata.yml, so this deck's YAML carries only the title.
+
+     This week teaches code, so the code has to be visible: every teaching chunk opts out of the
+     default fold with #| code-fold: false, as in week 03.
+
+     Rhythm: every concept is followed by a "Practice:" slide the room does on the spot, with the
+     answer behind a . . . beat. The red line is ONE story: read a messy file, make it tidy, then
+     transform, join and summarise, while a single gapminder pipeline grows one verb at a time
+     (the new line is highlighted with code-line-numbers). It ends in a pipeline the room writes.
+
+     Time budget (90 min): recap 8, errors 5, packages 10, tidyverse and tidy data 10, read 8,
+     tidy 8, transform 17, join 7, summarise 9, final challenge 6, wrap-up 2.
+     If the room runs slow, cut arrange first, then pivot_wider.
+
+     data/week04-lifeexp-wide.csv is gapminder's life expectancy for the nine countries of the
+     hw-03 `europe` table, pivoted wide (one column per year) and written once with:
+       gapminder |> filter(country %in% nine) |> select(country, year, lifeExp) |>
+         pivot_wider(names_from = year, values_from = lifeExp) |> write_csv(...)
+     Students read the same file from its raw GitHub URL, so it must be pushed before class. -->
+
+```{r}
+#| label: setup
+#| include: false
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling
+library(here) # project-root-relative paths
+library(gapminder) # demo data
+
+# _quarto.yml is a project-root marker, so anchor here() at the repo root.
+here::i_am("website/slides/week04.qmd")
+
+# Short tibble printouts, so a result fits under its code on a slide.
+options(pillar.print_min = 5, pillar.print_max = 5, width = 70)
+```
+
+## Week 4 goals {#sec-week04-goals .smaller}
+
+By the end of today, you will be able to:
+
+1. Use Quarto cell options to control what a rendered document shows.
+2. Tell an R error, a Quarto error and a LaTeX error apart.
+3. Install and load packages, and call a function as `package::function()`.
+4. Say what the tidyverse is and what makes data tidy.
+5. Read a file and reshape it into tidy form.
+6. Transform, join and summarise data in one readable pipeline.
+
+## Today {#sec-today .smaller}
+
+1. **Recap:** Quarto cell options
+2. **Errors:** which layer is complaining?
+3. **Packages:** install, load, `package::function()`
+4. **The tidyverse** and tidy data
+5. **Read, tidy, transform:** one dataset, one growing pipeline
+   - `read_csv()`, `pivot_longer()`, the `dplyr` verbs, `left_join()`, `summarise()`
+6. **Your pipeline**
+
+::: notes
+Same deal as last week: type along.
+Positron open, a fresh `.qmd` or the console.
+:::
+
+## Where today fits {#sec-where-today-fits .smaller}
+
+Today starts **step 2, the data summary**.
+Every data summary you will write this term is a pipeline like the one we build today.
+
+{{< include _workflow-8step.qmd >}}
+
+::: notes
+One minute.
+Point at step 2 only.
+:::
+
+# Recap: Quarto cell options {#sec-cell-options}
+
+## Cell options you have met {#sec-cell-options-table .smaller}
+
+::: notes
+Two minutes.
+They used label, echo, eval and error in hw-03.
+Add include, message, warning and fig-cap as the new ones.
+:::
+
+:::: {.columns}
+
+::: {.column width="60%"}
+::: {.small}
+| Option | What it does |
+|---|---|
+| `label: my-name` | Names the cell. Unique, and required. |
+| `echo: false` | Runs the code, hides it, shows the result. |
+| `eval: false` | Shows the code, does not run it. |
+| `include: false` | Runs the code, shows nothing at all. |
+| `error: true` | Shows an error and keeps rendering. |
+| `message: false` | Hides messages, such as package startup text. |
+| `warning: false` | Hides warnings. |
+| `fig-cap: "..."` | Captions a figure, with a `fig-` label. |
+
+: The cell options this course uses, one `#|` line each at the top of a cell. {#tbl-cell-options}
+:::
+:::
+
+::: {.column width="40%"}
+Options set in the YAML header apply to **every** cell.
+A cell option overrides them for that one cell.
+
+```yaml
+execute:
+  echo: true
+  message: false
+  warning: false
+```
+:::
+
+::::
+
+## Practice: predict the PDF {#sec-practice-cell-options .smaller}
+
+**Do this now.**
+For each cell, what appears in the rendered document: code, result, both, or nothing?
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**A**
+
+```{{r}}
+#| label: a
+#| echo: false
+
+mean(c(2, 4, 6))
+```
+
+**B**
+
+```{{r}}
+#| label: b
+#| eval: false
+
+mean(c(2, 4, 6))
+```
+:::
+
+::: {.column width="50%"}
+**C**
+
+```{{r}}
+#| label: c
+#| include: false
+
+avg <- mean(c(2, 4, 6))
+```
+
+**D**
+
+```{{r}}
+#| label: d
+#| error: true
+
+mean(c(2, 4, 6)) + "one"
+```
+:::
+
+::::
+
+. . .
+
+A: only the result `4`.
+B: only the code.
+C: nothing, but `avg` now exists for later cells.
+D: the code and the error, and the render goes on.
+
+# Three layers of errors {#sec-error-layers}
+
+## Rendering is a relay {#sec-render-relay .smaller}
+
+::: notes
+Three minutes.
+The one idea: the first word of the message tells you which runner dropped the baton.
+Week 3 taught reading an R error, this is the step before: is it R at all?
+:::
+
+`.qmd` → **R** runs the cells → `.md` → **Quarto and Pandoc** convert → `.tex` → **LaTeX** typesets → `.pdf`
+
+. . .
+
+Each runner has its own voice when it fails:
+
+::: {.small}
+| Layer | The message looks like | Where to look |
+|---|---|---|
+| **R** | `Error:` or `Error in f():`, then `Quitting from hw.qmd:6-10 [cell-label]` | The cell named in square brackets, at those lines. |
+| **Quarto** | `ERROR: YAMLException: ... (6:20)` | The YAML header, at line 6, column 20. |
+| **LaTeX** | `compilation failed- error`, then a line number `l.172` | Your prose: a special character such as `%`, `&`, `$` or a stray `\`. |
+
+: The three layers of a PDF render, how each one reports a failure, and where to go to fix it. {#tbl-error-layers}
+:::
+
+::: {.callout-tip}
+**Only the first error counts.**
+Scroll up to the first message, fix that, and render again.
+:::
+
+## Practice: which layer? {#sec-practice-error-layers .smaller}
+
+**Do this now.**
+Real messages from real renders.
+Which layer broke, and what would you check first?
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**1**
+
+```text
+compilation failed- error
+Undefined control sequence.
+l.172 GDP grew by 5\% and the \gdp
+```
+
+**2**
+
+```text
+ERROR: YAMLException: bad indentation
+of a mapping entry (6:20)
+ 5 |    toc: true
+ 6 |     number-sections: true
+```
+:::
+
+::: {.column width="50%"}
+**3**
+
+```text
+Error:
+! object 'lifeexp' not found
+Quitting from hw-04.qmd:6-10 [life-mean]
+```
+:::
+
+::::
+
+. . .
+
+1: **LaTeX**, the prose holds `\gdp`, which LaTeX reads as a command.
+2: **Quarto**, the YAML header is misindented at line 6.
+3: **R**, in the cell `life-mean`: a typo or a line not run yet, as in week 3.
+
+# Packages {#sec-packages}
+
+## Packages: functions other people wrote {#sec-what-packages .smaller}
+
+::: notes
+Callback to week 3: they wrote `celsius_to_fahrenheit()`.
+A package is that, times a few hundred, with documentation, shared.
+:::
+
+Last week you wrote your own function.
+A **package** is a bundle of functions, their help pages, and sometimes data, that someone wrote and shared.
+
+. . .
+
+- R itself ships with the **base** packages: `mean()`, `round()`, `data.frame()`.
+- **CRAN**, R's package archive, holds more than 20,000 more, checked and free.
+- Nearly every method in this course lives in a package: `dplyr` today, `ggplot2` next week, `brms` later.
+
+## Install once, load every session {#sec-install-load .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Install** downloads the package to your computer.
+Once, in the **console**.
+
+```{r}
+#| label: install-demo
+#| code-fold: false
+#| eval: false
+
+install.packages("gapminder")
+```
+:::
+
+::: {.column width="50%"}
+**Load** makes its functions available.
+Every session, at the top of your `.qmd`.
+
+```{r}
+#| label: load-demo
+#| code-fold: false
+
+library(gapminder) # demo data
+```
+:::
+
+::::
+
+. . .
+
+Like an app on your phone: you install it once, and you open it every time you use it.
+
+::: {.callout-important}
+**`install.packages()` never goes into a `.qmd`.**
+It would reinstall on every render, and Quarto refuses to run it anyway.
+:::
+
+## Quarto stops when a package is missing {#sec-missing-package .smaller}
+
+If a `library()` call names a package that is not installed, the render stops at that cell:
+
+```text
+Error in `library()`:
+! there is no package called 'gapminder'
+Quitting from hw-04.qmd:6-10 [setup]
+```
+
+. . .
+
+- That is an **R** error, reported through Quarto.
+- The fix is in the **console**, not in the document: `install.packages("gapminder")`, then render again.
+- It also happens when the name is misspelled: `library(gapmindr)` gives the same message.
+
+::: notes
+This is the most common first-render failure on a new laptop.
+Everybody who installed a package in a different R version meets it once.
+:::
+
+## `package::function()` {#sec-double-colon .smaller}
+
+`::` names the package a function comes from.
+
+```{r}
+#| label: double-colon
+#| code-fold: false
+
+gapminder::gapminder |> nrow()
+```
+
+. . .
+
+Three reasons to use it:
+
+- **Clarity:** the reader sees where a function lives.
+- **No `library()` needed** for a one-off call, such as `readxl::read_excel()`.
+- **Name clashes:** two packages can both have a `filter()`.
+  `library(tidyverse)` tells you which one wins:
+
+```text
+✖ dplyr::filter() masks stats::filter()
+```
+
+## Practice: install and load {#sec-practice-packages .smaller}
+
+**Do this now.**
+
+1. In the **console**, install `gapminder`.
+2. At the top of your `.qmd`, load `tidyverse` and `gapminder` in a setup cell.
+   Run the cell and read the startup message.
+   Which packages were attached, and what is masked?
+3. Type `gapminder` and run it.
+   How many rows and columns?
+4. Run `?gapminder`.
+   What does `gdpPercap` measure?
+
+. . .
+
+```{r}
+#| label: practice-packages
+#| code-fold: false
+
+library(tidyverse) # wrangling
+library(gapminder) # demo data
+
+gapminder
+```
+
+::: notes
+Circulate.
+Anyone whose `library(tidyverse)` fails installs it now.
+:::
+
+# The tidyverse {#sec-tidyverse}
+
+## One grammar across many packages {#sec-tidyverse-philosophy .smaller}
+
+The **tidyverse** is a family of packages built on one shared philosophy:
+
+. . .
+
+- **Tidy data in, tidy data out:** every function takes a table and returns a table.
+- **Data first:** the table is always the first argument, so every step chains with `|>`.
+- **Functions are verbs:** `filter()`, `select()` and `summarise()` read like what they do.
+- **Written for humans:** consistent names and arguments, so learning one package teaches you the next.
+
+. . .
+
+`library(tidyverse)` loads the core packages in one line.
+
+::: notes
+Two minutes.
+The payoff of the design: tomorrow's package already feels familiar.
+:::
+
+## What is tidy data? {#sec-tidy-data .smaller}
+
+> Tidy datasets are all alike, but every messy dataset is messy in its own way.
+>
+> Hadley Wickham
+
+. . .
+
+A dataset is **tidy** when:
+
+1. Each **variable** has its own **column**.
+2. Each **observation** has its own **row**.
+3. Each **value** has its own **cell**.
+
+. . .
+
+This is the data frame from week 3, with one rule added: **decide what a row is**.
+In gapminder, a row is one country in one year.
+
+## Practice: is this tidy? {#sec-practice-tidy .smaller}
+
+**Do this now.**
+Tidy or not?
+If not, which rule does it break?
+
+:::: {.columns}
+
+::: {.column width="50%"}
+::: {.small}
+| country | year | lifeExp |
+|---|---|---|
+| Germany | 1952 | 67.5 |
+| Germany | 2007 | 79.4 |
+
+: Layout A. {#tbl-layout-a}
+
+| country | 1952 | 2007 |
+|---|---|---|
+| Germany | 67.5 | 79.4 |
+| France | 67.4 | 80.7 |
+
+: Layout B. {#tbl-layout-b}
+:::
+:::
+
+::: {.column width="50%"}
+::: {.small}
+| country | year | measure | value |
+|---|---|---|---|
+| Germany | 2007 | lifeExp | 79.4 |
+| Germany | 2007 | pop | 82400996 |
+
+: Layout C. {#tbl-layout-c}
+
+| country | year | life_range |
+|---|---|---|
+| Germany | 1952-2007 | 67.5-79.4 |
+
+: Layout D. {#tbl-layout-d}
+:::
+:::
+
+::::
+
+. . .
+
+A is tidy.
+B hides the variable `year` in its column names.
+C stores two variables in rows.
+D puts two values in each cell.
+
+::: notes
+Hands up for each one before revealing.
+B is the one we meet on the next slides: it is our file.
+:::
+
+## The core packages, along the data cycle {#sec-core-packages .smaller}
+
+**Read** → **Tidy** → **Transform** → Visualise → Model → Communicate
+
+::: {.small}
+| Stage | Package | For | Key functions |
+|---|---|---|---|
+| Read | `readr` | Text files such as CSV | `read_csv()`, `write_csv()` |
+| Tidy | `tidyr` | Reshaping | `pivot_longer()`, `pivot_wider()` |
+| Transform | `dplyr` | The verbs of data manipulation | `filter()`, `mutate()`, `summarise()` |
+| Transform | `stringr`, `forcats`, `lubridate` | Text, factors, dates | `str_detect()`, `fct_reorder()`, `ymd()` |
+| Visualise | `ggplot2` | Plots, next week | `ggplot()` |
+| Underneath | `tibble`, `purrr` | Data frames, repetition | `tibble()`, `map()` |
+
+: The core tidyverse packages, ordered along the data cycle. Today covers the first three stages. {#tbl-core-packages}
+:::
+
+::: notes
+Do not read the table.
+Point at the three stages we cover, then move on.
+:::
+
+# Read {#sec-read}
+
+## Every format has a reader {#sec-import-formats .smaller}
+
+::: {.small}
+| Format | Extension | Function | Loaded by `library(tidyverse)`? |
+|---|---|---|---|
+| Comma-separated | `.csv` | `readr::read_csv()` | yes |
+| Semicolon-separated, as German Excel saves it | `.csv` | `readr::read_csv2()` | yes |
+| Tab-separated | `.tsv` | `readr::read_tsv()` | yes |
+| R's own format | `.rds` | `readr::read_rds()` | yes |
+| Excel | `.xlsx`, `.xls` | `readxl::read_excel()` | installed, not loaded |
+| Stata | `.dta` | `haven::read_dta()` | installed, not loaded |
+| SPSS | `.sav` | `haven::read_sav()` | installed, not loaded |
+| JSON | `.json` | `jsonlite::fromJSON()` | installed, not loaded |
+| Parquet | `.parquet` | `arrow::read_parquet()` | install it yourself |
+
+: Common data formats and the function that reads each one. Installing the tidyverse also installs `readxl`, `haven` and `jsonlite`, but only `library(tidyverse)` loads `readr`, which is where `::` earns its keep. {#tbl-import-formats}
+:::
+
+::: notes
+Point out the German Excel row: a CSV that comes out as one column is usually a semicolon file.
+The next homework reads an `.xlsx` with `readxl::read_excel()`.
+:::
+
+## Reading a file {#sec-read-csv .smaller}
+
+```{r}
+#| label: read-csv
+#| code-fold: false
+
+lifeexp_wide <- read_csv(here("website", "slides", "data", "week04-lifeexp-wide.csv"))
+glimpse(lifeexp_wide)
+```
+
+. . .
+
+- **Assign the result.** `read_csv()` alone prints the data and forgets it.
+- `here()` builds the path from your project folder, so it works on any computer.
+  In your homework repository that is `here("data", "parlgov.xlsx")`.
+- `glimpse()` shows every column with its type: the first thing to run on new data.
+
+## Practice: read it yourself {#sec-practice-read .smaller}
+
+**Do this now.**
+`read_csv()` also reads straight from the web.
+
+```{r}
+#| label: practice-read
+#| code-fold: false
+#| eval: false
+
+url <- "https://raw.githubusercontent.com/qmir-2026-fall/qmir-2026-fall.github.io/main/website/slides/data/week04-lifeexp-wide.csv"
+lifeexp_wide <- read_csv(url)
+```
+
+1. Read the file and `glimpse()` it.
+2. Which rule of tidy data does it break?
+3. A tidy version has one row per country and year.
+   How many rows will it have?
+
+. . .
+
+It is Layout B: `year` hides in the column names.
+Nine countries times twelve years makes **108 rows**.
+
+# Tidy {#sec-tidy}
+
+## `pivot_longer()`: wide to tidy {#sec-pivot-longer .smaller}
+
+```{r}
+#| label: pivot-longer
+#| code-fold: false
+
+lifeexp <- lifeexp_wide |>
+  pivot_longer(
+    cols = -country, # every column except country
+    names_to = "year", # the column names become this variable
+    values_to = "lifeExp", # the cell values become this one
+    names_transform = as.integer # "1952" is text, make it a number
+  )
+lifeexp
+```
+
+::: notes
+Read the call aloud as a sentence: take every column except country, put the names into year and the values into lifeExp.
+:::
+
+## `pivot_wider()`: the way back {#sec-pivot-wider .smaller}
+
+Wide is not wrong.
+It is how a **table for a reader** usually looks, and `pivot_wider()` gets you there:
+
+```{r}
+#| label: pivot-wider
+#| code-fold: false
+
+lifeexp |>
+  pivot_wider(names_from = year, values_from = lifeExp)
+```
+
+. . .
+
+::: {.callout-tip}
+**Tidy for the computer, wide for the reader.**
+Keep your working data tidy, and pivot wider only at the very end, for a table in your report.
+:::
+
+## Practice: pivot it {#sec-practice-pivot .smaller}
+
+**Do this now.**
+
+1. Pivot `lifeexp_wide` into a tidy tibble called `lifeexp`.
+2. Check with `nrow()` that it has 108 rows.
+3. Check with `class(lifeexp$year)` that `year` is a number.
+   What happens without `names_transform`?
+4. **Stretch:** pivot it back to wide.
+
+. . .
+
+Without `names_transform`, `year` stays **character**, and `year > 2000` would compare text.
+From here on we use the full `gapminder`: it is this tibble for all 142 countries, with three more variables.
+
+::: notes
+The transition to gapminder is the key sentence here.
+Our file was a slice of gapminder all along.
+:::
+
+# Transform {#sec-transform}
+
+## The `dplyr` verbs {#sec-dplyr-verbs .smaller}
+
+:::: {.columns}
+
+::: {.column width="55%"}
+::: {.small}
+| Verb | What it does |
+|---|---|
+| `filter()` | Keep rows that meet a condition |
+| `select()` | Keep or drop columns |
+| `mutate()` | Create or change columns |
+| `arrange()` | Sort rows |
+| `left_join()` | Add columns from another table |
+| `group_by()` | Split rows into groups |
+| `summarise()` | Collapse each group to one row |
+
+: The core `dplyr` verbs covered today, in the order the pipeline uses them. {#tbl-dplyr-verbs}
+:::
+:::
+
+::: {.column width="45%"}
+Every verb:
+
+- takes a **table first**, so it pipes
+- names columns **without quotes** and without `$`
+- returns a **new table** and leaves the old one unchanged
+:::
+
+::::
+
+. . .
+
+We build **one pipeline**, one verb at a time.
+The highlighted line is the new one.
+
+## `filter()`: keep rows {#sec-filter .smaller}
+
+```{r}
+#| label: pipe-filter
+#| code-fold: false
+#| code-line-numbers: "2"
+
+gapminder |>
+  filter(continent == "Europe", year == 2007)
+```
+
+. . .
+
+- A comma means **and**.
+  `|` means or, and `%in%` tests membership, as in week 3.
+- `==` compares, `=` names an argument.
+
+## `select()`: keep columns {#sec-select .smaller}
+
+```{r}
+#| label: pipe-select
+#| code-fold: false
+#| code-line-numbers: "3"
+
+gapminder |>
+  filter(continent == "Europe", year == 2007) |>
+  select(country, lifeExp, pop, gdpPercap)
+```
+
+. . .
+
+A minus drops a column instead: `select(-continent)`.
+
+## Practice: filter and select {#sec-practice-filter-select .smaller}
+
+**Do this now.**
+
+1. Keep the Asian countries in 1952, with only `country` and `lifeExp`.
+2. Which countries had a life expectancy above 80 in 2007?
+3. **Stretch:** keep only the nine countries of our file, in every year.
+   Hint: `%in%` and the `country` column of `lifeexp_wide`.
+
+. . .
+
+```{r}
+#| label: practice-filter-select
+#| code-fold: false
+
+gapminder |>
+  filter(lifeExp > 80, year == 2007) |>
+  select(country, lifeExp)
+```
+
+`filter(country %in% lifeexp_wide$country)` answers the stretch.
+
+## `mutate()`: new columns {#sec-mutate .smaller}
+
+```{r}
+#| label: pipe-mutate
+#| code-fold: false
+#| code-line-numbers: "4-7"
+
+gapminder |>
+  filter(continent == "Europe", year == 2007) |>
+  select(country, lifeExp, pop, gdpPercap) |>
+  mutate(
+    pop_m = pop / 1e6,
+    gdp_bn = pop * gdpPercap / 1e9
+  )
+```
+
+::: notes
+`1e6` is a million, `1e9` a billion.
+Several new columns in one `mutate()`, separated by commas.
+:::
+
+## `arrange()`: sort rows {#sec-arrange .smaller}
+
+```{r}
+#| label: pipe-arrange
+#| code-fold: false
+#| code-line-numbers: "8"
+
+gapminder |>
+  filter(continent == "Europe", year == 2007) |>
+  select(country, lifeExp, pop, gdpPercap) |>
+  mutate(
+    pop_m = pop / 1e6,
+    gdp_bn = pop * gdpPercap / 1e9
+  ) |>
+  arrange(desc(gdp_bn))
+```
+
+. . .
+
+`arrange()` sorts ascending, and `desc()` flips it.
+
+## Practice: mutate and arrange {#sec-practice-mutate-arrange .smaller}
+
+**Do this now.**
+
+1. For 2007, add a column `pop_m` with the population in millions.
+2. Sort so that the most populous country comes first.
+   Which five countries lead?
+3. **Stretch:** which country gained the most life expectancy between 1952 and 2007?
+   Use your tidy `lifeexp`, `pivot_wider()` and `mutate()`.
+
+. . .
+
+```{r}
+#| label: practice-mutate-arrange
+#| code-fold: false
+
+gapminder |>
+  filter(year == 2007) |>
+  mutate(pop_m = pop / 1e6) |>
+  arrange(desc(pop_m)) |>
+  select(country, pop_m)
+```
+
+::: notes
+Stretch answer: pivot_wider, then mutate(gain = `2007` - `1952`), then arrange(desc(gain)).
+Turkey, by about 28 years.
+:::
+
+# Join {#sec-join}
+
+## `left_join()`: add columns from another table {#sec-left-join .smaller}
+
+gapminder does not know who is in the EU.
+The `europe` table from hw-03 does:
+
+:::: {.columns}
+
+::: {.column width="45%"}
+```{r}
+#| label: eu-accession
+#| code-fold: false
+
+eu_accession <- tibble(
+  country = c(
+    "France", "Germany", "Italy",
+    "Spain", "Sweden", "Poland"
+  ),
+  eu_joined = c(
+    1958, 1958, 1958,
+    1986, 1995, 2004
+  )
+)
+```
+:::
+
+::: {.column width="55%"}
+```{r}
+#| label: pipe-join
+#| code-fold: false
+#| code-line-numbers: "4"
+
+gapminder |>
+  filter(country %in% lifeexp_wide$country) |>
+  filter(year == 2007) |>
+  left_join(eu_accession, by = "country") |>
+  select(country, lifeExp, eu_joined)
+```
+:::
+
+::::
+
+::: notes
+Before running the join, ask the prediction question on the next slide.
+:::
+
+## Practice: predict the join {#sec-practice-join .smaller}
+
+**Do this now.**
+Before you run the join, write down:
+
+1. How many rows will the result have?
+2. What will `eu_joined` hold for Norway?
+3. What happens to a country spelled `"Czechia"` in one table and `"Czech Republic"` in the other?
+
+. . .
+
+1. **Nine**: `left_join()` keeps every row of the left table.
+2. **`NA`**: Norway has no match, and `NA` is R's missing value from week 3.
+3. It silently gets `NA` too.
+
+::: {.callout-warning}
+**A join matches text exactly.**
+One spelling difference and the row gets `NA`, without any error.
+Always check how many `NA`s a join produced.
+:::
+
+# Summarise {#sec-summarise}
+
+## `summarise()`: many rows to one {#sec-summarise-intro .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: summarise-all
+#| code-fold: false
+
+gapminder |>
+  filter(year == 2007) |>
+  summarise(
+    mean_life = mean(lifeExp),
+    n = n()
+  )
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: summarise-grouped
+#| code-fold: false
+#| code-line-numbers: "3"
+
+gapminder |>
+  filter(year == 2007) |>
+  group_by(continent) |>
+  summarise(
+    mean_life = mean(lifeExp),
+    n = n()
+  )
+```
+:::
+
+::::
+
+. . .
+
+`group_by()` changes nothing you can see.
+It tells the **next** verb to work once per group.
+`n()` counts rows, and `count(continent)` is the shortcut for exactly that.
+
+::: notes
+This is a data summary table: step 2 of the workflow in one pipeline.
+:::
+
+## Practice: summarise {#sec-practice-summarise .smaller}
+
+**Do this now.**
+
+1. Count the countries per continent in 2007 with `count()`.
+2. For each continent, compute the median GDP per capita in 2007.
+3. **Stretch:** for each year, the mean life expectancy in Europe.
+   Did it ever fall?
+
+. . .
+
+```{r}
+#| label: practice-summarise
+#| code-fold: false
+
+gapminder |>
+  filter(year == 2007) |>
+  group_by(continent) |>
+  summarise(median_gdp = median(gdpPercap)) |>
+  arrange(desc(median_gdp))
+```
+
+::: notes
+Stretch answer: filter Europe, group_by(year), summarise the mean.
+It never fell, from 64.4 in 1952 to 77.6 in 2007.
+:::
+
+# Your pipeline {#sec-your-pipeline}
+
+## Practice: the whole pipeline {#sec-practice-pipeline .smaller}
+
+**Do this now, in pairs.**
+For our nine countries in 2007, compare **EU members** with the rest:
+
+- how many countries in each group
+- their mean life expectancy
+- their total GDP in billions
+
+Hint: after the join, `eu_member = !is.na(eu_joined)` makes the grouping variable.
+
+::: notes
+Six minutes.
+Walk the room.
+Pairs who finish: the life expectancy gain stretch from the mutate practice.
+:::
+
+## The whole pipeline {#sec-pipeline-answer .smaller}
+
+```{r}
+#| label: pipeline-answer
+#| code-fold: false
+
+gapminder |>
+  filter(country %in% lifeexp_wide$country, year == 2007) |> # rows
+  left_join(eu_accession, by = "country") |> # add a table
+  mutate(
+    eu_member = !is.na(eu_joined), # new columns
+    gdp_bn = pop * gdpPercap / 1e9
+  ) |>
+  group_by(eu_member) |> # groups
+  summarise(
+    n = n(),
+    mean_life = mean(lifeExp),
+    total_gdp_bn = sum(gdp_bn)
+  ) |> # one row per group
+  arrange(desc(mean_life)) # sort
+```
+
+. . .
+
+Read it aloud as "take gapminder, **and then** ...".
+Every line is one step you can run and check on its own.
+
+# Wrap-up {#sec-wrap-up}
+
+## Summary {#sec-summary .smaller}
+
+Today we:
+
+- recapped the **cell options** that decide what a PDF shows
+- told **R, Quarto and LaTeX** errors apart
+- **installed** and **loaded** packages, and called functions as `package::function()`
+- met the **tidyverse** and the three rules of **tidy data**
+- **read** a file, made it **tidy** with `pivot_longer()`
+- **transformed** it with `filter()`, `select()`, `mutate()` and `arrange()`
+- **joined** a second table and **summarised** by group
+
+## Homework {#sec-homework .smaller}
+
+- `hw-04`: wrangle the ParlGov election data with today's verbs, due 7 October.
+  Linked from the Schedule.
+- A sample solution is published after the due date.
+
+::: {.callout-important}
+**Individual feedback is only available through the opt-in path.**
+Add an open-source `license.md` to your submission repo to opt in.
+:::
+
+::: {.callout-tip}
+**Do the DataCamp course "Introduction to the Tidyverse" this week.**
+It drills today's verbs until they are automatic, with gapminder as its dataset.
+How to join the course group is on the [syllabus](https://qmir-2026-fall.github.io/syllabus.html#sec-practice-materials).
+:::
+
+## Next week {#sec-next-week}
+
+**Data visualisation**
+
+- From a table to a figure with `ggplot2`.
+- Every plot starts from a tidy table, which is why today came first.
+
+```{r}
+#| label: session-info
+#| include: false
+
+sessionInfo()
+Sys.time() - start_time
+```

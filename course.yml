@@ -166,24 +166,26 @@ weeks:
     steps: [2]
     content: |
       Getting data into a shape that tools can work with, which is most of the work in most
-      analyses. Step 2 of the workflow, the data summary, starts here.
+      analyses. One small dataset is read from a file, made tidy, transformed, joined and
+      summarised, and the pipeline grows one verb at a time. Step 2 of the workflow, the data
+      summary, starts here.
     goals:
-      - "Understand what the tidyverse is and why it exists."
-      - "Know what tidy data means and why it matters."
-      - "Import data with `readr` and explore it with `glimpse()`, `head()` and `summary()`."
+      - "Use Quarto cell options to control what a rendered document shows."
+      - "Tell an R error, a Quarto error and a LaTeX error apart, and know where to look for each."
+      - "Install and load packages, and call a function as `package::function()`."
+      - "Understand what the tidyverse is, why it exists, and what tidy data means."
+      - "Import data with `readr` and reshape wide data into tidy form with `pivot_longer()`."
       - "Wrangle data with the core `dplyr` verbs, chained with the native pipe."
-      - "Use Quarto cell options for labels, captions and execution control."
+      - "Combine two tables with `left_join()`, and summarise groups with `group_by()` and `summarise()`."
   - week: 5
     topic: "Data visualisation"
     steps: [2]
     content: |
-      Moving from a plot that displays data to a figure that makes a point, plus the reshaping
-      and joining that usually comes first. We close on probabilities and distributions, which
+      Moving from a plot that displays data to a figure that makes a point, on top of the
+      reshaping and joining from session 4. We close on probabilities and distributions, which
       is the bridge into the second block.
     goals:
-      - "Reshape data between wide and long form with `pivot_longer()` and `pivot_wider()`."
-      - "Combine datasets from several sources with `left_join()`, and verify the result."
-      - "Handle missing values transparently, and understand the risks of imputation."
+      - "Verify a join on messy real data, and handle missing values transparently, understanding the risks of imputation."
       - "Build and customise `ggplot2` figures through aesthetics, geoms, scales and themes."
       - "Produce publication-ready tables and embed computed results directly in prose with inline code."
       - "Read a distribution as a statement about how plausible each value is."
