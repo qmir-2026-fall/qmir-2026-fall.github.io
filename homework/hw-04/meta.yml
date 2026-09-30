@@ -1,0 +1,13 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 04 and the +7 day offset from course.yml.
+# readxl is installed with the tidyverse, so the starter calls readxl::read_excel() without a
+# library() line. The EU membership file is read from the course repo's raw URL, not shipped.
+slug: hw-04
+week: "04"
+title: "Homework 04: Wrangling ParlGov election data"
+released: 2026-09-30
+due: 2026-10-07
+# Which of the 8 workflow steps this homework exercises: the data summary.
+steps: [2]
+data:
+  - parlgov.xlsx

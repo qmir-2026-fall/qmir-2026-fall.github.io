@@ -63,7 +63,7 @@ This repository is public and its history is permanent.
 - The four READMEs that came from spring (`hw-02`, `hw-04`, `hw-05`, `hw-11`) carry their own
   **AI-tools warning** above the banner. That text predates this term's AI policy, which declares
   AI assistance in commit messages instead. Reconcile the two when you convert the week.
-- `hw-04` and `hw-06` still carry a `QMIR 2026` subtitle from the spring term.
+- `hw-06` still carries a `QMIR 2026` subtitle from the spring term.
 - **`hw-02/hw-02.qmd` is a filled-in worked answer, not a starter**, and its YAML title reads
   `"Homework 03: Practicing the Reproducible Workflow"`. Week 02 went live as README-only on
   purpose (students author the `.qmd` from scratch), so `homework/hw-02/` deliberately does not

@@ -1,0 +1,264 @@
+---
+title: "Homework 04: Wrangling ParlGov election data"
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling
+library(here) # project-root-relative paths
+```
+
+# Read and explore {#sec-read}
+
+This homework uses **ParlGov**, a database of parties, elections and cabinets in 37 democracies.
+The file `data/parlgov.xlsx` is an Excel workbook with several sheets.
+`readxl` was installed with the tidyverse but is not loaded by it, so call its functions as `readxl::read_excel()`, as in class.
+
+1. List the sheets of the workbook with `readxl::excel_sheets()`.
+   Build the path with `here("data", "parlgov.xlsx")`.
+2. Read the `election` sheet into an object called `elections` and the `party` sheet into `parties`.
+   The `sheet =` argument of `readxl::read_excel()` picks the sheet.
+3. `glimpse()` both.
+
+```{r}
+#| label: ex-read
+```
+
+4. Answer in prose: how many rows does each table have, and what is one row of each?
+5. Which type did `election_date` get?
+   In class, `read_csv()` read `accession_date` as a `<date>`.
+   Why do you think the two differ?
+
+6. `count()` the values of `election_type`.
+   What are the two types, and which is more common?
+7. The `variable` sheet documents every column.
+   Read it and find out what `left_right` measures and on which scale.
+
+```{r}
+#| label: ex-explore
+```
+
+# Tidy {#sec-tidy}
+
+1. Is `elections` tidy?
+   Say in one sentence what a row is, and check it against the three rules of tidy data.
+
+2. `parties` holds three positions of every party, each on a scale from 0 to 10, in three columns: `left_right`, `state_market` and `liberty_authority`.
+   For a question such as "how do the party families differ on each scale", the scale is itself a variable.
+   **Before running anything**, predict how many rows a tibble with one row per party and scale will have.
+3. Pivot the three columns longer, with the names going to `scale` and the values to `position`, and assign the result to `positions`.
+   Check your prediction with `nrow()`.
+4. Compute the mean `position` per `scale` with one `group_by()` and `summarise()`.
+   The first attempt returns `NA`: you met the fix in homework 03.
+5. **Stretch:** pivot `positions` back to wide, and check that you get the columns you started from.
+
+```{r}
+#| label: ex-tidy
+```
+
+# Transform {#sec-transform}
+
+From here on, work with **national parliament elections** only.
+
+1. Filter `elections` to the rows with `election_type == "parliament"` and assign the result to `parl`.
+   How many rows remain?
+2. In the same pipeline, add three columns with one `mutate()`:
+   - `year`, the year of the election.
+     `election_date` is text, so turn it into a date first: `year(as.Date(election_date))`.
+   - `seat_share`, the percentage of seats a party won: `seats / seats_total * 100`.
+   - `disproportionality`, how far a party's seat share lies from its vote share, in either direction: `abs(seat_share - vote_share)`.
+     `abs()` returns the absolute value, so a party 5 points over and a party 5 points under both count as 5.
+
+```{r}
+#| label: ex-transform-parl
+```
+
+3. Show the most recent German election in `parl`, with only the columns `party_name_english`, `vote_share`, `seats` and `seat_share`, sorted by vote share with the largest party first.
+   Hint: find the date first, then `filter()` on it.
+
+```{r}
+#| label: ex-transform-germany
+```
+
+4. In one or two sentences: which parties won more seat share than vote share, and which won no seats at all despite winning votes?
+   What rule of the German electoral system do you think explains the second group?
+
+5. **Stretch:** find the five largest seat shares in the whole of `parl`, with the country, the date, the party, its vote share and its seat share.
+   What do the countries have in common?
+
+```{r}
+#| label: ex-transform-stretch
+```
+
+# Join {#sec-join}
+
+## Party families {#sec-join-families}
+
+`parl` does not know which party family a party belongs to.
+`parties` does, in `family_name`, and both tables share the key `party_id`.
+
+1. **Before running anything**, predict how many rows `parl` will have after a `left_join()` that adds `family_name` from `parties`.
+2. Join `parties |> select(party_id, family_name)` onto `parl` by `party_id`, and assign the result to `parl_family`.
+   Check your prediction, and count the `NA`s in `family_name`.
+3. Why select the two columns before the join?
+   Try the join once with the whole of `parties` and look at the column names.
+
+```{r}
+#| label: ex-join-families
+```
+
+## EU membership {#sec-join-eu}
+
+The EU membership file from class also lives on GitHub.
+Read it straight from the web:
+
+```{r}
+#| label: eu-members-read
+
+base <- "https://raw.githubusercontent.com/qmir-2026-fall/qmir-2026-fall.github.io/main/website/slides/data/"
+eu_members <- read_csv(paste0(base, "eu-members.csv"))
+```
+
+The key has a different name in each table: `country_name` in ParlGov and `country` in `eu_members`.
+`by = join_by(country_name == country)` tells `left_join()` that the two columns are the same key.
+
+1. Build a table of ParlGov's countries with one row each: `parl |> count(country_name)`.
+   Then join `eu_members` onto it.
+2. **Before running the join**, predict how many rows the result has.
+3. How many countries get `NA` in `accession_date`?
+   `filter()` them with `is.na(accession_date)` and read the list.
+   One of them is an EU member state.
+   Which one, and why did the join miss it?
+
+```{r}
+#| label: ex-join-eu
+```
+
+4. Fix the spelling in `eu_members` so that it matches ParlGov, and overwrite `eu_members` with the fixed version.
+   Hint: `mutate(country = if_else(country == "...", "...", country))` replaces one value and keeps every other.
+5. Run the join again.
+   Show with `count()` that 28 countries now have an accession date and 9 do not.
+
+```{r}
+#| label: ex-join-eu-fix
+```
+
+::: {.callout-warning}
+**A join matches text exactly.**
+A spelling difference gives `NA` without any error or warning.
+Count the `NA`s after every join, and read the list of rows that failed to match.
+:::
+
+# Count and summarise {#sec-summarise}
+
+1. Count the rows of `parl_family` per `family_name`, largest first.
+   Two of the values are not party families at all.
+   Which ones, and what do they mean?
+
+```{r}
+#| label: ex-summarise-count
+```
+
+2. For every country, compute the mean `disproportionality` and the number of rows with `n()`.
+   Sort so that the most disproportional country comes first.
+   `vote_share` has missing values, so remember `na.rm = TRUE`.
+
+```{r}
+#| label: ex-summarise-disprop
+```
+
+3. In two or three sentences: which countries top the list, and which close it?
+   What do you know about how these countries turn votes into seats?
+
+4. **Stretch:** is the largest party getting smaller over time?
+   For each election, find the vote share of the largest party with `max()`, then compute the mean of those maxima per decade.
+   This needs two rounds of `group_by()` and `summarise()`: first per election, then per decade.
+   Hint: `decade = year %/% 10 * 10`, and drop the rows without a vote share before the first round.
+
+```{r}
+#| label: ex-summarise-stretch
+```
+
+# Your pipeline: a data summary {#sec-pipeline}
+
+::: {.callout-important}
+**This section is step 2 of the workflow, the data summary.**
+A data summary answers a precise question with a table a reader can understand without your code.
+From now on, every analysis you write starts with one.
+:::
+
+**The question.**
+In national parliament elections since 2000, did the average party of each family win a larger vote share in EU member states than outside?
+
+1. Write **one pipeline**, starting from `parl_family`, that:
+   - keeps the elections from 2000 onwards
+   - joins the fixed `eu_members`
+   - adds `eu_member`, which is `TRUE` if the country was a member **on the day of the election**: `!is.na(accession_date) & accession_date <= as.Date(election_date)`
+   - drops the two values of `family_name` that are not families
+   - returns one row per family and membership status, with the mean vote share in a column `mean_vote`
+
+   Assign the result to `eu_families`, and run the pipeline after every new line, as in class.
+
+```{r}
+#| label: ex-pipeline
+```
+
+2. Turn `eu_families` into a table for a reader: `pivot_wider()` so that each family is one row, with one column for members and one for non-members.
+   Then pass it to `knitr::kable()`, with `digits = 1` and readable column names.
+   The cell below already carries the label `tbl-eu-families`.
+   Replace its placeholder `tbl-cap` with a caption a reader can understand without the text: what is in the table, for which elections, and in which unit.
+
+```{r}
+#| label: tbl-eu-families
+#| tbl-cap: "Replace this with your caption."
+```
+
+3. Below the table, write three to four sentences that answer the question.
+   - Reference the table with `@tbl-eu-families`.
+   - Put at least one number into a sentence with inline code, so that it updates when the data does.
+   - Name one thing the mean hides, or one reason why a gap between members and non-members is not yet an effect of EU membership.
+
+::: {.callout-tip}
+**Tidy for the computer, wide for the reader.**
+Keep `eu_families` tidy, and pivot wider only in the cell that prints the table.
+:::
+
+# Reflection {#sec-reflection .unnumbered}
+
+Which step of this homework took you longest, and why?
+Is there a verb or a join you are still unsure about?
+
+# Session info and execution time {#sec-session .unnumbered}
+
+```{r}
+#| label: session-info
+
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+
+end_time <- Sys.time()
+cat(
+  "Total execution time:",
+  round(difftime(end_time, start_time, units = "mins"), 1),
+  "minutes\n"
+)
+```
