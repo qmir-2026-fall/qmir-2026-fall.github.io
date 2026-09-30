@@ -47,10 +47,28 @@ if (length(bad) > 0) {
     ". Add them to tag_vocab in glossary.qmd first, or use an existing tag."
   )
 }
+
+# Every entry names the week it is first met, and that week must be a taught one.
+# The block badge is derived from it, so a wrong week would silently mislabel the term.
+week_ok <- vapply(
+  entries,
+  function(e) {
+    is.numeric(e$week) && length(e$week) == 1 &&
+      e$week >= 1 && e$week <= cfg$sessions$count
+  },
+  logical(1)
+)
+if (!all(week_ok)) {
+  stop(
+    "glossary.yml entries with a missing or out-of-range week: ",
+    paste(vapply(entries[!week_ok], function(e) e$term, character(1)), collapse = ", "),
+    ". Set week: to a number from 1 to ", cfg$sessions$count, "."
+  )
+}
 ```
 
 The vocabulary of the course, collected in one place and sorted alphabetically.
-Every entry is tagged with the block in which you first meet it, so you can still read this page in the same order as the [Schedule](schedule.qmd) if you want to.
+Every entry is tagged with the week in which you first meet it, and with that week's block, so you can still read this page in the same order as the [Schedule](schedule.qmd) if you want to.
 
 Nothing here replaces the slides.
 A glossary entry is the short version you can check quickly, not the explanation.
@@ -109,10 +127,13 @@ cat(
   sep = ""
 )
 
-# --- tag badges: the block tag first, then the topical tags ---
+# --- tag badges: the week, its block, then the topical tags ---
+# Week 1 sits outside the three blocks (course.yml), so it is labelled as orientation.
 badges <- function(e) {
-  block <- block_name_of(cfg, cfg$blocks[[e$block]]$from)
-  out <- sprintf("[%s]{.glossary-tag .glossary-block}", block)
+  block <- block_name_of(cfg, e$week)
+  if (is.na(block)) block <- "Orientation"
+  out <- sprintf("[Week %d]{.glossary-tag .glossary-block}", as.integer(e$week))
+  out <- c(out, sprintf("[%s]{.glossary-tag .glossary-block}", block))
   out <- c(out, sprintf("[%s]{.glossary-tag}", e$tags))
   paste(out, collapse = " ")
 }
