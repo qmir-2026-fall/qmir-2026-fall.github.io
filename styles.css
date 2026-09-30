@@ -45,7 +45,7 @@ blockquote {
 
 /* The size-ladder classes from slides/theme.scss, so a partial that is included on
    both a slide and an HTML page (notably _workflow-8step.qmd) renders sensibly in
-   both. See STYLE.md section 5.1. */
+   both. See .claude/slides.md. */
 .small  { font-size: 0.90rem; }
 .xsmall { font-size: 0.82rem; }
 

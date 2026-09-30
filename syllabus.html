@@ -826,14 +826,16 @@ Note
 <div class="session-meta">
 <p>30 September 2026 · Scientific programming fundamentals · workflow step 2</p>
 </div>
-<p>Getting data into a shape that tools can work with, which is most of the work in most analyses. Step 2 of the workflow, the data summary, starts here.</p>
+<p>Getting data into a shape that tools can work with, which is most of the work in most analyses. One small dataset is read from a file, made tidy, transformed, joined and summarised, and the pipeline grows one verb at a time. Step 2 of the workflow, the data summary, starts here.</p>
 <p><strong>Afterwards you will be able to:</strong></p>
 <ul>
-<li>Understand what the tidyverse is and why it exists.</li>
-<li>Know what tidy data means and why it matters.</li>
-<li>Import data with <code>readr</code> and explore it with <code>glimpse()</code>, <code>head()</code> and <code>summary()</code>.</li>
+<li>Use Quarto cell options to control what a rendered document shows.</li>
+<li>Tell an R error, a Quarto error and a LaTeX error apart, and know where to look for each.</li>
+<li>Install and load packages, and call a function as <code>package::function()</code>.</li>
+<li>Understand what the tidyverse is, why it exists, and what tidy data means.</li>
+<li>Import data with <code>readr</code> and reshape wide data into tidy form with <code>pivot_longer()</code>.</li>
 <li>Wrangle data with the core <code>dplyr</code> verbs, chained with the native pipe.</li>
-<li>Use Quarto cell options for labels, captions and execution control.</li>
+<li>Combine two tables with <code>left_join()</code>, and summarise groups with <code>group_by()</code> and <code>summarise()</code>.</li>
 </ul>
 </section>
 <section id="sec-session-05" class="level3">
@@ -841,12 +843,10 @@ Note
 <div class="session-meta">
 <p>07 October 2026 · Scientific programming fundamentals · workflow step 2</p>
 </div>
-<p>Moving from a plot that displays data to a figure that makes a point, plus the reshaping and joining that usually comes first. We close on probabilities and distributions, which is the bridge into the second block.</p>
+<p>Moving from a plot that displays data to a figure that makes a point, on top of the reshaping and joining from session 4. We close on probabilities and distributions, which is the bridge into the second block.</p>
 <p><strong>Afterwards you will be able to:</strong></p>
 <ul>
-<li>Reshape data between wide and long form with <code>pivot_longer()</code> and <code>pivot_wider()</code>.</li>
-<li>Combine datasets from several sources with <code>left_join()</code>, and verify the result.</li>
-<li>Handle missing values transparently, and understand the risks of imputation.</li>
+<li>Verify a join on messy real data, and handle missing values transparently, understanding the risks of imputation.</li>
 <li>Build and customise <code>ggplot2</code> figures through aesthetics, geoms, scales and themes.</li>
 <li>Produce publication-ready tables and embed computed results directly in prose with inline code.</li>
 <li>Read a distribution as a statement about how plausible each value is.</li>
