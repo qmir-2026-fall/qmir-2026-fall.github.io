@@ -18,9 +18,9 @@ plan) live in `course.yml` and nowhere else.
 
 ## Status (as of 2026-09-30)
 
-- Weeks 1 to 3 are live (`website/slides/week01.qmd` to `week03.qmd`). The week 4 deck is a
-  draft (`week04.qmd`, "not final"), so do not treat it as finished.
-- Homework 02 and 03 exist in `homework/`. Their sample solutions are in `solutions/`.
+- Weeks 1 to 4 are live (`website/slides/week01.qmd` to `week04.qmd`).
+- Homework 02 to 04 are released (`homework/`, org repos `hw-02` to `hw-04`). Their sample
+  solutions are in `solutions/`. The hw-02 and hw-03 solution PDFs are published.
 - Weeks 5 to 13 and the later homeworks are **staged**: spring material ported verbatim to
   `website/slides/_weekNN.qmd` and `homework/_import/hw-NN/`, not yet converted to the style
   guide. How a staged week goes live is in `workflow.md`.
