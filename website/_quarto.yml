@@ -12,7 +12,7 @@ project:
 # schedule silently stopped at week 2. They are cheap, so they re-execute on every render.
 #
 # The decks ARE frozen: slides/_metadata.yml sets execute: freeze: auto, which overrides this
-# for slides/. _freeze/ IS COMMITTED (see CLAUDE.md §7) so any machine reproduces the decks
+# for slides/. _freeze/ IS COMMITTED (see .claude/workflow.md) so any machine reproduces the decks
 # without re-running their models.
 freeze: false
 
@@ -58,7 +58,7 @@ format:
       text: |
         <meta name="robots" content="noindex">
 
-# Cross-references are mandatory on every figure, table and equation (STYLE.md §2).
+# Cross-references are mandatory on every figure, table and equation (.claude/writing.md).
 # Numbering stays Quarto's default. Only the prefixes are pinned, so wording is stable.
 crossref:
   fig-title: "Figure"

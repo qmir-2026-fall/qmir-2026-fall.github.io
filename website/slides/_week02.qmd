@@ -6,10 +6,10 @@ title: "Week 2: Reproducible literate programming with Quarto and Git"
 
      This file is staged: the leading underscore keeps it out of the Quarto render, off
      the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
-     below is the spring deck verbatim, so it does NOT yet follow STYLE.md.
+     below is the spring deck verbatim, so it does NOT yet follow the style guide in .claude/
 
      To put this week live:
-       1. Convert the body to STYLE.md (em dashes, inline font-size, {#sec-} labels,
+       1. Convert the body to the style guide in .claude/ (em dashes, inline font-size, {#sec-} labels,
           chunk labels and captions, the size ladder).
        2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
        3. ./automation/check-authoring.ps1 -Week NN -Fit
@@ -516,7 +516,7 @@ Step 10: Show how I see in GitHub the date and time of commits
      recap instead, and the environment belongs in this session.
 
      Unlike the rest of this staging file, these two slides are already written to
-     STYLE.md, so they can go into week02.qmd unchanged when this deck is converted.
+     the style guide in .claude/, so they can go into week02.qmd unchanged when this deck is converted.
      ───────────────────────────────────────────────────────────────────────────── -->
 
 # First glance at Positron {#sec-positron}

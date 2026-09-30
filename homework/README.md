@@ -10,7 +10,7 @@ It is the payload that `automation/release-homework.ps1` pushes into the distrib
 ## Start a new homework
 
 **Check `_import/` first.** Weeks 2 and 4 to 12 already exist there, ported from the 2026 spring
-course and in the right shape but not yet converted to `STYLE.md`. Their sample solutions are
+course and in the right shape but not yet converted to the style guide in `.claude/`. Their sample solutions are
 already in the private submodule. `_import/README.md` has the provenance and the known gaps.
 
 ```powershell
@@ -33,7 +33,7 @@ And in `solutions/hw-05/`:
 - `solution.qmd`, the sample solution. It is published as a PDF after the due date, and it is
   the standard the opt-in AI feedback compares submissions against.
 
-Both files follow `STYLE.md`. The starter is where students first meet the conventions, so it
+Both files follow the style guide in `.claude/`. The starter is where students first meet the conventions, so it
 has to model them: labelled and captioned figures, `here()` for paths, a setup chunk, and the
 closing session-info and execution-time chunks. Run `automation/check-authoring.ps1` when done.
 

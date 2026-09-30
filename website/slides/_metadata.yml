@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Shared options for EVERY deck in this directory (STYLE.md §5.4).
+# Shared options for EVERY deck in this directory (.claude/slides.md).
 #
 # The 2026 spring iteration duplicated this block in all 13 decks and they drifted
 # apart (code-fold: true vs show, cache on some weeks only). Set it once, here.
@@ -35,11 +35,11 @@ format:
     incremental: true
     code-fold: true
     code-summary: "View source"
-    # Keep a fragmented slide on ONE printed page. The fit check (STYLE.md §6)
+    # Keep a fragmented slide on ONE printed page. The fit check (.claude/slides.md)
     # measures print-pdf layout, so this also keeps the check honest.
     pdfSeparateFragments: false
     footer: "QMIR -- {{< meta date >}}"
-    # Canvas is reveal's 1050x700 default, stated in STYLE.md §5.1 and asserted
+    # Canvas is reveal's 1050x700 default, stated in .claude/slides.md and asserted
     # by automation/check-slide-fit.R. Do not override width/height per deck.
 
 execute:

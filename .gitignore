@@ -3,7 +3,7 @@
 # world-readable (solutions, the exam, student data) or because it is a build
 # artifact. Solutions/exam live in the PRIVATE submodule `solutions/`.
 
-# Quarto / render artifacts  (NOTE: _freeze/ is COMMITTED on purpose — see CLAUDE.md)
+# Quarto / render artifacts  (NOTE: _freeze/ is COMMITTED on purpose — see .claude/workflow.md)
 /_site/
 _site/
 .quarto/
@@ -54,4 +54,6 @@ Thumbs.db
 # 5+ MB of vendored JS that Quarto regenerates from its own install on every render.
 /website/_freeze/site_libs/
 
-notes.md
+# Tristan's own notes and prompt material. Private, because this repo is public.
+/.claude/context/
+/.claude/settings.local.json

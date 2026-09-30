@@ -14,7 +14,7 @@ library(here) # project-root-relative paths
 library(yaml) # read course.yml
 
 # website/_quarto.yml is itself a project-root marker, so a bare here() would stop at
-# website/ rather than the repo root. i_am() anchors it explicitly. See STYLE.md section 4.
+# website/ rather than the repo root. i_am() anchors it explicitly. See .claude/r-code.md.
 here::i_am("website/syllabus.qmd")
 source(here("website", "_course-helpers.R"))
 

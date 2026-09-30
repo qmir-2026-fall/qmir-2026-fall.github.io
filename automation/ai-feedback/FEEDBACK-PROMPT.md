@@ -59,7 +59,7 @@ Give every `###` block a unique id, for example `{#sec-objects}` or `{#sec-step-
 
 No em dashes, no en dashes, and no semicolons. Use a comma, a colon, parentheses, or a plain
 double hyphen. One sentence per line, and never two sentences on one line. Code, function
-names and variable names go in backticks. The full guide is `STYLE.md` in the course repo.
+names and variable names go in backticks. The full guide is `.claude/writing.md` in the course repo.
 
 ## Hard rules
 

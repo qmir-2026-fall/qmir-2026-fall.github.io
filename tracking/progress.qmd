@@ -29,7 +29,7 @@ library(here) # project-root-relative paths
 library(yaml) # read course.yml
 
 # Anchor here() to the repo root explicitly: a bare here() stops at the nearest
-# project marker, and website/_quarto.yml is one. See STYLE.md section 4.
+# project marker, and website/_quarto.yml is one. See .claude/r-code.md.
 here::i_am("tracking/progress.qmd")
 
 cfg <- yaml::read_yaml(here("course.yml"))

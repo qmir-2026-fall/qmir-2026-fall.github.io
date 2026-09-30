@@ -14,7 +14,7 @@ library(here) # project-root-relative paths
 library(yaml) # read course.yml and the per-homework meta.yml
 
 # website/_quarto.yml is itself a project-root marker, so a bare here() would stop at
-# website/ rather than the repo root. i_am() anchors it explicitly. See STYLE.md section 4.
+# website/ rather than the repo root. i_am() anchors it explicitly. See .claude/r-code.md.
 here::i_am("website/schedule.qmd")
 source(here("website", "_course-helpers.R"))
 
@@ -96,7 +96,7 @@ icon_link <- function(name, href) sprintf("[%s](%s)", icon(name), href)
 icon_off <- function(name) sprintf("[%s]{.schedule-tbd}", icon(name))
 
 # --- topic: the deck's own YAML title, minus the "Week N: " prefix ---
-# The title shape is a contract (STYLE.md section 5.4) and check-authoring.ps1
+# The title shape is a contract (.claude/slides.md) and check-authoring.ps1
 # enforces it, so this strip is safe. With no deck yet, fall back to the planned
 # topic from course.yml, greyed so a plan never looks like a published deck.
 deck_of <- function(i) here("website", "slides", paste0("week", pad(i), ".qmd"))
@@ -156,7 +156,7 @@ hw_of <- function(i) {
   # account, which is how the week 02 repos ended up off the org and invisible to
   # tracking.ps1. These query parameters pre-select the org and ask for a private
   # repo. Owner stays editable, so schedule.qmd also says the rule in prose below.
-  # Canonical URL shape: CLAUDE.md section 6. Kept in step with release-homework.ps1.
+  # Canonical URL shape: .claude/github.md. Kept in step with release-homework.ps1.
   icon_link(
     "laptop-code",
     sprintf(

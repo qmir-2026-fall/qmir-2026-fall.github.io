@@ -5,10 +5,13 @@ R/Quarto). **Public**: the site, the slides, the homework starters, and the auto
 runs the term are all here, openly licensed.
 
 - **Live site:** <https://qmir-2026-fall.github.io/>
-- Read **`CLAUDE.md`** first. It is the full operating manual (pipeline, feedback policy,
-  tracking, distribution).
-- Read **`STYLE.md`** before writing any `.qmd`. It is the authoring and coding style, and
-  `automation/check-authoring.ps1` enforces it.
+- Read **`.claude/CLAUDE.md`** first. It is the entry point to the operating manual, and its
+  index says which file in `.claude/` covers what: the pipeline and layout (`workflow.md`),
+  distribution and tracking (`github.md`), the opt-in feedback (`feedback.md`), and the course
+  design (`course-design.md`).
+- Read the style guide before writing any `.qmd`: `.claude/writing.md` (prose, cross-references,
+  callouts, notation), `.claude/r-code.md` and `.claude/slides.md`.
+  `automation/check-authoring.ps1` enforces all three.
 - Licences: course content **CC BY-SA 4.0**, code **MIT**. See [`LICENSE`](LICENSE).
 
 ## What is *not* here

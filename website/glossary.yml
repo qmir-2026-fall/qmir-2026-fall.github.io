@@ -11,10 +11,10 @@
 #          font sizes did in the previous course iteration.
 #          workflow quarto git r data probability model prior mcmc diagnostics
 #          regression multilevel interpretation
-#   def:   one or two sentences, ONE SENTENCE PER LINE (STYLE.md section 1).
+#   def:   one or two sentences, ONE SENTENCE PER LINE (.claude/writing.md).
 #
-# STYLE.md applies here as everywhere: no em dashes, no en dashes, no semicolons.
-# No frequentist framing (CLAUDE.md section 3). Where a contrast genuinely teaches
+# .claude/writing.md applies here as everywhere: no em dashes, no en dashes, no semicolons.
+# No frequentist framing (.claude/course-design.md). Where a contrast genuinely teaches
 # something, as with credible versus confidence intervals, explain the contrast
 # rather than substituting one framework for the other.
 #

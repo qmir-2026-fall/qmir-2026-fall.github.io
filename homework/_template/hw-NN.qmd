@@ -17,7 +17,7 @@ execute:
 <!-- STUDENT-FACING STARTER. No solution content here. Files named solution.* are stripped on
      release, but this file ships as-is, so keep it clean.
 
-     The structure below follows the 8-step workflow and the house style in STYLE.md: every
+     The structure below follows the 8-step workflow and the house style in .claude/: every
      heading is labelled, every figure and table is labelled and captioned, and paths go
      through here(). Students inherit the conventions by filling in this skeleton. -->
 

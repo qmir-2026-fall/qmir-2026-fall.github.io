@@ -43,7 +43,7 @@ library(ggpubr) # theme_pubr()
 library(brms) # Bayesian regression via Stan
 
 # website/_quarto.yml is itself a project-root marker, so a bare here() would stop at
-# website/ rather than the repo root. i_am() anchors it explicitly. See STYLE.md section 4.
+# website/ rather than the repo root. i_am() anchors it explicitly. See .claude/r-code.md.
 here::i_am("website/slides/week01.qmd")
 
 # Shared palette. Reused verbatim across slides, homework and solutions so a
@@ -348,7 +348,7 @@ Test submissions, marked TEST in the free-text box, were dropped before any of t
 
 Given our approximately continuous outcome, and for the sake of simplicity, we use a bivariate linear model.
 
-<!-- The whole derivation is one dense block, sized at ladder step 2 (STYLE.md section 5.1) so
+<!-- The whole derivation is one dense block, sized at ladder step 2 (.claude/slides.md) so
      that the slide still fits the canvas with both readings opened. -->
 :::: {.small}
 
@@ -795,7 +795,7 @@ There is no second channel, no handouts and no shared drive.
 . . .
 
 <!-- The feedback-policy banner is reproduced VERBATIM wherever it appears
-     (CLAUDE.md section 2, STYLE.md section 7). Do not reword it here. -->
+     (.claude/workflow.md). Do not reword it here. -->
 ::: {.callout-important}
 **A sample solution is published for every homework.
 Individual feedback is NOT provided by default.**

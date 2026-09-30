@@ -45,7 +45,7 @@ github:
   hw_repo_pattern: "hw-{week}"
   student_repo_pattern: "hw-{week}-{username}"
 
-# One session per week (CLAUDE.md §1 — no more Mon/Thu doubling).
+# One session per week (.claude/course-design.md: no more Mon/Thu doubling).
 sessions:
   # 13 TAUGHT sessions across 14 calendar dates, 9 Sep to 9 Dec 2026.
   count: 13
@@ -108,17 +108,17 @@ blocks:
     to: 13
 
 # Planned topic per week. The deck's OWN YAML title wins once website/slides/weekNN.qmd
-# exists -- that is the E040 contract in STYLE.md §5.4. This list is the forward plan
+# exists -- that is the E040 contract in .claude/slides.md. This list is the forward plan
 # shown on the schedule until the deck is written.
 #
 # Each entry also carries the session plan rendered by website/syllabus.qmd:
-#   steps:    which of the 8 workflow steps (CLAUDE.md §3) the session foregrounds
+#   steps:    which of the 8 workflow steps (.claude/course-design.md) the session foregrounds
 #   goals:    learning goals, addressed to the student ("You will be able to ...")
 #   content:  one or two sentences on what the session actually covers
 #
 # Goals are carried over from the 2026 spring decks (qmir-2026/.../slides/weekNN.qmd)
 # and re-cut to the session structure of this term. Sessions 8 and 13 carry classical
-# statistics deliberately, as CONTRAST rather than substitution (CLAUDE.md §3).
+# statistics deliberately, as CONTRAST rather than substitution (.claude/course-design.md).
 weeks:
   - week: 1
     topic: "Introduction"

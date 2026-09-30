@@ -6,11 +6,11 @@ destructive happens without an explicit run). Run them from the repo root.
 | Script | Does |
 |---|---|
 | `publish-site.ps1` | Render `website/` and publish it to this repo's own `gh-pages` branch, which GitHub Pages serves at <https://qmir-2026-fall.github.io/>. Refuses to publish from a dirty tree. |
-| `release-homework.ps1 -Week NN` | Create/refresh the public distribution repo `hw-NN` from `homework/hw-NN/` and mark it a **template repo**. Prints the student link, which pre-selects the org as owner (see `CLAUDE.md` section 6). |
+| `release-homework.ps1 -Week NN` | Create/refresh the public distribution repo `hw-NN` from `homework/hw-NN/` and mark it a **template repo**. Prints the student link, which pre-selects the org as owner (see `.claude/github.md`). |
 | `release-solution.ps1 -Week NN` | After the due date, render `solutions/hw-NN/solution.qmd` (private submodule) to `website/resources/hw-NN-solution.pdf`. The schedule links it automatically once `due` has passed. |
 | `tracking.ps1` | Enumerate `hw-NN-<username>` repos on the org via `gh`, derive submission status, write `tracking/hw_status.csv` (git-ignored). |
 | `ai-feedback/run-feedback.ps1 -Week NN` | For opted-in student repos (those containing `license.md`), invoke Claude to draft `FEEDBACK.qmd`, render to PDF, and push into the student repo. |
-| `check-authoring.ps1` | The style gate. Enforces `STYLE.md` over every `.qmd` and `.md`, and with `-Fit` measures every slide of a deck against the 1050x700 canvas in headless Chrome. `publish-site.ps1` runs the static stage before publishing. |
+| `check-authoring.ps1` | The style gate. Enforces the style guide (`.claude/writing.md`, `r-code.md`, `slides.md`) over every `.qmd` and `.md`, and with `-Fit` measures every slide of a deck against the 1050x700 canvas in headless Chrome. `publish-site.ps1` runs the static stage before publishing. |
 | `hooks/install-hooks.ps1` | Point this clone's git hooks at `automation/hooks` (the public-repo leak guard). Run once after cloning. |
 | `_common.ps1` | Dot-sourced helpers (`Test-NativeOk`, `Invoke-NativeQuiet`, `Get-NativeOutput`, `Get-RscriptPath`). The first three make "does this exist?" probes against `gh` and `git` safe in PS 5.1 (see gotcha 2). The last finds R, which is routinely installed without being on PATH. |
 

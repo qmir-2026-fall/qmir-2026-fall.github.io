@@ -5,7 +5,7 @@ title: "Week NN: <topic>"
 <!--
 CANONICAL DECK TEMPLATE. Copy to weekNN.qmd (zero-padded) and replace the content.
 
-This file is also the worked example of every slide convention in STYLE.md §5, so
+This file is also the worked example of every slide convention in .claude/slides.md, so
 read it as documentation, not just as a skeleton. Before publishing a deck run:
 
     .\automation\check-authoring.ps1 -Week NN -Fit
@@ -46,7 +46,7 @@ The second beat lands here.
 
 ::: {.callout-note}
 **A note carries background or further detail.**
-The four callout types and their jobs are fixed in STYLE.md §3.
+The four callout types and their jobs are fixed in .claude/writing.md.
 :::
 
 ## A dense block {#sec-dense-block .smaller}

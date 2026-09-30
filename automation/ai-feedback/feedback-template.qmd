@@ -11,7 +11,7 @@ format:
 <!-- Claude fills this in. One block per exercise (programming weeks) or per workflow step
      (applied weeks), as the run header says. Delete unused blocks. Every block id is unique.
      Keep it to about one page. No grade or score, this is formative feedback only.
-     House style applies: no em dashes, no semicolons, one sentence per line (STYLE.md). -->
+     House style applies: no em dashes, no semicolons, one sentence per line (.claude/writing.md). -->
 
 *Automated feedback.
 You opted in via `license.md`.

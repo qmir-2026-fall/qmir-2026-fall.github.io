@@ -16,7 +16,7 @@
 param(
   [Parameter(Mandatory)][string]$Week,          # e.g. 05
   [string]$Org = "qmir-2026-fall",
-  [switch]$Classroom,                            # INACTIVE: Classroom 50 is not adopted (CLAUDE.md section 6)
+  [switch]$Classroom,                            # INACTIVE: Classroom 50 is not adopted (.claude/github.md)
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
@@ -63,7 +63,7 @@ $copied | ForEach-Object { Write-Host "  $_" }
 $leaked = $copied | Where-Object { $_ -like "*solution*" }
 if ($leaked) { throw "ABORT: solution file in payload: $($leaked -join ', ')" }
 
-# The canonical student link (CLAUDE.md section 6). NOT .../$slug/generate: that page
+# The canonical student link (.claude/github.md). NOT .../$slug/generate: that page
 # defaults the Owner dropdown to the student's personal account, which puts the submission
 # repo off the org where tracking.ps1 cannot see it. These query parameters pre-select the
 # org and ask for a private repo. schedule.qmd's hw_of() builds the same URL, so if you
@@ -102,7 +102,7 @@ try {
 } finally { Pop-Location }
 
 if ($Classroom) {
-  # Classroom 50 was evaluated and deferred (CLAUDE.md section 6). Left here so the path is one
+  # Classroom 50 was evaluated and deferred (.claude/github.md). Left here so the path is one
   # uncomment away if it is ever adopted mid-term.
   Write-Host "-Classroom is inactive: Classroom 50 is not in use this term." -ForegroundColor Yellow
   # gh teacher assignment add $Org qmir $slug --name "Homework $Week" --template "$Org/$slug"

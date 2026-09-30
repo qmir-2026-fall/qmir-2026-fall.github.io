@@ -194,6 +194,6 @@ for (k in seq_len(nrow(bad))) {
     bad$i[k], bad$title[k], bad$h[k], bad$pct[k], remedy(bad$pct[k])
   ))
 }
-cat(sprintf("\n  %d of %d slides fit. See STYLE.md section 5.1 for the ladder.\n",
+cat(sprintf("\n  %d of %d slides fit. See .claude/slides.md for the ladder.\n",
             nrow(slides) - nrow(bad), nrow(slides)))
 quit(status = 1)

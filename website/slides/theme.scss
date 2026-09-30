@@ -93,7 +93,7 @@ $link-accent: #DE7E50; // the only non-blue in the deck
   border: none;
 }
 
-/* ── The size ladder (STYLE.md §5.1) ─────────────────────────────────────────
+/* ── The size ladder (.claude/slides.md) ─────────────────────────────────────────
    These two classes plus Quarto's built-in {.smaller} on the heading are the
    ONLY permitted steps. Inline style="font-size: ..." is a lint error (E031).
    Anything still overflowing the 1050x700 canvas gets SPLIT, not shrunk. */

@@ -17,7 +17,7 @@ cp -r homework/_import/hw-05 homework/hw-05
 Each folder is already in the shape `release-homework.ps1` expects: `hw-NN.qmd`, `README.md`,
 `meta.yml`, `data/`. The `released:` and `due:` dates in `meta.yml` are the week's session date
 and the `due_offset_days` from `course.yml`, and `steps:` is seeded from the matching session.
-Nothing in here follows `STYLE.md` yet.
+Nothing in here follows the style guide in `.claude/` yet.
 
 ## Provenance
 

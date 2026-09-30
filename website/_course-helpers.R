@@ -7,7 +7,7 @@
 #
 # The leading underscore keeps Quarto from treating this as a render target.
 #
-# Everything term-level comes from course.yml (CLAUDE.md §7). Nothing here holds a
+# Everything term-level comes from course.yml (.claude/workflow.md). Nothing here holds a
 # date, a threshold or a block name of its own: this file only does arithmetic and
 # formatting on what course.yml says.
 # -----------------------------------------------------------------------------

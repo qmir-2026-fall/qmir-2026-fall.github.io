@@ -10,7 +10,7 @@
   Only website/ is rendered. homework/ is public but is not part of the site project,
   and solutions/ is a private submodule that is never rendered here.
 .PARAMETER SkipChecks
-  Skip the STYLE.md gate. Use only when you know the finding is a false positive.
+  Skip the style gate (.claude/writing.md, r-code.md, slides.md). Use only when you know the finding is a false positive.
 .PARAMETER DryRun
   Render only; do not publish.
 .EXAMPLE
@@ -36,7 +36,7 @@ $site = Join-Path $root $SiteDir
 if (-not $SkipChecks) {
   & (Join-Path $PSScriptRoot "check-authoring.ps1")
   if ($LASTEXITCODE -ne 0) {
-    throw "STYLE.md violations above. Fix them, or re-run with -SkipChecks if a finding is wrong."
+    throw "Style violations above (see .claude/). Fix them, or re-run with -SkipChecks if a finding is wrong."
   }
 }
 

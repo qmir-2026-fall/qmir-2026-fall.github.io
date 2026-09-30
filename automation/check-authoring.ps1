@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Check the repo against the authoring conventions in STYLE.md.
+  Check the repo against the authoring conventions in .claude/ (writing.md, r-code.md, slides.md).
 
 .DESCRIPTION
   Stage A (always): static rules over every .qmd and .md. Prose rules are applied only to
@@ -11,7 +11,7 @@
   through R's chromote to measure every slide against the 1050x700 canvas. Skips cleanly
   (without failing) when chromote or Chrome is unavailable.
 
-  Every rule code emitted here is documented in STYLE.md.
+  Every rule code emitted here is documented in .claude/writing.md, r-code.md or slides.md.
 
 .PARAMETER Path
   File or directory to check. Default: the whole repo.
@@ -258,8 +258,8 @@ function Test-File {
 
   # One sentence per line applies to prose a student reads: every rendered .qmd, plus
   # the README.md that ships inside a homework distribution repo. The repo's own
-  # manuals (CLAUDE.md, STYLE.md, notes.md, the automation and folder READMEs) are
-  # hard-wrapped at 95 columns on purpose, and STYLE.md section 1 says so.
+  # manuals (everything in .claude/, the automation and folder READMEs) are
+  # hard-wrapped at 95 columns on purpose, and .claude/writing.md says so.
   $slash = $File -replace '\\', '/'
   $isStudentFacing = $isQmd -or ($slash -match '/homework/(hw-\d+|_template)/README\.md$')
 
@@ -384,7 +384,7 @@ function Test-File {
       Add-Finding $File $n 'E031' 'inline font-size, use the {.small} / {.xsmall} ladder'
     }
 
-    # Math notation (STYLE.md section 9). Math survives in $lc, which only blanks code
+    # Math notation (.claude/writing.md). Math survives in $lc, which only blanks code
     # spans, so a macro quoted in backticks is documentation and is not flagged.
     if ($lc -match '\\(bm|vec)\s*\{' -or $lc -match '\\boldsymbol\s*\{\s*[A-Za-z]') {
       Add-Finding $File $n 'E050' 'bold Latin with \mathbf, bold Greek with \boldsymbol, never \bm or \vec'
@@ -535,12 +535,12 @@ if ($Week) {
 # Never lint build output, caches, the private submodule, vendored files, or staged
 # material ported from the 2026 spring course.
 #
-# The two staging paths are deliberate holes, not oversights (CLAUDE.md section 7). A ported
+# The two staging paths are deliberate holes, not oversights (.claude/workflow.md). A ported
 # deck sits at website/slides/_weekNN.qmd and a ported homework at homework/_import/hw-NN/
-# until it has been converted to STYLE.md. Neither is rendered by Quarto and neither is
-# visible to schedule.qmd, so they cannot reach a student. Promoting one (rename the deck to
-# weekNN.qmd, copy the homework folder to homework/hw-NN/) moves it back INTO scope, which is
-# what makes the conversion checkable.
+# until it has been converted to the style guide in .claude/. Neither is rendered by Quarto
+# and neither is visible to schedule.qmd, so they cannot reach a student. Promoting one
+# (rename the deck to weekNN.qmd, copy the homework folder to homework/hw-NN/) moves it back
+# INTO scope, which is what makes the conversion checkable.
 $targets = $targets | Where-Object {
   $p = $_.FullName -replace '\\', '/'
   ($p -notmatch '/_site/') -and
@@ -587,7 +587,7 @@ $n = $sorted.Count
 if ($n -eq 0) {
   Write-Host "check-authoring: clean ($($targets.Count) files)." -ForegroundColor Green
 } else {
-  Write-Host "check-authoring: $n finding(s) across $($targets.Count) files. See STYLE.md." -ForegroundColor Red
+  Write-Host "check-authoring: $n finding(s) across $($targets.Count) files. See .claude/writing.md, r-code.md, slides.md." -ForegroundColor Red
 }
 
 if ($n -gt 0 -or -not $fitOk) { exit 1 }

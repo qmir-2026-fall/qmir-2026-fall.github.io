@@ -10,7 +10,7 @@
 # _template/.github/workflows/hw-check.yml, whose `quarto render hw-*.qmd` would fail on
 # a week whose whole point is that the student names the file, plus _template/.gitignore.
 #
-# KNOWN DRIFT: README.md here has had its em and en dashes replaced per STYLE.md E001,
+# KNOWN DRIFT: README.md here has had its em and en dashes replaced per .claude/writing.md E001,
 # and has been rewrapped to one sentence per line per E003 and E004, neither of which the
 # live copy has. Cosmetic, and it reaches students whenever this week is next released
 # for real.
