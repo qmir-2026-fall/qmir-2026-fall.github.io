@@ -12,15 +12,23 @@ title: "Week 4: The tidyverse"
      transform, join and summarise, while a single gapminder pipeline grows one verb at a time
      (the new line is highlighted with code-line-numbers). It ends in a pipeline the room writes.
 
-     Time budget (90 min): recap 8, errors 5, packages 10, tidyverse and tidy data 10, read 8,
-     tidy 8, transform 17, join 7, summarise 9, final challenge 6, wrap-up 2.
-     If the room runs slow, cut arrange first, then pivot_wider.
+     Time budget (90 min): cell options and errors 4, packages 10, tidyverse and tidy data 10,
+     read 8, tidy 6, transform 17, join 9, count and summarise 10, pipeline and bonus 14,
+     wrap-up 2.
+     If the room runs slow, cut arrange first, then pivot_wider, then the kable bonus.
 
      data/week04-lifeexp-wide.csv is gapminder's life expectancy for the nine countries of the
      hw-03 `europe` table, pivoted wide (one column per year) and written once with:
        gapminder |> filter(country %in% nine) |> select(country, year, lifeExp) |>
          pivot_wider(names_from = year, values_from = lifeExp) |> write_csv(...)
-     Students read the same file from its raw GitHub URL, so it must be pushed before class. -->
+
+     data/eu-members.csv is typed by hand: every EU member state with its accession date, plus
+     the United Kingdom with its exit date (europa.eu, "EU countries"). Founders date from the
+     EEC treaty entering into force, 1958-01-01, and Germany means West Germany until 1990.
+     Country names follow gapminder's spelling (Czech Republic, Slovak Republic) so the join is
+     clean. Six members are not in gapminder at all (Luxembourg, Cyprus, the Baltics, Malta).
+
+     Students read both files from their raw GitHub URLs, so both must be pushed before class. -->
 
 ```{r}
 #| label: setup
@@ -43,22 +51,20 @@ options(pillar.print_min = 5, pillar.print_max = 5, width = 70)
 
 By the end of today, you will be able to:
 
-1. Use Quarto cell options to control what a rendered document shows.
-2. Tell an R error, a Quarto error and a LaTeX error apart.
-3. Install and load packages, and call a function as `package::function()`.
-4. Say what the tidyverse is and what makes data tidy.
-5. Read a file and reshape it into tidy form.
-6. Transform, join and summarise data in one readable pipeline.
+1. Install and load packages, and call a function as `package::function()`.
+2. Say what the tidyverse is and what makes data tidy.
+3. Read a file and reshape it into tidy form.
+4. Transform, join and summarise data in one readable pipeline.
+5. Answer a question with a pipeline, and report the answer as a captioned table.
 
 ## Today {#sec-today .smaller}
 
-1. **Recap:** Quarto cell options
-2. **Errors:** which layer is complaining?
-3. **Packages:** install, load, `package::function()`
-4. **The tidyverse** and tidy data
-5. **Read, tidy, transform:** one dataset, one growing pipeline
-   - `read_csv()`, `pivot_longer()`, the `dplyr` verbs, `left_join()`, `summarise()`
-6. **Your pipeline**
+1. **Before we start:** cell options and error messages, in brief
+2. **Packages:** install, load, `package::function()`
+3. **The tidyverse** and tidy data
+4. **Read, tidy, transform:** one dataset, one growing pipeline
+   - `read_csv()`, `pivot_longer()`, the `dplyr` verbs, `left_join()`, `count()`, `summarise()`
+5. **Your pipeline:** from a question to an answer
 
 ::: notes
 Same deal as last week: type along.
@@ -77,19 +83,16 @@ One minute.
 Point at step 2 only.
 :::
 
-# Recap: Quarto cell options {#sec-cell-options}
+# Before we start: cell options and errors {#sec-before-we-start}
 
 ## Cell options you have met {#sec-cell-options-table .smaller}
 
 ::: notes
-Two minutes.
+Two minutes, no practice.
 They used label, echo, eval and error in hw-03.
-Add include, message, warning and fig-cap as the new ones.
+Point at include, message, warning and the two captions as the new ones.
 :::
 
-:::: {.columns}
-
-::: {.column width="60%"}
 ::: {.small}
 | Option | What it does |
 |---|---|
@@ -101,96 +104,19 @@ Add include, message, warning and fig-cap as the new ones.
 | `message: false` | Hides messages, such as package startup text. |
 | `warning: false` | Hides warnings. |
 | `fig-cap: "..."` | Captions a figure, with a `fig-` label. |
+| `tbl-cap: "..."` | Captions a table, with a `tbl-` label. |
 
-: The cell options this course uses, one `#|` line each at the top of a cell. {#tbl-cell-options}
-:::
-:::
-
-::: {.column width="40%"}
-Options set in the YAML header apply to **every** cell.
-A cell option overrides them for that one cell.
-
-```yaml
-execute:
-  echo: true
-  message: false
-  warning: false
-```
+: The cell options this course uses, one `#|` line each at the top of a cell. Set under `execute:` in the YAML header, an option applies to every cell instead. {#tbl-cell-options}
 :::
 
-::::
-
-## Practice: predict the PDF {#sec-practice-cell-options .smaller}
-
-**Do this now.**
-For each cell, what appears in the rendered document: code, result, both, or nothing?
-
-:::: {.columns}
-
-::: {.column width="50%"}
-**A**
-
-```{{r}}
-#| label: a
-#| echo: false
-
-mean(c(2, 4, 6))
-```
-
-**B**
-
-```{{r}}
-#| label: b
-#| eval: false
-
-mean(c(2, 4, 6))
-```
-:::
-
-::: {.column width="50%"}
-**C**
-
-```{{r}}
-#| label: c
-#| include: false
-
-avg <- mean(c(2, 4, 6))
-```
-
-**D**
-
-```{{r}}
-#| label: d
-#| error: true
-
-mean(c(2, 4, 6)) + "one"
-```
-:::
-
-::::
-
-. . .
-
-A: only the result `4`.
-B: only the code.
-C: nothing, but `avg` now exists for later cells.
-D: the code and the error, and the render goes on.
-
-# Three layers of errors {#sec-error-layers}
-
-## Rendering is a relay {#sec-render-relay .smaller}
+## Errors: which layer is complaining? {#sec-render-relay .smaller}
 
 ::: notes
-Three minutes.
+Two minutes, no practice.
 The one idea: the first word of the message tells you which runner dropped the baton.
-Week 3 taught reading an R error, this is the step before: is it R at all?
 :::
 
 `.qmd` → **R** runs the cells → `.md` → **Quarto and Pandoc** convert → `.tex` → **LaTeX** typesets → `.pdf`
-
-. . .
-
-Each runner has its own voice when it fails:
 
 ::: {.small}
 | Layer | The message looks like | Where to look |
@@ -206,51 +132,6 @@ Each runner has its own voice when it fails:
 **Only the first error counts.**
 Scroll up to the first message, fix that, and render again.
 :::
-
-## Practice: which layer? {#sec-practice-error-layers .smaller}
-
-**Do this now.**
-Real messages from real renders.
-Which layer broke, and what would you check first?
-
-:::: {.columns}
-
-::: {.column width="50%"}
-**1**
-
-```text
-compilation failed- error
-Undefined control sequence.
-l.172 GDP grew by 5\% and the \gdp
-```
-
-**2**
-
-```text
-ERROR: YAMLException: bad indentation
-of a mapping entry (6:20)
- 5 |    toc: true
- 6 |     number-sections: true
-```
-:::
-
-::: {.column width="50%"}
-**3**
-
-```text
-Error:
-! object 'lifeexp' not found
-Quitting from hw-04.qmd:6-10 [life-mean]
-```
-:::
-
-::::
-
-. . .
-
-1: **LaTeX**, the prose holds `\gdp`, which LaTeX reads as a command.
-2: **Quarto**, the YAML header is misindented at line 6.
-3: **R**, in the cell `life-mean`: a typo or a line not run yet, as in week 3.
 
 # Packages {#sec-packages}
 
@@ -344,18 +225,27 @@ gapminder::gapminder |> nrow()
 
 . . .
 
-Three reasons to use it:
+Three reasons when it can be useful:
 
 - **Clarity:** the reader sees where a function lives.
 - **No `library()` needed** for a one-off call, such as `readxl::read_excel()`.
 - **Name clashes:** two packages can both have a `filter()`.
-  `library(tidyverse)` tells you which one wins:
+  `library(tidyverse)` tells you which one wins: `✖ dplyr::filter() masks stats::filter()`.
 
-```text
-✖ dplyr::filter() masks stats::filter()
-```
+`?dplyr::filter` opens the help page of that exact function.
+Most packages also have good online documentation, such as [dplyr.tidyverse.org](https://dplyr.tidyverse.org).
+
+::: {.callout-tip}
+**Rule of thumb: more than three calls, load the package.**
+Once you use a package's functions more than three times, add a `library()` line to your setup cell instead of repeating `package::` every time.
+:::
 
 ## Practice: install and load {#sec-practice-packages .smaller}
+
+::: notes
+Circulate.
+Anyone whose `library(tidyverse)` fails installs it now.
+:::
 
 **Do this now.**
 
@@ -368,8 +258,11 @@ Three reasons to use it:
 4. Run `?gapminder`.
    What does `gdpPercap` measure?
 
-. . .
+## Practice: install and load, solution {#sec-practice-packages-solution .smaller}
 
+:::: {.columns}
+
+::: {.column width="55%"}
 ```{r}
 #| label: practice-packages
 #| code-fold: false
@@ -379,11 +272,17 @@ library(gapminder) # demo data
 
 gapminder
 ```
-
-::: notes
-Circulate.
-Anyone whose `library(tidyverse)` fails installs it now.
 :::
+
+::: {.column width="45%"}
+1. `install.packages("gapminder")`, in the console only.
+2. The nine core packages, from `dplyr` to `tidyr`.
+   `dplyr::filter()` and `dplyr::lag()` mask their namesakes from `stats`.
+3. **1704 rows** and **6 columns**.
+4. GDP per capita, in US dollars and adjusted for inflation.
+:::
+
+::::
 
 # The tidyverse {#sec-tidyverse}
 
@@ -500,6 +399,13 @@ B is the one we meet on the next slides: it is our file.
 : The core tidyverse packages, ordered along the data cycle. Today covers the first three stages. {#tbl-core-packages}
 :::
 
+::: {.small}
+::: {.callout-note}
+**In a real project the cycle loops.**
+A plot reveals an odd value, and you go back to tidy or transform again, sometimes many times over.
+:::
+:::
+
 ::: notes
 Do not read the table.
 Point at the three stages we cover, then move on.
@@ -513,7 +419,7 @@ Point at the three stages we cover, then move on.
 | Format | Extension | Function | Loaded by `library(tidyverse)`? |
 |---|---|---|---|
 | Comma-separated | `.csv` | `readr::read_csv()` | yes |
-| Semicolon-separated, as German Excel saves it | `.csv` | `readr::read_csv2()` | yes |
+| Semicolon-separated | `.csv` | `readr::read_csv2()` | yes |
 | Tab-separated | `.tsv` | `readr::read_tsv()` | yes |
 | R's own format | `.rds` | `readr::read_rds()` | yes |
 | Excel | `.xlsx`, `.xls` | `readxl::read_excel()` | installed, not loaded |
@@ -522,7 +428,7 @@ Point at the three stages we cover, then move on.
 | JSON | `.json` | `jsonlite::fromJSON()` | installed, not loaded |
 | Parquet | `.parquet` | `arrow::read_parquet()` | install it yourself |
 
-: Common data formats and the function that reads each one. Installing the tidyverse also installs `readxl`, `haven` and `jsonlite`, but only `library(tidyverse)` loads `readr`, which is where `::` earns its keep. {#tbl-import-formats}
+: Common data formats and the function that reads each one. Installing the tidyverse also installs `readxl`, `haven` and `jsonlite`, but `library(tidyverse)` loads only `readr`. {#tbl-import-formats}
 :::
 
 ::: notes
@@ -536,40 +442,50 @@ The next homework reads an `.xlsx` with `readxl::read_excel()`.
 #| label: read-csv
 #| code-fold: false
 
-lifeexp_wide <- read_csv(here("website", "slides", "data", "week04-lifeexp-wide.csv"))
+path <- here("website", "slides", "data", "week04-lifeexp-wide.csv")
+lifeexp_wide <- read_csv(path)
 glimpse(lifeexp_wide)
 ```
 
 . . .
 
+::: {.small}
 - **Assign the result.** `read_csv()` alone prints the data and forgets it.
 - `here()` builds the path from your project folder, so it works on any computer.
   In your homework repository that is `here("data", "parlgov.xlsx")`.
 - `glimpse()` shows every column with its type: the first thing to run on new data.
+:::
 
 ## Practice: read it yourself {#sec-practice-read .smaller}
 
 **Do this now.**
 `read_csv()` also reads straight from the web.
+Both files live in the course repository on GitHub.
 
 ```{r}
 #| label: practice-read
 #| code-fold: false
 #| eval: false
 
-url <- "https://raw.githubusercontent.com/qmir-2026-fall/qmir-2026-fall.github.io/main/website/slides/data/week04-lifeexp-wide.csv"
-lifeexp_wide <- read_csv(url)
+base <- "https://raw.githubusercontent.com/qmir-2026-fall/qmir-2026-fall.github.io/main/website/slides/data/"
+lifeexp_wide <- read_csv(paste0(base, "week04-lifeexp-wide.csv")) # paste0(): paste() without spaces
+eu_members <- read_csv(paste0(base, "eu-members.csv"))
 ```
 
-1. Read the file and `glimpse()` it.
-2. Which rule of tidy data does it break?
-3. A tidy version has one row per country and year.
-   How many rows will it have?
+1. Read both files and `glimpse()` each.
+2. Which rule of tidy data does `lifeexp_wide` break?
+   A tidy version has one row per country and year: how many rows will it have?
+3. What is a row of `eu_members`, and which type did `accession_date` get?
 
 . . .
 
-It is Layout B: `year` hides in the column names.
-Nine countries times twelve years makes **108 rows**.
+::: {.small}
+1. `glimpse(lifeexp_wide)` and `glimpse(eu_members)`.
+2. It is Layout B: `year` hides in the column names.
+   Nine countries times twelve years makes **108 rows**.
+3. One EU member state, 28 rows including the United Kingdom, which left in 2020.
+   `accession_date` is a **`<date>`**: `read_csv()` recognises `2004-05-01` as a date by itself.
+:::
 
 # Tidy {#sec-tidy}
 
@@ -583,8 +499,7 @@ lifeexp <- lifeexp_wide |>
   pivot_longer(
     cols = -country, # every column except country
     names_to = "year", # the column names become this variable
-    values_to = "lifeExp", # the cell values become this one
-    names_transform = as.integer # "1952" is text, make it a number
+    values_to = "lifeExp" # the cell values become this one
   )
 lifeexp
 ```
@@ -615,23 +530,53 @@ Keep your working data tidy, and pivot wider only at the very end, for a table i
 
 ## Practice: pivot it {#sec-practice-pivot .smaller}
 
-**Do this now.**
-
-1. Pivot `lifeexp_wide` into a tidy tibble called `lifeexp`.
-2. Check with `nrow()` that it has 108 rows.
-3. Check with `class(lifeexp$year)` that `year` is a number.
-   What happens without `names_transform`?
-4. **Stretch:** pivot it back to wide.
-
-. . .
-
-Without `names_transform`, `year` stays **character**, and `year > 2000` would compare text.
-From here on we use the full `gapminder`: it is this tibble for all 142 countries, with three more variables.
-
 ::: notes
 The transition to gapminder is the key sentence here.
 Our file was a slice of gapminder all along.
 :::
+
+**Do this now.**
+
+1. Pivot `lifeexp_wide` into a tidy tibble called `lifeexp`.
+2. Check with `nrow()` that it has 108 rows.
+3. **Stretch:** pivot it back to wide.
+
+## Practice: pivot it, solution {#sec-practice-pivot-solution .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: practice-pivot
+#| code-fold: false
+
+lifeexp <- lifeexp_wide |>
+  pivot_longer(
+    cols = -country,
+    names_to = "year",
+    values_to = "lifeExp"
+  )
+nrow(lifeexp)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: practice-pivot-stretch
+#| code-fold: false
+
+# stretch
+lifeexp |>
+  pivot_wider(
+    names_from = year,
+    values_from = lifeExp
+  )
+```
+:::
+
+::::
+
+From here on we use the full `gapminder`: it is this tibble for all 142 countries, with three more variables.
 
 # Transform {#sec-transform}
 
@@ -639,23 +584,26 @@ Our file was a slice of gapminder all along.
 
 :::: {.columns}
 
-::: {.column width="55%"}
+::: {.column width="60%"}
 ::: {.small}
 | Verb | What it does |
 |---|---|
 | `filter()` | Keep rows that meet a condition |
+| `slice()` | Keep rows by position |
 | `select()` | Keep or drop columns |
-| `mutate()` | Create or change columns |
+| `mutate()` | Create new columns or change old ones |
 | `arrange()` | Sort rows |
 | `left_join()` | Add columns from another table |
+| `count()` | Count rows per value of a column |
 | `group_by()` | Split rows into groups |
-| `summarise()` | Collapse each group to one row |
+| `summarise()` | Summary statistics, such as a mean, per group |
 
-: The core `dplyr` verbs covered today, in the order the pipeline uses them. {#tbl-dplyr-verbs}
+: The core `dplyr` verbs covered today. Each takes a table and returns a table, so they chain into one pipeline. {#tbl-dplyr-verbs}
 :::
 :::
 
-::: {.column width="45%"}
+::: {.column width="40%"}
+::: {.small}
 Every verb:
 
 - takes a **table first**, so it pipes
@@ -663,12 +611,11 @@ Every verb:
 - returns a **new table** and leaves the old one unchanged
 :::
 
-::::
-
-. . .
-
 We build **one pipeline**, one verb at a time.
 The highlighted line is the new one.
+:::
+
+::::
 
 ## `filter()`: keep rows {#sec-filter .smaller}
 
@@ -683,9 +630,8 @@ gapminder |>
 
 . . .
 
-- A comma means **and**.
-  `|` means or, and `%in%` tests membership, as in week 3.
-- `==` compares, `=` names an argument.
+- A condition is built from the **logical operators** of week 3: `==`, `!=`, `<`, `>`, `%in%` and friends ([the table in week 3](week03.html#/sec-logical)).
+- A comma between conditions means **and**, `|` means **or**.
 
 ## `select()`: keep columns {#sec-select .smaller}
 
@@ -714,49 +660,86 @@ A minus drops a column instead: `select(-continent)`.
 
 . . .
 
+:::: {.columns}
+
+::: {.column width="50%"}
 ```{r}
-#| label: practice-filter-select
+#| label: practice-filter-select-1
+#| code-fold: false
+
+gapminder |>
+  filter(continent == "Asia", year == 1952) |>
+  select(country, lifeExp)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: practice-filter-select-2
 #| code-fold: false
 
 gapminder |>
   filter(lifeExp > 80, year == 2007) |>
   select(country, lifeExp)
 ```
+:::
 
-`filter(country %in% lifeexp_wide$country)` answers the stretch.
+::::
 
-## `mutate()`: new columns {#sec-mutate .smaller}
+## Practice: filter and select, the stretch {#sec-practice-filter-select-stretch .smaller}
+
+```{r}
+#| label: practice-filter-select-stretch
+#| code-fold: false
+
+gapminder |>
+  filter(country %in% lifeexp_wide$country)
+```
+
+. . .
+
+Nine countries times twelve years: 108 rows, the same as our tidy `lifeexp`, with the three extra columns of gapminder.
+
+## `mutate()`: new or changed columns {#sec-mutate .smaller}
+
+::: notes
+`1e6` is a million, `1e9` a billion.
+Several columns in one `mutate()`, separated by commas.
+Point at the column type under `country`: `<fct>` became `<chr>`.
+:::
 
 ```{r}
 #| label: pipe-mutate
 #| code-fold: false
-#| code-line-numbers: "4-7"
+#| code-line-numbers: "4-8"
 
 gapminder |>
   filter(continent == "Europe", year == 2007) |>
   select(country, lifeExp, pop, gdpPercap) |>
   mutate(
+    country = as.character(country),
     pop_m = pop / 1e6,
     gdp_bn = pop * gdpPercap / 1e9
   )
 ```
 
-::: notes
-`1e6` is a million, `1e9` a billion.
-Several new columns in one `mutate()`, separated by commas.
-:::
+. . .
+
+- A **new name** creates a new column: `pop_m`, `gdp_bn`.
+- An **existing name** changes that column: `country` was a factor (week 3), and `as.character()` makes it plain text.
 
 ## `arrange()`: sort rows {#sec-arrange .smaller}
 
 ```{r}
 #| label: pipe-arrange
 #| code-fold: false
-#| code-line-numbers: "8"
+#| code-line-numbers: "9"
 
 gapminder |>
   filter(continent == "Europe", year == 2007) |>
   select(country, lifeExp, pop, gdpPercap) |>
   mutate(
+    country = as.character(country),
     pop_m = pop / 1e6,
     gdp_bn = pop * gdpPercap / 1e9
   ) |>
@@ -774,8 +757,8 @@ gapminder |>
 1. For 2007, add a column `pop_m` with the population in millions.
 2. Sort so that the most populous country comes first.
    Which five countries lead?
-3. **Stretch:** which country gained the most life expectancy between 1952 and 2007?
-   Use your tidy `lifeexp`, `pivot_wider()` and `mutate()`.
+3. **Stretch:** in 2007, which country had the largest economy, its total GDP in billions?
+   Is it also the richest per person?
 
 . . .
 
@@ -790,57 +773,101 @@ gapminder |>
   select(country, pop_m)
 ```
 
-::: notes
-Stretch answer: pivot_wider, then mutate(gain = `2007` - `1952`), then arrange(desc(gain)).
-Turkey, by about 28 years.
-:::
-
-# Join {#sec-join}
-
-## `left_join()`: add columns from another table {#sec-left-join .smaller}
-
-gapminder does not know who is in the EU.
-The `europe` table from hw-03 does:
+## Practice: mutate and arrange, the stretch {#sec-practice-mutate-arrange-stretch .smaller}
 
 :::: {.columns}
 
-::: {.column width="45%"}
+::: {.column width="50%"}
+**Largest economy**
+
 ```{r}
-#| label: eu-accession
+#| label: practice-mutate-arrange-stretch
 #| code-fold: false
 
-eu_accession <- tibble(
-  country = c(
-    "France", "Germany", "Italy",
-    "Spain", "Sweden", "Poland"
-  ),
-  eu_joined = c(
-    1958, 1958, 1958,
-    1986, 1995, 2004
-  )
-)
+gapminder |>
+  filter(year == 2007) |>
+  mutate(gdp_bn = pop * gdpPercap / 1e9) |>
+  arrange(desc(gdp_bn)) |>
+  select(country, gdp_bn, gdpPercap)
 ```
 :::
 
-::: {.column width="55%"}
+::: {.column width="50%"}
+**Richest per person**
+
 ```{r}
-#| label: pipe-join
+#| label: practice-mutate-arrange-stretch-2
 #| code-fold: false
-#| code-line-numbers: "4"
 
 gapminder |>
-  filter(country %in% lifeexp_wide$country) |>
   filter(year == 2007) |>
-  left_join(eu_accession, by = "country") |>
-  select(country, lifeExp, eu_joined)
+  mutate(gdp_bn = pop * gdpPercap / 1e9) |>
+  arrange(desc(gdpPercap)) |>
+  select(country, gdp_bn, gdpPercap)
 ```
 :::
 
 ::::
 
+. . .
+
+The **United States** has the largest economy, and China the second largest, at only about 5,000 dollars per person.
+**Norway** is the richest per person, although it ranks only 40th by total GDP.
+Total size and wealth per person are different questions.
+
+# Join {#sec-join}
+
+## Four ways to join {#sec-join-types .smaller}
+
+A **join** combines two tables by matching rows on a shared **key** column, such as `country`.
+
+::: {.small}
+| Join | Keeps |
+|---|---|
+| `left_join(x, y)` | Every row of `x`, with the matching columns of `y`, and `NA` where `y` has no match |
+| `right_join(x, y)` | Every row of `y`, with the matching columns of `x`, and `NA` where `x` has no match |
+| `inner_join(x, y)` | Only the rows that match in **both** tables |
+| `full_join(x, y)` | Every row of both tables, and `NA` wherever there is no match |
+
+: The four joins of `dplyr`. They differ only in which rows survive when a key has no partner in the other table. {#tbl-join-types}
+:::
+
+. . .
+
+::: {.callout-tip}
+**In practice, `left_join()` is nearly always the one you want.**
+Your main tibble sits on the left, and the join adds information to it from a second table.
+No row of your main data is lost, so it is the only join we practise today.
+:::
+
+## `left_join()`: add columns from another table {#sec-left-join .smaller}
+
 ::: notes
 Before running the join, ask the prediction question on the next slide.
 :::
+
+gapminder does not know who is in the EU.
+`eu_members` does:
+
+```{r}
+#| label: eu-members
+#| code-fold: false
+
+eu_members <- read_csv(here("website", "slides", "data", "eu-members.csv"))
+```
+
+. . .
+
+```{r}
+#| label: pipe-join
+#| code-fold: false
+#| code-line-numbers: "3"
+
+gapminder |>
+  filter(continent == "Europe", year == 2007) |>
+  left_join(eu_members, by = "country") |>
+  select(country, lifeExp, accession_date)
+```
 
 ## Practice: predict the join {#sec-practice-join .smaller}
 
@@ -848,14 +875,15 @@ Before running the join, ask the prediction question on the next slide.
 Before you run the join, write down:
 
 1. How many rows will the result have?
-2. What will `eu_joined` hold for Norway?
-3. What happens to a country spelled `"Czechia"` in one table and `"Czech Republic"` in the other?
+2. What will `accession_date` hold for Norway?
+3. What happens if one table spells `"Czechia"` and the other `"Czech Republic"`?
 
 . . .
 
-1. **Nine**: `left_join()` keeps every row of the left table.
+1. **30**, the European countries in 2007: `left_join()` keeps every row of the left table.
+   Cyprus and Malta are in `eu_members` but not in gapminder, so they do not appear.
 2. **`NA`**: Norway has no match, and `NA` is R's missing value from week 3.
-3. It silently gets `NA` too.
+3. Czechia silently gets `NA` too.
 
 ::: {.callout-warning}
 **A join matches text exactly.**
@@ -865,7 +893,28 @@ Always check how many `NA`s a join produced.
 
 # Summarise {#sec-summarise}
 
-## `summarise()`: many rows to one {#sec-summarise-intro .smaller}
+## `count()`: how many rows per value {#sec-count .smaller}
+
+```{r}
+#| label: count
+#| code-fold: false
+
+gapminder |>
+  filter(year == 2007) |>
+  count(continent)
+```
+
+. . .
+
+- `count()` returns one row per value of the column, with the number of rows in `n`.
+- `count(continent, sort = TRUE)` puts the largest group first.
+- Run it on any grouping variable first: how big is each group?
+
+## `summarise()`: summary statistics per group {#sec-summarise-intro .smaller}
+
+::: notes
+This is a data summary table: step 2 of the workflow in one pipeline.
+:::
 
 :::: {.columns}
 
@@ -903,15 +952,11 @@ gapminder |>
 
 . . .
 
-`group_by()` changes nothing you can see.
-It tells the **next** verb to work once per group.
-`n()` counts rows, and `count(continent)` is the shortcut for exactly that.
+Without groups, `summarise()` returns one row for the whole table.
+`group_by()` changes nothing you can see: it tells `summarise()` to work **once per group**.
+`n()` counts the rows of each group.
 
-::: notes
-This is a data summary table: step 2 of the workflow in one pipeline.
-:::
-
-## Practice: summarise {#sec-practice-summarise .smaller}
+## Practice: count and summarise {#sec-practice-summarise .smaller}
 
 **Do this now.**
 
@@ -922,8 +967,22 @@ This is a data summary table: step 2 of the workflow in one pipeline.
 
 . . .
 
+:::: {.columns}
+
+::: {.column width="50%"}
 ```{r}
-#| label: practice-summarise
+#| label: practice-summarise-1
+#| code-fold: false
+
+gapminder |>
+  filter(year == 2007) |>
+  count(continent)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: practice-summarise-2
 #| code-fold: false
 
 gapminder |>
@@ -932,30 +991,60 @@ gapminder |>
   summarise(median_gdp = median(gdpPercap)) |>
   arrange(desc(median_gdp))
 ```
-
-::: notes
-Stretch answer: filter Europe, group_by(year), summarise the mean.
-It never fell, from 64.4 in 1952 to 77.6 in 2007.
 :::
+
+::::
+
+## Practice: count and summarise, the stretch {#sec-practice-summarise-stretch .smaller}
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: practice-summarise-stretch
+#| code-fold: false
+
+gapminder |>
+  filter(continent == "Europe") |>
+  group_by(year) |>
+  summarise(mean_life = mean(lifeExp)) |>
+  print(n = 12)
+```
+:::
+
+::: {.column width="45%"}
+**It never fell.**
+Mean life expectancy in Europe rose in every five-year step, from 64.4 years in 1952 to 77.6 in 2007.
+
+`print(n = 12)` shows all twelve rows instead of the first five.
+:::
+
+::::
 
 # Your pipeline {#sec-your-pipeline}
 
-## Practice: the whole pipeline {#sec-practice-pipeline .smaller}
-
-**Do this now, in pairs.**
-For our nine countries in 2007, compare **EU members** with the rest:
-
-- how many countries in each group
-- their mean life expectancy
-- their total GDP in billions
-
-Hint: after the join, `eu_member = !is.na(eu_joined)` makes the grouping variable.
+## Practice: from a question to an answer {#sec-practice-pipeline .smaller}
 
 ::: notes
-Six minutes.
+Eight minutes.
 Walk the room.
-Pairs who finish: the life expectancy gain stretch from the mutate practice.
+Push pairs to run the pipeline after every line, not only at the end.
 :::
+
+**The question.**
+In 2007, did European countries **inside the EU** live longer, and were they richer, than those outside?
+
+**Do this now.**
+With `gapminder` and `eu_members` only, build one pipeline that returns one row per group, with the number of countries, the mean life expectancy and the mean GDP per capita.
+
+. . .
+
+Hints:
+
+- After the join, a country is a member in 2007 if it joined in 2007 or earlier: `eu_member = !is.na(accession_date) & year(accession_date) <= 2007`.
+  `year()` comes from `lubridate`, loaded with the tidyverse.
+- Why not just `!is.na(accession_date)`?
+  Croatia is in the file, but joined in 2013.
 
 ## The whole pipeline {#sec-pipeline-answer .smaller}
 
@@ -963,26 +1052,76 @@ Pairs who finish: the life expectancy gain stretch from the mutate practice.
 #| label: pipeline-answer
 #| code-fold: false
 
-gapminder |>
-  filter(country %in% lifeexp_wide$country, year == 2007) |> # rows
-  left_join(eu_accession, by = "country") |> # add a table
+eu_2007 <- gapminder |>
+  filter(continent == "Europe", year == 2007) |> # rows
+  left_join(eu_members, by = "country") |> # add a table
   mutate(
-    eu_member = !is.na(eu_joined), # new columns
-    gdp_bn = pop * gdpPercap / 1e9
-  ) |>
+    eu_member = !is.na(accession_date) & year(accession_date) <= 2007
+  ) |> # new column
   group_by(eu_member) |> # groups
   summarise(
     n = n(),
     mean_life = mean(lifeExp),
-    total_gdp_bn = sum(gdp_bn)
-  ) |> # one row per group
-  arrange(desc(mean_life)) # sort
+    mean_gdppc = mean(gdpPercap)
+  ) # one row per group
+eu_2007
 ```
 
 . . .
 
-Read it aloud as "take gapminder, **and then** ...".
-Every line is one step you can run and check on its own.
+::: {.callout-important}
+**Pipelines are powerful, so test them at every step.**
+Run the pipeline after each new line and look at what it returns: how many rows, which columns, any `NA`s?
+A pipeline you have not checked step by step can be wrong without a single error message.
+:::
+
+## The answer {#sec-pipeline-conclusion .smaller}
+
+```{r}
+#| label: pipeline-numbers
+#| include: false
+
+eu_in <- eu_2007 |> filter(eu_member)
+eu_out <- eu_2007 |> filter(!eu_member)
+gdp_gap <- round(eu_in$mean_gdppc - eu_out$mean_gdppc, -3)
+```
+
+**Yes, on both counts, but by very different margins.**
+
+- The `r eu_in$n` EU members lived `r round(eu_in$mean_life - eu_out$mean_life, 1)` years longer on average than the `r eu_out$n` countries outside: `r sprintf("%.1f", eu_in$mean_life)` against `r sprintf("%.1f", eu_out$mean_life)`.
+- Their mean GDP per capita was about `r format(gdp_gap, big.mark = ",")` US dollars higher.
+
+. . .
+
+::: {.callout-note}
+**A mean hides who is in the group.**
+The countries outside mix Norway and Switzerland, among the richest in the data, with Albania and Bosnia and Herzegovina.
+And a difference between groups says nothing yet about whether membership caused it: that is step 8, the limitations.
+:::
+
+## Bonus: a table for your PDF {#sec-pipeline-kable .smaller}
+
+A printed tibble is for you.
+A reader gets a numbered, captioned table: `knitr::kable()` in a cell with a `tbl-` label and a `tbl-cap`.
+
+```{r}
+#| label: tbl-eu-2007
+#| tbl-cap: "European countries in 2007, split by EU membership at the time. Members lived a little longer on average and had a clearly higher mean GDP per capita (US dollars, adjusted for inflation). Data: gapminder and the course's EU membership file."
+#| code-fold: false
+
+eu_2007 |>
+  knitr::kable(
+    digits = 1,
+    col.names = c(
+      "EU member",
+      "Countries",
+      "Mean life expectancy",
+      "Mean GDP per capita"
+    )
+  )
+```
+
+In the text, `@tbl-eu-2007` becomes a clickable "Table 1".
 
 # Wrap-up {#sec-wrap-up}
 
@@ -990,13 +1129,13 @@ Every line is one step you can run and check on its own.
 
 Today we:
 
-- recapped the **cell options** that decide what a PDF shows
-- told **R, Quarto and LaTeX** errors apart
+- recapped the **cell options** and how to tell **R, Quarto and LaTeX** errors apart
 - **installed** and **loaded** packages, and called functions as `package::function()`
 - met the **tidyverse** and the three rules of **tidy data**
 - **read** a file, made it **tidy** with `pivot_longer()`
 - **transformed** it with `filter()`, `select()`, `mutate()` and `arrange()`
-- **joined** a second table and **summarised** by group
+- **joined** a second table with `left_join()`, then **counted** and **summarised** by group
+- answered a question with **one pipeline**, and turned the result into a captioned table
 
 ## Homework {#sec-homework .smaller}
 
