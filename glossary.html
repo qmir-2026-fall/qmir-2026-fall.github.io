@@ -374,7 +374,7 @@ window.Quarto = {
 </header>
 
 
-<p>The vocabulary of the course, collected in one place and sorted alphabetically. Every entry is tagged with the week in which you first meet it, and with that week’s block, so you can still read this page in the same order as the <a href="./schedule.html">Schedule</a> if you want to.</p>
+<p>The vocabulary of the course, collected in one place and sorted alphabetically. Every entry is tagged with the week in which you first meet it, and with that week’s block, so you can still read this page in the same order as the <a href="./schedule.html">Schedule</a> if you want to. Terms inside a definition link to their own entries, and software entries link to their official documentation. The page grows with the course: a term is added in the week it is taught.</p>
 <p>Nothing here replaces the slides. A glossary entry is the short version you can check quickly, not the explanation.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -395,144 +395,138 @@ Tip
 <section id="sec-glossary-a" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-a">A</h2>
 <dl>
-<dt><code>arrange()</code></dt>
-<dd>
-Sorts the rows of a table by one or more columns, ascending by default. Wrap a column in <code>desc()</code> to sort it descending.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
-</dd>
-<dt>Array and tensor</dt>
+<dt><span id="gl-array-and-tensor">Array and tensor</span></dt>
 <dd>
 The generalisation of a matrix to three or more dimensions, created in R with <code>array()</code>. In mathematics it is called a tensor and written in calligraphic as <span class="math inline">\(\mathcal{X}\)</span>, and this course rarely needs one.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/array.html">R documentation: arrays</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Assignment</dt>
+<dt><span id="gl-assignment">Assignment</span></dt>
 <dd>
-Storing a value under a name with <code>&lt;-</code>, read aloud as “gets”: <code>country &lt;- "Germany"</code>. Assigning to a name that already exists overwrites it without asking.
+Storing a value in an <a href="#gl-object">object</a> under a name with <code>&lt;-</code>, read aloud as “gets”: <code>country &lt;- "Germany"</code>. Assigning to a name that already exists overwrites it without asking.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/assignOps.html">R documentation: assignment operators</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
-</dd>
-<dt>Association</dt>
-<dd>
-Two variables moving together, so that knowing one tells you something about the other. An association is not a causal effect: this course analyses associations, and identifying causes is the subject of a different course.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">interpretation</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-b" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-b">B</h2>
 <dl>
-<dt>Base R</dt>
+<dt><span id="gl-base-r">Base R</span></dt>
 <dd>
-The functions R ships with before any package is installed, such as <code>mean()</code>, <code>round()</code> and <code>data.frame()</code>.
+The functions R ships with before any package is installed, such as <code>mean()</code>, <code>round()</code> and <code>data.frame()</code>. Everything in week 3 was base R.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/00Index.html">R documentation: the base package</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
-</dd>
-<dt>Bayes’ theorem</dt>
-<dd>
-The rule that combines prior and likelihood into a posterior. Read as a proportionality, the posterior is the likelihood times the prior, up to a constant.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span>
-</dd>
-<dt>Branch</dt>
-<dd>
-A named line of development inside a repository, so work in progress does not disturb the main version. This course uses <code>main</code> for sources and <code>gh-pages</code> for the rendered website.
-<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
-</dd>
-<dt><code>brms</code></dt>
-<dd>
-The R package used throughout this course to fit Bayesian regression models with familiar formula syntax. Every model call here sets its priors explicitly.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">r</span> <span class="glossary-tag">model</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-c" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-c">C</h2>
 <dl>
-<dt>Cell option</dt>
+<dt><span id="gl-caption">Caption</span></dt>
 <dd>
-A <code>#|</code> line at the top of a code cell that controls it, such as <code>label:</code>, <code>echo: false</code> or <code>fig-cap:</code>. Set under <code>execute:</code> in the YAML header, an option applies to every cell instead.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
+The descriptive text attached to a figure or a table, written in the Markdown or set with the <code>fig-cap</code> and <code>tbl-cap</code> <a href="#gl-cell-option">cell options</a>. A good caption lets a reader understand the figure or table without the surrounding text.
+Documentation: <a href="https://quarto.org/docs/authoring/figures.html">Quarto: figures</a>
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
-<dt>Chain</dt>
+<dt><span id="gl-case-sensitivity">Case sensitivity</span></dt>
 <dd>
-One run of the sampler, producing a sequence of draws. Several chains are run from different starting points so their agreement can be checked.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">mcmc</span>
+R treats upper and lower case as different, so <code>city</code> and <code>City</code> are two different names and <code>Mean()</code> is not <code>mean()</code>. A wrong capital letter is the most common cause of an “object not found” <a href="#gl-error-and-warning">error</a>.
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Character</dt>
+<dt><span id="gl-cell-option">Cell option</span></dt>
 <dd>
-R’s type for text, also called a string, always written in quotes: <code>"Germany"</code>. A number in quotes is text, so <code>"42" + 1</code> is an error until <code>as.numeric()</code> converts it.
+A <code>#|</code> line at the top of a <a href="#gl-code-cell">code cell</a> that controls it, such as <code>label:</code>, <code>echo: false</code> (hide the code), <code>eval: false</code> (do not run it), <code>include: false</code> (show nothing) or <code>error: true</code> (show the error and keep rendering). Set under <code>execute:</code> in the <a href="#gl-yaml-header">YAML header</a>, an option applies to every cell instead.
+Documentation: <a href="https://quarto.org/docs/computations/execution-options.html">Quarto: execution options</a>
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
+</dd>
+<dt><span id="gl-character">Character</span></dt>
+<dd>
+R’s type for text, also called a string, always written in quotes: <code>"Germany"</code>. A number in quotes is text, so <code>"42" + 1</code> is an error until it is <a href="#gl-type-conversion">converted</a>.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/character.html">R documentation: character vectors</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Clone</dt>
+<dt><span id="gl-clone">Clone</span></dt>
 <dd>
-Making a local copy of a remote repository, including its history.
+Making a local copy of a <a href="#gl-remote">remote</a> repository, including its full history. It is how a homework repository gets from GitHub onto your computer.
+Documentation: <a href="https://git-scm.com/docs/git-clone">Git: git clone</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
-<dt>Code cell</dt>
+<dt><span id="gl-code-cell">Code cell</span></dt>
 <dd>
-A block of executable code inside a <code>.qmd</code>, also called a code chunk. Every cell in this course carries a label, so it can be referred to and so an error points somewhere specific.
+A block of executable code inside a <code>.qmd</code>, also called a code chunk, which starts with three backticks and <code>{r}</code> and ends with three backticks. Quarto runs it on <a href="#gl-render">render</a> and places the result directly underneath, and every cell in this course carries a <a href="#gl-label">label</a>.
+See also: <a href="#gl-cell-option">Cell option</a>, <a href="#gl-inline-code">Inline code</a>.
+Documentation: <a href="https://quarto.org/docs/get-started/computations/positron.html">Quarto: computations</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Coefficient</dt>
+<dt><span id="gl-codebook">Codebook</span></dt>
 <dd>
-A parameter multiplying a predictor, describing how the expected outcome changes as that predictor changes by one unit. In a bivariate model it is the slope of the line, and in a Bayesian model it has a full posterior, not a single value.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">interpretation</span>
+The documentation of a dataset, listing every variable with what it measures, its scale or categories, and how missing values are coded. Read it before analysing, because column names rarely say enough.
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Coercion</dt>
+<dt><span id="gl-coercion">Coercion</span></dt>
 <dd>
-R converting values from one type to another, silently when a vector mixes types. <code>c(1, 2, "three")</code> becomes all text, and <code>c(1, TRUE, FALSE)</code> becomes the numbers 1, 1 and 0.
+R changing values from one <a href="#gl-data-type">type</a> to another automatically, most often when a vector mixes types, without anyone asking for it. <code>c(1, 2, "three")</code> becomes all text and <code>c(1, TRUE, FALSE)</code> becomes the numbers 1, 1 and 0, whereas <a href="#gl-type-conversion">type conversion</a> is the same change made on purpose.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Commit</dt>
+<dt><span id="gl-column-type">Column type</span></dt>
 <dd>
-One recorded snapshot of the project: the changes, who made them, when, and a message saying what changed. A commit is the unit of history, so it should be a meaningful checkpoint.
+The <a href="#gl-data-type">data type</a> of a column, shown in short form when a tibble is printed: <code>&lt;chr&gt;</code> character, <code>&lt;dbl&gt;</code> double, <code>&lt;int&gt;</code> integer, <code>&lt;lgl&gt;</code> logical, <code>&lt;fct&gt;</code> factor and <code>&lt;date&gt;</code> date. Check it first with new data, because a number or a date read in as text breaks everything that follows.
+Documentation: <a href="https://tibble.tidyverse.org/articles/types.html">tibble: column types</a>
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-comment">Comment</span></dt>
+<dd>
+Text after a <code>#</code> on a line of code, which R ignores when it runs the code. In a Quarto document the prose carries the reasoning, so comments stay short and say why a line is there.
+Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Comments">R Language Definition: comments</a>
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-commit">Commit</span></dt>
+<dd>
+One recorded snapshot of the project: the <a href="#gl-stage">staged</a> changes, who made them, when, and a <a href="#gl-commit-message">message</a> saying what changed. A commit is the unit of history, so it should be a meaningful checkpoint.
+See also: <a href="#gl-commit-history">Commit history</a>.
+Documentation: <a href="https://git-scm.com/docs/git-commit">Git: git commit</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
-<dt>Commit message</dt>
+<dt><span id="gl-commit-history">Commit history</span></dt>
+<dd>
+The list of all commits in a repository, newest first, each with its message, author and date, shown by <code>git log</code> or in Positron’s Source Control view. It is the record of how the project developed, and the way back to any earlier version.
+Documentation: <a href="https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History">Pro Git: viewing the commit history</a>
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
+</dd>
+<dt><span id="gl-commit-message">Commit message</span></dt>
 <dd>
 The short text attached to a commit, written for a future reader, most importantly future you. “Add figure and cross-reference to introduction” helps, “Update” does not, and it is also where AI assistance gets declared.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span> <span class="glossary-tag">workflow</span>
 </dd>
-<dt>Comparison and logical operators</dt>
+<dt><span id="gl-comparison-and-logical-operators">Comparison and logical operators</span></dt>
 <dd>
 Operators that return <code>TRUE</code> or <code>FALSE</code>: <code>&lt;</code>, <code>&gt;</code>, <code>==</code>, <code>!=</code>, <code>%in%</code>, combined with <code>&amp;</code> (and), <code>|</code> (or) and <code>!</code> (not). Note that <code>=</code> assigns and <code>==</code> compares.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/Comparison.html">R documentation: relational operators</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Confounder</dt>
+<dt><span id="gl-console">Console</span></dt>
 <dd>
-A variable that influences both the presumed cause and the outcome, so leaving it out distorts the relationship you are trying to measure. Whether a variable is a confounder is a claim about the DAG, not something the data can tell you.
-<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">model</span> <span class="glossary-tag">interpretation</span>
-</dd>
-<dt>Console</dt>
-<dd>
-The place where R code runs line by line and prints its result straight away. Use it for one-off commands such as <code>install.packages()</code>, and keep anything that belongs to the analysis in the document.
+The interactive R session in Positron, where code runs line by line and prints its result straight away. Use it to try things out and for one-off commands such as <code>install.packages()</code>, and keep everything that belongs to the analysis in the document.
+See also: <a href="#gl-fresh-r-session">Fresh R session</a>.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">workflow</span>
 </dd>
-<dt><code>count()</code></dt>
+<dt><span id="gl-cran">CRAN</span></dt>
 <dd>
-Counts the rows for each value of a column, returning one row per value with the number in a column called <code>n</code>.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
-</dd>
-<dt>Counterfactual prediction</dt>
-<dd>
-A model-based prediction of the outcome under a specified, possibly unobserved, setting of the predictors. It is how a fitted model answers a substantive question.
-<span class="glossary-tag glossary-block">Week 8</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">interpretation</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>CRAN</dt>
-<dd>
-The Comprehensive R Archive Network, R’s official package archive, holding more than 20,000 checked and free packages. <code>install.packages()</code> downloads from it.
+The Comprehensive R Archive Network, a network of servers around the world that store identical, up-to-date versions of R and of more than 20,000 contributed <a href="#gl-package">packages</a>. <code>install.packages()</code> downloads from it.
+Documentation: <a href="https://cran.r-project.org/">CRAN</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Credible interval</dt>
+<dt><span id="gl-cross-reference">Cross-reference</span></dt>
 <dd>
-A range containing a stated share of the posterior probability, for example 90 percent. It is a direct statement about the parameter given the data and the model, which is what makes it straightforward to interpret. A frequentist confidence interval is a different object, describing the long-run behaviour of the procedure rather than the parameter.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">interpretation</span> <span class="glossary-tag">probability</span>
-</dd>
-<dt>Cross-reference</dt>
-<dd>
-A link from the text to a labelled figure, table, equation or section, written as <code>@fig-example</code>. A label survives reordering and a phrase such as “the figure below” does not.
+A numbered, clickable reference from the text to a <a href="#gl-label">labelled</a> figure, table, equation or section, written as <code>@fig-example</code>. A label survives reordering, and a phrase such as “the figure below” does not.
+Documentation: <a href="https://quarto.org/docs/authoring/cross-references.html">Quarto: cross-references</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
-<dt>CSV</dt>
+<dt><span id="gl-csv">CSV</span></dt>
 <dd>
-Comma-separated values: a plain-text file with one row per line and the columns separated by commas. Any program can read it, which makes it the most common way to share a dataset.
+Comma-separated values: a plain-text file with one row per line and the columns separated by commas, which any program can read. Files saved by a German-language Excel often separate columns with semicolons instead, and readr reads those with <code>read_csv2()</code>.
+Documentation: <a href="https://readr.tidyverse.org/">readr</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
 </dl>
@@ -540,119 +534,124 @@ Comma-separated values: a plain-text file with one row per line and the columns 
 <section id="sec-glossary-d" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-d">D</h2>
 <dl>
-<dt>Data frame and tibble</dt>
+<dt><span id="gl-data-cycle">Data cycle</span></dt>
 <dd>
-A rectangular table of data in R, in which each column is a vector with its own type, so a dataset can mix numbers, text and logicals. A tibble is the tidyverse version of a data frame, with friendlier printing and fewer surprises.
+The stages of a data analysis: import the data, tidy it, transform it, visualise it, model it, and communicate the result. In a real project the middle stages loop, because a plot or a model often sends you back to tidy or transform again.
+Documentation: <a href="https://r4ds.hadley.nz/intro.html">R for Data Science: introduction</a>
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-data-frame-and-tibble">Data frame and tibble</span></dt>
+<dd>
+R’s structure for a rectangular dataset: a table in which each column is a <a href="#gl-vector">vector</a> with its own type, so one dataset can mix numbers, text and logicals. A tibble is the tidyverse’s modern reimagining of the data frame, with friendlier printing and fewer surprises.
+See also: <a href="#gl-tidy-data">Tidy data</a>, <a href="#gl-column-type">Column type</a>.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/data.frame.html">R documentation: data frames</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Data structure</dt>
+<dt><span id="gl-data-structure">Data structure</span></dt>
 <dd>
 How R organises values: from a single value, through vectors, matrices and arrays, to data frames and lists. Each step adds a dimension or, for data frames and lists, the freedom to mix types.
+See also: <a href="#gl-scalar">Scalar</a>, <a href="#gl-vector">Vector</a>, <a href="#gl-matrix">Matrix</a>, <a href="#gl-array-and-tensor">Array and tensor</a>, <a href="#gl-data-frame-and-tibble">Data frame and tibble</a>, <a href="#gl-list">List</a>.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Data summary</dt>
+<dt><span id="gl-data-summary">Data summary</span></dt>
 <dd>
-Step 2 of the workflow: describing the variables the analysis uses, their scales and how they are distributed, before any model. Every decision that changes the data, such as dropping blank answers, is named here.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">workflow</span> <span class="glossary-tag">data</span>
+Step 2 of the <a href="#gl-eight-step-workflow">eight-step workflow</a>: describing the data an analysis uses, its variables, measurement, coverage and obvious issues, before any model. In practice it is a <a href="#gl-pipeline">pipeline</a> ending in a captioned table, and every decision that changes the data, such as dropping missing values, is named in the text.
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Data type</dt>
+<dt><span id="gl-data-type">Data type</span></dt>
 <dd>
 What kind of information a value is: <code>double</code>, <code>integer</code>, <code>character</code> or <code>logical</code>, plus <code>factor</code> and <code>Date</code> built on top of them. <code>class()</code> tells you which one you have.
+See also: <a href="#gl-double-and-integer">Double and integer</a>, <a href="#gl-character">Character</a>, <a href="#gl-logical">Logical</a>, <a href="#gl-factor">Factor</a>, <a href="#gl-date">Date</a>, <a href="#gl-column-type">Column type</a>.
+Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Basic-types">R Language Definition: basic types</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Date</dt>
+<dt><span id="gl-date">Date</span></dt>
 <dd>
-R’s type for calendar dates, created with <code>as.Date("1957-03-25")</code>. A date knows about the calendar, so dates can be sorted and subtracted.
+R’s type for calendar dates, created from text in the form year-month-day, as in <code>as.Date("1957-03-25")</code>. A date knows about the calendar, so dates can be sorted and subtracted.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/Dates.html">R documentation: dates</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Diff</dt>
+<dt><span id="gl-default-argument-value">Default argument value</span></dt>
+<dd>
+The value an argument takes when the call does not supply one, set in the function definition, as <code>digits = 0</code> is for <code>round()</code>. It is why many functions work with a single argument, and the Usage section of a <a href="#gl-help-page">help page</a> lists every default.
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-diff">Diff</span></dt>
 <dd>
 A comparison of two versions of a file, showing what was removed, what was added and where. Reading the diff before you commit is how you check that a commit contains what you think it does.
+Documentation: <a href="https://git-scm.com/docs/git-diff">Git: git diff</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
-<dt>Directed acyclic graph</dt>
-<dd>
-A diagram of assumed causal relationships, drawn as arrows between variables with no cycles. Usually called a DAG, it makes explicit which variables must be adjusted for and which must not.
-<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">workflow</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Divergent transition</dt>
-<dd>
-A warning that the sampler failed to explore part of the posterior faithfully. Divergences are not cosmetic, so they are understood rather than silenced.
-<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span> <span class="glossary-tag">diagnostics</span>
-</dd>
-<dt>Double and integer</dt>
+<dt><span id="gl-double-and-integer">Double and integer</span></dt>
 <dd>
 R’s two numeric types: <code>double</code> for decimal numbers, the default, and <code>integer</code> for whole numbers, written with an <code>L</code> as in <code>42L</code>. The difference rarely matters here, but whether a value is numeric at all does, and <code>is.numeric()</code> answers that.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/numeric.html">R documentation: numeric vectors</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
-</dd>
-<dt><code>dplyr</code></dt>
-<dd>
-The tidyverse package for data manipulation, a set of verbs such as <code>filter()</code>, <code>select()</code>, <code>mutate()</code> and <code>summarise()</code>. Every verb takes a table first, names columns without quotes, and returns a new table, leaving the old one unchanged.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
-</dd>
-<dt>Draw</dt>
-<dd>
-A single sample from the posterior. A posterior is represented in practice as a large collection of draws, and every summary is computed from them.
-<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-e" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-e">E</h2>
 <dl>
-<dt>Effective sample size</dt>
+<dt><span id="gl-eight-step-workflow">Eight-step workflow</span></dt>
 <dd>
-How many independent draws the correlated MCMC draws are worth. A low value means a summary rests on less information than the raw number of draws suggests.
-<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span> <span class="glossary-tag">diagnostics</span>
+The fixed sequence every analysis in this course follows, from stating the <a href="#gl-estimand">estimand</a> to reflecting on limitations. It is also the shape of the take-home exam, and each week deepens one or two of its steps, starting with the <a href="#gl-data-summary">data summary</a>.
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span>
 </dd>
-<dt>Eight-step workflow</dt>
-<dd>
-The fixed sequence every analysis in this course follows, from clarifying the estimand to reflecting on limitations. It is also the shape of the take-home exam, and every week deepens one or two of its steps.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">workflow</span>
-</dd>
-<dt>Error and warning</dt>
+<dt><span id="gl-error-and-warning">Error and warning</span></dt>
 <dd>
 An error stops the code and nothing is computed, while a warning lets the code finish but flags something suspicious. Read an error in two parts, where it broke and what went wrong, before you change anything.
+See also: <a href="#gl-render-layers">Render layers</a>.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Estimand</dt>
+<dt><span id="gl-estimand">Estimand</span></dt>
 <dd>
-The quantity you actually want to know, stated precisely, before any model is fitted. Naming it first is step 1 of the workflow, and it is what keeps a model answerable to a question.
+The quantity we want to learn about from data, such as the association between two variables, stated precisely before any analysis. Naming it first is what keeps the <a href="#gl-estimator">estimator</a> and the <a href="#gl-estimate">estimate</a> answerable to a question.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">workflow</span> <span class="glossary-tag">interpretation</span>
 </dd>
-<dt>Estimate</dt>
+<dt><span id="gl-estimate">Estimate</span></dt>
 <dd>
-The result the estimator gives us, what we get. Estimand, estimator and estimate are three different things: what we want, how we go about it, and what comes back.
+The output of the <a href="#gl-estimator">estimator</a>: the result we get back once the method has been applied to the data. Ideally it corresponds to the <a href="#gl-estimand">estimand</a>, and checking how far it does is part of every analysis.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">interpretation</span>
 </dd>
-<dt>Estimator</dt>
+<dt><span id="gl-estimator">Estimator</span></dt>
 <dd>
-The procedure by which we learn about the estimand, our method. In this course the estimator is a Bayesian model, and what it returns is a whole posterior distribution.
+The procedure, our method, that turns data into an <a href="#gl-estimate">estimate</a> of the <a href="#gl-estimand">estimand</a>. The same estimand can be approached with different estimators, so the choice is one you have to justify.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">workflow</span> <span class="glossary-tag">model</span>
+</dd>
+<dt><span id="gl-excel-workbook-and-sheet">Excel workbook and sheet</span></dt>
+<dd>
+An Excel file (<code>.xlsx</code> or <code>.xls</code>) is a workbook that can hold several sheets, each its own table. The readxl package, installed with the tidyverse but not loaded by it, lists the sheets and reads one at a time.
+Documentation: <a href="https://readxl.tidyverse.org/">readxl</a>
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-f" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-f">F</h2>
 <dl>
-<dt>Factor</dt>
+<dt><span id="gl-factor">Factor</span></dt>
 <dd>
-R’s type for categories with a fixed set of levels, such as autocracy, hybrid and democracy. Stored this way, categories can be ordered and counted, and the level order controls how they appear in tables and plots.
+R’s type for categories, a vector encoded with a fixed set of levels, such as autocracy, hybrid and democracy. Stored this way, categories can be ordered and counted, and the order of the levels controls how they appear in tables and plots.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/factor.html">R documentation: factors</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt><code>filter()</code></dt>
+<dt><span id="gl-file-extension">File extension</span></dt>
 <dd>
-Keeps the rows of a table that meet a condition built from comparison and logical operators. A comma between conditions means and, <code>|</code> means or.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+The ending of a file name, such as <code>.csv</code>, <code>.xlsx</code>, <code>.dta</code> or <code>.qmd</code>, which tells you and your software what format the file is in. Each data format has its own reading function, so the extension tells you which one to reach for.
+Documentation: <a href="https://r4ds.hadley.nz/data-import.html">R for Data Science: data import</a>
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Freeze</dt>
+<dt><span id="gl-fresh-r-session">Fresh R session</span></dt>
 <dd>
-Quarto’s cache of already-computed results, stored in <code>_freeze/</code>, so a rebuild does not re-run expensive code. It is committed deliberately, so the site rebuilds identically anywhere.
-<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span> <span class="glossary-tag">workflow</span>
+An R session with nothing in it yet, which is what Quarto starts for every <a href="#gl-render">render</a> before running every cell from top to bottom. An object you created only in the <a href="#gl-console">console</a> does not exist there, which is the usual reason a render fails with “object not found” while the console works.
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">quarto</span>
 </dd>
-<dt>Function and argument</dt>
+<dt><span id="gl-function-and-argument">Function and argument</span></dt>
 <dd>
-A function is a named, reusable piece of code that takes inputs, its arguments, and returns an output. Arguments can be given by position or by name, and naming them makes code readable a month later.
+A function is a named, reusable piece of code that takes inputs, its arguments, and returns an output, called as <code>name(argument1, argument2)</code>. Arguments can be given by position or by name, and naming them makes code readable a month later.
+See also: <a href="#gl-default-argument-value">Default argument value</a>, <a href="#gl-writing-a-function">Writing a function</a>, <a href="#gl-help-page">Help page</a>.
+Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Named-arguments-and-defaults">An Introduction to R: named arguments and defaults</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
 </dl>
@@ -660,79 +659,67 @@ A function is a named, reusable piece of code that takes inputs, its arguments, 
 <section id="sec-glossary-g" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-g">G</h2>
 <dl>
-<dt>Generative model</dt>
+<dt><span id="gl-git">Git</span></dt>
 <dd>
-A model complete enough to simulate fake data that looks like the real thing. If you can simulate from it, you can check it before it ever touches your data.
-<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Git</dt>
-<dd>
-A version control system that records the history of a project as a series of snapshots. It answers what changed, when, and why, and it lets you go back.
+A free and open-source distributed <a href="#gl-version-control">version control</a> system that records the history of a project as a series of <a href="#gl-commit">commits</a>. It answers what changed, when, and why, and it lets you go back.
+Documentation: <a href="https://git-scm.com/book/en/v2/Getting-Started-What-is-Git%3F">Pro Git: what is Git?</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
-<dt>GitHub</dt>
+<dt><span id="gl-github">GitHub</span></dt>
 <dd>
-The platform that hosts Git repositories and adds collaboration features such as issues and automated checks. Course materials are distributed and homework submitted through it.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">git</span>
+A cloud-based platform where you can store, share and work together with others on <a href="#gl-git">Git</a> repositories. Git is the version control system on your computer, and GitHub is the service that hosts the <a href="#gl-remote">remote</a> copy, which is how homework is distributed and submitted in this course.
+Documentation: <a href="https://docs.github.com/en/get-started/start-your-journey/about-github-and-git">GitHub Docs: about GitHub and Git</a>
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
-<dt><code>glimpse()</code></dt>
+<dt><span id="gl-grouped-summary">Grouped summary</span></dt>
 <dd>
-Shows every column of a table with its type and its first values. The first thing to run on data you have just read.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
-</dd>
-<dt><code>group_by()</code></dt>
-<dd>
-Splits a table into groups by the values of one or more columns. It changes nothing you can see, but tells the next verb, usually <code>summarise()</code>, to work once per group.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+Reducing a table to summary statistics, such as a count or a mean, once for each group defined by the values of one or more columns. In dplyr, <code>group_by()</code> sets the groups without changing anything you can see, <code>summarise()</code> then returns one row per group, and <code>count()</code> is the shortcut for the number of rows per group.
+Documentation: <a href="https://dplyr.tidyverse.org/articles/grouping.html">dplyr: grouped data</a>
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-h" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-h">H</h2>
 <dl>
-<dt>Help page</dt>
+<dt><span id="gl-help-page">Help page</span></dt>
 <dd>
-The documentation every R function has, opened with <code>?mean</code> or <code>help(mean)</code>. The Usage section shows the arguments and their defaults, and the Examples at the bottom are usually the fastest way in.
+The documentation every R function has, opened with <code>?mean</code> or <code>help(mean)</code>. Its sections say what the function does, which arguments it takes and their defaults (Usage and Arguments) and what it returns (Value), and the Examples at the bottom are usually the fastest way in.
+Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Getting-help-with-functions-and-features">An Introduction to R: getting help</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
-</dd>
-<dt><code>here()</code></dt>
-<dd>
-The function from the <code>here</code> package that builds a path from the project root rather than from whatever the current working directory happens to be. Use it for every path, always.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">workflow</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-i" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-i">I</h2>
 <dl>
-<dt>Indexing</dt>
+<dt><span id="gl-indexing">Indexing</span></dt>
 <dd>
-Picking values out of a structure: <code>[ ]</code> by position or by condition, and <code>$</code> by name, for data frames and lists. A logical vector inside <code>[ ]</code> keeps the elements where it is <code>TRUE</code>, which is filtering.
+Picking values out of a structure: <code>[ ]</code> by position or by condition, and <code>$</code> by name, for data frames and lists. On a data frame <code>[row, column]</code> takes both (a blank means all), a negative position drops instead of keeps, and a <a href="#gl-logical">logical</a> vector keeps the elements where it is <code>TRUE</code>, which is filtering.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/Extract.html">R documentation: extract or replace parts of an object</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Inference</dt>
+<dt><span id="gl-inference">Inference</span></dt>
 <dd>
-Using known information to infer something unknown. Measuring two variables to learn about their association, or sampling people to learn about a population, are both inference.
+Learning from data: using what we have observed to say something about what we have not. Measuring two variables to learn about their association, or sampling people to learn about a population, are both inference.
+See also: <a href="#gl-estimand">Estimand</a>, <a href="#gl-signal-and-noise">Signal and noise</a>.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">interpretation</span>
 </dd>
-<dt>Interaction</dt>
+<dt><span id="gl-inline-code">Inline code</span></dt>
 <dd>
-A term letting the effect of one predictor depend on the value of another. An interaction is a claim that an effect is conditional, so it is interpreted jointly and not term by term.
-<span class="glossary-tag glossary-block">Week 10</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">interpretation</span>
-</dd>
-<dt>Intercept</dt>
-<dd>
-The expected outcome when every predictor is zero. It is only interpretable when zero is a meaningful value, which is one reason predictors are often centred.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">interpretation</span>
+R code inside a sentence, written as a backtick, the letter <code>r</code>, a space, the code and a closing backtick, whose result replaces it in the rendered text. A number reported this way updates itself when the data or the code changes.
+Documentation: <a href="https://quarto.org/docs/computations/inline-code.html">Quarto: inline code</a>
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span> <span class="glossary-tag">r</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-j" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-j">J</h2>
 <dl>
-<dt>Join</dt>
+<dt><span id="gl-join">Join</span></dt>
 <dd>
-Combining two tables by matching rows on a shared key column. The four joins of <code>dplyr</code> differ only in which rows survive when a key has no partner in the other table.
+Combining two tables by matching rows on a shared <a href="#gl-key">key</a>, so the result has the columns of both. The four joins differ only in which rows survive when a key has no partner: a left join keeps every row of the first table, a right join every row of the second, an inner join only the matches, and a full join everything.
+Documentation: <a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">dplyr: mutating joins</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
 </dl>
@@ -740,9 +727,10 @@ Combining two tables by matching rows on a shared key column. The four joins of 
 <section id="sec-glossary-k" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-k">K</h2>
 <dl>
-<dt>Key</dt>
+<dt><span id="gl-key">Key</span></dt>
 <dd>
-The column, or columns, a join matches rows on, such as <code>country</code>. A key matches text exactly, so one spelling difference silently produces <code>NA</code>.
+The column, or columns, a <a href="#gl-join">join</a> matches rows on, such as <code>country</code>, and when it has a different name in each table, <code>join_by()</code> says which columns belong together. A key matches text exactly, so one spelling difference silently produces <a href="#gl-na"><code>NA</code></a>: count the missing values after every join.
+Documentation: <a href="https://dplyr.tidyverse.org/reference/join_by.html">dplyr: join specifications</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
 </dl>
@@ -750,159 +738,156 @@ The column, or columns, a join matches rows on, such as <code>country</code>. A 
 <section id="sec-glossary-l" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-l">L</h2>
 <dl>
-<dt>LaTeX</dt>
+<dt><span id="gl-label">Label</span></dt>
 <dd>
-The typesetting system that turns the converted document into a PDF, the last layer of a PDF render. Its errors usually come from a special character in your prose, such as <code>%</code>, <code>&amp;</code>, <code>$</code> or a stray backslash.
+A unique name given to a figure, table, section or code cell, such as <code>#fig-map</code>, <code>#tbl-results</code> or <code>#sec-intro</code>, whose prefix says what kind of thing it is. A label is what a <a href="#gl-cross-reference">cross-reference</a> points to.
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
+</dd>
+<dt><span id="gl-latex">LaTeX</span></dt>
+<dd>
+A high-quality typesetting system, the last layer of a PDF render, which turns the converted document into the PDF. Its errors usually come from a special character in your prose, such as <code>%</code>, <code>&amp;</code>, <code>$</code> or a stray backslash.
+Documentation: <a href="https://www.latex-project.org/">The LaTeX Project</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
-<dt><code>left_join()</code></dt>
-<dd>
-Keeps every row of the left table and adds the matching columns of the right one, with <code>NA</code> where there is no match. It is nearly always the join you want, and afterwards you check how many <code>NA</code> values it produced.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
-</dd>
-<dt>Likelihood</dt>
-<dd>
-How probable the observed data would be, for each candidate value of the parameters. It is the part of the model that lets the data speak.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Linear predictor</dt>
-<dd>
-The part of a regression model that computes the expected outcome from the predictors, such as <span class="math inline">\(\mu_i = \alpha + \beta \times x_i\)</span>. Everything the predictors do not account for is left to the spread of the outcome around it.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Linear regression</dt>
-<dd>
-A model in which the expected outcome is a straight-line function of the predictors. The foundation the later models extend rather than replace.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">regression</span>
-</dd>
-<dt>Link function</dt>
-<dd>
-The transformation connecting a linear predictor to the scale of the outcome. It lets a linear model describe outcomes that are bounded, such as probabilities.
-<span class="glossary-tag glossary-block">Week 11</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>List</dt>
+<dt><span id="gl-list">List</span></dt>
 <dd>
 R’s flexible container, created with <code>list()</code>, which can hold anything, including other lists. You will rarely build one yourself, but every fitted model in this course comes back as one.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/list.html">R documentation: lists</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Literate programming</dt>
+<dt><span id="gl-literate-programming">Literate programming</span></dt>
 <dd>
-Writing code, the prose that explains it and its results in a single document, so the reasoning and the computation cannot drift apart. Quarto is the tool we use for it.
+Writing code, the prose that explains it and its results in a single document, so the reasoning and the computation cannot drift apart. <a href="#gl-quarto">Quarto</a> is the tool we use for it.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span> <span class="glossary-tag">quarto</span>
 </dd>
-<dt>Local repository</dt>
+<dt><span id="gl-local-repository">Local repository</span></dt>
 <dd>
-The copy of a repository on your own computer, where you edit files and make commits. Your commits live only here until you push them to the remote.
+The copy of a repository on your own computer, where you edit files and make commits. Your commits live only here until you <a href="#gl-push-and-pull">push</a> them to the <a href="#gl-remote">remote</a>.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
-<dt>Log-odds</dt>
+<dt><span id="gl-logical">Logical</span></dt>
 <dd>
-The scale a logistic regression’s coefficients live on, the logarithm of the odds. Coefficients are additive here but not on the probability scale, which is why results are converted before interpretation.
-<span class="glossary-tag glossary-block">Week 11</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">interpretation</span>
-</dd>
-<dt>Logical</dt>
-<dd>
-R’s type for true or false, <code>TRUE</code> and <code>FALSE</code>, which every comparison returns. Logicals are the backbone of filtering, and <code>sum()</code> of a logical vector counts its <code>TRUE</code> values.
+R’s type for true or false, <code>TRUE</code> and <code>FALSE</code>, which every <a href="#gl-comparison-and-logical-operators">comparison</a> returns. Logicals are the backbone of filtering, and the sum of a logical vector counts its <code>TRUE</code> values.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/logical.html">R documentation: logical vectors</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
-</dd>
-<dt>Logistic regression</dt>
-<dd>
-A model for a binary outcome, using the logit link to keep predicted probabilities between zero and one.
-<span class="glossary-tag glossary-block">Week 11</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-m" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-m">M</h2>
 <dl>
-<dt>Marginal effect</dt>
+<dt><span id="gl-markdown">Markdown</span></dt>
 <dd>
-How the expected outcome changes with a predictor, after averaging over the others. It is often the form in which a result becomes reportable.
-<span class="glossary-tag glossary-block">Week 8</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">interpretation</span>
-</dd>
-<dt>Markdown</dt>
-<dd>
-The plain-text formatting syntax used in the body of a <code>.qmd</code>: <code>*italics*</code>, <code>**bold**</code>, <code>#</code> for headings, and so on. It stays readable as source and still renders to a formatted document.
+The plain-text formatting syntax used in the body of a <code>.qmd</code>: <code>*italics*</code>, <code>**bold**</code>, <code>#</code> for headings, <code>&gt;</code> for a block quote, <code>-</code> for a list item, <code>[text](url)</code> for a link and <code>|</code> pipes for a table. Quarto uses <a href="#gl-pandoc">Pandoc</a>’s flavour of Markdown, which stays readable as source and still renders to a formatted document.
+Documentation: <a href="https://quarto.org/docs/authoring/markdown-basics.html">Quarto: Markdown basics</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
-<dt>Markov chain Monte Carlo</dt>
+<dt><span id="gl-masking">Masking</span></dt>
 <dd>
-A family of algorithms, usually shortened to MCMC, that explore the posterior by taking a long, dependent random walk through it. We need it because most interesting posteriors cannot be written down in closed form.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">mcmc</span>
-</dd>
-<dt>Masking</dt>
-<dd>
-What happens when a loaded package has a function with the same name as one already available, so the newer one wins. <code>library(tidyverse)</code> reports, for example, that <code>dplyr::filter()</code> masks <code>stats::filter()</code>.
+What happens when a loaded package has a function with the same name as one already available, so the newer one wins. <code>library(tidyverse)</code> reports, for example, that <code>dplyr::filter()</code> masks <code>stats::filter()</code>, and the <a href="#gl-namespace">namespace</a> operator <code>::</code> picks one explicitly.
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Matrix</dt>
+<dt><span id="gl-matrix">Matrix</span></dt>
 <dd>
 A two-dimensional arrangement of values of one type, in rows and columns, created with <code>matrix()</code> and written in bold uppercase as <span class="math inline">\(\mathbf{X}\)</span>. It is the workhorse of linear algebra, and of every regression under the hood.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/matrix.html">R documentation: matrices</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Mean and standard deviation</dt>
+<dt><span id="gl-mean-and-standard-deviation">Mean and standard deviation</span></dt>
 <dd>
 The mean <span class="math inline">\(\mu\)</span> is the centre of a distribution, and moving it slides a normal curve left or right. The standard deviation <span class="math inline">\(\sigma\)</span> is its spread, and raising it makes the curve wider and flatter.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Multilevel model</dt>
+<dt><span id="gl-median">Median</span></dt>
 <dd>
-A model with parameters that vary by group, where the group-level variation is itself estimated. Also called a hierarchical model.
-<span class="glossary-tag glossary-block">Week 12</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">multilevel</span>
+The middle value of a set of numbers once they are sorted, so half the values lie below it and half above. Unlike the <a href="#gl-mean-and-standard-deviation">mean</a>, it barely moves when a few values are extreme, which makes it the better summary of skewed data such as income.
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">data</span>
 </dd>
-<dt><code>mutate()</code></dt>
+<dt><span id="gl-missing-values-in-calculations">Missing values in calculations</span></dt>
 <dd>
-Creates new columns or changes existing ones. A new name creates a column, and an existing name overwrites it.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+Most summary functions, such as <code>mean()</code> or <code>sum()</code>, return <a href="#gl-na"><code>NA</code></a> if any value is missing, because the true answer is then unknown. Their argument <code>na.rm = TRUE</code> removes the missing values first, which is a decision about your data worth stating in the text.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/mean.html">R documentation: mean</a>
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-n" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-n">N</h2>
 <dl>
-<dt><code>NA</code></dt>
+<dt><span id="gl-na"><code>NA</code></span></dt>
 <dd>
-R’s marker for a missing value, “not available”. It appears when a value was never recorded, when a conversion fails, and when a join finds no match, so always check how many you have.
+R’s marker for a missing value, “not available”. It appears when a value was never recorded, when a <a href="#gl-type-conversion">conversion</a> fails and when a <a href="#gl-join">join</a> finds no match, so always check how many you have.
+See also: <a href="#gl-missing-values-in-calculations">Missing values in calculations</a>.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/NA.html">R documentation: NA</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Native pipe</dt>
+<dt><span id="gl-namespace">Namespace (<code>::</code>)</span></dt>
 <dd>
-The <code>|&gt;</code> operator, which passes the result on its left into the first argument of the function on its right, so a sequence of steps reads left to right, as “and then”. This course uses <code>|&gt;</code> throughout and not the older <code>%&gt;%</code>.
+Calling a function by naming the <a href="#gl-package">package</a> it lives in, written <code>package::function()</code>, as in <code>readxl::read_excel()</code>. It makes the source clear, needs no <code>library()</code> for a one-off call, and settles which function you mean when two packages share a name.
+See also: <a href="#gl-masking">Masking</a>.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/ns-dblcolon.html">R documentation: double colon</a>
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-nan"><code>NaN</code></span></dt>
+<dd>
+R’s value for “not a number”, the result of a calculation with no defined answer, such as <code>0 / 0</code> or <code>sqrt(-1)</code>. It usually comes with a <a href="#gl-error-and-warning">warning</a>, and R also counts it as a missing value.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/is.finite.html">R documentation: finite, infinite and NaN numbers</a>
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-native-pipe">Native pipe</span></dt>
+<dd>
+The <code>|&gt;</code> operator, which passes the value on its left into the function call on its right as the first argument, so a sequence of steps reads left to right, as “and then”. This course uses <code>|&gt;</code> throughout and not the older <code>%&gt;%</code> from the magrittr package.
+See also: <a href="#gl-pipeline">Pipeline</a>.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/pipeOp.html">R documentation: forward pipe operator</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Normal distribution</dt>
+<dt><span id="gl-nested-function-call">Nested function call</span></dt>
 <dd>
-The symmetric bell-shaped distribution, written <span class="math inline">\(\mathcal{N}(\mu, \sigma)\)</span> in this course. It has exactly two knobs, the mean and the standard deviation, and no other shape is available.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span>
+A function call inside another, such as <code>round(mean(x), digits = 1)</code>, which R evaluates from the inside out. Deep nesting is hard to read, which is what the <a href="#gl-native-pipe">native pipe</a> is for.
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Normalising constant</dt>
+<dt><span id="gl-normal-distribution">Normal distribution</span></dt>
 <dd>
-The quantity that rescales the posterior so it integrates to one. It does not depend on the parameters, which is why we can usually ignore it and work with the unnormalised posterior.
-<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span>
+The symmetric bell-shaped distribution, written <span class="math inline">\(\mathcal{N}(\mu, \sigma)\)</span> in this course. It has exactly two knobs, the <a href="#gl-mean-and-standard-deviation">mean and the standard deviation</a>, and no other shape is available.
+See also: <a href="#gl-rule-of-68-and-95-percent">Rule of 68 and 95 percent</a>, <a href="#gl-standard-normal-distribution">Standard normal distribution</a>.
+<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-o" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-o">O</h2>
 <dl>
-<dt>Object</dt>
+<dt><span id="gl-object">Object</span></dt>
 <dd>
-A named container holding information, with a name, a value and a type. In R, everything that exists is an object, including functions and fitted models.
+A named container holding information, with a name, a value and a <a href="#gl-data-type">type</a>. In R, everything that exists is an object, including <a href="#gl-function-and-argument">functions</a> and fitted models.
+Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Objects">R Language Definition: objects</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Observation</dt>
+<dt><span id="gl-observation">Observation</span></dt>
 <dd>
-One unit of what was measured, such as one country in one year. In a tidy dataset each observation has its own row.
+One unit of what was measured, such as one country in one year. In <a href="#gl-tidy-data">tidy data</a> each observation has its own row.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>One sentence per line</dt>
+<dt><span id="gl-one-sentence-per-line">One sentence per line</span></dt>
 <dd>
-Writing prose in a <code>.qmd</code> with each sentence on its own source line. The rendered document looks the same, but Git can now show a change sentence by sentence.
+Writing prose in a <code>.qmd</code> with each sentence on its own source line. The rendered document looks the same, but the <a href="#gl-diff">diff</a> can now show a change sentence by sentence.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span> <span class="glossary-tag">git</span>
 </dd>
-<dt>Output format</dt>
+<dt><span id="gl-open-source-licence">Open-source licence</span></dt>
 <dd>
-The kind of document a render produces, such as HTML, PDF or Word, set with <code>format:</code> in the YAML header. The source stays the same whatever the format, which is the point of one source and several outputs.
+A licence that allows anyone to use, copy, change and share a piece of work under stated conditions, such as keeping the copyright notice, the MIT License being a short and common example. Adding it as <code>license.md</code> to a homework repo is how you opt in to <a href="#gl-opt-in-ai-feedback">AI feedback</a>.
+Documentation: <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository">GitHub Docs: licensing a repository</a>
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span> <span class="glossary-tag">git</span>
+</dd>
+<dt><span id="gl-opt-in-ai-feedback">Opt-in AI feedback</span></dt>
+<dd>
+The only individual feedback on homework: if your submission repo contains an <a href="#gl-open-source-licence">open-source licence</a> as <code>license.md</code>, an AI compares your work with the <a href="#gl-sample-solution">sample solution</a> and adds a <code>FEEDBACK.pdf</code> to your repo. Without that file your submission is not processed at all.
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span>
+</dd>
+<dt><span id="gl-output-format">Output format</span></dt>
+<dd>
+The kind of document a <a href="#gl-render">render</a> produces, such as HTML, PDF or Word, set with <code>format:</code> in the <a href="#gl-yaml-header">YAML header</a>. The source stays the same whatever the format: one source, several outputs.
+Documentation: <a href="https://quarto.org/docs/output-formats/all-formats.html">Quarto: all formats</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
 </dl>
@@ -910,99 +895,51 @@ The kind of document a render produces, such as HTML, PDF or Word, set with <cod
 <section id="sec-glossary-p" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-p">P</h2>
 <dl>
-<dt>Package</dt>
+<dt><span id="gl-package">Package</span></dt>
 <dd>
-A bundle of functions, their help pages and sometimes data, that someone wrote and shared. Installed once with <code>install.packages()</code> in the console, loaded every session with <code>library()</code> in the document.
+A bundle of R functions, their documentation and sometimes data, that someone wrote and shared, whose contents become available only once it is loaded. Install it once with <code>install.packages()</code> in the <a href="#gl-console">console</a>, and load it every session with <code>library()</code> at the top of the document.
+See also: <a href="#gl-cran">CRAN</a>, <a href="#gl-namespace">Namespace (<code>::</code>)</a>.
+Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Packages">An Introduction to R: packages</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt><code>package::function()</code></dt>
+<dt><span id="gl-pandoc">Pandoc</span></dt>
 <dd>
-Calling a function by naming the package it lives in, as in <code>readxl::read_excel()</code>. It makes the source clear, needs no <code>library()</code> for a one-off call, and settles which function you mean when two packages share a name.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
-</dd>
-<dt>Pandoc</dt>
-<dd>
-The document converter Quarto runs after R has executed the cells, turning Markdown into HTML, Word or LaTeX. An error mentioning YAML usually comes from this layer, and points at a line and column of the header.
+A universal document converter, which Quarto runs after the code cells have executed to turn <a href="#gl-markdown">Markdown</a> into HTML, Word or LaTeX. An error from the <a href="#gl-yaml-header">YAML header</a> surfaces at this layer, with a line and column number.
+Documentation: <a href="https://pandoc.org/">Pandoc</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
-<dt>Parameter</dt>
+<dt><span id="gl-pipeline">Pipeline</span></dt>
 <dd>
-An unknown quantity in a model that we want to learn about, such as a slope or an average. Bayesian inference gives a parameter a distribution rather than one fixed number.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Partial pooling</dt>
-<dd>
-The compromise a multilevel model strikes between one estimate for all groups and a separate, independent estimate per group. Groups with little data are pulled towards the overall pattern, and groups with plenty are left largely alone.
-<span class="glossary-tag glossary-block">Week 12</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">multilevel</span>
-</dd>
-<dt>Pipeline</dt>
-<dd>
-A sequence of steps chained with <code>|&gt;</code>, each taking the previous result, from reading a file to a finished table. Pipelines are powerful, so build them one step at a time and check the result at every step.
+A sequence of steps chained with the <a href="#gl-native-pipe">native pipe</a>, each taking the previous result, from reading a file to a finished table. Pipelines are powerful, so build them one step at a time and check the result at every step.
+Documentation: <a href="https://r4ds.hadley.nz/data-transform.html">R for Data Science: data transformation</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">workflow</span>
 </dd>
-<dt><code>pivot_longer()</code> and <code>pivot_wider()</code></dt>
+<dt><span id="gl-positron">Positron</span></dt>
 <dd>
-The <code>tidyr</code> functions that reshape a table: <code>pivot_longer()</code> turns wide data into long, tidy data, and <code>pivot_wider()</code> goes the other way. Column names become values of a new variable on the way to long, and values of a variable become column names on the way back.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
-</dd>
-<dt>Point estimate</dt>
-<dd>
-A single number summarising a posterior, such as its mean or median. Reported without an interval it is a claim the data cannot support, so this course always gives the width alongside it.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">interpretation</span>
-</dd>
-<dt>Population-level and group-level effects</dt>
-<dd>
-Population-level effects apply across all observations, and group-level effects vary by group. <code>brms</code> uses these names for what are elsewhere called fixed and random effects.
-<span class="glossary-tag glossary-block">Week 12</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">multilevel</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Positron</dt>
-<dd>
-The editor this course works in, built for data science in R and Python. Its panes include the editor, the terminal, the console, the file explorer and the Source Control pane.
+A free data science environment, an IDE (integrated development environment), for R and Python, and the editor this course works in. By default the editor sits above the <a href="#gl-console">console</a> and the <a href="#gl-terminal">terminal</a>, with the Variables and Plots panes on the right and views such as the Explorer and <a href="#gl-source-control-pane">Source Control</a> in the Activity Bar.
+Documentation: <a href="https://positron.posit.co/layout.html">Positron: layout</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span>
 </dd>
-<dt>Posterior</dt>
+<dt><span id="gl-probability-density">Probability density</span></dt>
 <dd>
-The distribution of the parameters after conditioning on the data. This is what Bayes’ theorem returns, and every quantity of interest is computed from it.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Posterior predictive check</dt>
-<dd>
-Simulating data from the fitted model and comparing it against the observed data. It asks whether the model can reproduce the features of the data you care about.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">diagnostics</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Posterior predictive distribution</dt>
-<dd>
-The distribution of new outcomes implied by the fitted model, accounting for both parameter uncertainty and outcome variability. Predictions come from it rather than from point estimates alone.
-<span class="glossary-tag glossary-block">Week 8</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">interpretation</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Prior</dt>
-<dd>
-The distribution expressing what is plausible about a parameter before seeing the data. A prior is a philosophical commitment, so it is defended on principled grounds rather than chosen for convenience.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">prior</span> <span class="glossary-tag">model</span>
-</dd>
-<dt>Prior predictive check</dt>
-<dd>
-Simulating data from the priors alone, before fitting, to see what outcomes the model considers plausible. It catches priors that imply impossible values, such as a turnout rate above 100 percent.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">prior</span> <span class="glossary-tag">diagnostics</span>
-</dd>
-<dt>Probability density</dt>
-<dd>
-The height of the curve of a continuous distribution. The density itself is not a probability: the area under the curve between two values is.
+The height of the curve of a continuous <a href="#gl-probability-distribution">probability distribution</a>. The density itself is not a probability: the area under the curve between two values is.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span>
 </dd>
-<dt>Probability distribution</dt>
+<dt><span id="gl-probability-distribution">Probability distribution</span></dt>
 <dd>
-A description of how plausible each possible value of a quantity is. Here, distributions describe both data and parameters, which is the central move of the Bayesian approach.
+A description of how plausible each possible value of a quantity is. For a continuous quantity it is drawn as a <a href="#gl-probability-density">density</a> curve, and the area under the curve between two values is the probability of landing between them.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span>
 </dd>
-<dt>Project root</dt>
+<dt><span id="gl-project-root">Project root</span></dt>
 <dd>
-The top folder of a project, the fixed point every other path is expressed relative to. Anchoring paths to it is what makes a project work on a machine other than yours.
+The top folder of a project, the fixed point every other path is expressed relative to. The <code>here</code> package builds every path from it, as in <code>here("data", "file.csv")</code>, which is what makes a project run on a machine other than yours.
+Documentation: <a href="https://here.r-lib.org/">here package</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span> <span class="glossary-tag">r</span>
 </dd>
-<dt>Push and pull</dt>
+<dt><span id="gl-push-and-pull">Push and pull</span></dt>
 <dd>
-Sending your local commits to the remote (push), and fetching commits from it into your local repository (pull). The Sync button in Positron does both.
+Sending your local commits to the <a href="#gl-remote">remote</a> (push), and bringing commits from it into your <a href="#gl-local-repository">local repository</a> (pull). The Sync button in Positron does both.
+Documentation: <a href="https://git-scm.com/docs/git-push">Git: git push</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
 </dl>
@@ -1010,14 +947,10 @@ Sending your local commits to the remote (push), and fetching commits from it in
 <section id="sec-glossary-q" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-q">Q</h2>
 <dl>
-<dt>Quantity of interest</dt>
+<dt><span id="gl-quarto">Quarto</span></dt>
 <dd>
-The specific, interpretable number a reader should take away, computed from the posterior. Deciding it in advance is what stops an analysis becoming a table of coefficients with no conclusion.
-<span class="glossary-tag glossary-block">Week 8</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">interpretation</span>
-</dd>
-<dt>Quarto</dt>
-<dd>
-The publishing system that turns a <code>.qmd</code> file into HTML, PDF or slides, running the embedded code as it goes. Everything in this course, including this page, is a Quarto document.
+An open-source scientific and technical publishing system that turns a <code>.qmd</code> file of <a href="#gl-markdown">Markdown</a> and executable <a href="#gl-code-cell">code cells</a> into HTML, PDF, Word, slides and more. Everything in this course, including this page, is a Quarto document.
+Documentation: <a href="https://quarto.org/docs/get-started/hello/positron.html">Quarto: Hello, Quarto (Positron)</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
 </dl>
@@ -1025,39 +958,45 @@ The publishing system that turns a <code>.qmd</code> file into HTML, PDF or slid
 <section id="sec-glossary-r" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-r">R</h2>
 <dl>
-<dt>R-hat</dt>
+<dt><span id="gl-remote">Remote</span></dt>
 <dd>
-A convergence diagnostic comparing variation between chains against variation within them. Values near 1 are consistent with convergence, and clearly larger values mean the chains do not agree.
-<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span> <span class="glossary-tag">diagnostics</span>
-</dd>
-<dt><code>read_csv()</code></dt>
-<dd>
-The <code>readr</code> function that reads a CSV file, from disk or a URL, into a tibble, guessing each column’s type. Assign the result, because on its own it prints the data and forgets it.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
-</dd>
-<dt>Remote</dt>
-<dd>
-A copy of the repository hosted elsewhere, normally on GitHub, that you push to and pull from. The remote is what makes the work shared rather than local.
+A version of your repository hosted on the internet, normally on <a href="#gl-github">GitHub</a>, that you push to and pull from. The remote is what makes the work shared rather than local.
+Documentation: <a href="https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes">Pro Git: working with remotes</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
-<dt>Render</dt>
+<dt><span id="gl-render">Render</span></dt>
 <dd>
-The act of turning a source <code>.qmd</code> into its output document, from the Preview button in Positron or with <code>quarto render</code> in the terminal. A submission that does not render is not a submission, because nobody else can reproduce it.
+Quarto’s term for taking a source <code>.qmd</code>, running its code cells and producing a new output document, from the Preview button in Positron or with <code>quarto render</code> in the terminal. A submission that does not render is not a submission, because nobody else can reproduce it.
+See also: <a href="#gl-fresh-r-session">Fresh R session</a>, <a href="#gl-render-layers">Render layers</a>.
+Documentation: <a href="https://quarto.org/docs/get-started/hello/positron.html#rendering">Quarto: rendering</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span> <span class="glossary-tag">workflow</span>
 </dd>
-<dt>Repository</dt>
+<dt><span id="gl-render-layers">Render layers</span></dt>
 <dd>
-A project under version control, together with its full history. Usually shortened to “repo”.
+The programs a PDF <a href="#gl-render">render</a> passes through in turn: R runs the code cells, <a href="#gl-pandoc">Pandoc</a> converts the Markdown, and <a href="#gl-latex">LaTeX</a> typesets the PDF. An error message shows which layer failed, and only the first error counts, so fix that one and render again.
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
+</dd>
+<dt><span id="gl-repository">Repository</span></dt>
+<dd>
+A project under version control: its files together with the full history of every change, usually shortened to “repo”. You get one either by initialising a folder as a new repository, which is what <code>git init</code> and Positron’s Source Control pane do, or by <a href="#gl-clone">cloning</a> an existing one.
+See also: <a href="#gl-local-repository">Local repository</a>, <a href="#gl-remote">Remote</a>.
+Documentation: <a href="https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository">Pro Git: getting a Git repository</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
-<dt>Reproducible research</dt>
+<dt><span id="gl-reproducible-research">Reproducible research</span></dt>
 <dd>
-Research whose results can be regenerated from the raw data and the code alone, by someone else, on another machine. The practical test is whether one command rebuilds every number and figure in the output.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">workflow</span>
+Research whose results can be regenerated from the raw data and the code alone, by someone else, on another machine. The practical test is whether one <a href="#gl-render">render</a> rebuilds every number and figure in the output.
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span>
 </dd>
-<dt>Rule of 68 and 95 percent</dt>
+<dt><span id="gl-reshaping">Reshaping</span></dt>
 <dd>
-For any normal distribution, about 68 percent of the probability lies within one standard deviation of the mean, and about 95 percent within two. It is why <span class="math inline">\(\mathcal{N}(5, 2)\)</span> reads as “5, plus or minus about 4”.
+Changing the layout of a table without changing its information, in the tidyverse by pivoting: <code>pivot_longer()</code> turns column names into values of a new variable, and <code>pivot_wider()</code> turns values back into column names. Keep working data long and <a href="#gl-tidy-data">tidy</a>, and pivot wider only for a table meant for a reader.
+Documentation: <a href="https://tidyr.tidyverse.org/articles/pivot.html">tidyr: pivoting</a>
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-rule-of-68-and-95-percent">Rule of 68 and 95 percent</span></dt>
+<dd>
+For any <a href="#gl-normal-distribution">normal distribution</a>, about 68 percent of the probability lies within one standard deviation of the mean, and about 95 percent within two. It is why <span class="math inline">\(\mathcal{N}(5, 2)\)</span> reads as “5, plus or minus about 4”.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span>
 </dd>
 </dl>
@@ -1065,124 +1004,161 @@ For any normal distribution, about 68 percent of the probability lies within one
 <section id="sec-glossary-s" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-s">S</h2>
 <dl>
-<dt>Scalar</dt>
+<dt><span id="gl-sample-solution">Sample solution</span></dt>
 <dd>
-A single value, written in italic lowercase as <span class="math inline">\(x\)</span> in this course. R has no scalars: a single value is a vector of length 1, so everything that works on a vector works on one value too.
+A complete worked answer to a homework, published for everyone after the due date. Comparing it with your own submission is the default way to get feedback in this course.
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span>
+</dd>
+<dt><span id="gl-scalar">Scalar</span></dt>
+<dd>
+A single value, written in italic lowercase as <span class="math inline">\(x\)</span> in this course. R has no scalars: a single value is a <a href="#gl-vector">vector</a> of length 1, so everything that works on a vector works on one value too.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt><code>select()</code></dt>
+<dt><span id="gl-scientific-notation">Scientific notation</span></dt>
 <dd>
-Keeps or drops columns of a table, by name.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+Writing a very large or very small number as a number times a power of ten, where <code>e</code> means “times ten to the”: <code>1e6</code> is a million and <code>2.5e-3</code> is 0.0025. R prints large numbers this way too, so <code>8.4e+07</code> is 84 million.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/NumericConstants.html">R documentation: numeric constants</a>
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
-<dt><code>set.seed()</code></dt>
+<dt><span id="gl-signal-and-noise">Signal and noise</span></dt>
 <dd>
-Fixes the starting point of R’s random number generator, so anything involving randomness gives the same result on every run. Required wherever this course simulates or samples.
-<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">r</span> <span class="glossary-tag">workflow</span>
-</dd>
-<dt>Shrinkage</dt>
-<dd>
-The pull of a group’s estimate towards the overall mean under partial pooling. It is a feature, because it stops small groups producing extreme estimates on thin evidence.
-<span class="glossary-tag glossary-block">Week 12</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">multilevel</span>
-</dd>
-<dt>Signal and noise</dt>
-<dd>
-Signal is a real pattern in the world, and noise is random variation from measurement or data collection. Telling the two apart, and saying how certain we can be about it, is the fundamental task of quantitative methods.
+Signal is the real pattern in the world that we want to learn about, and noise is random variation from measurement or data collection. Telling the two apart, and saying how certain we can be that we have, is the fundamental task of learning from data.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">interpretation</span>
 </dd>
-<dt>Stan</dt>
+<dt><span id="gl-source-control-pane">Source Control pane</span></dt>
 <dd>
-The probabilistic programming language and sampler that <code>brms</code> compiles models down to and runs. You will rarely write Stan code directly, but its diagnostics are the ones you read.
-<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span> <span class="glossary-tag">model</span>
+The view in Positron’s Activity Bar that shows your changed files and lets you <a href="#gl-stage">stage</a> and <a href="#gl-commit">commit</a> them with a few clicks. It is Positron’s built-in interface to <a href="#gl-git">Git</a>, so everything it does can also be done with Git commands in the terminal.
+Documentation: <a href="https://positron.posit.co/git.html">Positron: Git</a>
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span> <span class="glossary-tag">workflow</span>
 </dd>
-<dt>Standard normal distribution</dt>
+<dt><span id="gl-stage">Stage</span></dt>
 <dd>
-The normal distribution with mean 0 and standard deviation 1, <span class="math inline">\(\mathcal{N}(0, 1)\)</span>. Every other normal distribution is that same shape, shifted and stretched.
+Marking changes to go into the next <a href="#gl-commit">commit</a>, with <code>git add</code> or the plus button in the <a href="#gl-source-control-pane">Source Control pane</a>. Staging lets you commit some changes and keep others back, so each commit stays one meaningful step.
+Documentation: <a href="https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository">Pro Git: recording changes</a>
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
+</dd>
+<dt><span id="gl-standard-normal-distribution">Standard normal distribution</span></dt>
+<dd>
+The normal distribution with mean 0 and standard deviation 1, <span class="math inline">\(\mathcal{N}(0, 1)\)</span>. Every other normal distribution is that same shape, shifted and stretched, which is what <a href="#gl-standardising">standardising</a> undoes.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span>
 </dd>
-<dt>Standardising</dt>
+<dt><span id="gl-standardising">Standardising</span></dt>
 <dd>
 Subtracting the mean and dividing by the standard deviation, <span class="math inline">\(z_i = (x_i - \mu) / \sigma\)</span>, which turns any normal variable into a standard normal one. A value of <span class="math inline">\(z_i = 2\)</span> then means the same thing everywhere: two standard deviations above the mean.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">data</span>
-</dd>
-<dt><code>summarise()</code></dt>
-<dd>
-Reduces a table to summary statistics, such as a mean, with one row for the whole table or one per group after <code>group_by()</code>. Inside it, <code>n()</code> counts the rows of each group.
-<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-t" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-t">T</h2>
 <dl>
-<dt>Template repository</dt>
+<dt><span id="gl-table-of-contents">Table of contents</span></dt>
 <dd>
-A repository GitHub can copy to make a fresh, independent repository with no shared history. Every homework starter is distributed this way, which is why your submission repo is yours alone.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">git</span>
+An automatically generated list of the document’s sections, switched on with <code>toc: true</code> in the <a href="#gl-yaml-header">YAML header</a>. It is built from the headings, so it stays correct as sections are added or moved.
+Documentation: <a href="https://quarto.org/docs/output-formats/html-basics.html#table-of-contents">Quarto: table of contents</a>
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
-<dt>Terminal</dt>
+<dt><span id="gl-template-repository">Template repository</span></dt>
 <dd>
-A text interface that talks to your computer, with commands such as <code>ls</code>, <code>cd</code> and <code>clear</code>. It is not the console: the terminal runs system commands such as <code>quarto render</code>, and the console runs R.
+A repository GitHub can copy into a new repository with the same files and folders but none of the history. Every homework starter is distributed this way, which is why your submission repo is yours alone.
+Documentation: <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template">GitHub Docs: creating a repository from a template</a>
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
+</dd>
+<dt><span id="gl-terminal">Terminal</span></dt>
+<dd>
+A text interface to your computer’s operating system, where you type commands such as <code>ls</code> (list files), <code>cd</code> (change directory, <code>cd ..</code> for one folder up) and <code>clear</code>. It is not the <a href="#gl-console">console</a>: the terminal runs system commands such as <code>quarto render</code>, and the console runs R.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span>
 </dd>
-<dt>Tidy data</dt>
+<dt><span id="gl-tidy-data">Tidy data</span></dt>
 <dd>
-Data arranged so that each variable is a column, each observation is a row, and each value has its own cell. Most of the work in an analysis is getting data into this shape, and most tools assume it.
+Data in which every column is a <a href="#gl-variable">variable</a>, every row is an <a href="#gl-observation">observation</a>, and every cell holds a single value. Most tools assume this shape, and most of the work of an analysis is getting data into it.
+See also: <a href="#gl-wide-and-long-format">Wide and long format</a>, <a href="#gl-reshaping">Reshaping</a>.
+Documentation: <a href="https://tidyr.tidyverse.org/articles/tidy-data.html">tidyr: tidy data</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Tidyverse</dt>
+<dt><span id="gl-tidyverse">Tidyverse</span></dt>
 <dd>
-A family of R packages built on one shared philosophy: tidy data in and out, the data as the first argument, and functions named as verbs. <code>library(tidyverse)</code> loads the core packages, including <code>readr</code>, <code>tidyr</code>, <code>dplyr</code> and <code>ggplot2</code>, in one line.
+An opinionated collection of R packages designed for data science, which share an underlying design philosophy, grammar and data structures. <code>library(tidyverse)</code> loads the core packages, among them readr for reading files, tidyr for <a href="#gl-reshaping">reshaping</a>, dplyr for transforming with <a href="#gl-verb">verbs</a> and ggplot2 for plots.
+See also: <a href="#gl-tidy-data">Tidy data</a>, <a href="#gl-data-cycle">Data cycle</a>.
+Documentation: <a href="https://www.tidyverse.org/packages/">tidyverse: packages</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Trace plot</dt>
+<dt><span id="gl-type-conversion">Type conversion</span></dt>
 <dd>
-A plot of drawn values against iteration, one line per chain. Well-mixed chains overlap and look stationary, like noise around a stable level.
-<span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">mcmc</span> <span class="glossary-tag">diagnostics</span>
+Deliberately changing a value from one <a href="#gl-data-type">type</a> to another with an <code>as.</code> function, such as <code>as.numeric("42")</code> or <code>as.character(2026)</code>. A value that cannot be converted, such as <code>as.numeric("five")</code>, becomes <a href="#gl-na"><code>NA</code></a> with a warning.
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-v" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-v">V</h2>
 <dl>
-<dt>Variable</dt>
+<dt><span id="gl-variable">Variable</span></dt>
 <dd>
-One characteristic measured across observations, such as population or regime type. In a tidy dataset each variable has its own column.
+One characteristic measured across observations, such as population or regime type. In <a href="#gl-tidy-data">tidy data</a> each variable has its own column.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Vector</dt>
+<dt><span id="gl-variables-pane">Variables pane</span></dt>
+<dd>
+The Positron pane that lists every object in your current R session, with its type and a preview of its value. It shows what exists in the <a href="#gl-console">console</a>, which can differ from what exists in a <a href="#gl-fresh-r-session">fresh R session</a>.
+Documentation: <a href="https://positron.posit.co/variables-pane.html">Positron: Variables pane</a>
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">workflow</span>
+</dd>
+<dt><span id="gl-vector">Vector</span></dt>
 <dd>
 An ordered set of values of one type, created with <code>c()</code> and written in bold lowercase as <span class="math inline">\(\mathbf{x}\)</span>. It is the building block of R, and arithmetic on a vector works on every element at once.
+See also: <a href="#gl-vectorisation">Vectorisation</a>, <a href="#gl-coercion">Coercion</a>.
+Documentation: <a href="https://search.r-project.org/R/refmans/base/html/vector.html">R documentation: vectors</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-vectorisation">Vectorisation</span></dt>
+<dd>
+Applying an operation to every element of a <a href="#gl-vector">vector</a> at once, without writing a loop: <code>c(84, 68) * 1000000</code> multiplies both values. Most R operators and functions are vectorised, which is why a function written for one value usually works on a whole column too.
+Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Vector-arithmetic">An Introduction to R: vector arithmetic</a>
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-verb">Verb</span></dt>
+<dd>
+A tidyverse function named for what it does to a table, such as dplyr’s <code>filter()</code> (keep rows), <code>select()</code> (keep columns), <code>mutate()</code> (create or change columns) and <code>arrange()</code> (sort rows). Every verb takes a table first, names columns without quotes, and returns a new table, so verbs chain into a <a href="#gl-pipeline">pipeline</a>.
+Documentation: <a href="https://dplyr.tidyverse.org/articles/dplyr.html">dplyr: introduction</a>
+<span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-version-control">Version control</span></dt>
+<dd>
+A system that records changes to a file or set of files over time, so that you can recall specific versions later. <a href="#gl-git">Git</a> is the version control system this course uses.
+Documentation: <a href="https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control">Pro Git: about version control</a>
+<span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-w" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-w">W</h2>
 <dl>
-<dt>Warmup</dt>
+<dt><span id="gl-wide-and-long-format">Wide and long format</span></dt>
 <dd>
-The initial draws a chain uses to adapt and find the posterior, discarded before inference. They describe the sampler getting started, not the posterior.
-<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span>
-</dd>
-<dt>Wide and long format</dt>
-<dd>
-Wide data spreads one variable across several columns, for example one column per year, and long data stacks it into one column with a second column saying which year. Keep working data long and tidy, and go wide only for a table meant for a reader.
+Wide data spreads one variable across several columns, for example one column per year, and long data stacks it into one column with a second column saying which year. Going from one to the other is <a href="#gl-reshaping">reshaping</a>.
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
-<dt>Working directory</dt>
+<dt><span id="gl-working-directory">Working directory</span></dt>
 <dd>
-The folder a terminal or R currently treats as “here” when it resolves a relative path. It changes depending on how code is run, which is exactly why we do not rely on it.
+The folder the <a href="#gl-terminal">terminal</a> or R currently treats as “here” when it resolves a relative path. It changes depending on how code is run, which is why paths in this course are built from the <a href="#gl-project-root">project root</a> instead.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">workflow</span>
+</dd>
+<dt><span id="gl-writing-a-function">Writing a function</span></dt>
+<dd>
+Creating your own function with <code>function()</code> and assigning it to a name like any object: <code>double_it &lt;- function(x) { x * 2 }</code>. The arguments go between the parentheses, the body between the braces, and the value of the last line of the body is the output.
+Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Writing-your-own-functions">An Introduction to R: writing your own functions</a>
+<span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
 </dl>
 </section>
 <section id="sec-glossary-y" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-y">Y</h2>
 <dl>
-<dt>YAML header</dt>
+<dt><span id="gl-yaml-header">YAML header</span></dt>
 <dd>
-The block between the two <code>---</code> lines at the top of a <code>.qmd</code>, which sets the document title, output format and options. It is configuration, not content, and is also called the front matter.
+The block between two <code>---</code> lines at the top of a <code>.qmd</code>, written in YAML, that holds the document’s metadata: title, author, date, <a href="#gl-output-format">output format</a> and other options. Everything below it is the document body, the actual content.
+Documentation: <a href="https://quarto.org/docs/get-started/hello/rstudio.html#yaml-header">Quarto: YAML header</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
 </dl>
@@ -1194,7 +1170,8 @@ groups and renders them. The header comment in glossary.yml documents the fields
 and the closed tag vocabulary, and an unknown tag stops the render.
 
 The letter headings and their {#sec-glossary-x} ids are generated, so the anchors
-stay stable as terms are added and the A to Z jump bar keeps working.
+stay stable as terms are added and the A to Z jump bar keeps working. Each entry also
+gets its own {#gl-...} anchor, so entries can link to each other with [text](#gl-...).
 -->
 
 
