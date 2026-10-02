@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-09-30
+last_modified: 2026-10-02
 scope: repo topology, term pipeline, feedback policy, naming, layout, staging, automation contracts
 ---
 
@@ -125,6 +125,10 @@ it back into scope, which is what makes the conversion checkable:
 - **A homework.** `cp -r homework/_import/hw-07 homework/hw-07`, convert it, then
   `./automation/release-homework.ps1 -Week 07`. The homework link is gated on `released:` in
   `meta.yml` as well, so the folder can land before the session.
+- **The glossary.** Add every concept from the week's slides and homework that is new to a
+  beginner to `website/glossary.yml`, and link related entries with `#gl-` anchors. Concepts
+  only, never an entry for a single R function. Software entries follow the official
+  documentation and carry a `docs:` link. The rules are in the file's header comment.
 
 ## `course.yml` gotcha
 

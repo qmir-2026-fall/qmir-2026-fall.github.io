@@ -1,115 +1,101 @@
 # -----------------------------------------------------------------------------
 # The course glossary, as data. Rendered alphabetically by website/glossary.qmd.
 #
-# Adding a term:
-#   term:  as it should be displayed. Package and function names in backticks.
+# What goes in:
+#   Concepts only: object, function, tidy data, join, commit. NO entries for single
+#   R functions such as filter() or summary(). A function may appear INSIDE a concept's
+#   definition as an example, never as an entry of its own.
+#   Only weeks whose deck is live. When a week goes live, add every concept from its
+#   slides AND its homework that is new to someone learning this from scratch.
+#
+# Fields:
+#   term:  as it should be displayed. Package names and code in backticks.
 #          Start with a letter, so the term files under the A to Z jump bar.
-#   week:  the week in which students FIRST meet the term, not where it is most
-#          advanced. That is the earliest week whose slide text uses it (not folded
-#          code, not speaker notes). A term no live deck uses yet takes its planned
-#          week from `weeks:` in course.yml. The page derives the block name from
-#          `blocks:` in course.yml, so the glossary and the schedule cannot drift
-#          apart. glossary.qmd stops the render on a missing or out-of-range week.
+#   week:  the week in which students FIRST meet the term, in a live deck or a released
+#          homework (not folded code, not speaker notes). Week 1's worked Bayesian
+#          example is a preview and does not count: its terms wait for their real week.
+#          The page derives the block name from `blocks:` in course.yml, and stops the
+#          render on a missing or out-of-range week.
 #   tags:  one or more from the CLOSED vocabulary below. glossary.qmd stops the
 #          render on an unknown tag, so the tag set cannot sprawl the way the slide
 #          font sizes did in the previous course iteration.
 #          workflow quarto git r data probability model prior mcmc diagnostics
 #          regression multilevel interpretation
 #   def:   one or two sentences, ONE SENTENCE PER LINE (.claude/writing.md).
+#   id:    optional. Every entry gets the anchor gl-<term as a slug>, for example
+#          "Tidy data" is gl-tidy-data and "`NA`" is gl-na. Set id: only to keep an
+#          old anchor alive after renaming a term.
+#   see:   optional list of entry ids, rendered as a "See also" line.
+#   docs:  optional {url, label}, rendered as a "Documentation" link. OFFICIAL sources
+#          only: r-project.org and its manuals, tidyverse.org, quarto.org,
+#          positron.posit.co, git-scm.com, docs.github.com, the package's own site.
+#
+# Linking: inside a def, write [text](#gl-id). A link to an id that does not exist,
+# in a def or under see:, stops the render.
+#
+# Voice: statistical terms are framed as learning from data (the estimand is what we
+# want to learn, the estimator how, the estimate what we get). Software terms follow
+# the tool's own documentation, not a slide example.
 #
 # .claude/writing.md applies here as everywhere: no em dashes, no en dashes, no semicolons.
-# No frequentist framing (.claude/course-design.md). Where a contrast genuinely teaches
-# something, as with credible versus confidence intervals, explain the contrast
-# rather than substituting one framework for the other.
+# No frequentist framing (.claude/course-design.md).
 #
 # Order in this file does not matter. The page sorts alphabetically. Entries are
-# grouped by week here only so a new deck's terms are easy to check off.
+# grouped by week here only so a new week's terms are easy to check off.
 # -----------------------------------------------------------------------------
 
 # --- Week 1: Introduction ----------------------------------------------------
+# Statistics in a nutshell and the normal-distribution recap. The applied Bayesian
+# example of week 1 is a preview, so its terms are not entered here.
 
 - term: "Estimand"
   week: 1
   tags: [workflow, interpretation]
   def: |
-    The quantity you actually want to know, stated precisely, before any model is fitted.
-    Naming it first is step 1 of the workflow, and it is what keeps a model answerable to a question.
+    The quantity we want to learn about from data, such as the association between two variables, stated precisely before any analysis.
+    Naming it first is what keeps the [estimator](#gl-estimator) and the [estimate](#gl-estimate) answerable to a question.
 
 - term: "Estimator"
   week: 1
   tags: [workflow, model]
   def: |
-    The procedure by which we learn about the estimand, our method.
-    In this course the estimator is a Bayesian model, and what it returns is a whole posterior distribution.
+    The procedure, our method, that turns data into an [estimate](#gl-estimate) of the [estimand](#gl-estimand).
+    The same estimand can be approached with different estimators, so the choice is one you have to justify.
 
 - term: "Estimate"
   week: 1
   tags: [interpretation]
   def: |
-    The result the estimator gives us, what we get.
-    Estimand, estimator and estimate are three different things: what we want, how we go about it, and what comes back.
+    The output of the [estimator](#gl-estimator): the result we get back once the method has been applied to the data.
+    Ideally it corresponds to the [estimand](#gl-estimand), and checking how far it does is part of every analysis.
 
 - term: "Inference"
   week: 1
   tags: [probability, interpretation]
   def: |
-    Using known information to infer something unknown.
+    Learning from data: using what we have observed to say something about what we have not.
     Measuring two variables to learn about their association, or sampling people to learn about a population, are both inference.
+  see: [gl-estimand, gl-signal-and-noise]
 
 - term: "Signal and noise"
   week: 1
   tags: [probability, interpretation]
   def: |
-    Signal is a real pattern in the world, and noise is random variation from measurement or data collection.
-    Telling the two apart, and saying how certain we can be about it, is the fundamental task of quantitative methods.
-
-- term: "Association"
-  week: 1
-  tags: [interpretation]
-  def: |
-    Two variables moving together, so that knowing one tells you something about the other.
-    An association is not a causal effect: this course analyses associations, and identifying causes is the subject of a different course.
-
-- term: "Point estimate"
-  week: 1
-  tags: [interpretation]
-  def: |
-    A single number summarising a posterior, such as its mean or median.
-    Reported without an interval it is a claim the data cannot support, so this course always gives the width alongside it.
-
-- term: "Eight-step workflow"
-  week: 1
-  tags: [workflow]
-  def: |
-    The fixed sequence every analysis in this course follows, from clarifying the estimand to reflecting on limitations.
-    It is also the shape of the take-home exam, and every week deepens one or two of its steps.
-
-- term: "Data summary"
-  week: 1
-  tags: [workflow, data]
-  def: |
-    Step 2 of the workflow: describing the variables the analysis uses, their scales and how they are distributed, before any model.
-    Every decision that changes the data, such as dropping blank answers, is named here.
-
-- term: "Parameter"
-  week: 1
-  tags: [probability, model]
-  def: |
-    An unknown quantity in a model that we want to learn about, such as a slope or an average.
-    Bayesian inference gives a parameter a distribution rather than one fixed number.
+    Signal is the real pattern in the world that we want to learn about, and noise is random variation from measurement or data collection.
+    Telling the two apart, and saying how certain we can be that we have, is the fundamental task of learning from data.
 
 - term: "Probability distribution"
   week: 1
   tags: [probability]
   def: |
     A description of how plausible each possible value of a quantity is.
-    Here, distributions describe both data and parameters, which is the central move of the Bayesian approach.
+    For a continuous quantity it is drawn as a [density](#gl-probability-density) curve, and the area under the curve between two values is the probability of landing between them.
 
 - term: "Probability density"
   week: 1
   tags: [probability]
   def: |
-    The height of the curve of a continuous distribution.
+    The height of the curve of a continuous [probability distribution](#gl-probability-distribution).
     The density itself is not a probability: the area under the curve between two values is.
 
 - term: "Normal distribution"
@@ -117,7 +103,8 @@
   tags: [probability]
   def: |
     The symmetric bell-shaped distribution, written $\mathcal{N}(\mu, \sigma)$ in this course.
-    It has exactly two knobs, the mean and the standard deviation, and no other shape is available.
+    It has exactly two knobs, the [mean and the standard deviation](#gl-mean-and-standard-deviation), and no other shape is available.
+  see: [gl-rule-of-68-and-95-percent, gl-standard-normal-distribution]
 
 - term: "Mean and standard deviation"
   week: 1
@@ -130,7 +117,7 @@
   week: 1
   tags: [probability]
   def: |
-    For any normal distribution, about 68 percent of the probability lies within one standard deviation of the mean, and about 95 percent within two.
+    For any [normal distribution](#gl-normal-distribution), about 68 percent of the probability lies within one standard deviation of the mean, and about 95 percent within two.
     It is why $\mathcal{N}(5, 2)$ reads as "5, plus or minus about 4".
 
 - term: "Standard normal distribution"
@@ -138,7 +125,7 @@
   tags: [probability]
   def: |
     The normal distribution with mean 0 and standard deviation 1, $\mathcal{N}(0, 1)$.
-    Every other normal distribution is that same shape, shifted and stretched.
+    Every other normal distribution is that same shape, shifted and stretched, which is what [standardising](#gl-standardising) undoes.
 
 - term: "Standardising"
   week: 1
@@ -147,239 +134,200 @@
     Subtracting the mean and dividing by the standard deviation, $z_i = (x_i - \mu) / \sigma$, which turns any normal variable into a standard normal one.
     A value of $z_i = 2$ then means the same thing everywhere: two standard deviations above the mean.
 
-- term: "Prior"
-  week: 1
-  tags: [prior, model]
-  def: |
-    The distribution expressing what is plausible about a parameter before seeing the data.
-    A prior is a philosophical commitment, so it is defended on principled grounds rather than chosen for convenience.
-
-- term: "Likelihood"
-  week: 1
-  tags: [probability, model]
-  def: |
-    How probable the observed data would be, for each candidate value of the parameters.
-    It is the part of the model that lets the data speak.
-
-- term: "Posterior"
-  week: 1
-  tags: [probability, model]
-  def: |
-    The distribution of the parameters after conditioning on the data.
-    This is what Bayes' theorem returns, and every quantity of interest is computed from it.
-
-- term: "Bayes' theorem"
-  week: 1
-  tags: [probability]
-  def: |
-    The rule that combines prior and likelihood into a posterior.
-    Read as a proportionality, the posterior is the likelihood times the prior, up to a constant.
-
-- term: "Linear regression"
-  week: 1
-  tags: [regression]
-  def: |
-    A model in which the expected outcome is a straight-line function of the predictors.
-    The foundation the later models extend rather than replace.
-
-- term: "Linear predictor"
-  week: 1
-  tags: [regression, model]
-  def: |
-    The part of a regression model that computes the expected outcome from the predictors, such as $\mu_i = \alpha + \beta \times x_i$.
-    Everything the predictors do not account for is left to the spread of the outcome around it.
-
-- term: "Intercept"
-  week: 1
-  tags: [regression, interpretation]
-  def: |
-    The expected outcome when every predictor is zero.
-    It is only interpretable when zero is a meaningful value, which is one reason predictors are often centred.
-
-- term: "Coefficient"
-  week: 1
-  tags: [regression, interpretation]
-  def: |
-    A parameter multiplying a predictor, describing how the expected outcome changes as that predictor changes by one unit.
-    In a bivariate model it is the slope of the line, and in a Bayesian model it has a full posterior, not a single value.
-
-- term: "Prior predictive check"
-  week: 1
-  tags: [prior, diagnostics]
-  def: |
-    Simulating data from the priors alone, before fitting, to see what outcomes the model considers plausible.
-    It catches priors that imply impossible values, such as a turnout rate above 100 percent.
-
-- term: "Posterior predictive check"
-  week: 1
-  tags: [diagnostics, model]
-  def: |
-    Simulating data from the fitted model and comparing it against the observed data.
-    It asks whether the model can reproduce the features of the data you care about.
-
-- term: "Markov chain Monte Carlo"
-  week: 1
-  tags: [mcmc]
-  def: |
-    A family of algorithms, usually shortened to MCMC, that explore the posterior by taking a long, dependent random walk through it.
-    We need it because most interesting posteriors cannot be written down in closed form.
-
-- term: "Chain"
-  week: 1
-  tags: [mcmc]
-  def: |
-    One run of the sampler, producing a sequence of draws.
-    Several chains are run from different starting points so their agreement can be checked.
-
-- term: "Trace plot"
-  week: 1
-  tags: [mcmc, diagnostics]
-  def: |
-    A plot of drawn values against iteration, one line per chain.
-    Well-mixed chains overlap and look stationary, like noise around a stable level.
-
-- term: "Credible interval"
-  week: 1
-  tags: [interpretation, probability]
-  def: |
-    A range containing a stated share of the posterior probability, for example 90 percent.
-    It is a direct statement about the parameter given the data and the model, which is what makes it straightforward to interpret.
-    A frequentist confidence interval is a different object, describing the long-run behaviour of the procedure rather than the parameter.
-
-- term: "`brms`"
-  week: 1
-  tags: [r, model]
-  def: |
-    The R package used throughout this course to fit Bayesian regression models with familiar formula syntax.
-    Every model call here sets its priors explicitly.
-
-- term: "Reproducible research"
-  week: 1
-  tags: [workflow]
-  def: |
-    Research whose results can be regenerated from the raw data and the code alone, by someone else, on another machine.
-    The practical test is whether one command rebuilds every number and figure in the output.
-
-- term: "GitHub"
-  week: 1
-  tags: [git]
-  def: |
-    The platform that hosts Git repositories and adds collaboration features such as issues and automated checks.
-    Course materials are distributed and homework submitted through it.
-
-- term: "Template repository"
-  week: 1
-  tags: [git]
-  def: |
-    A repository GitHub can copy to make a fresh, independent repository with no shared history.
-    Every homework starter is distributed this way, which is why your submission repo is yours alone.
-
 # --- Week 2: Quarto, Git and GitHub ------------------------------------------
 
 - term: "Positron"
   week: 2
   tags: [workflow]
   def: |
-    The editor this course works in, built for data science in R and Python.
-    Its panes include the editor, the terminal, the console, the file explorer and the Source Control pane.
+    A free data science environment, an IDE (integrated development environment), for R and Python, and the editor this course works in.
+    By default the editor sits above the [console](#gl-console) and the [terminal](#gl-terminal), with the Variables and Plots panes on the right and views such as the Explorer and [Source Control](#gl-source-control-pane) in the Activity Bar.
+  docs:
+    url: "https://positron.posit.co/layout.html"
+    label: "Positron: layout"
 
 - term: "Terminal"
   week: 2
   tags: [workflow]
   def: |
-    A text interface that talks to your computer, with commands such as `ls`, `cd` and `clear`.
-    It is not the console: the terminal runs system commands such as `quarto render`, and the console runs R.
+    A text interface to your computer's operating system, where you type commands such as `ls` (list files), `cd` (change directory, `cd ..` for one folder up) and `clear`.
+    It is not the [console](#gl-console): the terminal runs system commands such as `quarto render`, and the console runs R.
 
 - term: "Console"
   week: 2
   tags: [r, workflow]
   def: |
-    The place where R code runs line by line and prints its result straight away.
-    Use it for one-off commands such as `install.packages()`, and keep anything that belongs to the analysis in the document.
+    The interactive R session in Positron, where code runs line by line and prints its result straight away.
+    Use it to try things out and for one-off commands such as `install.packages()`, and keep everything that belongs to the analysis in the document.
+  see: [gl-fresh-r-session]
 
 - term: "Working directory"
   week: 2
   tags: [r, workflow]
   def: |
-    The folder a terminal or R currently treats as "here" when it resolves a relative path.
-    It changes depending on how code is run, which is exactly why we do not rely on it.
+    The folder the [terminal](#gl-terminal) or R currently treats as "here" when it resolves a relative path.
+    It changes depending on how code is run, which is why paths in this course are built from the [project root](#gl-project-root) instead.
+
+- term: "Source Control pane"
+  week: 2
+  tags: [git, workflow]
+  def: |
+    The view in Positron's Activity Bar that shows your changed files and lets you [stage](#gl-stage) and [commit](#gl-commit) them with a few clicks.
+    It is Positron's built-in interface to [Git](#gl-git), so everything it does can also be done with Git commands in the terminal.
+  docs:
+    url: "https://positron.posit.co/git.html"
+    label: "Positron: Git"
 
 - term: "Literate programming"
   week: 2
   tags: [workflow, quarto]
   def: |
     Writing code, the prose that explains it and its results in a single document, so the reasoning and the computation cannot drift apart.
-    Quarto is the tool we use for it.
+    [Quarto](#gl-quarto) is the tool we use for it.
+
+- term: "Reproducible research"
+  week: 2
+  tags: [workflow]
+  def: |
+    Research whose results can be regenerated from the raw data and the code alone, by someone else, on another machine.
+    The practical test is whether one [render](#gl-render) rebuilds every number and figure in the output.
 
 - term: "Quarto"
   week: 2
   tags: [quarto]
   def: |
-    The publishing system that turns a `.qmd` file into HTML, PDF or slides, running the embedded code as it goes.
+    An open-source scientific and technical publishing system that turns a `.qmd` file of [Markdown](#gl-markdown) and executable [code cells](#gl-code-cell) into HTML, PDF, Word, slides and more.
     Everything in this course, including this page, is a Quarto document.
+  docs:
+    url: "https://quarto.org/docs/get-started/hello/positron.html"
+    label: "Quarto: Hello, Quarto (Positron)"
 
 - term: "Markdown"
   week: 2
   tags: [quarto]
   def: |
-    The plain-text formatting syntax used in the body of a `.qmd`: `*italics*`, `**bold**`, `#` for headings, and so on.
-    It stays readable as source and still renders to a formatted document.
+    The plain-text formatting syntax used in the body of a `.qmd`: `*italics*`, `**bold**`, `#` for headings, `>` for a block quote, `-` for a list item, `[text](url)` for a link and `|` pipes for a table.
+    Quarto uses [Pandoc](#gl-pandoc)'s flavour of Markdown, which stays readable as source and still renders to a formatted document.
+  docs:
+    url: "https://quarto.org/docs/authoring/markdown-basics.html"
+    label: "Quarto: Markdown basics"
 
 - term: "YAML header"
   week: 2
   tags: [quarto]
   def: |
-    The block between the two `---` lines at the top of a `.qmd`, which sets the document title, output format and options.
-    It is configuration, not content, and is also called the front matter.
+    The block between two `---` lines at the top of a `.qmd`, written in YAML, that holds the document's metadata: title, author, date, [output format](#gl-output-format) and other options.
+    Everything below it is the document body, the actual content.
+  docs:
+    url: "https://quarto.org/docs/get-started/hello/rstudio.html#yaml-header"
+    label: "Quarto: YAML header"
+
+- term: "Table of contents"
+  week: 2
+  tags: [quarto]
+  def: |
+    An automatically generated list of the document's sections, switched on with `toc: true` in the [YAML header](#gl-yaml-header).
+    It is built from the headings, so it stays correct as sections are added or moved.
+  docs:
+    url: "https://quarto.org/docs/output-formats/html-basics.html#table-of-contents"
+    label: "Quarto: table of contents"
 
 - term: "Render"
   week: 2
   tags: [quarto, workflow]
   def: |
-    The act of turning a source `.qmd` into its output document, from the Preview button in Positron or with `quarto render` in the terminal.
+    Quarto's term for taking a source `.qmd`, running its code cells and producing a new output document, from the Preview button in Positron or with `quarto render` in the terminal.
     A submission that does not render is not a submission, because nobody else can reproduce it.
+  see: [gl-fresh-r-session, gl-render-layers]
+  docs:
+    url: "https://quarto.org/docs/get-started/hello/positron.html#rendering"
+    label: "Quarto: rendering"
 
 - term: "Output format"
   week: 2
   tags: [quarto]
   def: |
-    The kind of document a render produces, such as HTML, PDF or Word, set with `format:` in the YAML header.
-    The source stays the same whatever the format, which is the point of one source and several outputs.
+    The kind of document a [render](#gl-render) produces, such as HTML, PDF or Word, set with `format:` in the [YAML header](#gl-yaml-header).
+    The source stays the same whatever the format: one source, several outputs.
+  docs:
+    url: "https://quarto.org/docs/output-formats/all-formats.html"
+    label: "Quarto: all formats"
+
+- term: "Label"
+  week: 2
+  tags: [quarto]
+  def: |
+    A unique name given to a figure, table, section or code cell, such as `#fig-map`, `#tbl-results` or `#sec-intro`, whose prefix says what kind of thing it is.
+    A label is what a [cross-reference](#gl-cross-reference) points to.
+
+- term: "Caption"
+  week: 2
+  tags: [quarto]
+  def: |
+    The descriptive text attached to a figure or a table, written in the Markdown or set with the `fig-cap` and `tbl-cap` [cell options](#gl-cell-option).
+    A good caption lets a reader understand the figure or table without the surrounding text.
+  docs:
+    url: "https://quarto.org/docs/authoring/figures.html"
+    label: "Quarto: figures"
 
 - term: "Cross-reference"
   week: 2
   tags: [quarto]
   def: |
-    A link from the text to a labelled figure, table, equation or section, written as `@fig-example`.
-    A label survives reordering and a phrase such as "the figure below" does not.
+    A numbered, clickable reference from the text to a [labelled](#gl-label) figure, table, equation or section, written as `@fig-example`.
+    A label survives reordering, and a phrase such as "the figure below" does not.
+  docs:
+    url: "https://quarto.org/docs/authoring/cross-references.html"
+    label: "Quarto: cross-references"
 
 - term: "Code cell"
   week: 2
   tags: [quarto, r]
   def: |
-    A block of executable code inside a `.qmd`, also called a code chunk.
-    Every cell in this course carries a label, so it can be referred to and so an error points somewhere specific.
+    A block of executable code inside a `.qmd`, also called a code chunk, which starts with three backticks and `{r}` and ends with three backticks.
+    Quarto runs it on [render](#gl-render) and places the result directly underneath, and every cell in this course carries a [label](#gl-label).
+  see: [gl-cell-option, gl-inline-code]
+  docs:
+    url: "https://quarto.org/docs/get-started/computations/positron.html"
+    label: "Quarto: computations"
+
+- term: "Version control"
+  week: 2
+  tags: [git]
+  def: |
+    A system that records changes to a file or set of files over time, so that you can recall specific versions later.
+    [Git](#gl-git) is the version control system this course uses.
+  docs:
+    url: "https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control"
+    label: "Pro Git: about version control"
 
 - term: "Git"
   week: 2
   tags: [git]
   def: |
-    A version control system that records the history of a project as a series of snapshots.
+    A free and open-source distributed [version control](#gl-version-control) system that records the history of a project as a series of [commits](#gl-commit).
     It answers what changed, when, and why, and it lets you go back.
+  docs:
+    url: "https://git-scm.com/book/en/v2/Getting-Started-What-is-Git%3F"
+    label: "Pro Git: what is Git?"
 
 - term: "Repository"
   week: 2
   tags: [git]
   def: |
-    A project under version control, together with its full history.
-    Usually shortened to "repo".
+    A project under version control: its files together with the full history of every change, usually shortened to "repo".
+    You get one either by initialising a folder as a new repository, which is what `git init` and Positron's Source Control pane do, or by [cloning](#gl-clone) an existing one.
+  see: [gl-local-repository, gl-remote]
+  docs:
+    url: "https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository"
+    label: "Pro Git: getting a Git repository"
 
 - term: "Local repository"
   week: 2
   tags: [git]
   def: |
     The copy of a repository on your own computer, where you edit files and make commits.
-    Your commits live only here until you push them to the remote.
+    Your commits live only here until you [push](#gl-push-and-pull) them to the [remote](#gl-remote).
 
 - term: "Diff"
   week: 2
@@ -387,13 +335,30 @@
   def: |
     A comparison of two versions of a file, showing what was removed, what was added and where.
     Reading the diff before you commit is how you check that a commit contains what you think it does.
+  docs:
+    url: "https://git-scm.com/docs/git-diff"
+    label: "Git: git diff"
+
+- term: "Stage"
+  week: 2
+  tags: [git]
+  def: |
+    Marking changes to go into the next [commit](#gl-commit), with `git add` or the plus button in the [Source Control pane](#gl-source-control-pane).
+    Staging lets you commit some changes and keep others back, so each commit stays one meaningful step.
+  docs:
+    url: "https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository"
+    label: "Pro Git: recording changes"
 
 - term: "Commit"
   week: 2
   tags: [git]
   def: |
-    One recorded snapshot of the project: the changes, who made them, when, and a message saying what changed.
+    One recorded snapshot of the project: the [staged](#gl-stage) changes, who made them, when, and a [message](#gl-commit-message) saying what changed.
     A commit is the unit of history, so it should be a meaningful checkpoint.
+  see: [gl-commit-history]
+  docs:
+    url: "https://git-scm.com/docs/git-commit"
+    label: "Git: git commit"
 
 - term: "Commit message"
   week: 2
@@ -402,46 +367,96 @@
     The short text attached to a commit, written for a future reader, most importantly future you.
     "Add figure and cross-reference to introduction" helps, "Update" does not, and it is also where AI assistance gets declared.
 
+- term: "Commit history"
+  week: 2
+  tags: [git]
+  def: |
+    The list of all commits in a repository, newest first, each with its message, author and date, shown by `git log` or in Positron's Source Control view.
+    It is the record of how the project developed, and the way back to any earlier version.
+  docs:
+    url: "https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History"
+    label: "Pro Git: viewing the commit history"
+
 - term: "One sentence per line"
   week: 2
   tags: [quarto, git]
   def: |
     Writing prose in a `.qmd` with each sentence on its own source line.
-    The rendered document looks the same, but Git can now show a change sentence by sentence.
+    The rendered document looks the same, but the [diff](#gl-diff) can now show a change sentence by sentence.
 
 - term: "Remote"
   week: 2
   tags: [git]
   def: |
-    A copy of the repository hosted elsewhere, normally on GitHub, that you push to and pull from.
+    A version of your repository hosted on the internet, normally on [GitHub](#gl-github), that you push to and pull from.
     The remote is what makes the work shared rather than local.
+  docs:
+    url: "https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes"
+    label: "Pro Git: working with remotes"
 
 - term: "Push and pull"
   week: 2
   tags: [git]
   def: |
-    Sending your local commits to the remote (push), and fetching commits from it into your local repository (pull).
+    Sending your local commits to the [remote](#gl-remote) (push), and bringing commits from it into your [local repository](#gl-local-repository) (pull).
     The Sync button in Positron does both.
+  docs:
+    url: "https://git-scm.com/docs/git-push"
+    label: "Git: git push"
 
 - term: "Clone"
   week: 2
   tags: [git]
   def: |
-    Making a local copy of a remote repository, including its history.
+    Making a local copy of a [remote](#gl-remote) repository, including its full history.
+    It is how a homework repository gets from GitHub onto your computer.
+  docs:
+    url: "https://git-scm.com/docs/git-clone"
+    label: "Git: git clone"
 
-- term: "Branch"
+- term: "GitHub"
   week: 2
   tags: [git]
   def: |
-    A named line of development inside a repository, so work in progress does not disturb the main version.
-    This course uses `main` for sources and `gh-pages` for the rendered website.
+    A cloud-based platform where you can store, share and work together with others on [Git](#gl-git) repositories.
+    Git is the version control system on your computer, and GitHub is the service that hosts the [remote](#gl-remote) copy, which is how homework is distributed and submitted in this course.
+  docs:
+    url: "https://docs.github.com/en/get-started/start-your-journey/about-github-and-git"
+    label: "GitHub Docs: about GitHub and Git"
 
-- term: "Freeze"
+- term: "Template repository"
   week: 2
-  tags: [quarto, workflow]
+  tags: [git]
   def: |
-    Quarto's cache of already-computed results, stored in `_freeze/`, so a rebuild does not re-run expensive code.
-    It is committed deliberately, so the site rebuilds identically anywhere.
+    A repository GitHub can copy into a new repository with the same files and folders but none of the history.
+    Every homework starter is distributed this way, which is why your submission repo is yours alone.
+  docs:
+    url: "https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template"
+    label: "GitHub Docs: creating a repository from a template"
+
+- term: "Sample solution"
+  week: 2
+  tags: [workflow]
+  def: |
+    A complete worked answer to a homework, published for everyone after the due date.
+    Comparing it with your own submission is the default way to get feedback in this course.
+
+- term: "Opt-in AI feedback"
+  week: 2
+  tags: [workflow]
+  def: |
+    The only individual feedback on homework: if your submission repo contains an [open-source licence](#gl-open-source-licence) as `license.md`, an AI compares your work with the [sample solution](#gl-sample-solution) and adds a `FEEDBACK.pdf` to your repo.
+    Without that file your submission is not processed at all.
+
+- term: "Open-source licence"
+  week: 2
+  tags: [workflow, git]
+  def: |
+    A licence that allows anyone to use, copy, change and share a piece of work under stated conditions, such as keeping the copyright notice, the MIT License being a short and common example.
+    Adding it as `license.md` to a homework repo is how you opt in to [AI feedback](#gl-opt-in-ai-feedback).
+  docs:
+    url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository"
+    label: "GitHub Docs: licensing a repository"
 
 # --- Week 3: R fundamentals --------------------------------------------------
 
@@ -449,29 +464,94 @@
   week: 3
   tags: [r]
   def: |
-    A named container holding information, with a name, a value and a type.
-    In R, everything that exists is an object, including functions and fitted models.
+    A named container holding information, with a name, a value and a [type](#gl-data-type).
+    In R, everything that exists is an object, including [functions](#gl-function-and-argument) and fitted models.
+  docs:
+    url: "https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Objects"
+    label: "R Language Definition: objects"
 
 - term: "Assignment"
   week: 3
   tags: [r]
   def: |
-    Storing a value under a name with `<-`, read aloud as "gets": `country <- "Germany"`.
+    Storing a value in an [object](#gl-object) under a name with `<-`, read aloud as "gets": `country <- "Germany"`.
     Assigning to a name that already exists overwrites it without asking.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/assignOps.html"
+    label: "R documentation: assignment operators"
+
+- term: "Case sensitivity"
+  week: 3
+  tags: [r]
+  def: |
+    R treats upper and lower case as different, so `city` and `City` are two different names and `Mean()` is not `mean()`.
+    A wrong capital letter is the most common cause of an "object not found" [error](#gl-error-and-warning).
 
 - term: "Function and argument"
   week: 3
   tags: [r]
   def: |
-    A function is a named, reusable piece of code that takes inputs, its arguments, and returns an output.
+    A function is a named, reusable piece of code that takes inputs, its arguments, and returns an output, called as `name(argument1, argument2)`.
     Arguments can be given by position or by name, and naming them makes code readable a month later.
+  see: [gl-default-argument-value, gl-writing-a-function, gl-help-page]
+  docs:
+    url: "https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Named-arguments-and-defaults"
+    label: "An Introduction to R: named arguments and defaults"
+
+- term: "Default argument value"
+  week: 3
+  tags: [r]
+  def: |
+    The value an argument takes when the call does not supply one, set in the function definition, as `digits = 0` is for `round()`.
+    It is why many functions work with a single argument, and the Usage section of a [help page](#gl-help-page) lists every default.
+
+- term: "Writing a function"
+  week: 3
+  tags: [r]
+  def: |
+    Creating your own function with `function()` and assigning it to a name like any object: `double_it <- function(x) { x * 2 }`.
+    The arguments go between the parentheses, the body between the braces, and the value of the last line of the body is the output.
+  docs:
+    url: "https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Writing-your-own-functions"
+    label: "An Introduction to R: writing your own functions"
+
+- term: "Nested function call"
+  week: 3
+  tags: [r]
+  def: |
+    A function call inside another, such as `round(mean(x), digits = 1)`, which R evaluates from the inside out.
+    Deep nesting is hard to read, which is what the [native pipe](#gl-native-pipe) is for.
+
+- term: "Native pipe"
+  week: 3
+  tags: [r]
+  def: |
+    The `|>` operator, which passes the value on its left into the function call on its right as the first argument, so a sequence of steps reads left to right, as "and then".
+    This course uses `|>` throughout and not the older `%>%` from the magrittr package.
+  see: [gl-pipeline]
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/pipeOp.html"
+    label: "R documentation: forward pipe operator"
+
+- term: "Comment"
+  week: 3
+  tags: [r]
+  def: |
+    Text after a `#` on a line of code, which R ignores when it runs the code.
+    In a Quarto document the prose carries the reasoning, so comments stay short and say why a line is there.
+  docs:
+    url: "https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Comments"
+    label: "R Language Definition: comments"
 
 - term: "Help page"
   week: 3
   tags: [r]
   def: |
     The documentation every R function has, opened with `?mean` or `help(mean)`.
-    The Usage section shows the arguments and their defaults, and the Examples at the bottom are usually the fastest way in.
+    Its sections say what the function does, which arguments it takes and their defaults (Usage and Arguments) and what it returns (Value), and the Examples at the bottom are usually the fastest way in.
+  docs:
+    url: "https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Getting-help-with-functions-and-features"
+    label: "An Introduction to R: getting help"
 
 - term: "Error and warning"
   week: 3
@@ -479,13 +559,7 @@
   def: |
     An error stops the code and nothing is computed, while a warning lets the code finish but flags something suspicious.
     Read an error in two parts, where it broke and what went wrong, before you change anything.
-
-- term: "Native pipe"
-  week: 3
-  tags: [r]
-  def: |
-    The `|>` operator, which passes the result on its left into the first argument of the function on its right, so a sequence of steps reads left to right, as "and then".
-    This course uses `|>` throughout and not the older `%>%`.
+  see: [gl-render-layers]
 
 - term: "Data type"
   week: 3
@@ -493,6 +567,10 @@
   def: |
     What kind of information a value is: `double`, `integer`, `character` or `logical`, plus `factor` and `Date` built on top of them.
     `class()` tells you which one you have.
+  see: [gl-double-and-integer, gl-character, gl-logical, gl-factor, gl-date, gl-column-type]
+  docs:
+    url: "https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Basic-types"
+    label: "R Language Definition: basic types"
 
 - term: "Double and integer"
   week: 3
@@ -500,20 +578,29 @@
   def: |
     R's two numeric types: `double` for decimal numbers, the default, and `integer` for whole numbers, written with an `L` as in `42L`.
     The difference rarely matters here, but whether a value is numeric at all does, and `is.numeric()` answers that.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/numeric.html"
+    label: "R documentation: numeric vectors"
 
 - term: "Character"
   week: 3
   tags: [r, data]
   def: |
     R's type for text, also called a string, always written in quotes: `"Germany"`.
-    A number in quotes is text, so `"42" + 1` is an error until `as.numeric()` converts it.
+    A number in quotes is text, so `"42" + 1` is an error until it is [converted](#gl-type-conversion).
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/character.html"
+    label: "R documentation: character vectors"
 
 - term: "Logical"
   week: 3
   tags: [r, data]
   def: |
-    R's type for true or false, `TRUE` and `FALSE`, which every comparison returns.
-    Logicals are the backbone of filtering, and `sum()` of a logical vector counts its `TRUE` values.
+    R's type for true or false, `TRUE` and `FALSE`, which every [comparison](#gl-comparison-and-logical-operators) returns.
+    Logicals are the backbone of filtering, and the sum of a logical vector counts its `TRUE` values.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/logical.html"
+    label: "R documentation: logical vectors"
 
 - term: "Comparison and logical operators"
   week: 3
@@ -521,34 +608,64 @@
   def: |
     Operators that return `TRUE` or `FALSE`: `<`, `>`, `==`, `!=`, `%in%`, combined with `&` (and), `|` (or) and `!` (not).
     Note that `=` assigns and `==` compares.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/Comparison.html"
+    label: "R documentation: relational operators"
 
 - term: "Factor"
   week: 3
   tags: [r, data]
   def: |
-    R's type for categories with a fixed set of levels, such as autocracy, hybrid and democracy.
-    Stored this way, categories can be ordered and counted, and the level order controls how they appear in tables and plots.
+    R's type for categories, a vector encoded with a fixed set of levels, such as autocracy, hybrid and democracy.
+    Stored this way, categories can be ordered and counted, and the order of the levels controls how they appear in tables and plots.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/factor.html"
+    label: "R documentation: factors"
 
 - term: "Date"
   week: 3
   tags: [r, data]
   def: |
-    R's type for calendar dates, created with `as.Date("1957-03-25")`.
+    R's type for calendar dates, created from text in the form year-month-day, as in `as.Date("1957-03-25")`.
     A date knows about the calendar, so dates can be sorted and subtracted.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/Dates.html"
+    label: "R documentation: dates"
 
 - term: "`NA`"
   week: 3
   tags: [r, data]
   def: |
     R's marker for a missing value, "not available".
-    It appears when a value was never recorded, when a conversion fails, and when a join finds no match, so always check how many you have.
+    It appears when a value was never recorded, when a [conversion](#gl-type-conversion) fails and when a [join](#gl-join) finds no match, so always check how many you have.
+  see: [gl-missing-values-in-calculations]
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/NA.html"
+    label: "R documentation: NA"
+
+- term: "`NaN`"
+  week: 3
+  tags: [r, data]
+  def: |
+    R's value for "not a number", the result of a calculation with no defined answer, such as `0 / 0` or `sqrt(-1)`.
+    It usually comes with a [warning](#gl-error-and-warning), and R also counts it as a missing value.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/is.finite.html"
+    label: "R documentation: finite, infinite and NaN numbers"
+
+- term: "Type conversion"
+  week: 3
+  tags: [r, data]
+  def: |
+    Deliberately changing a value from one [type](#gl-data-type) to another with an `as.` function, such as `as.numeric("42")` or `as.character(2026)`.
+    A value that cannot be converted, such as `as.numeric("five")`, becomes [`NA`](#gl-na) with a warning.
 
 - term: "Coercion"
   week: 3
   tags: [r, data]
   def: |
-    R converting values from one type to another, silently when a vector mixes types.
-    `c(1, 2, "three")` becomes all text, and `c(1, TRUE, FALSE)` becomes the numbers 1, 1 and 0.
+    R changing values from one [type](#gl-data-type) to another automatically, most often when a vector mixes types, without anyone asking for it.
+    `c(1, 2, "three")` becomes all text and `c(1, TRUE, FALSE)` becomes the numbers 1, 1 and 0, whereas [type conversion](#gl-type-conversion) is the same change made on purpose.
 
 - term: "Data structure"
   week: 3
@@ -556,13 +673,14 @@
   def: |
     How R organises values: from a single value, through vectors, matrices and arrays, to data frames and lists.
     Each step adds a dimension or, for data frames and lists, the freedom to mix types.
+  see: [gl-scalar, gl-vector, gl-matrix, gl-array-and-tensor, gl-data-frame-and-tibble, gl-list]
 
 - term: "Scalar"
   week: 3
   tags: [r, data]
   def: |
     A single value, written in italic lowercase as $x$ in this course.
-    R has no scalars: a single value is a vector of length 1, so everything that works on a vector works on one value too.
+    R has no scalars: a single value is a [vector](#gl-vector) of length 1, so everything that works on a vector works on one value too.
 
 - term: "Vector"
   week: 3
@@ -570,6 +688,20 @@
   def: |
     An ordered set of values of one type, created with `c()` and written in bold lowercase as $\mathbf{x}$.
     It is the building block of R, and arithmetic on a vector works on every element at once.
+  see: [gl-vectorisation, gl-coercion]
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/vector.html"
+    label: "R documentation: vectors"
+
+- term: "Vectorisation"
+  week: 3
+  tags: [r]
+  def: |
+    Applying an operation to every element of a [vector](#gl-vector) at once, without writing a loop: `c(84, 68) * 1000000` multiplies both values.
+    Most R operators and functions are vectorised, which is why a function written for one value usually works on a whole column too.
+  docs:
+    url: "https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Vector-arithmetic"
+    label: "An Introduction to R: vector arithmetic"
 
 - term: "Matrix"
   week: 3
@@ -577,6 +709,9 @@
   def: |
     A two-dimensional arrangement of values of one type, in rows and columns, created with `matrix()` and written in bold uppercase as $\mathbf{X}$.
     It is the workhorse of linear algebra, and of every regression under the hood.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/matrix.html"
+    label: "R documentation: matrices"
 
 - term: "Array and tensor"
   week: 3
@@ -584,13 +719,20 @@
   def: |
     The generalisation of a matrix to three or more dimensions, created in R with `array()`.
     In mathematics it is called a tensor and written in calligraphic as $\mathcal{X}$, and this course rarely needs one.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/array.html"
+    label: "R documentation: arrays"
 
 - term: "Data frame and tibble"
   week: 3
   tags: [data, r]
   def: |
-    A rectangular table of data in R, in which each column is a vector with its own type, so a dataset can mix numbers, text and logicals.
-    A tibble is the tidyverse version of a data frame, with friendlier printing and fewer surprises.
+    R's structure for a rectangular dataset: a table in which each column is a [vector](#gl-vector) with its own type, so one dataset can mix numbers, text and logicals.
+    A tibble is the tidyverse's modern reimagining of the data frame, with friendlier printing and fewer surprises.
+  see: [gl-tidy-data, gl-column-type]
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/data.frame.html"
+    label: "R documentation: data frames"
 
 - term: "List"
   week: 3
@@ -598,388 +740,343 @@
   def: |
     R's flexible container, created with `list()`, which can hold anything, including other lists.
     You will rarely build one yourself, but every fitted model in this course comes back as one.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/list.html"
+    label: "R documentation: lists"
 
 - term: "Observation"
   week: 3
   tags: [data]
   def: |
     One unit of what was measured, such as one country in one year.
-    In a tidy dataset each observation has its own row.
+    In [tidy data](#gl-tidy-data) each observation has its own row.
 
 - term: "Variable"
   week: 3
   tags: [data]
   def: |
     One characteristic measured across observations, such as population or regime type.
-    In a tidy dataset each variable has its own column.
+    In [tidy data](#gl-tidy-data) each variable has its own column.
 
 - term: "Indexing"
   week: 3
   tags: [r, data]
   def: |
     Picking values out of a structure: `[ ]` by position or by condition, and `$` by name, for data frames and lists.
-    A logical vector inside `[ ]` keeps the elements where it is `TRUE`, which is filtering.
+    On a data frame `[row, column]` takes both (a blank means all), a negative position drops instead of keeps, and a [logical](#gl-logical) vector keeps the elements where it is `TRUE`, which is filtering.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/Extract.html"
+    label: "R documentation: extract or replace parts of an object"
+
+- term: "Missing values in calculations"
+  week: 3
+  tags: [r, data]
+  def: |
+    Most summary functions, such as `mean()` or `sum()`, return [`NA`](#gl-na) if any value is missing, because the true answer is then unknown.
+    Their argument `na.rm = TRUE` removes the missing values first, which is a decision about your data worth stating in the text.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/mean.html"
+    label: "R documentation: mean"
 
 - term: "Package"
   week: 3
   tags: [r]
   def: |
-    A bundle of functions, their help pages and sometimes data, that someone wrote and shared.
-    Installed once with `install.packages()` in the console, loaded every session with `library()` in the document.
+    A bundle of R functions, their documentation and sometimes data, that someone wrote and shared, whose contents become available only once it is loaded.
+    Install it once with `install.packages()` in the [console](#gl-console), and load it every session with `library()` at the top of the document.
+  see: [gl-cran, gl-namespace]
+  docs:
+    url: "https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Packages"
+    label: "An Introduction to R: packages"
+
+- term: "Variables pane"
+  week: 3
+  tags: [r, workflow]
+  def: |
+    The Positron pane that lists every object in your current R session, with its type and a preview of its value.
+    It shows what exists in the [console](#gl-console), which can differ from what exists in a [fresh R session](#gl-fresh-r-session).
+  docs:
+    url: "https://positron.posit.co/variables-pane.html"
+    label: "Positron: Variables pane"
+
+- term: "Cell option"
+  week: 3
+  tags: [quarto]
+  def: |
+    A `#|` line at the top of a [code cell](#gl-code-cell) that controls it, such as `label:`, `echo: false` (hide the code), `eval: false` (do not run it), `include: false` (show nothing) or `error: true` (show the error and keep rendering).
+    Set under `execute:` in the [YAML header](#gl-yaml-header), an option applies to every cell instead.
+  docs:
+    url: "https://quarto.org/docs/computations/execution-options.html"
+    label: "Quarto: execution options"
+
+- term: "Inline code"
+  week: 3
+  tags: [quarto, r]
+  def: |
+    R code inside a sentence, written as a backtick, the letter `r`, a space, the code and a closing backtick, whose result replaces it in the rendered text.
+    A number reported this way updates itself when the data or the code changes.
+  docs:
+    url: "https://quarto.org/docs/computations/inline-code.html"
+    label: "Quarto: inline code"
+
+- term: "Fresh R session"
+  week: 3
+  tags: [r, quarto]
+  def: |
+    An R session with nothing in it yet, which is what Quarto starts for every [render](#gl-render) before running every cell from top to bottom.
+    An object you created only in the [console](#gl-console) does not exist there, which is the usual reason a render fails with "object not found" while the console works.
 
 # --- Week 4: The tidyverse ---------------------------------------------------
 
-- term: "Cell option"
+- term: "Eight-step workflow"
+  week: 4
+  tags: [workflow]
+  def: |
+    The fixed sequence every analysis in this course follows, from stating the [estimand](#gl-estimand) to reflecting on limitations.
+    It is also the shape of the take-home exam, and each week deepens one or two of its steps, starting with the [data summary](#gl-data-summary).
+
+- term: "Data summary"
+  week: 4
+  tags: [workflow, data]
+  def: |
+    Step 2 of the [eight-step workflow](#gl-eight-step-workflow): describing the data an analysis uses, its variables, measurement, coverage and obvious issues, before any model.
+    In practice it is a [pipeline](#gl-pipeline) ending in a captioned table, and every decision that changes the data, such as dropping missing values, is named in the text.
+
+- term: "Render layers"
   week: 4
   tags: [quarto]
   def: |
-    A `#|` line at the top of a code cell that controls it, such as `label:`, `echo: false` or `fig-cap:`.
-    Set under `execute:` in the YAML header, an option applies to every cell instead.
+    The programs a PDF [render](#gl-render) passes through in turn: R runs the code cells, [Pandoc](#gl-pandoc) converts the Markdown, and [LaTeX](#gl-latex) typesets the PDF.
+    An error message shows which layer failed, and only the first error counts, so fix that one and render again.
 
 - term: "Pandoc"
   week: 4
   tags: [quarto]
   def: |
-    The document converter Quarto runs after R has executed the cells, turning Markdown into HTML, Word or LaTeX.
-    An error mentioning YAML usually comes from this layer, and points at a line and column of the header.
+    A universal document converter, which Quarto runs after the code cells have executed to turn [Markdown](#gl-markdown) into HTML, Word or LaTeX.
+    An error from the [YAML header](#gl-yaml-header) surfaces at this layer, with a line and column number.
+  docs:
+    url: "https://pandoc.org/"
+    label: "Pandoc"
 
 - term: "LaTeX"
   week: 4
   tags: [quarto]
   def: |
-    The typesetting system that turns the converted document into a PDF, the last layer of a PDF render.
+    A high-quality typesetting system, the last layer of a PDF render, which turns the converted document into the PDF.
     Its errors usually come from a special character in your prose, such as `%`, `&`, `$` or a stray backslash.
+  docs:
+    url: "https://www.latex-project.org/"
+    label: "The LaTeX Project"
 
 - term: "Base R"
   week: 4
   tags: [r]
   def: |
     The functions R ships with before any package is installed, such as `mean()`, `round()` and `data.frame()`.
+    Everything in week 3 was base R.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/00Index.html"
+    label: "R documentation: the base package"
 
 - term: "CRAN"
   week: 4
   tags: [r]
   def: |
-    The Comprehensive R Archive Network, R's official package archive, holding more than 20,000 checked and free packages.
+    The Comprehensive R Archive Network, a network of servers around the world that store identical, up-to-date versions of R and of more than 20,000 contributed [packages](#gl-package).
     `install.packages()` downloads from it.
+  docs:
+    url: "https://cran.r-project.org/"
+    label: "CRAN"
 
-- term: "`package::function()`"
+- term: "Namespace (`::`)"
+  id: gl-namespace
   week: 4
   tags: [r]
   def: |
-    Calling a function by naming the package it lives in, as in `readxl::read_excel()`.
+    Calling a function by naming the [package](#gl-package) it lives in, written `package::function()`, as in `readxl::read_excel()`.
     It makes the source clear, needs no `library()` for a one-off call, and settles which function you mean when two packages share a name.
+  see: [gl-masking]
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/ns-dblcolon.html"
+    label: "R documentation: double colon"
 
 - term: "Masking"
   week: 4
   tags: [r]
   def: |
     What happens when a loaded package has a function with the same name as one already available, so the newer one wins.
-    `library(tidyverse)` reports, for example, that `dplyr::filter()` masks `stats::filter()`.
+    `library(tidyverse)` reports, for example, that `dplyr::filter()` masks `stats::filter()`, and the [namespace](#gl-namespace) operator `::` picks one explicitly.
 
 - term: "Tidyverse"
   week: 4
   tags: [r, data]
   def: |
-    A family of R packages built on one shared philosophy: tidy data in and out, the data as the first argument, and functions named as verbs.
-    `library(tidyverse)` loads the core packages, including `readr`, `tidyr`, `dplyr` and `ggplot2`, in one line.
+    An opinionated collection of R packages designed for data science, which share an underlying design philosophy, grammar and data structures.
+    `library(tidyverse)` loads the core packages, among them readr for reading files, tidyr for [reshaping](#gl-reshaping), dplyr for transforming with [verbs](#gl-verb) and ggplot2 for plots.
+  see: [gl-tidy-data, gl-data-cycle]
+  docs:
+    url: "https://www.tidyverse.org/packages/"
+    label: "tidyverse: packages"
+
+- term: "Data cycle"
+  week: 4
+  tags: [workflow, data]
+  def: |
+    The stages of a data analysis: import the data, tidy it, transform it, visualise it, model it, and communicate the result.
+    In a real project the middle stages loop, because a plot or a model often sends you back to tidy or transform again.
+  docs:
+    url: "https://r4ds.hadley.nz/intro.html"
+    label: "R for Data Science: introduction"
 
 - term: "Tidy data"
   week: 4
   tags: [data]
   def: |
-    Data arranged so that each variable is a column, each observation is a row, and each value has its own cell.
-    Most of the work in an analysis is getting data into this shape, and most tools assume it.
+    Data in which every column is a [variable](#gl-variable), every row is an [observation](#gl-observation), and every cell holds a single value.
+    Most tools assume this shape, and most of the work of an analysis is getting data into it.
+  see: [gl-wide-and-long-format, gl-reshaping]
+  docs:
+    url: "https://tidyr.tidyverse.org/articles/tidy-data.html"
+    label: "tidyr: tidy data"
 
 - term: "Wide and long format"
   week: 4
   tags: [data]
   def: |
     Wide data spreads one variable across several columns, for example one column per year, and long data stacks it into one column with a second column saying which year.
-    Keep working data long and tidy, and go wide only for a table meant for a reader.
+    Going from one to the other is [reshaping](#gl-reshaping).
+
+- term: "Reshaping"
+  week: 4
+  tags: [data, r]
+  def: |
+    Changing the layout of a table without changing its information, in the tidyverse by pivoting: `pivot_longer()` turns column names into values of a new variable, and `pivot_wider()` turns values back into column names.
+    Keep working data long and [tidy](#gl-tidy-data), and pivot wider only for a table meant for a reader.
+  docs:
+    url: "https://tidyr.tidyverse.org/articles/pivot.html"
+    label: "tidyr: pivoting"
 
 - term: "Project root"
   week: 4
   tags: [workflow, r]
   def: |
     The top folder of a project, the fixed point every other path is expressed relative to.
-    Anchoring paths to it is what makes a project work on a machine other than yours.
+    The `here` package builds every path from it, as in `here("data", "file.csv")`, which is what makes a project run on a machine other than yours.
+  docs:
+    url: "https://here.r-lib.org/"
+    label: "here package"
 
-- term: "`here()`"
+- term: "File extension"
   week: 4
-  tags: [r, workflow]
+  tags: [data]
   def: |
-    The function from the `here` package that builds a path from the project root rather than from whatever the current working directory happens to be.
-    Use it for every path, always.
+    The ending of a file name, such as `.csv`, `.xlsx`, `.dta` or `.qmd`, which tells you and your software what format the file is in.
+    Each data format has its own reading function, so the extension tells you which one to reach for.
+  docs:
+    url: "https://r4ds.hadley.nz/data-import.html"
+    label: "R for Data Science: data import"
 
 - term: "CSV"
   week: 4
   tags: [data]
   def: |
-    Comma-separated values: a plain-text file with one row per line and the columns separated by commas.
-    Any program can read it, which makes it the most common way to share a dataset.
+    Comma-separated values: a plain-text file with one row per line and the columns separated by commas, which any program can read.
+    Files saved by a German-language Excel often separate columns with semicolons instead, and readr reads those with `read_csv2()`.
+  docs:
+    url: "https://readr.tidyverse.org/"
+    label: "readr"
 
-- term: "`read_csv()`"
+- term: "Excel workbook and sheet"
+  week: 4
+  tags: [data]
+  def: |
+    An Excel file (`.xlsx` or `.xls`) is a workbook that can hold several sheets, each its own table.
+    The readxl package, installed with the tidyverse but not loaded by it, lists the sheets and reads one at a time.
+  docs:
+    url: "https://readxl.tidyverse.org/"
+    label: "readxl"
+
+- term: "Column type"
   week: 4
   tags: [r, data]
   def: |
-    The `readr` function that reads a CSV file, from disk or a URL, into a tibble, guessing each column's type.
-    Assign the result, because on its own it prints the data and forgets it.
+    The [data type](#gl-data-type) of a column, shown in short form when a tibble is printed: `<chr>` character, `<dbl>` double, `<int>` integer, `<lgl>` logical, `<fct>` factor and `<date>` date.
+    Check it first with new data, because a number or a date read in as text breaks everything that follows.
+  docs:
+    url: "https://tibble.tidyverse.org/articles/types.html"
+    label: "tibble: column types"
 
-- term: "`glimpse()`"
+- term: "Scientific notation"
+  week: 4
+  tags: [r]
+  def: |
+    Writing a very large or very small number as a number times a power of ten, where `e` means "times ten to the": `1e6` is a million and `2.5e-3` is 0.0025.
+    R prints large numbers this way too, so `8.4e+07` is 84 million.
+  docs:
+    url: "https://search.r-project.org/R/refmans/base/html/NumericConstants.html"
+    label: "R documentation: numeric constants"
+
+- term: "Verb"
   week: 4
   tags: [r, data]
   def: |
-    Shows every column of a table with its type and its first values.
-    The first thing to run on data you have just read.
-
-- term: "`pivot_longer()` and `pivot_wider()`"
-  week: 4
-  tags: [r, data]
-  def: |
-    The `tidyr` functions that reshape a table: `pivot_longer()` turns wide data into long, tidy data, and `pivot_wider()` goes the other way.
-    Column names become values of a new variable on the way to long, and values of a variable become column names on the way back.
-
-- term: "`dplyr`"
-  week: 4
-  tags: [r, data]
-  def: |
-    The tidyverse package for data manipulation, a set of verbs such as `filter()`, `select()`, `mutate()` and `summarise()`.
-    Every verb takes a table first, names columns without quotes, and returns a new table, leaving the old one unchanged.
-
-- term: "`filter()`"
-  week: 4
-  tags: [r, data]
-  def: |
-    Keeps the rows of a table that meet a condition built from comparison and logical operators.
-    A comma between conditions means and, `|` means or.
-
-- term: "`select()`"
-  week: 4
-  tags: [r, data]
-  def: |
-    Keeps or drops columns of a table, by name.
-
-- term: "`mutate()`"
-  week: 4
-  tags: [r, data]
-  def: |
-    Creates new columns or changes existing ones.
-    A new name creates a column, and an existing name overwrites it.
-
-- term: "`arrange()`"
-  week: 4
-  tags: [r, data]
-  def: |
-    Sorts the rows of a table by one or more columns, ascending by default.
-    Wrap a column in `desc()` to sort it descending.
+    A tidyverse function named for what it does to a table, such as dplyr's `filter()` (keep rows), `select()` (keep columns), `mutate()` (create or change columns) and `arrange()` (sort rows).
+    Every verb takes a table first, names columns without quotes, and returns a new table, so verbs chain into a [pipeline](#gl-pipeline).
+  docs:
+    url: "https://dplyr.tidyverse.org/articles/dplyr.html"
+    label: "dplyr: introduction"
 
 - term: "Join"
   week: 4
   tags: [data]
   def: |
-    Combining two tables by matching rows on a shared key column.
-    The four joins of `dplyr` differ only in which rows survive when a key has no partner in the other table.
+    Combining two tables by matching rows on a shared [key](#gl-key), so the result has the columns of both.
+    The four joins differ only in which rows survive when a key has no partner: a left join keeps every row of the first table, a right join every row of the second, an inner join only the matches, and a full join everything.
+  docs:
+    url: "https://dplyr.tidyverse.org/reference/mutate-joins.html"
+    label: "dplyr: mutating joins"
 
 - term: "Key"
   week: 4
   tags: [data]
   def: |
-    The column, or columns, a join matches rows on, such as `country`.
-    A key matches text exactly, so one spelling difference silently produces `NA`.
+    The column, or columns, a [join](#gl-join) matches rows on, such as `country`, and when it has a different name in each table, `join_by()` says which columns belong together.
+    A key matches text exactly, so one spelling difference silently produces [`NA`](#gl-na): count the missing values after every join.
+  docs:
+    url: "https://dplyr.tidyverse.org/reference/join_by.html"
+    label: "dplyr: join specifications"
 
-- term: "`left_join()`"
+- term: "Grouped summary"
   week: 4
-  tags: [r, data]
+  tags: [data, r]
   def: |
-    Keeps every row of the left table and adds the matching columns of the right one, with `NA` where there is no match.
-    It is nearly always the join you want, and afterwards you check how many `NA` values it produced.
+    Reducing a table to summary statistics, such as a count or a mean, once for each group defined by the values of one or more columns.
+    In dplyr, `group_by()` sets the groups without changing anything you can see, `summarise()` then returns one row per group, and `count()` is the shortcut for the number of rows per group.
+  docs:
+    url: "https://dplyr.tidyverse.org/articles/grouping.html"
+    label: "dplyr: grouped data"
 
-- term: "`count()`"
+- term: "Median"
   week: 4
-  tags: [r, data]
+  tags: [probability, data]
   def: |
-    Counts the rows for each value of a column, returning one row per value with the number in a column called `n`.
-
-- term: "`group_by()`"
-  week: 4
-  tags: [r, data]
-  def: |
-    Splits a table into groups by the values of one or more columns.
-    It changes nothing you can see, but tells the next verb, usually `summarise()`, to work once per group.
-
-- term: "`summarise()`"
-  week: 4
-  tags: [r, data]
-  def: |
-    Reduces a table to summary statistics, such as a mean, with one row for the whole table or one per group after `group_by()`.
-    Inside it, `n()` counts the rows of each group.
+    The middle value of a set of numbers once they are sorted, so half the values lie below it and half above.
+    Unlike the [mean](#gl-mean-and-standard-deviation), it barely moves when a few values are extreme, which makes it the better summary of skewed data such as income.
 
 - term: "Pipeline"
   week: 4
   tags: [r, workflow]
   def: |
-    A sequence of steps chained with `|>`, each taking the previous result, from reading a file to a finished table.
+    A sequence of steps chained with the [native pipe](#gl-native-pipe), each taking the previous result, from reading a file to a finished table.
     Pipelines are powerful, so build them one step at a time and check the result at every step.
+  docs:
+    url: "https://r4ds.hadley.nz/data-transform.html"
+    label: "R for Data Science: data transformation"
 
-# --- Later weeks: planned week from course.yml -------------------------------
-
-- term: "`set.seed()`"
-  week: 6
-  tags: [r, workflow]
+- term: "Codebook"
+  week: 4
+  tags: [data]
   def: |
-    Fixes the starting point of R's random number generator, so anything involving randomness gives the same result on every run.
-    Required wherever this course simulates or samples.
-
-- term: "Normalising constant"
-  week: 6
-  tags: [probability]
-  def: |
-    The quantity that rescales the posterior so it integrates to one.
-    It does not depend on the parameters, which is why we can usually ignore it and work with the unnormalised posterior.
-
-- term: "Generative model"
-  week: 6
-  tags: [model]
-  def: |
-    A model complete enough to simulate fake data that looks like the real thing.
-    If you can simulate from it, you can check it before it ever touches your data.
-
-- term: "Warmup"
-  week: 7
-  tags: [mcmc]
-  def: |
-    The initial draws a chain uses to adapt and find the posterior, discarded before inference.
-    They describe the sampler getting started, not the posterior.
-
-- term: "Draw"
-  week: 7
-  tags: [mcmc]
-  def: |
-    A single sample from the posterior.
-    A posterior is represented in practice as a large collection of draws, and every summary is computed from them.
-
-- term: "Divergent transition"
-  week: 7
-  tags: [mcmc, diagnostics]
-  def: |
-    A warning that the sampler failed to explore part of the posterior faithfully.
-    Divergences are not cosmetic, so they are understood rather than silenced.
-
-- term: "R-hat"
-  week: 7
-  tags: [mcmc, diagnostics]
-  def: |
-    A convergence diagnostic comparing variation between chains against variation within them.
-    Values near 1 are consistent with convergence, and clearly larger values mean the chains do not agree.
-
-- term: "Effective sample size"
-  week: 7
-  tags: [mcmc, diagnostics]
-  def: |
-    How many independent draws the correlated MCMC draws are worth.
-    A low value means a summary rests on less information than the raw number of draws suggests.
-
-- term: "Stan"
-  week: 7
-  tags: [mcmc, model]
-  def: |
-    The probabilistic programming language and sampler that `brms` compiles models down to and runs.
-    You will rarely write Stan code directly, but its diagnostics are the ones you read.
-
-- term: "Marginal effect"
-  week: 8
-  tags: [interpretation]
-  def: |
-    How the expected outcome changes with a predictor, after averaging over the others.
-    It is often the form in which a result becomes reportable.
-
-- term: "Quantity of interest"
-  week: 8
-  tags: [interpretation]
-  def: |
-    The specific, interpretable number a reader should take away, computed from the posterior.
-    Deciding it in advance is what stops an analysis becoming a table of coefficients with no conclusion.
-
-- term: "Counterfactual prediction"
-  week: 8
-  tags: [interpretation, model]
-  def: |
-    A model-based prediction of the outcome under a specified, possibly unobserved, setting of the predictors.
-    It is how a fitted model answers a substantive question.
-
-- term: "Posterior predictive distribution"
-  week: 8
-  tags: [interpretation, model]
-  def: |
-    The distribution of new outcomes implied by the fitted model, accounting for both parameter uncertainty and outcome variability.
-    Predictions come from it rather than from point estimates alone.
-
-- term: "Directed acyclic graph"
-  week: 9
-  tags: [workflow, model]
-  def: |
-    A diagram of assumed causal relationships, drawn as arrows between variables with no cycles.
-    Usually called a DAG, it makes explicit which variables must be adjusted for and which must not.
-
-- term: "Confounder"
-  week: 9
-  tags: [model, interpretation]
-  def: |
-    A variable that influences both the presumed cause and the outcome, so leaving it out distorts the relationship you are trying to measure.
-    Whether a variable is a confounder is a claim about the DAG, not something the data can tell you.
-
-- term: "Interaction"
-  week: 10
-  tags: [regression, interpretation]
-  def: |
-    A term letting the effect of one predictor depend on the value of another.
-    An interaction is a claim that an effect is conditional, so it is interpreted jointly and not term by term.
-
-- term: "Link function"
-  week: 11
-  tags: [regression, model]
-  def: |
-    The transformation connecting a linear predictor to the scale of the outcome.
-    It lets a linear model describe outcomes that are bounded, such as probabilities.
-
-- term: "Logistic regression"
-  week: 11
-  tags: [regression]
-  def: |
-    A model for a binary outcome, using the logit link to keep predicted probabilities between zero and one.
-
-- term: "Log-odds"
-  week: 11
-  tags: [regression, interpretation]
-  def: |
-    The scale a logistic regression's coefficients live on, the logarithm of the odds.
-    Coefficients are additive here but not on the probability scale, which is why results are converted before interpretation.
-
-- term: "Multilevel model"
-  week: 12
-  tags: [multilevel]
-  def: |
-    A model with parameters that vary by group, where the group-level variation is itself estimated.
-    Also called a hierarchical model.
-
-- term: "Partial pooling"
-  week: 12
-  tags: [multilevel]
-  def: |
-    The compromise a multilevel model strikes between one estimate for all groups and a separate, independent estimate per group.
-    Groups with little data are pulled towards the overall pattern, and groups with plenty are left largely alone.
-
-- term: "Shrinkage"
-  week: 12
-  tags: [multilevel]
-  def: |
-    The pull of a group's estimate towards the overall mean under partial pooling.
-    It is a feature, because it stops small groups producing extreme estimates on thin evidence.
-
-- term: "Population-level and group-level effects"
-  week: 12
-  tags: [multilevel, model]
-  def: |
-    Population-level effects apply across all observations, and group-level effects vary by group.
-    `brms` uses these names for what are elsewhere called fixed and random effects.
+    The documentation of a dataset, listing every variable with what it measures, its scale or categories, and how missing values are coded.
+    Read it before analysing, because column names rarely say enough.

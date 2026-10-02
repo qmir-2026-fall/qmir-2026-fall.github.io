@@ -93,7 +93,7 @@ the style files.
 
 | File | Read when… | Last modified |
 |------|-----------|---------------|
-| `.claude/workflow.md` | adding or converting a week, releasing homework or solutions, publishing, touching the repo layout, `course.yml`, the submodule or the leak guards (topology, term pipeline, feedback banner, naming, staging, automation contracts) | 2026-09-30 |
+| `.claude/workflow.md` | adding or converting a week, releasing homework or solutions, publishing, touching the repo layout, `course.yml`, the submodule or the leak guards (topology, term pipeline, feedback banner, naming, staging, automation contracts) | 2026-10-02 |
 | `.claude/course-design.md` | planning what a session or homework teaches, the 8-step workflow, the exam, or methods voice (lessons from qmir-2026, scaffolding backward from the exam, deliberate non-goals) | 2026-09-30 |
 | `.claude/writing.md` | authoring or editing any `.qmd`, a student-facing `README.md`, a glossary entry, or any math (prose rules, one sentence per line, cross-references, callouts, notation) | 2026-09-30 |
 | `.claude/r-code.md` | writing or editing R code in any `.qmd` or script (paths, tidyverse, setup chunk, figures, tables, `brms`) | 2026-09-30 |
