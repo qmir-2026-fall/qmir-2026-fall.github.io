@@ -181,14 +181,19 @@ weeks:
     topic: "Data visualisation"
     steps: [2]
     content: |
-      Moving from a plot that displays data to a figure that makes a point, on top of the
-      reshaping and joining from session 4. We close on probabilities and distributions, which
-      is the bridge into the second block.
+      Moving from a plot that displays data to a figure that makes a point. One gapminder
+      figure is built layer by layer with ggplot2, then charts for one, two and more variables,
+      styling for a reader, and the common pitfalls, all guided by the data-ink principle.
     goals:
-      - "Verify a join on messy real data, and handle missing values transparently, understanding the risks of imputation."
-      - "Build and customise `ggplot2` figures through aesthetics, geoms, scales and themes."
-      - "Produce publication-ready tables and embed computed results directly in prose with inline code."
-      - "Read a distribution as a statement about how plausible each value is."
+      - "Explain the layered grammar of graphics and build a `ggplot2` figure from data, aesthetics and geoms."
+      - "Choose a fitting chart for one, two, and three or more variables."
+      - "Encode more variables with aesthetics and small multiples."
+      - "Style a figure for a reader: labels, themes, colour palettes and annotation."
+      - "Recognise common visualisation pitfalls and fix them."
+  # Moved out of week 5 when it became a full ggplot2 session (2026-10-07), not yet placed:
+  # verifying a join and handling missing values transparently (the risks of imputation),
+  # and inline code for computed results in prose. Reading a distribution as plausibility
+  # opens week 6 anyway.
   - week: 6
     topic: "The logic of Bayesian inference"
     steps: [3, 4]

@@ -1080,3 +1080,238 @@
   def: |
     The documentation of a dataset, listing every variable with what it measures, its scale or categories, and how missing values are coded.
     Read it before analysing, because column names rarely say enough.
+
+# --- Week 5: Data visualisation ----------------------------------------------
+
+- term: "Grammar of graphics"
+  week: 5
+  tags: [data, r]
+  def: |
+    The idea that every statistical figure is built from the same few parts: data, [aesthetic mappings](#gl-aesthetic-mapping), [geoms](#gl-geom), [scales](#gl-scale), facets, labels and a [theme](#gl-theme) [@wilkinson2005grammar; @wickham2010layered].
+    `ggplot2` implements it, so a plot starts with `ggplot()` and grows one [layer](#gl-layer) at a time with `+`.
+  docs:
+    url: "https://ggplot2.tidyverse.org/"
+    label: "ggplot2"
+
+- term: "Aesthetic mapping"
+  week: 5
+  tags: [data, r]
+  def: |
+    The link between a variable and a visual property of a plot, such as position, colour, size or shape, written inside `aes()`.
+    Inside `aes()` a property follows the data, outside it is one fixed value for every mark.
+  docs:
+    url: "https://ggplot2.tidyverse.org/reference/aes.html"
+    label: "ggplot2: aesthetic mappings"
+
+- term: "Geom"
+  week: 5
+  tags: [data, r]
+  def: |
+    The kind of mark that represents the data in a plot, such as points, lines, bars or boxes, added as a `geom_*()` layer.
+    Several geoms can be stacked on the same [aesthetic mappings](#gl-aesthetic-mapping), for example points with a line through them.
+  docs:
+    url: "https://ggplot2.tidyverse.org/reference/index.html#layers"
+    label: "ggplot2: layers"
+
+- term: "Scale"
+  week: 5
+  tags: [data, r]
+  def: |
+    The rule that turns data values into visual values: positions on an axis, colours, sizes, and the breaks and labels of axes and legends.
+    A log scale, for example, gives equal space to every multiplication of a value, which suits skewed variables such as income.
+  docs:
+    url: "https://ggplot2.tidyverse.org/reference/index.html#scales"
+    label: "ggplot2: scales"
+
+- term: "Histogram"
+  week: 5
+  tags: [data, probability]
+  def: |
+    A chart of one numeric variable that cuts its range into bins and draws a bar for the number of observations in each.
+    The bin width is a choice that changes what the shape seems to say, so try several, and compare it with a smooth [density](#gl-probability-density) curve.
+  see: [gl-density-plot, gl-skewed-distribution]
+
+- term: "Box plot"
+  week: 5
+  tags: [data]
+  def: |
+    A compact summary of a numeric variable, often one box per group: the line marks the [median](#gl-median), the box holds the middle half of the observations, and whiskers and points show the rest.
+    With few observations, draw the points themselves on top, because a box hides how many there are.
+  see: [gl-violin-plot, gl-jitter]
+
+- term: "Overplotting"
+  week: 5
+  tags: [data]
+  def: |
+    Marks drawn on top of each other, so a plot hides how many observations sit in one place.
+    Transparency, small points, jitter or [small multiples](#gl-small-multiples) make the hidden density visible again.
+
+- term: "Small multiples"
+  week: 5
+  tags: [data, r]
+  def: |
+    A series of small panels that show the same plot for each group, with the same axes, so the eye can compare them at a glance.
+    In `ggplot2` they are made with `facet_wrap()` or `facet_grid()`, and free axes per panel trade cross-panel comparison for detail within a panel.
+  docs:
+    url: "https://ggplot2.tidyverse.org/reference/facet_wrap.html"
+    label: "ggplot2: facet_wrap()"
+
+- term: "Data-ink ratio"
+  week: 5
+  tags: [data, interpretation]
+  def: |
+    Edward Tufte's measure of a figure: the share of its ink that shows data rather than decoration [@tufte1983visual].
+    Raising it means removing every mark that carries no information, such as heavy grids, backgrounds and redundant legends, and choosing deliberately what stays.
+  see: [gl-chartjunk]
+
+- term: "Chartjunk"
+  week: 5
+  tags: [data, interpretation]
+  def: |
+    Tufte's word for decoration in a figure that carries no information and distracts from the data: 3D effects, heavy borders, gradients, ornamental grids [@tufte1983visual].
+    It lowers the [data-ink ratio](#gl-data-ink-ratio) and often distorts what the reader perceives.
+  see: [gl-graphical-perception]
+
+- term: "Colour palette"
+  week: 5
+  tags: [data]
+  def: |
+    The set of colours a figure uses for a variable, matched to its kind: qualitative for categories without an order, sequential for values from low to high, diverging for values above and below a meaningful midpoint.
+    Avoid letting red against green carry a distinction, and prefer palettes such as viridis that stay distinct for colourblind readers and in greyscale.
+  see: [gl-redundant-encoding]
+  docs:
+    url: "https://ggplot2.tidyverse.org/reference/scale_viridis.html"
+    label: "ggplot2: viridis colour scales"
+
+- term: "Redundant encoding"
+  week: 5
+  tags: [data]
+  def: |
+    Showing the same variable through two visual properties at once, such as colour and point shape, so that colour is never the only cue.
+    It keeps a figure readable for colourblind readers and in a black and white print.
+
+- term: "Layer"
+  week: 5
+  tags: [r, data]
+  def: |
+    One component of a `ggplot2` figure, such as a [geom](#gl-geom), a [scale](#gl-scale) or a [theme](#gl-theme), stacked onto the plot with `+`.
+    The [native pipe](#gl-native-pipe) only carries the data into `ggplot()`, and every step after that is a layer added with `+`.
+  see: [gl-grammar-of-graphics]
+
+- term: "Theme"
+  week: 5
+  tags: [r, data]
+  def: |
+    The look of everything in a plot that is not data: background, grid lines, fonts and the position of the legend.
+    Pick a complete theme first, such as `theme_classic()`, the course default, then adjust single elements with `theme()`.
+  see: [gl-data-ink-ratio]
+  docs:
+    url: "https://ggplot2.tidyverse.org/reference/ggtheme.html"
+    label: "ggplot2: complete themes"
+
+- term: "Log scale"
+  week: 5
+  tags: [data]
+  def: |
+    An axis on which equal distances multiply the value instead of adding to it, so the steps from 1,000 to 10,000 and from 10,000 to 100,000 are equally long.
+    It spreads out a [right-skewed](#gl-skewed-distribution) variable such as income, where an extra dollar matters more to the poor than to the rich.
+  see: [gl-scale]
+
+- term: "Skewed distribution"
+  week: 5
+  tags: [probability, data]
+  def: |
+    A distribution with a long tail on one side, such as income: many small values and a few very large ones make it right-skewed.
+    In a skewed variable the [mean](#gl-mean-and-standard-deviation) is pulled towards the tail, so the [median](#gl-median) or a [log scale](#gl-log-scale) often describes it better.
+
+- term: "Bar chart"
+  week: 5
+  tags: [data]
+  def: |
+    A chart that shows a value per category by the length of a bar, either a count of rows or a value computed beforehand.
+    Because length carries the value, bars start at zero, and their order is a decision, set through the levels of a [factor](#gl-factor).
+  see: [gl-truncated-axis]
+
+- term: "Scatter plot"
+  week: 5
+  tags: [data]
+  def: |
+    A chart of two numeric variables, one point per observation, which shows the direction, shape and strength of their relationship.
+    With many points, watch for [overplotting](#gl-overplotting).
+
+- term: "Line plot"
+  week: 5
+  tags: [data]
+  def: |
+    A chart that connects points in the order of the x axis, the natural choice for change over time.
+    With several units, such as countries, each needs its own line through a grouping variable, and [small multiples](#gl-small-multiples) keep many lines readable.
+
+- term: "Density plot"
+  week: 5
+  tags: [data, probability]
+  def: |
+    A smooth curve estimated from the data that shows the shape of a numeric variable, an alternative to the [histogram](#gl-histogram) without bins.
+    The area under the curve is 1, so its height is a [probability density](#gl-probability-density), not a count.
+
+- term: "Violin plot"
+  week: 5
+  tags: [data]
+  def: |
+    A [density plot](#gl-density-plot) per group, mirrored around its axis, so each group's whole distribution is visible side by side.
+    It shows shape, such as two peaks, where a [box plot](#gl-box-plot) shows only five numbers, but with very few observations the smooth shape can mislead.
+
+- term: "Jitter"
+  week: 5
+  tags: [data, r]
+  def: |
+    Small random shifts added to the position of points so that points on top of each other become visible, a remedy for [overplotting](#gl-overplotting).
+    Because the shifts are random, set a seed with `set.seed()` so the figure looks the same on every render.
+
+- term: "Legend and direct labels"
+  week: 5
+  tags: [data]
+  def: |
+    A legend is the key that decodes an [aesthetic mapping](#gl-aesthetic-mapping), such as which colour stands for which continent.
+    Direct labels write the name next to the data instead, which spares the reader from looking back and forth.
+  see: [gl-annotation]
+
+- term: "Annotation"
+  week: 5
+  tags: [data, interpretation]
+  def: |
+    Marks added to a figure that are not rows of the data, such as a text note, a reference line or a label on a single point.
+    Annotate the few things the reader should notice, not everything, so the annotation carries information instead of clutter.
+  see: [gl-data-ink-ratio]
+
+- term: "Truncated axis"
+  week: 5
+  tags: [data, interpretation]
+  def: |
+    An axis that starts well above zero, which exaggerates differences when values are shown as lengths, as in a [bar chart](#gl-bar-chart).
+    For points and lines, which show values by position, zooming in on the range of the data is fine.
+
+- term: "Graphical perception"
+  week: 5
+  tags: [data, interpretation]
+  def: |
+    How accurately readers decode the visual encodings of a chart: positions on a common axis and lengths best, angles, areas, depth and colour shades worst [@cleveland1984graphical].
+    It is the reason pie charts and 3D charts mislead, and why most charts show values by position or length.
+
+- term: "Choropleth"
+  week: 5
+  tags: [data]
+  def: |
+    A map that colours each area, such as a country, by the value of a variable.
+    The values usually arrive through a [join](#gl-join) by name, so an area without a match shows up empty, which looks like missing data but may be a spelling difference.
+  see: [gl-simple-features]
+
+- term: "Simple features"
+  week: 5
+  tags: [data, r]
+  def: |
+    The standard way to store geographic shapes as a column of a table, one row per area, so maps work with the same verbs as any other data.
+    In R the `sf` package reads them, and `ggplot2` draws them with `geom_sf()`.
+  see: [gl-choropleth]
+  docs:
+    url: "https://r-spatial.github.io/sf/"
+    label: "sf: simple features for R"
