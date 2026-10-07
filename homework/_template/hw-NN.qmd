@@ -31,7 +31,6 @@ start_time <- Sys.time()
 library(tidyverse) # wrangling and visualization
 library(here) # project-root-relative paths
 library(brms) # Bayesian regression via Stan
-library(ggpubr) # theme_pubr()
 
 # Shared course palette. Keep these names, the slides use the same ones.
 col_1 <- "steelblue"
@@ -67,7 +66,7 @@ Add sections as the term introduces more steps.>
 read_csv(here("data", "<file>.csv")) |>
   ggplot(aes(x = x)) +
   geom_histogram(bins = 25, fill = col_1, colour = "white", linewidth = 0.3) +
-  theme_pubr() +
+  theme_classic() +
   labs(x = "<x>", y = "Count", title = "<title>")
 ```
 

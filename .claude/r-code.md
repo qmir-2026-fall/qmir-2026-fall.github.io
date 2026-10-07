@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-09-30
+last_modified: 2026-10-07
 scope: R code in every .qmd and script: paths, tidyverse, setup chunk, figures, tables, brms
 ---
 
@@ -37,7 +37,6 @@ start_time <- Sys.time()
 library(tidyverse) # wrangling and visualization
 library(here) # project-root-relative paths
 library(brms) # Bayesian regression via Stan
-library(ggpubr) # theme_pubr()
 
 # Shared palette. Reused verbatim across slides, homework and solutions so a
 # chain colour means the same thing in every artefact of the course.
@@ -51,10 +50,11 @@ chain_cols <- c(col_1, col_2, col_3, col_4)
 Rendered documents (homework, solutions, labs) close with a session-info chunk and an
 execution-time chunk, both `eval: true`.
 
-**Figures.** `ggplot2` is the plotting system, `theme_pubr()` the default theme. `colour =`, not
-`color =` (`E011`). Always a `title =` in `labs()`. One plot per chunk. `patchwork` for
-multi-panel. `dpi: 500`. Colourblind-safe, readable in black and white, high
-information-to-ink ratio.
+**Figures.** `ggplot2` is the plotting system, `theme_classic()` the default theme (native to
+ggplot2, so no extra package). `colour =`, not `color =` (`E011`). Always a `title =` in `labs()`.
+One plot per chunk. `patchwork` for multi-panel. `dpi: 500`. Colourblind-safe, readable in black
+and white, high information-to-ink ratio. Staged material and the spring solutions still call
+`theme_pubr()` from `ggpubr`. Switch them to `theme_classic()` when the week is converted.
 
 **Tables.** A static overview goes in a raw Markdown table. A computed table goes through
 `knitr::kable()`. Model output goes through `modelsummary`. Reach for `gt` only when the

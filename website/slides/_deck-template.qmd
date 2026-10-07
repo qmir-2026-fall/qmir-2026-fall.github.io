@@ -97,7 +97,6 @@ $$ {#eq-bayes-core}
 #| echo: false
 
 library(tidyverse) # wrangling and visualization
-library(ggpubr) # theme_pubr()
 
 col_1 <- "steelblue"
 
@@ -105,7 +104,7 @@ set.seed(2026)
 tibble(x = rnorm(200)) |>
   ggplot(aes(x = x)) +
   geom_histogram(bins = 25, fill = col_1, colour = "white", linewidth = 0.3) +
-  theme_pubr() +
+  theme_classic() +
   labs(x = "Value", y = "Count", title = "Placeholder figure")
 ```
 

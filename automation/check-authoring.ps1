@@ -68,7 +68,8 @@ function Add-Finding {
 # Returns one entry per source line: the line with everything that is NOT prose
 # blanked out. Blanking rather than removing keeps line numbers exact.
 # Stripped: YAML front matter, fenced code blocks, inline code spans, raw HTML
-# tags and comments, display and inline math, link targets and image paths.
+# tags and comments, display and inline math, citation groups, link targets and
+# image paths.
 # -----------------------------------------------------------------------------
 function Get-ProseLines {
   param([string[]]$Lines)
@@ -128,6 +129,7 @@ function Get-ProseLines {
     $t = $t -replace '`[^`]*`', ' '             # inline code span
     $t = $t -replace '\$[^$]+\$', ' '           # inline math
     $t = $t -replace '<[^>]+>', ' '             # raw HTML tag
+    $t = $t -replace '\[-?@[^\]]*\]', ' '       # pandoc citation group, [@a; @b]
     $t = $t -replace '\]\([^)]*\)', '] '        # link / image target
     $t = $t -replace 'https?://\S+', ' '        # bare URL
     $t = $t -replace '\{[^}]*\}', ' '           # pandoc attributes, shortcodes

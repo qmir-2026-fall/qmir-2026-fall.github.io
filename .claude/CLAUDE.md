@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Last modified: 2026-09-30
+Last modified: 2026-10-07
 
 This is the entry point. It holds only what every task needs. The detail lives in the
 context files indexed below, and you should open those only when a task needs them.
@@ -51,7 +51,7 @@ the style files.
 - **Cross-references:** every figure, table, equation and `##`/`###` heading is labelled and
   referenced by label, id first, then classes. (`writing.md`)
 - **Callouts:** `note`, `warning`, `important`, `tip`. No `caution`. (`writing.md`)
-- **R:** `here()` for every path, `|>` never `%>%`, `theme_pubr()` and `colour =`,
+- **R:** `here()` for every path, `|>` never `%>%`, `theme_classic()` and `colour =`,
   `case_match()`, `set.seed()`, explicit `prior =` on every `brms` call. (`r-code.md`)
 - **Slides:** 1050 x 700 canvas. Ladder `{.smaller}`, then `.small`, then `.xsmall`, then split.
   Inline `font-size` is an error. (`slides.md`)
@@ -95,8 +95,8 @@ the style files.
 |------|-----------|---------------|
 | `.claude/workflow.md` | adding or converting a week, releasing homework or solutions, publishing, touching the repo layout, `course.yml`, the submodule or the leak guards (topology, term pipeline, feedback banner, naming, staging, automation contracts) | 2026-10-02 |
 | `.claude/course-design.md` | planning what a session or homework teaches, the 8-step workflow, the exam, or methods voice (lessons from qmir-2026, scaffolding backward from the exam, deliberate non-goals) | 2026-09-30 |
-| `.claude/writing.md` | authoring or editing any `.qmd`, a student-facing `README.md`, a glossary entry, or any math (prose rules, one sentence per line, cross-references, callouts, notation) | 2026-09-30 |
-| `.claude/r-code.md` | writing or editing R code in any `.qmd` or script (paths, tidyverse, setup chunk, figures, tables, `brms`) | 2026-09-30 |
+| `.claude/writing.md` | authoring or editing any `.qmd`, a student-facing `README.md`, a glossary entry, or any math (prose rules, one sentence per line, cross-references, callouts, notation) | 2026-10-07 |
+| `.claude/r-code.md` | writing or editing R code in any `.qmd` or script (paths, tidyverse, setup chunk, figures, tables, `brms`) | 2026-10-07 |
 | `.claude/slides.md` | anything under `website/slides/`, or acting on a `check-authoring.ps1` finding (canvas, size ladder, columns, deck grammar and YAML, the two check stages) | 2026-09-30 |
 | `.claude/github.md` | the org, template repos, the student link, org permissions, rosters, attendance or progress tracking | 2026-09-30 |
 | `.claude/feedback.md` | the opt-in AI feedback job or exam grading (trigger, inputs, output, safety) | 2026-09-30 |

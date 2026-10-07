@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-09-30
+last_modified: 2026-10-07
 scope: prose and typography, one sentence per line, cross-references, callouts, math notation
 ---
 
@@ -42,7 +42,7 @@ be one. Split them.
 
 The rule is about *prose*. Code, YAML mechanics, SCSS, URLs, file paths and the box-drawing
 banners in comments are all exempt, and the checker strips fenced code blocks, inline code spans,
-raw HTML and math before it looks.
+raw HTML, math and citation groups (`[@a; @b]`) before it looks.
 
 ### One sentence per line
 

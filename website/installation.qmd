@@ -343,7 +343,6 @@ R packages are bundles of functions, data and documentation that extend R. You i
 | `posterior` | Tools for handling and summarising posterior draws. | Provides the convergence diagnostics we read after every fit. |
 | `bayesplot` | Plots for Bayesian model checking and diagnostics. | Trace plots and posterior predictive checks, steps 6a and 6b of the workflow. |
 | `marginaleffects` | Computes marginal effects and predictions from fitted models. | How we turn coefficients into interpretable quantities of interest. |
-| `ggpubr` | Publication-ready `ggplot2` themes. | Supplies `theme_pubr()`, the default theme for every figure in the course. |
 | `patchwork` | Combines several plots into one figure. | For multi-panel figures. |
 | `modelsummary` | Formats model output into tables. | Regression tables that can go straight into a report. |
 | `knitr` | The engine that runs the R code inside a Quarto document. | Also provides `kable()` for computed tables. |
@@ -356,7 +355,7 @@ In Positron, find the **Console** (see @fig-positron-layout), start an R session
 ```r
 install.packages(c(
   "tidyverse", "here", "brms", "posterior", "bayesplot",
-  "marginaleffects", "ggpubr", "patchwork", "modelsummary",
+  "marginaleffects", "patchwork", "modelsummary",
   "knitr"
 ))
 ```
