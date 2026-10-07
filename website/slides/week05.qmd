@@ -1,0 +1,1709 @@
+---
+title: "Week 5: Data visualisation"
+---
+
+<!-- Shared format options live in _metadata.yml, so this deck's YAML carries only the title.
+
+     This week teaches code, so the code has to be visible: every teaching chunk opts out of the
+     default fold with #| code-fold: false, as in weeks 03 and 04. Build slides put the code on
+     the left and the plot on the right with #| output-location: column. The bad examples in the
+     pitfalls section hide their code (echo: false), and the fixes keep the default fold, so the
+     code is one click away.
+
+     Rhythm: every section ends in a "Practice:" slide the room does on the spot, with the answer
+     on the next slide. The red line is ONE figure, Rosling's chart of GDP per capita against life
+     expectancy in 2007: section 2 builds its skeleton, section 5 adds colour, size and facets,
+     section 6 polishes it into a publication figure. The new line is highlighted with
+     code-line-numbers. The philosophy is Tufte's: maximise the data-ink, and make every choice
+     minimal but deliberate.
+
+     Sources: the selection follows Melanie Sauter's Advanced Graphics course
+     (melinscribe.github.io/datavis-course): the layer-by-layer ggplot2 introduction, chart
+     choice and the Cleveland and McGill ranking, "the title states the finding", and redundant
+     encoding. Every bad example is built here from gapminder, nothing is copied.
+
+     Themes: the build-up keeps ggplot's default grey look on purpose, so the styling section has
+     something to strip. Only built-in themes appear, and theme_classic() is the course default
+     (.claude/r-code.md).
+
+     Time budget (90 min): opening 3, reminders 5, grammar 16, one variable 13, two variables 14,
+     three and more 12, styling 14, pitfalls 10, wrap-up 2, maps bonus 1 (only if time is left).
+     If the room runs slow, cut the maps first, then the violin slide, then annotation, then the
+     stretch tasks, then pitfalls 2 and 6.
+
+     Deck-only packages: janitor, plotrix (the 3D pie), sf, rnaturalearth and rnaturalearthdata
+     (the maps bonus). Students do not need the last four. _freeze/ is committed, so they must be
+     installed wherever the deck is re-rendered. -->
+
+```{r}
+#| label: setup
+#| include: false
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(gapminder) # demo data
+library(janitor) # tabyl() and adorn_totals()
+library(knitr) # tables for the PDF
+library(patchwork) # multi-panel figures
+library(plotrix) # the 3D pie, a bad example
+library(sf) # simple features, the maps bonus
+library(rnaturalearth) # country shapes, the maps bonus
+
+# _quarto.yml is a project-root marker, so anchor here() at the repo root.
+here::i_am("website/slides/week05.qmd")
+
+# Shared palette (.claude/r-code.md).
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+
+# Short tibble printouts, so a result fits under its code on a slide.
+options(pillar.print_min = 5, pillar.print_max = 5, width = 70)
+
+gapminder_2007 <- gapminder |>
+  filter(year == 2007)
+```
+
+## Week 5 goals {#sec-week05-goals .smaller}
+
+By the end of today, you will be able to:
+
+1. Explain the layered grammar of graphics and build a `ggplot2` figure from data, aesthetics and geoms.
+2. Choose a fitting chart for one, two, and three or more variables.
+3. Encode more variables with aesthetics and small multiples.
+4. Style a figure for a reader: labels, themes, colour palettes and annotation.
+5. Recognise common visualisation pitfalls and fix them.
+
+## Today {#sec-today .smaller}
+
+1. **Before we start:** two reminders
+2. **The grammar of graphics:** one plot, layer by layer
+3. **One variable:** bar charts, histograms, densities
+4. **Two variables:** scatter plots, box plots, line plots
+5. **Three and more variables:** colour, size, shape, facets
+6. **Styling:** less ink, more information
+7. **Common pitfalls:** what is wrong here?
+
+::: notes
+Type along again.
+Positron open, a fresh `.qmd`, `library(tidyverse)` and `library(gapminder)` in the setup cell.
+:::
+
+## Where today fits {#sec-where-today-fits .smaller}
+
+Today continues **step 2, the data summary**.
+Last week it was a table, today it is a figure, and in the exam you need both.
+
+{{< include _workflow-8step.qmd >}}
+
+::: notes
+One minute.
+Point at step 2, then at 4 and 6b: prior and posterior predictive checks are plots too.
+:::
+
+# Before we start: two reminders {#sec-before-we-start}
+
+## Positron shortcuts {#sec-positron-shortcuts .smaller}
+
+::: notes
+Two minutes, no practice.
+Demo the pipe shortcut and the restart live.
+:::
+
+::: {.small}
+| Action | Windows and Linux | Mac |
+|---|---|---|
+| Run the current line or selection | `Ctrl + Enter` | `Cmd + Enter` |
+| Run the current code cell | `Ctrl + Shift + Enter` | `Cmd + Shift + Enter` |
+| Insert a code cell | `Ctrl + Shift + I` | `Cmd + Shift + I` |
+| Insert the native pipe | `Ctrl + Shift + M` | `Cmd + Shift + M` |
+| Insert the assignment `<-` | `Alt + -` | `Option + -` |
+| Comment or uncomment | `Ctrl + /` | `Cmd + /` |
+| Move a line up or down | `Alt + Up` or `Down` | `Option + Up` or `Down` |
+| Select every occurrence | `Ctrl + Shift + L` | `Cmd + Shift + L` |
+| Restart R | `Ctrl + Shift + 0` | `Cmd + Shift + 0` |
+
+: Positron shortcuts worth learning by heart. Every shortcut can be changed under Settings, Keyboard Shortcuts. {#tbl-positron-shortcuts}
+:::
+
+::: {.callout-tip}
+**Restart R often.**
+A fresh session forgets every object you created by hand, so it catches a missing step before the render does.
+:::
+
+## Quick tables with `janitor` {#sec-janitor-tabyl .smaller}
+
+::: notes
+Two minutes, show, don't practise.
+`tabyl()` counts and adds percentages, `adorn_totals()` adds the summary row, `kable()` makes it a table for the PDF.
+:::
+
+`janitor` is a small package outside the tidyverse (`install.packages("janitor")`, once), and its `tabyl()` is a fast way to a frequency table.
+
+```{r}
+#| label: tbl-janitor-continents
+#| tbl-cap: "Countries per continent in 2007, with a totals row. Africa holds over a third of the countries in gapminder, Oceania only two."
+#| code-fold: false
+#| output-location: column
+
+gapminder_2007 |>
+  tabyl(continent) |>
+  adorn_totals() |>
+  adorn_pct_formatting() |>
+  kable(
+    col.names = c("Continent", "Count", "Share")
+  )
+```
+
+# The grammar of graphics {#sec-grammar}
+
+## A plot is built in layers {#sec-layers .smaller}
+
+::: notes
+This table is the map for the whole session.
+Today we fill it in, row by row.
+:::
+
+::: {.small}
+| Layer | The question it answers | Example |
+|---|---|---|
+| **Data** | Which table? | `gapminder_2007` |
+| **Aesthetics** | Which variable goes where? | `aes(x = gdpPercap, y = lifeExp)` |
+| **Geoms** | Which marks represent the data? | `geom_point()` |
+| **Scales** | How do values become positions and colours? | `scale_x_log10()` |
+| **Facets** | Split into small panels? | `facet_wrap(~continent)` |
+| **Labels** | What does the reader read? | `labs(title = "...")` |
+| **Theme** | How does the non-data ink look? | `theme_classic()` |
+
+: The layers of a `ggplot2` figure. The first three are required, the rest refine the figure. {#tbl-layers}
+:::
+
+. . .
+
+This is the **grammar of graphics** [@wilkinson2005grammar; @wickham2010layered]: any figure is a combination of these few parts, so learning the parts teaches you every chart.
+
+## The data for today {#sec-data-2007 .smaller}
+
+One row per country, in the latest year of gapminder:
+
+```{r}
+#| label: data-2007
+#| code-fold: false
+
+gapminder_2007 <- gapminder |>
+  filter(year == 2007)
+gapminder_2007
+```
+
+. . .
+
+Our question for the next hour: **do people in richer countries live longer?**
+
+## Step 1: data, an empty canvas {#sec-build-canvas .smaller}
+
+```{r}
+#| label: fig-build-canvas
+#| fig-cap: "ggplot() with data alone draws an empty grey canvas: it knows the table, but not which variables to show."
+#| code-fold: false
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot()
+```
+
+## Step 2: aesthetics, the axes {#sec-build-aes .smaller}
+
+```{r}
+#| label: fig-build-aes
+#| fig-cap: "Mapping GDP per capita to x and life expectancy to y draws the axes, but there are still no marks."
+#| code-fold: false
+#| code-line-numbers: "2"
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp))
+```
+
+. . .
+
+::: {.small}
+`aes()` maps **variables** to **visual properties**, here the two positions.
+:::
+
+## Step 3: a geom, the marks {#sec-build-geom .smaller}
+
+```{r}
+#| label: fig-build-geom
+#| fig-cap: "With geom_point(), every country becomes one point: life expectancy rises steeply with income among poor countries and levels off among rich ones."
+#| code-fold: false
+#| code-line-numbers: "3"
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point()
+```
+
+. . .
+
+::: {.small}
+The first real plot.
+Most countries crowd into the left edge.
+:::
+
+## Step 4: a scale, the log axis {#sec-build-scale .smaller}
+
+```{r}
+#| label: fig-build-scale
+#| fig-cap: "On a log scale for GDP per capita, the crowded left edge spreads out and the relationship looks close to a straight line."
+#| code-fold: false
+#| code-line-numbers: "4"
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  scale_x_log10()
+```
+
+. . .
+
+::: {.small}
+On a log scale, equal steps multiply income.
+That fits the substance: an extra 1,000 dollars matters far more in Malawi than in Norway.
+:::
+
+## `+` adds a layer {#sec-plus .smaller}
+
+::: notes
+The most common first ggplot error in the room, guaranteed.
+:::
+
+- The pipe `|>` carries the **data into** `ggplot()`.
+- After that, `+` **stacks layers**: each line adds one thing to the figure.
+- The `+` goes at the **end** of a line, never at the start of the next.
+
+. . .
+
+```r
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp)) |>
+  geom_point()
+```
+
+```text
+Error in `geom_point()`:
+! `mapping` must be created by `aes()`.
+ℹ Did you use `%>%` or `|>` instead of `+`?
+```
+
+::: {.callout-warning}
+**`|>` after `ggplot()` is an error.**
+`ggplot2` is older than the pipe, so it chains with `+`, and the error message even tells you so.
+:::
+
+## Inside `aes()` or outside? {#sec-aes-inside-outside .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Outside:** a fixed value for every point.
+
+```{r}
+#| label: fig-aes-outside
+#| fig-cap: "colour set outside aes(): every point is the same blue."
+#| code-fold: false
+#| fig-width: 5
+#| fig-height: 2.7
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(colour = col_1) +
+  scale_x_log10()
+```
+:::
+
+::: {.column width="50%"}
+**Inside:** mapped to a variable.
+
+```{r}
+#| label: fig-aes-inside
+#| fig-cap: "colour mapped inside aes(): each continent gets its own colour, and a legend appears."
+#| code-fold: false
+#| fig-width: 5
+#| fig-height: 2.7
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp,
+             colour = continent)) +
+  geom_point() +
+  scale_x_log10()
+```
+:::
+
+::::
+
+::: notes
+Ask: what happens with `aes(colour = "blue")`?
+Red points, and a legend that says "blue": the text became a one-value variable.
+:::
+
+## Practice: your first plot {#sec-practice-grammar .smaller}
+
+::: notes
+Five minutes.
+Circulate, look for `|>` where `+` belongs.
+:::
+
+**Do this now.**
+
+1. Make a tibble `gapminder_1952` with the year 1952 only.
+2. Plot GDP per capita against life expectancy for 1952, with every point in one fixed colour of your choice and a log scale for GDP per capita.
+3. Compare with 2007.
+   What changed?
+4. **Stretch:** add a layer `geom_smooth()`.
+   What does it draw?
+
+## Practice: your first plot, solution {#sec-practice-grammar-solution .smaller}
+
+```{r}
+#| label: fig-practice-grammar
+#| fig-cap: "GDP per capita against life expectancy in 1952, with a smooth trend line. The cloud sits far lower and further left than in 2007."
+#| code-fold: false
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_1952 <- gapminder |>
+  filter(year == 1952)
+
+gapminder_1952 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(colour = "darkred") +
+  scale_x_log10() +
+  geom_smooth() # stretch
+```
+
+. . .
+
+::: {.small}
+The cloud moved **up and to the right**: in 1952 most countries lived below 50 years, in 2007 most above 70.
+`geom_smooth()` draws a smooth trend, with a grey band for its uncertainty.
+:::
+
+# One variable {#sec-one-variable}
+
+## Which chart for which variables? {#sec-chart-choice .smaller}
+
+::: notes
+The backbone of the next three sections.
+Do not read it, point at the row we are in.
+:::
+
+::: {.small}
+| Variables | Chart | Geom |
+|---|---|---|
+| One categorical | Bar chart | `geom_bar()` |
+| One numeric | Histogram, density plot | `geom_histogram()`, `geom_density()` |
+| Numeric and numeric | Scatter plot | `geom_point()` |
+| Numeric and categorical | Box plot, violin plot | `geom_boxplot()`, `geom_violin()` |
+| Numeric over time | Line plot | `geom_line()` |
+| A third variable or more | Colour, size, shape, panels | `aes()`, `facet_wrap()` |
+
+: Chart choice starts from the variables: how many, and of which type. {#tbl-chart-choice}
+:::
+
+. . .
+
+::: {.callout-tip}
+**Prefer position and length over angle, area and colour.**
+People compare positions on a common axis most accurately, and angles, areas and colour shades least accurately [@cleveland1984graphical].
+That ranking is the reason behind most of today's advice.
+:::
+
+## Bar chart: counts of a category {#sec-bar-chart .smaller}
+
+```{r}
+#| label: fig-bar-default
+#| fig-cap: "Countries per continent in 2007, in the default alphabetical order of the factor levels."
+#| code-fold: false
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = continent)) +
+  geom_bar()
+```
+
+. . .
+
+::: {.small}
+- `geom_bar()` **counts the rows** per category, so there is no `y` in `aes()`.
+- Bars show a value by their **length**, so they always start at zero.
+- The order is alphabetical.
+  Is that the order a reader needs?
+:::
+
+## Order is a decision: factors {#sec-factor-order .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-bar-infreq
+#| fig-cap: "fct_infreq() sorts the counts, most countries first."
+#| code-fold: false
+#| fig-width: 5
+#| fig-height: 1.9
+#| dpi: 500
+
+gapminder_2007 |>
+  mutate(continent = fct_infreq(continent)) |>
+  ggplot(aes(x = continent)) +
+  geom_bar()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-col-reorder
+#| fig-cap: "fct_reorder() sorts by a value, here the median life expectancy."
+#| code-fold: false
+#| fig-width: 5
+#| fig-height: 1.9
+#| dpi: 500
+
+gapminder_2007 |>
+  group_by(continent) |>
+  summarise(med_life = median(lifeExp)) |>
+  mutate(
+    continent = fct_reorder(continent, med_life)
+  ) |>
+  ggplot(aes(x = continent, y = med_life)) +
+  geom_col()
+```
+:::
+
+::::
+
+::: {.small}
+::: {.callout-tip}
+**Factors set the order of the categories in a plot.**
+`ggplot2` draws a factor in the order of its levels (week 3), alphabetical by default: change the levels, not the plot.
+:::
+:::
+
+::: notes
+`geom_col()` is `geom_bar()` for values you already computed: it takes a `y`.
+`fct_infreq()` and `fct_reorder()` come from `forcats`, loaded with the tidyverse.
+:::
+
+## Histogram: the shape of a variable {#sec-histogram .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-hist-narrow
+#| fig-cap: "Life expectancy in 2007 in bins of 1 year: noisy, every bin holds only a few countries."
+#| code-fold: false
+#| fig-width: 5
+#| fig-height: 2.4
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = lifeExp)) +
+  geom_histogram(binwidth = 1)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-hist-wide
+#| fig-cap: "The same data in bins of 5 years: two humps appear, around 50 and around 75 years."
+#| code-fold: false
+#| fig-width: 5
+#| fig-height: 2.4
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = lifeExp)) +
+  geom_histogram(binwidth = 5)
+```
+:::
+
+::::
+
+. . .
+
+::: {.small}
+A histogram cuts the axis into **bins** and counts the rows in each.
+The bin width is a decision: try several, and report the one that shows the shape honestly.
+:::
+
+## Density plot: the shape, smoothed {#sec-density .smaller}
+
+```{r}
+#| label: fig-density
+#| fig-cap: "A density plot of life expectancy in 2007, which shows the same two humps as the histogram as one smooth curve."
+#| code-fold: false
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = lifeExp)) +
+  geom_density(fill = col_1, alpha = 0.5)
+```
+
+. . .
+
+::: {.small}
+- A smooth version of the histogram, and the area under the curve is 1.
+- `alpha` sets transparency, from 0 (invisible) to 1 (solid).
+- From next week on, a curve like this says **how plausible each value is**.
+:::
+
+## Practice: one variable {#sec-practice-one-variable .smaller}
+
+::: notes
+Five minutes.
+:::
+
+**Do this now.**
+
+1. Draw a histogram of GDP per capita in 2007.
+   Describe its shape.
+2. Add `scale_x_log10()`.
+   How does the shape change?
+3. Draw a bar chart of the number of countries per continent in **1952**, sorted from most to fewest.
+4. **Stretch:** a density plot of GDP per capita in 2007 on the log scale.
+
+## Practice: one variable, solution {#sec-practice-one-variable-solution .smaller}
+
+::: {.small}
+:::: {.columns}
+
+::: {.column width="33%"}
+```{r}
+#| label: fig-practice-hist
+#| fig-cap: "GDP per capita in 2007 on a log scale: a roughly symmetric hump."
+#| code-fold: false
+#| fig-width: 3.4
+#| fig-height: 2.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap)) +
+  geom_histogram(bins = 20) +
+  scale_x_log10() # step 2
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+#| label: fig-practice-bar
+#| fig-cap: "Countries per continent in 1952, sorted, the same counts as in 2007."
+#| code-fold: false
+#| fig-width: 3.4
+#| fig-height: 2.2
+#| dpi: 500
+
+gapminder |>
+  filter(year == 1952) |>
+  mutate(
+    continent = fct_infreq(continent)
+  ) |>
+  ggplot(aes(x = continent)) +
+  geom_bar()
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+#| label: fig-practice-density
+#| fig-cap: "The stretch: a density plot of GDP per capita in 2007 on a log scale."
+#| code-fold: false
+#| fig-width: 3.4
+#| fig-height: 2.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap)) +
+  geom_density() +
+  scale_x_log10() # stretch
+```
+:::
+
+::::
+:::
+
+. . .
+
+::: {.small}
+Raw GDP per capita is **right-skewed**: many poor countries and a long tail of rich ones.
+On the log scale the shape is roughly symmetric, which is why income is so often analysed on a log scale.
+:::
+
+# Two variables {#sec-two-variables}
+
+## Numeric and numeric: scatter plot {#sec-scatter .smaller}
+
+```{r}
+#| label: fig-scatter-all-years
+#| fig-cap: "All 1704 country-years of gapminder. With alpha = 0.2, the dense regions show up darker instead of as a solid blob."
+#| code-fold: false
+#| code-line-numbers: "3"
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder |>
+  ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(alpha = 0.2) +
+  scale_x_log10()
+```
+
+. . .
+
+::: {.small}
+- Our running example, now for every year at once.
+- **Overplotting:** points drawn on top of each other hide how many there are.
+- Transparency is the simplest fix: where points overlap, the ink gets darker.
+:::
+
+## Numeric and categorical: box plot {#sec-boxplot .smaller}
+
+```{r}
+#| label: fig-boxplot
+#| fig-cap: "Life expectancy by continent in 2007, ordered by the median. Each box spans the middle half of the countries, and the points show every country."
+#| code-fold: false
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+set.seed(2026) # jitter is random
+
+gapminder_2007 |>
+  mutate(
+    continent = fct_reorder(continent, lifeExp)
+  ) |>
+  ggplot(aes(x = continent, y = lifeExp)) +
+  geom_boxplot(outliers = FALSE) +
+  geom_jitter(width = 0.15, alpha = 0.5)
+```
+
+. . .
+
+::: {.small}
+- The line is the **median**, the box holds the **middle half** of the countries.
+- With 2 to 52 countries per continent, **show the points**: `geom_jitter()` spreads them sideways.
+:::
+
+## The same data as a violin {#sec-violin .smaller}
+
+```{r}
+#| label: fig-violin
+#| fig-cap: "The same data as a violin plot: each shape is a density plot mirrored on its axis, so Africa's wide spread and Europe's tight cluster are visible at a glance."
+#| code-fold: false
+#| code-line-numbers: "8"
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+set.seed(2026) # jitter is random
+
+gapminder_2007 |>
+  mutate(
+    continent = fct_reorder(continent, lifeExp)
+  ) |>
+  ggplot(aes(x = continent, y = lifeExp)) +
+  geom_violin() +
+  geom_jitter(width = 0.15, alpha = 0.5)
+```
+
+. . .
+
+::: {.small}
+One line changed.
+A violin shows the **whole shape** of each distribution, a box only five numbers.
+:::
+
+::: notes
+Cut this slide first if time is short.
+Oceania's violin from two countries is a warning in itself.
+:::
+
+## Over time: line plot {#sec-line-plot .smaller}
+
+```{r}
+#| label: fig-line-germany
+#| fig-cap: "Life expectancy in Germany, 1952 to 2007: a steady rise of about 12 years over 55 years."
+#| code-fold: false
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder |>
+  filter(country == "Germany") |>
+  ggplot(aes(x = year, y = lifeExp)) +
+  geom_line() +
+  geom_point()
+```
+
+. . .
+
+::: {.small}
+- `geom_line()` connects the points **in the order of x**.
+- The points mark where the data are, which matters with only twelve years.
+- For **many** countries, add `group = country` to `aes()`, or ggplot joins them all into one zigzag.
+:::
+
+## Practice: two variables {#sec-practice-two-variables .smaller}
+
+::: notes
+Five minutes.
+:::
+
+**Do this now.**
+
+1. A box plot of GDP per capita by continent in 2007, ordered by the median, with every country as a point on top.
+2. A line plot of life expectancy in Germany over time.
+3. **Stretch:** Germany and Rwanda in one plot, one line each.
+   Hint: `%in%` and `colour = country`.
+   What happened in Rwanda?
+
+## Practice: two variables, solution {#sec-practice-two-variables-solution .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-practice-boxplot
+#| fig-cap: "GDP per capita by continent in 2007, on a log scale and ordered by the median."
+#| code-fold: false
+#| fig-width: 5
+#| fig-height: 2.4
+#| dpi: 500
+
+set.seed(2026)
+
+gapminder_2007 |>
+  mutate(
+    continent = fct_reorder(continent, gdpPercap)
+  ) |>
+  ggplot(aes(x = continent, y = gdpPercap)) +
+  geom_boxplot(outliers = FALSE) +
+  geom_jitter(width = 0.15, alpha = 0.5) +
+  scale_y_log10()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-practice-rwanda
+#| fig-cap: "Life expectancy in Germany and Rwanda. Rwanda's falls to 24 years in 1992, during the civil war and genocide."
+#| code-fold: false
+#| fig-width: 5
+#| fig-height: 2.4
+#| dpi: 500
+
+gapminder |>
+  filter(country %in% c("Germany", "Rwanda")) |>
+  ggplot(aes(x = year, y = lifeExp,
+             colour = country)) +
+  geom_line() +
+  geom_point()
+```
+:::
+
+::::
+
+::: notes
+The continents overlap far more than their medians suggest.
+A line plot shows what a mean hides: Rwanda's collapse and recovery.
+:::
+
+# Three and more variables {#sec-more-variables}
+
+## More aesthetics: colour and size {#sec-more-aesthetics .smaller}
+
+```{r}
+#| label: fig-bubble
+#| fig-cap: "Our running example with continent as colour and population as point size: the large Asian countries sit in the middle of the income range."
+#| code-fold: false
+#| code-line-numbers: "2-3"
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp,
+             colour = continent, size = pop)) +
+  geom_point(alpha = 0.7) +
+  scale_x_log10()
+```
+
+. . .
+
+::: {.small}
+Four variables in one figure: two positions, a colour and a size.
+This is Hans Rosling's famous chart.
+:::
+
+## Which aesthetic for which variable? {#sec-aesthetics-table .smaller}
+
+::: {.small}
+| Aesthetic | What it changes | Suits |
+|---|---|---|
+| `x`, `y` | Position | Any variable, and the most precise encoding |
+| `colour` | Colour of points and lines | Categories, or a numeric scale |
+| `fill` | Colour inside bars, boxes, areas | Categories, or a numeric scale |
+| `size` | Point size, line width | Numeric |
+| `shape` | Point shape | A few categories, at most about six |
+| `linetype` | Solid, dashed, dotted | A few categories |
+| `alpha` | Transparency | Mostly fixed, against overplotting |
+
+: The main aesthetics of `ggplot2` and the kind of variable each one suits. Inside `aes()` an aesthetic is mapped to a variable, outside it is a fixed value. {#tbl-aesthetics}
+:::
+
+::: {.callout-note}
+**`colour` or `color`?**
+`ggplot2` accepts both spellings.
+This course writes `colour`.
+:::
+
+## Redundant encoding {#sec-redundant-encoding .smaller}
+
+```{r}
+#| label: fig-redundant
+#| fig-cap: "Continent mapped to both colour and shape: the groups stay distinct for colourblind readers and in a black and white print."
+#| code-fold: false
+#| code-line-numbers: "3-4"
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp,
+             colour = continent,
+             shape = continent)) +
+  geom_point(size = 2) +
+  scale_x_log10()
+```
+
+. . .
+
+::: {.small}
+- About **1 in 12 men** has a red-green colour vision deficiency.
+- Encode an important variable **twice**, so colour is never the only cue.
+- Both mapped to one variable: `ggplot2` merges them into one legend.
+:::
+
+## Small multiples: `facet_wrap()` {#sec-facets .smaller}
+
+```{r}
+#| label: fig-facets
+#| fig-cap: "Our running example split into one panel per continent. All panels share the same axes, so the positions can be compared across continents."
+#| code-fold: false
+#| code-line-numbers: "5"
+#| fig-width: 10
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(alpha = 0.5) +
+  scale_x_log10() +
+  facet_wrap(~continent, nrow = 1)
+```
+
+. . .
+
+::: {.callout-tip}
+**Keep the scales fixed unless you have a reason.**
+`facet_wrap(~continent, scales = "free")` gives each panel its own axes, which shows detail within a panel but breaks every comparison across panels.
+:::
+
+## Practice: many variables {#sec-practice-many-variables .smaller}
+
+::: notes
+Five minutes.
+The solution is the starting point for the styling practice, so everybody should keep the code.
+:::
+
+**Do this now.**
+
+1. Plot life expectancy over time for **every** country, one line per country.
+   Use `group = country` and a low `alpha`.
+2. Split the plot into one panel per continent.
+3. **Stretch:** draw Rwanda on top in `col_2`, the orange of our palette (`col_2 <- "#E07B39"`).
+   Hint: a second `geom_line()` with its own `data =`.
+
+## Practice: many variables, solution {#sec-practice-many-variables-solution .smaller}
+
+```{r}
+#| label: fig-practice-facets
+#| fig-cap: "Life expectancy over time for all 142 countries, one panel per continent, with Rwanda in orange. Nearly every line rises, and the dips in Africa stand out."
+#| code-fold: false
+#| fig-width: 10
+#| fig-height: 3.2
+#| dpi: 500
+
+gapminder |>
+  ggplot(aes(x = year, y = lifeExp, group = country)) +
+  geom_line(alpha = 0.3) +
+  geom_line(
+    data = filter(gapminder, country == "Rwanda"),
+    colour = col_2,
+    linewidth = 1
+  ) + # stretch
+  facet_wrap(~continent, nrow = 1)
+```
+
+. . .
+
+::: {.small}
+Grey context plus one highlighted line answers the question every figure must answer: **compared to what?**
+:::
+
+# Styling: less ink, more information {#sec-styling}
+
+## Tufte: the data-ink ratio {#sec-data-ink .smaller}
+
+> Above all else show the data.
+>
+> Edward Tufte [-@tufte1983visual]
+
+```{r}
+#| label: fig-data-ink
+#| fig-cap: "The same data twice. Left, the default: grey panel, white grid, a legend to decode. Right, the background and minor grid are gone and the axes say what they show."
+#| echo: false
+#| fig-width: 10
+#| fig-height: 3
+#| dpi: 500
+
+p_default <- gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp, colour = continent)) +
+  geom_point() +
+  scale_x_log10()
+
+p_lean <- p_default +
+  scale_colour_viridis_d(end = 0.85) +
+  theme_classic() +
+  labs(x = "GDP per capita (US dollars, log scale)", y = "Life expectancy (years)", colour = NULL)
+
+p_default + p_lean
+```
+
+. . .
+
+::: {.small}
+**Data-ink** is the ink that shows data.
+Every other mark has to earn its place: remove what carries no information, and make deliberate choices about what stays.
+:::
+
+## Labels that say something {#sec-labels .smaller}
+
+```{r}
+#| label: fig-labels
+#| fig-cap: "Our running example with a title that states the finding, axis titles with units, a source caption and a readable legend title."
+#| code-fold: false
+#| code-line-numbers: "5-15"
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.4
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp,
+             colour = continent)) +
+  geom_point() +
+  scale_x_log10(
+    labels = scales::label_dollar(accuracy = 1)
+  ) +
+  labs(
+    title = "Richer countries live longer",
+    subtitle = "142 countries in 2007",
+    x = "GDP per capita (log scale)",
+    y = "Life expectancy (years)",
+    colour = "Continent",
+    caption = "Data: Gapminder"
+  )
+```
+
+. . .
+
+::: {.small}
+- The **title states the finding**, the subtitle says what is shown.
+- Axis titles carry **units**, the caption names the **source**.
+- `scales::label_dollar()` and friends format axis numbers.
+:::
+
+## Themes: the non-data ink {#sec-themes .smaller}
+
+```{r}
+#| label: fig-themes
+#| fig-cap: "One plot in four built-in themes. theme_minimal() and theme_classic() remove the most non-data ink, theme_void() removes even the axes."
+#| echo: false
+#| fig-width: 10
+#| fig-height: 2.6
+#| dpi: 500
+
+p_theme <- gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(size = 0.8) +
+  scale_x_log10() +
+  labs(x = NULL, y = NULL)
+
+(p_theme + theme_grey() + labs(title = "theme_grey(), the default")) +
+  (p_theme + theme_minimal() + labs(title = "theme_minimal()")) +
+  (p_theme + theme_classic() + labs(title = "theme_classic()")) +
+  (p_theme + theme_void() + labs(title = "theme_void()")) +
+  plot_layout(nrow = 1)
+```
+
+. . .
+
+A complete theme first, then `theme()` for single tweaks:
+
+```{r}
+#| label: theme-tweak
+#| code-fold: false
+#| eval: false
+
+# ... the rest of the plot, then:
+theme_classic(base_size = 14) +
+  theme(legend.position = "bottom")
+```
+
+::: {.small}
+`base_size` scales every text element at once.
+:::
+
+## Colour with intent {#sec-colour-palettes .smaller}
+
+::: {.small}
+| Palette | When | Example | In `ggplot2` |
+|---|---|---|---|
+| **Qualitative** | Categories without an order | Continent | `scale_colour_viridis_d()`, `scale_colour_brewer(palette = "Dark2")` |
+| **Sequential** | Ordered, from low to high | Life expectancy | `scale_colour_viridis_c()`, `scale_fill_distiller(palette = "Blues")` |
+| **Diverging** | Above or below a meaningful midpoint | Change since 1952, around 0 | `scale_fill_distiller(palette = "RdBu")`, `scale_colour_gradient2()` |
+
+: Three kinds of colour palette, each matched to a kind of variable. All of these scales are built into `ggplot2`. {#tbl-palettes}
+:::
+
+. . .
+
+::: {.callout-warning}
+**Never let red against green carry a distinction.**
+It is the pair colourblind readers confuse most.
+The viridis palettes stay distinct for most colour vision deficiencies and in greyscale.
+:::
+
+::: notes
+`end = 0.85` in the viridis scales drops the pale yellow end, which is hard to see on white.
+:::
+
+## Annotate what matters {#sec-annotate .smaller}
+
+```{r}
+#| label: fig-annotate
+#| fig-cap: "A reference line at the median life expectancy and one labelled outlier, South Africa."
+#| code-fold: false
+#| code-line-numbers: "1-3,8-16"
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.2
+#| dpi: 500
+
+median_life <- median(gapminder_2007$lifeExp)
+south_africa <- gapminder_2007 |>
+  filter(country == "South Africa")
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(colour = "grey60") +
+  geom_hline(yintercept = median_life,
+             linetype = "dashed") +
+  annotate("text", x = 300, y = 74,
+           label = "Median", hjust = 0) +
+  geom_point(data = south_africa,
+             colour = col_2) +
+  geom_text(data = south_africa,
+            aes(label = country), colour = col_2,
+            hjust = -0.1) +
+  scale_x_log10() +
+  theme_classic()
+```
+
+. . .
+
+::: {.small}
+`annotate()` adds a mark that is not in the data, `geom_text()` labels points from the data.
+Label **a few** points directly, so the reader need not hunt through a legend.
+:::
+
+## The finished figure {#sec-finished-figure .smaller}
+
+```{r}
+#| label: fig-finished
+#| fig-cap: "Life expectancy against GDP per capita for 142 countries in 2007. Life expectancy rises with income, steeply among poor countries and slowly among rich ones, and African countries sit below the trend at every income level."
+#| fig-width: 10
+#| fig-height: 4.2
+#| dpi: 500
+
+gapminder_2007 |>
+  ggplot(aes(x = gdpPercap, y = lifeExp, colour = continent, size = pop)) +
+  geom_point(alpha = 0.7) +
+  scale_x_log10(labels = scales::label_dollar(accuracy = 1)) +
+  scale_colour_viridis_d(end = 0.85) +
+  scale_size(range = c(1, 10), guide = "none") +
+  labs(
+    title = "Richer countries live longer, with flattening gains",
+    subtitle = "142 countries in 2007, point size proportional to population",
+    x = "GDP per capita (log scale, inflation-adjusted)",
+    y = "Life expectancy (years)",
+    colour = NULL,
+    caption = "Data: Gapminder, via the gapminder R package"
+  ) +
+  theme_classic(base_size = 13) +
+  theme(legend.position = "top")
+```
+
+::: notes
+Open "View source" and walk through it: every line is one of the layers from the first table.
+:::
+
+## Practice: make it publication-ready {#sec-practice-styling .smaller}
+
+::: notes
+Five minutes.
+Start from the faceted line plot of the last practice.
+:::
+
+**Do this now.**
+Start from your faceted line plot of life expectancy over time.
+
+1. A **title that states a finding**, and a subtitle that says what is shown.
+2. Axis titles with **units**, and a caption with the **source**.
+3. A built-in theme of your choice, then remove the minor grid lines.
+   Hint: `theme(panel.grid.minor = element_blank())`.
+4. **Stretch:** label Rwanda directly instead of explaining the orange line in the caption.
+
+## Practice: publication-ready, solution {#sec-practice-styling-solution .smaller}
+
+```{r}
+#| label: fig-practice-styling
+#| fig-cap: "The faceted line plot, styled for a reader: a finding as the title, units on the axes, the source in the caption and no minor grid."
+#| code-fold: false
+#| output-location: slide
+#| fig-width: 10
+#| fig-height: 4
+#| dpi: 500
+
+gapminder |>
+  ggplot(aes(x = year, y = lifeExp, group = country)) +
+  geom_line(alpha = 0.3) +
+  geom_line(
+    data = filter(gapminder, country == "Rwanda"),
+    colour = col_2,
+    linewidth = 1
+  ) +
+  geom_text(
+    data = filter(gapminder, country == "Rwanda", year == 1992),
+    aes(label = country),
+    colour = col_2,
+    hjust = 1.15
+  ) + # stretch
+  facet_wrap(~continent, nrow = 1) +
+  labs(
+    title = "Life expectancy rose almost everywhere, but not without setbacks",
+    subtitle = "142 countries, 1952 to 2007, one line per country",
+    x = NULL,
+    y = "Life expectancy (years)",
+    caption = "Data: Gapminder, via the gapminder R package"
+  ) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank())
+```
+
+::: notes
+The label is a `geom_text()` with a one-row data frame, so it lands in the Africa panel only.
+`annotate()` would print it in every panel, because it does not know about facets.
+:::
+
+# Common pitfalls: what is wrong here? {#sec-pitfalls}
+
+## How this works {#sec-pitfalls-how}
+
+- Six figures, all built from gapminder, all **deliberately bad**.
+- For each: what is wrong, and how would you fix it?
+- Talk to your neighbour for a minute, then we reveal.
+
+::: notes
+Ten minutes for the whole section.
+If time is short, skip the flat pie and the spaghetti.
+:::
+
+## Pitfall 1: the 3D pie {#sec-pitfall-3d-pie .smaller}
+
+```{r}
+#| label: pop-by-continent
+#| include: false
+
+pop_continent <- gapminder_2007 |>
+  group_by(continent) |>
+  summarise(pop_bn = sum(as.numeric(pop)) / 1e9)
+```
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-bad-3d-pie
+#| fig-cap: "A deliberately bad figure: world population by continent in 2007 as an exploded 3D pie."
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 3.6
+#| dpi: 500
+
+pie3D(
+  pop_continent$pop_bn,
+  labels = pop_continent$continent,
+  explode = 0.1,
+  theta = 0.6,
+  col = c(col_1, col_2, col_3, col_4, "grey60"),
+  labelcex = 1.1,
+  radius = 1.5
+)
+```
+:::
+
+::: {.column width="45%"}
+**What is wrong, and how would you fix it?**
+
+- **Depth distorts:** the front slices look bigger than the back ones.
+- Is Africa larger than the Americas?
+  The pie cannot tell you.
+- **Fix:** no 3D, ever, when the data have two dimensions.
+:::
+
+::::
+
+## Pitfall 2: the flat pie {#sec-pitfall-flat-pie .smaller}
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-bad-flat-pie
+#| fig-cap: "A deliberately bad figure: the same population shares as a flat pie chart."
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 3.6
+#| dpi: 500
+
+pop_continent |>
+  ggplot(aes(x = "", y = pop_bn, fill = continent)) +
+  geom_col() +
+  coord_polar(theta = "y") +
+  theme_void()
+```
+:::
+
+::: {.column width="45%"}
+**What is wrong, and how would you fix it?**
+
+- Better, but we read **angles** poorly, and Africa and the Americas still look equal.
+- Comparing two pies, say 1952 and 2007, is harder still.
+- **Fix:** turn the slices into bars on a common axis.
+:::
+
+::::
+
+## The fix for both pies {#sec-pitfall-pie-fix .smaller}
+
+```{r}
+#| label: fig-fix-pie
+#| fig-cap: "Population by continent in 2007 as sorted horizontal bars: Asia dwarfs the rest, and Africa is slightly ahead of the Americas, which no pie showed."
+#| fig-width: 10
+#| fig-height: 3.4
+#| dpi: 500
+
+pop_continent |>
+  mutate(continent = fct_reorder(continent, pop_bn)) |>
+  ggplot(aes(x = pop_bn, y = continent)) +
+  geom_col(fill = col_1) +
+  labs(
+    title = "Asia is home to most of the world's population",
+    x = "Population in 2007 (billions)",
+    y = NULL,
+    caption = "Data: Gapminder"
+  ) +
+  theme_classic()
+```
+
+::: notes
+Sorted with `fct_reorder()`, horizontal so the labels need no tilt.
+:::
+
+## Pitfall 3: the truncated axis {#sec-pitfall-truncated .smaller}
+
+```{r}
+#| label: life-three-continents
+#| include: false
+
+life_continent <- gapminder_2007 |>
+  filter(continent %in% c("Americas", "Europe", "Oceania")) |>
+  group_by(continent) |>
+  summarise(mean_life = mean(lifeExp))
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-bad-truncated
+#| fig-cap: "A deliberately bad figure: mean life expectancy in 2007, with the bars cut off at 72 years."
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| dpi: 500
+
+life_continent |>
+  ggplot(aes(x = continent, y = mean_life)) +
+  geom_col(fill = col_1) +
+  coord_cartesian(ylim = c(72, 81)) +
+  labs(x = NULL, y = "Mean life expectancy (years)")
+```
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+
+```{r}
+#| label: fig-fix-truncated
+#| fig-cap: "The fix: the same bars from zero. The differences are real, about 7 years, but nowhere near the fivefold gap the cut axis suggested."
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| dpi: 500
+
+life_continent |>
+  ggplot(aes(x = continent, y = mean_life)) +
+  geom_col(fill = col_1) +
+  labs(x = NULL, y = "Mean life expectancy (years)") +
+  theme_classic()
+```
+
+::: {.small}
+A bar shows a value by its **length**, so **bars start at zero**.
+Points and lines show position, so their axis may zoom in.
+:::
+:::
+:::
+
+::::
+
+## Pitfall 4: chartjunk {#sec-pitfall-chartjunk .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-bad-chartjunk
+#| fig-cap: "A deliberately bad figure: median life expectancy by continent with a dark theme, heavy borders and a redundant colour legend."
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| dpi: 500
+
+gapminder_2007 |>
+  group_by(continent) |>
+  summarise(median_life = median(lifeExp)) |>
+  ggplot(aes(x = continent, y = median_life, fill = median_life)) +
+  geom_col(colour = "black", linewidth = 1.5) +
+  geom_text(aes(label = round(median_life, 2)), vjust = -0.5, size = 5, fontface = "bold") +
+  scale_fill_gradient(low = "yellow", high = "red") +
+  labs(title = "MEDIAN LIFE EXPECTANCY!!!", x = "CONTINENT", y = "MEDIAN LIFE EXPECTANCY") +
+  theme_dark(base_size = 12) +
+  theme(
+    panel.grid.major = element_line(colour = "white", linewidth = 1),
+    panel.grid.minor = element_line(colour = "white", linewidth = 0.8),
+    plot.background = element_rect(fill = "lightyellow", colour = "black", linewidth = 3)
+  )
+```
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+
+```{r}
+#| label: fig-fix-chartjunk
+#| fig-cap: "The fix: the same data with only the ink that carries information, sorted, and with a title that says something."
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| dpi: 500
+
+gapminder_2007 |>
+  group_by(continent) |>
+  summarise(median_life = median(lifeExp)) |>
+  mutate(continent = fct_reorder(continent, median_life)) |>
+  ggplot(aes(x = continent, y = median_life)) +
+  geom_col(fill = col_1) +
+  labs(title = "Africa lags 20 years and more behind", x = NULL, y = "Median life expectancy (years)") +
+  theme_classic()
+```
+
+::: {.small}
+The colour repeats the height, the numbers repeat both, and the grid fights the bars.
+Erase non-data ink, then erase redundant ink.
+:::
+:::
+:::
+
+::::
+
+## Pitfall 5: colours that hide the data {#sec-pitfall-colours .smaller}
+
+```{r}
+#| label: life-by-continent-year
+#| include: false
+
+life_trend <- gapminder |>
+  group_by(continent, year) |>
+  summarise(mean_life = mean(lifeExp), .groups = "drop")
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-bad-colours
+#| fig-cap: "A deliberately bad figure: mean life expectancy per continent, with red and green lines told apart only through a legend."
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| dpi: 500
+
+life_trend |>
+  ggplot(aes(x = year, y = mean_life, colour = continent)) +
+  geom_line(linewidth = 1) +
+  scale_colour_manual(values = c("red3", "green4", "darkorange3", "forestgreen", "firebrick"))
+```
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+
+```{r}
+#| label: fig-fix-colours
+#| fig-cap: "The fix: a colourblind-safe palette, and each line labelled at its end instead of through a legend."
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| dpi: 500
+
+life_trend |>
+  ggplot(aes(x = year, y = mean_life, colour = continent)) +
+  geom_line(linewidth = 1) +
+  geom_text(
+    data = filter(life_trend, year == 2007),
+    aes(label = continent),
+    hjust = -0.1
+  ) +
+  scale_colour_viridis_d(end = 0.85, guide = "none") +
+  scale_x_continuous(limits = c(1952, 2020)) +
+  labs(x = NULL, y = "Mean life expectancy (years)") +
+  theme_classic()
+```
+
+::: {.small}
+Two reds and two greens: for a colourblind reader, four of the five lines merge.
+Direct labels remove the legend, and the decoding with it.
+:::
+:::
+:::
+
+::::
+
+## Pitfall 6: spaghetti {#sec-pitfall-spaghetti .smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-bad-spaghetti
+#| fig-cap: "A deliberately bad figure: 142 countries as 142 coloured lines. The legend is left out, because 142 entries would not fit on the slide."
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| dpi: 500
+
+gapminder |>
+  ggplot(aes(x = year, y = lifeExp, colour = country)) +
+  geom_line() +
+  theme(legend.position = "none")
+```
+:::
+
+::: {.column width="50%"}
+**What is wrong, and how would you fix it?**
+
+- You have already built the fix: your plot from the practice on many variables.
+- **Small multiples:** one panel per group.
+- **Grey context, one highlight:** the reader's eye goes where you send it.
+- Colour works for **a handful** of groups, not for 142.
+:::
+
+::::
+
+## Before you export: a checklist {#sec-checklist .smaller}
+
+::: {.small}
+| Check | Pitfall it prevents |
+|---|---|
+| Do the bars start at zero? | The truncated axis |
+| Are values shown by position and length, not angle, area or depth? | Pies, 3D |
+| Does every mark carry information? | Chartjunk |
+| Is colour readable for colourblind readers and in greyscale, and never the only cue? | Red against green |
+| Can the reader follow a few groups, through panels or a highlight? | Spaghetti |
+| Does the title state the finding, do the axes carry units, does the caption name the source? | A figure that says nothing |
+| Compared to what? | Data without context |
+
+: A short checklist before a figure leaves your hands, one line per pitfall from this section. {#tbl-checklist}
+:::
+
+# Wrap-up {#sec-wrap-up}
+
+## Summary {#sec-summary .smaller}
+
+Today we:
+
+- reviewed the **Positron shortcuts** and made a quick table with **`janitor`**
+- built a plot **layer by layer**: data, aesthetics, geoms, scales
+- chose charts for **one variable** (bar, histogram, density), **two** (scatter, box, violin, line) and **more** (colour, size, shape, facets)
+- set the **order of categories** with factors
+- styled a figure for a reader: **labels, themes, palettes, annotation**, with as little ink as possible
+- diagnosed and fixed **six common pitfalls**
+
+## Homework {#sec-homework .smaller}
+
+- `hw-05`: today's figures on real data, due 14 October.
+  Linked from the Schedule.
+- A sample solution is published after the due date.
+
+::: {.callout-important}
+**Individual feedback is only available through the opt-in path.**
+Add an open-source `license.md` to your submission repo to opt in.
+:::
+
+## Next week {#sec-next-week}
+
+**The logic of Bayesian inference**
+
+- From describing data to learning from it.
+- The density plot from today becomes a statement about how plausible each value of an unknown quantity is.
+
+# Bonus: a sneak peek at maps {#sec-bonus-maps}
+
+## Countries are shapes too {#sec-maps .smaller}
+
+::: notes
+Only if time is left, two minutes at most.
+Show, do not explain `sf` in depth.
+:::
+
+```{r}
+#| label: fig-map
+#| fig-cap: "Life expectancy in 2007 on a world map. A grey country found no match in the join: either gapminder does not cover it, such as Russia, or the two tables spell its name differently, such as the United States."
+#| code-fold: false
+#| output-location: column
+#| fig-width: 5.5
+#| fig-height: 3.6
+#| dpi: 500
+
+world <- ne_countries(returnclass = "sf") |>
+  filter(name != "Antarctica")
+
+world |>
+  left_join(gapminder_2007,
+            by = join_by(name == country)) |>
+  ggplot(aes(fill = lifeExp)) +
+  geom_sf(colour = "white", linewidth = 0.1) +
+  scale_fill_viridis_c(na.value = "grey85") +
+  labs(fill = "Life expectancy") +
+  theme_void() +
+  theme(legend.position = "bottom")
+```
+
+. . .
+
+::: {.small}
+::: {.callout-warning}
+**The United States is grey.**
+gapminder writes "United States", Natural Earth "United States of America": the join from last week, failing silently on a map.
+:::
+:::
+
+## Try it at home {#sec-maps-home .smaller}
+
+A map is a `ggplot()` like any other: the data are **simple features**, a table with one row per country and a column of shapes, and `geom_sf()` draws them.
+
+```{r}
+#| label: maps-install
+#| code-fold: false
+#| eval: false
+
+install.packages(c("sf", "rnaturalearth", "rnaturalearthdata")) # once, in the console
+
+library(sf) # simple features
+library(rnaturalearth) # country shapes
+```
+
+. . .
+
+Then run the code from the previous slide.
+The [`sf` documentation](https://r-spatial.github.io/sf/) has a gentle introduction, and the installation notes for your operating system.
+
+## References {#sec-references .smaller}
+
+::: {#refs}
+:::
+
+```{r}
+#| label: session-info
+#| include: false
+
+sessionInfo()
+Sys.time() - start_time
+```
