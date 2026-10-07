@@ -53,8 +53,11 @@ execution-time chunk, both `eval: true`.
 **Figures.** `ggplot2` is the plotting system, `theme_classic()` the default theme (native to
 ggplot2, so no extra package). `colour =`, not `color =` (`E011`). Always a `title =` in `labs()`.
 One plot per chunk. `patchwork` for multi-panel. `dpi: 500`. Colourblind-safe, readable in black
-and white, high information-to-ink ratio. Staged material and the spring solutions still call
-`theme_pubr()` from `ggpubr`. Switch them to `theme_classic()` when the week is converted.
+and white, high information-to-ink ratio. Code that teaches `ggplot2` itself (the week 5 deck,
+the hw-05 starter and solution) writes colours literally, as in `colour = "steelblue"`, never
+`col_1`: students copy that code and cannot see the setup chunk. Staged material and the spring
+solutions still call `theme_pubr()` from `ggpubr`. Switch them to `theme_classic()` when the
+week is converted.
 
 **Tables.** A static overview goes in a raw Markdown table. A computed table goes through
 `knitr::kable()`. Model output goes through `modelsummary`. Reach for `gt` only when the

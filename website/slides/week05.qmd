@@ -54,12 +54,6 @@ library(rnaturalearth) # country shapes, the maps bonus
 # _quarto.yml is a project-root marker, so anchor here() at the repo root.
 here::i_am("website/slides/week05.qmd")
 
-# Shared palette (.claude/r-code.md).
-col_1 <- "steelblue"
-col_2 <- "#E07B39"
-col_3 <- "#7B3F9E"
-col_4 <- "goldenrod3"
-
 # Short tibble printouts, so a result fits under its code on a slide.
 options(pillar.print_min = 5, pillar.print_max = 5, width = 70)
 
@@ -334,7 +328,7 @@ Error in `geom_point()`:
 
 gapminder_2007 |>
   ggplot(aes(x = gdpPercap, y = lifeExp)) +
-  geom_point(colour = col_1) +
+  geom_point(colour = "steelblue") +
   scale_x_log10()
 ```
 :::
@@ -574,7 +568,7 @@ The bin width is a decision: try several, and report the one that shows the shap
 
 gapminder_2007 |>
   ggplot(aes(x = lifeExp)) +
-  geom_density(fill = col_1, alpha = 0.5)
+  geom_density(fill = "steelblue", alpha = 0.5)
 ```
 
 . . .
@@ -964,7 +958,7 @@ The solution is the starting point for the styling practice, so everybody should
 1. Plot life expectancy over time for **every** country, one line per country.
    Use `group = country` and a low `alpha`.
 2. Split the plot into one panel per continent.
-3. **Stretch:** draw Rwanda on top in `col_2`, the orange of our palette (`col_2 <- "#E07B39"`).
+3. **Stretch:** draw Rwanda on top in orange (`colour = "#E07B39"`).
    Hint: a second `geom_line()` with its own `data =`.
 
 ## Practice: many variables, solution {#sec-practice-many-variables-solution .smaller}
@@ -982,7 +976,7 @@ gapminder |>
   geom_line(alpha = 0.3) +
   geom_line(
     data = filter(gapminder, country == "Rwanda"),
-    colour = col_2,
+    colour = "#E07B39",
     linewidth = 1
   ) + # stretch
   facet_wrap(~continent, nrow = 1)
@@ -1156,9 +1150,9 @@ gapminder_2007 |>
   annotate("text", x = 300, y = 74,
            label = "Median", hjust = 0) +
   geom_point(data = south_africa,
-             colour = col_2) +
+             colour = "#E07B39") +
   geom_text(data = south_africa,
-            aes(label = country), colour = col_2,
+            aes(label = country), colour = "#E07B39",
             hjust = -0.1) +
   scale_x_log10() +
   theme_classic()
@@ -1234,13 +1228,13 @@ gapminder |>
   geom_line(alpha = 0.3) +
   geom_line(
     data = filter(gapminder, country == "Rwanda"),
-    colour = col_2,
+    colour = "#E07B39",
     linewidth = 1
   ) +
   geom_text(
     data = filter(gapminder, country == "Rwanda", year == 1992),
     aes(label = country),
-    colour = col_2,
+    colour = "#E07B39",
     hjust = 1.15
   ) + # stretch
   facet_wrap(~continent, nrow = 1) +
@@ -1300,7 +1294,7 @@ pie3D(
   labels = pop_continent$continent,
   explode = 0.1,
   theta = 0.6,
-  col = c(col_1, col_2, col_3, col_4, "grey60"),
+  col = c("steelblue", "#E07B39", "#7B3F9E", "goldenrod3", "grey60"),
   labelcex = 1.1,
   radius = 1.5
 )
@@ -1361,7 +1355,7 @@ pop_continent |>
 pop_continent |>
   mutate(continent = fct_reorder(continent, pop_bn)) |>
   ggplot(aes(x = pop_bn, y = continent)) +
-  geom_col(fill = col_1) +
+  geom_col(fill = "steelblue") +
   labs(
     title = "Asia is home to most of the world's population",
     x = "Population in 2007 (billions)",
@@ -1400,7 +1394,7 @@ life_continent <- gapminder_2007 |>
 
 life_continent |>
   ggplot(aes(x = continent, y = mean_life)) +
-  geom_col(fill = col_1) +
+  geom_col(fill = "steelblue") +
   coord_cartesian(ylim = c(72, 81)) +
   labs(x = NULL, y = "Mean life expectancy (years)")
 ```
@@ -1419,7 +1413,7 @@ life_continent |>
 
 life_continent |>
   ggplot(aes(x = continent, y = mean_life)) +
-  geom_col(fill = col_1) +
+  geom_col(fill = "steelblue") +
   labs(x = NULL, y = "Mean life expectancy (years)") +
   theme_classic()
 ```
@@ -1479,7 +1473,7 @@ gapminder_2007 |>
   summarise(median_life = median(lifeExp)) |>
   mutate(continent = fct_reorder(continent, median_life)) |>
   ggplot(aes(x = continent, y = median_life)) +
-  geom_col(fill = col_1) +
+  geom_col(fill = "steelblue") +
   labs(title = "Africa lags 20 years and more behind", x = NULL, y = "Median life expectancy (years)") +
   theme_classic()
 ```
