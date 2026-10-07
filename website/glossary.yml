@@ -1315,3 +1315,11 @@
   docs:
     url: "https://r-spatial.github.io/sf/"
     label: "sf: simple features for R"
+
+- term: "Panel data"
+  week: 5
+  tags: [data]
+  def: |
+    Data that observe the same units again and again over time, such as countries in every year, so one row is one unit at one point in time.
+    A panel can show how each unit changes, which a single cross-section of one year cannot.
+  see: [gl-observation, gl-tidy-data]

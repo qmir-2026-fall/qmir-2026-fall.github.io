@@ -1,0 +1,408 @@
+---
+title: "Homework 05: Visualising democracy with V-Dem"
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+#| label: setup
+
+start_time <- Sys.time()
+
+# Install once, in the Console, not here:
+# install.packages("pak")
+# pak::pak("vdeminstitute/vdemdata")
+
+library(tidyverse) # wrangling and visualization
+library(janitor) # quick tables with tabyl()
+library(vdemdata) # the V-Dem dataset
+
+set.seed(2026)
+
+# One row per country and year, from 1950 on.
+vdem_df <- vdem |>
+  as_tibble() |>
+  filter(year >= 1950) |>
+  transmute(
+    country = country_name,
+    year,
+    continent = case_match(
+      e_regiongeo,
+      1:4 ~ "Europe",
+      5:9 ~ "Africa",
+      10:14 ~ "Asia",
+      15 ~ "Oceania",
+      16:19 ~ "Americas"
+    ),
+    regime = factor(
+      case_match(
+        v2x_regime,
+        0 ~ "Closed autocracy",
+        1 ~ "Electoral autocracy",
+        2 ~ "Electoral democracy",
+        3 ~ "Liberal democracy"
+      ),
+      levels = c(
+        "Closed autocracy",
+        "Electoral autocracy",
+        "Electoral democracy",
+        "Liberal democracy"
+      )
+    ),
+    libdem = v2x_libdem,
+    polyarchy = v2x_polyarchy,
+    liberal = v2x_liberal,
+    egaldem = v2x_egaldem,
+    partipdem = v2x_partipdem,
+    freexp = v2x_freexp_altinf,
+    corruption = v2x_corr,
+    women = v2x_gender,
+    gdp_pc = e_gdppc,
+    pop = e_pop / 100
+  )
+```
+
+# The data {#sec-data}
+
+This homework repeats the week 5 session on new data.
+Instead of gapminder, you explore how democracy has changed since 1950, over time and across continents.
+
+The data come from **V-Dem** (Varieties of Democracy), which measures democracy in almost every country of the world since 1789.
+The package `vdemdata` ships the whole dataset as one data frame, `vdem`, with more than 4,000 columns.
+The setup chunk above has already selected the columns you need, renamed them and stored them in `vdem_df`.
+Read it before you start.
+`transmute()` works like `mutate()` but keeps only the columns it creates, and `case_match()` turns V-Dem's number codes into readable categories.
+
+| Column | What it measures | Scale |
+|---|---|---|
+| `country`, `year` | The country and the year | |
+| `continent` | Built from V-Dem's geographic region, like gapminder's `continent` | Five categories |
+| `regime` | Regimes of the World: closed autocracy, electoral autocracy, electoral democracy, liberal democracy | Ordered categories |
+| `libdem` | Liberal democracy index: free elections plus civil liberties, rule of law and checks on the executive | 0 (low) to 1 (high) |
+| `polyarchy` | Electoral democracy index: free and fair elections | 0 to 1 |
+| `liberal` | Liberal component: civil liberties, rule of law, checks on the executive | 0 to 1 |
+| `egaldem` | Egalitarian democracy index | 0 to 1 |
+| `partipdem` | Participatory democracy index | 0 to 1 |
+| `freexp` | Freedom of expression and alternative sources of information | 0 to 1 |
+| `corruption` | Political corruption index, where **higher means more corrupt**, unlike every other index | 0 to 1 |
+| `women` | Women's political empowerment index | 0 to 1 |
+| `gdp_pc` | GDP per capita, a model-based estimate whose unit is not US dollars, so compare countries by ratios rather than differences | Ends in 2019 |
+| `pop` | Population in millions, a model-based estimate | Ends in 2019 |
+
+: The columns of `vdem_df`, built in the setup chunk from the V-Dem dataset. {#tbl-vdem-columns}
+
+Use AI tools to explain an error message or a function, not to write your answers.
+The point of this homework is the practice.
+
+# Explore {#sec-explore}
+
+1. `glimpse()` `vdem_df`.
+   How many rows and columns does it have, and what is one row?
+2. How many countries does it cover, and which years?
+   `count(country)` returns one row per country, as in homework 04, so `nrow()` of it is the number of countries.
+   `summarise()` with `min()` and `max()` returns the first and the last year.
+
+```{r}
+#| label: ex-explore
+```
+
+3. Answer in prose: data that observe the same units again and again over time are called **panel data**.
+   Name one question you could answer with `vdem_df` that you could not answer with data from a single year.
+
+4. Create `vdem_2025`, the rows of the most recent year, and make a quick table of `regime` with `tabyl()` and `adorn_totals()`, as in class.
+   Which regime type is the most common in 2025?
+5. `gdp_pc` and `pop` end in 2019.
+   Check this: count the non-missing values of `gdp_pc` in every year from 2016 to 2022.
+   Hint: `summarise(n_gdp = sum(!is.na(gdp_pc)))` after a `group_by(year)`.
+6. Create `vdem_2019`, the rows of 2019.
+   Every figure that uses `gdp_pc` or `pop` uses `vdem_2019`.
+
+```{r}
+#| label: ex-explore-years
+```
+
+# The grammar of graphics {#sec-grammar}
+
+1. Build a scatter plot of `libdem` against `gdp_pc` in `vdem_2019` the way we did in class, one layer at a time: the data, then the aesthetics, then a geom, then `scale_x_log10()`.
+   Run the code after every layer, and keep only the final figure in the chunk.
+
+```{r}
+#| label: ex-grammar-build
+```
+
+2. In one sentence each: what did each of the four layers add?
+3. Why does a log scale suit GDP per capita?
+   Look at the figure with and without it.
+
+4. Draw the same scatter plot twice: once with every point in one fixed colour of your choice, and once with each continent in its own colour.
+   Which of the two sets `colour` inside `aes()`, and which outside?
+
+```{r}
+#| label: ex-grammar-colour-outside
+```
+
+```{r}
+#| label: ex-grammar-colour-inside
+```
+
+5. **Before running anything**, predict what `aes(colour = "blue")` does.
+   Then run it and explain what you see.
+
+```{r}
+#| label: ex-grammar-colour-blue
+```
+
+# One variable {#sec-one-variable}
+
+1. Draw a bar chart of `regime` in `vdem_2025`.
+   The bars follow the order of the factor levels set in the setup chunk, from the least to the most democratic regime.
+   Here the alphabet happens to give the same order.
+   Why is it still worth setting the order explicitly?
+
+```{r}
+#| label: ex-bar
+```
+
+2. The category names overlap on the x-axis.
+   Map `regime` to `y` instead of `x` and see what happens.
+
+```{r}
+#| label: ex-bar-horizontal
+```
+
+3. Draw a histogram of `libdem` in `vdem_2025`, once with `binwidth = 0.1` and once with `binwidth = 0.02`.
+   Describe the shape of the distribution in one or two sentences.
+   Which bin width shows it better, and why?
+
+```{r}
+#| label: ex-histogram-wide
+```
+
+```{r}
+#| label: ex-histogram-narrow
+```
+
+4. Draw a density plot of `libdem` in `vdem_2025`, filled with a colour of your choice, with `alpha = 0.5`.
+   What does the density plot show less clearly than the histogram?
+
+```{r}
+#| label: ex-density
+```
+
+5. **Stretch:** compare the distribution of `libdem` in 1975 with the one in 2025 in one density plot.
+   Hint: filter both years, and map `fill = factor(year)`.
+
+```{r}
+#| label: ex-density-stretch
+```
+
+# Two variables {#sec-two-variables}
+
+1. Draw a scatter plot of `libdem` against `corruption` in `vdem_2025`.
+   Describe the relationship in one or two sentences, and remember which way `corruption` runs.
+
+```{r}
+#| label: ex-scatter
+```
+
+2. Draw a box plot of `libdem` by `continent` in `vdem_2025`.
+   Then draw the same data as a violin, with the countries as jittered points on top.
+   What does the violin with points show that the box plot hides?
+
+```{r}
+#| label: ex-boxplot
+```
+
+```{r}
+#| label: ex-violin
+```
+
+3. Pick three countries that interest you and draw a line plot of their `libdem` over time, one colour per country.
+   Hint: `%in%` and `colour = country`, as in class.
+   Describe one turning point you see, and what you think happened.
+
+```{r}
+#| label: ex-line
+```
+
+# Three and more variables {#sec-more-variables}
+
+1. Extend the scatter plot of `libdem` against `gdp_pc` in `vdem_2019`: map `continent` to colour and `pop` to point size.
+   How many variables does the figure show now?
+
+```{r}
+#| label: ex-colour-size
+```
+
+2. Encode `continent` redundantly, with colour and point shape.
+   Why does that help?
+
+```{r}
+#| label: ex-redundant
+```
+
+3. Plot `libdem` over time for **every** country, one line per country, with one panel per continent.
+   Use `group = country` and a low `alpha`.
+4. **Stretch:** draw one country of your choice on top, in a colour that stands out against the others.
+   Hint: a second `geom_line()` with its own `data =`.
+
+```{r}
+#| label: ex-facets
+```
+
+5. In two sentences: which continents saw the largest changes, and when?
+
+# Styling: less ink, more information {#sec-styling}
+
+1. Make the faceted line plot from @sec-more-variables publication-ready:
+   - a title that states a finding, and a subtitle that says what is plotted
+   - axis labels with units, or no label where the axis speaks for itself
+   - a caption with the source: `"Source: V-Dem dataset v16."`
+   - `theme_classic()`
+   - if you did the stretch, a label for your country with `geom_text()`
+
+```{r}
+#| label: ex-styled-facets
+```
+
+2. Annotate the scatter plot of `libdem` against `gdp_pc` in `vdem_2019`:
+   - every country in one muted colour, such as a grey
+   - a dashed horizontal line at the median of `libdem`, labelled with `annotate()`
+   - one country of your choice highlighted in a contrasting colour, labelled with its name
+   - `theme_classic()` and readable labels
+
+```{r}
+#| label: ex-annotate
+```
+
+3. Redo the scatter plot with colour and size from @sec-more-variables with a colourblind-safe palette: `scale_colour_viridis_d(end = 0.85)`.
+   Why `end = 0.85`?
+   Try the plot without it.
+
+```{r}
+#| label: ex-viridis
+```
+
+# Common pitfalls: what is wrong here? {#sec-pitfalls}
+
+The two figures below are deliberately bad.
+Run them, and use the checklist from the end of the week 5 slides.
+
+```{r}
+#| label: fig-bad-lines
+#| fig-cap: "A deliberately bad figure: mean liberal democracy by continent since 1950."
+
+vdem_df |>
+  group_by(continent, year) |>
+  summarise(mean_libdem = mean(libdem, na.rm = TRUE), .groups = "drop") |>
+  ggplot(aes(x = year, y = mean_libdem, colour = continent)) +
+  geom_line(linewidth = 1.5) +
+  scale_colour_manual(
+    values = c("red3", "green4", "darkorange3", "forestgreen", "firebrick")
+  ) +
+  theme_dark()
+```
+
+```{r}
+#| label: fig-bad-bars
+#| fig-cap: "A deliberately bad figure: mean liberal democracy by continent in 2025."
+
+vdem_df |>
+  filter(year == 2025) |>
+  group_by(continent) |>
+  summarise(mean_libdem = mean(libdem, na.rm = TRUE)) |>
+  ggplot(aes(x = continent, y = mean_libdem, fill = continent)) +
+  geom_col() +
+  coord_cartesian(ylim = c(0.2, 0.6))
+```
+
+1. List at least two problems in @fig-bad-lines and at least two in @fig-bad-bars.
+   For each, say what a reader would get wrong.
+2. Fix both figures.
+   The cells below already carry figure labels.
+   Replace each placeholder `fig-cap` with a caption that a reader can understand without the text.
+
+```{r}
+#| label: fig-fix-lines
+#| fig-cap: "Replace this with your caption."
+```
+
+```{r}
+#| label: fig-fix-bars
+#| fig-cap: "Replace this with your caption."
+```
+
+# Your figure: a data summary {#sec-figure}
+
+::: {.callout-important}
+**This section is step 2 of the workflow, the data summary.**
+In week 4 the data summary was a table.
+Here it is a figure that answers a precise question, and a reader should understand it without your code.
+:::
+
+**The question.**
+How has the share of countries in each regime type changed since 1950, and does the pattern differ by continent?
+
+1. Write **one pipeline**, starting from `vdem_df`, that:
+   - drops the rows without a `regime`
+   - counts the countries per `continent`, `year` and `regime`
+   - turns each count into a share of the countries on that continent in that year
+
+   Assign the result to `regime_shares`, and run the pipeline after every new line, as in class.
+   Hint: `count(continent, year, regime)`, then `group_by(continent, year)` and `mutate(share = n / sum(n))`.
+   End with `complete(continent, year, regime, fill = list(n = 0, share = 0))`: a regime type that no country had in some year has no row, and `geom_area()` needs one with a share of zero.
+
+```{r}
+#| label: ex-regime-shares
+```
+
+2. Plot `regime_shares` as a figure for a reader: the share on the y-axis, the year on the x-axis, `regime` as the fill colour, and one panel per continent.
+   `geom_area()` stacks the shares on top of each other, as a stacked bar chart stacks counts.
+   Style it as in @sec-styling, with a viridis palette.
+   The cell below already carries the label `fig-regimes`.
+   Replace its placeholder `fig-cap` with a caption that a reader can understand without the text.
+
+```{r}
+#| label: fig-regimes
+#| fig-cap: "Replace this with your caption."
+```
+
+3. Below the figure, write three to four sentences that answer the question.
+   - Reference the figure with `@fig-regimes`.
+   - Put at least one number into a sentence with inline code, so that it updates when the data does.
+   - Name one thing the figure hides, or one reason to read it with care.
+     Think about what one country counts for (India and Fiji count the same), and about which units V-Dem counts in 1950, when much of Africa and Asia was still under colonial rule.
+
+# Reflection {#sec-reflection .unnumbered}
+
+Which figure took you longest, and why?
+Is there a part of `ggplot2` you are still unsure about?
+
+# Session info and execution time {#sec-session .unnumbered}
+
+```{r}
+#| label: session-info
+
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+
+end_time <- Sys.time()
+cat(
+  "Total execution time:",
+  round(difftime(end_time, start_time, units = "mins"), 1),
+  "minutes\n"
+)
+```

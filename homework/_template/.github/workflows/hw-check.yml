@@ -32,8 +32,11 @@ jobs:
         id: deps
         run: |
           # `|| true`: a base-R homework has no library() calls, and grep then exits 1.
+          # The second sed maps packages that are not on CRAN to their GitHub source.
           pkgs=$( { grep -ohE '^\s*library\(([A-Za-z0-9.]+)\)' hw-*.qmd || true; } \
-                 | sed -E 's/.*library\(([A-Za-z0-9.]+)\).*/any::\1/' | sort -u | tr '\n' ' ')
+                 | sed -E 's/.*library\(([A-Za-z0-9.]+)\).*/any::\1/' \
+                 | sed -E 's#^any::vdemdata$#github::vdeminstitute/vdemdata#' \
+                 | sort -u | tr '\n' ' ')
           echo "Packages: $pkgs"
           echo "pkgs=$pkgs" >> "$GITHUB_OUTPUT"
       - uses: r-lib/actions/setup-r-dependencies@v2

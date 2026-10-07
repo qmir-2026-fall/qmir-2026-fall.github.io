@@ -1,0 +1,12 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Dates are the session date for week 05 and the +7 day offset from course.yml.
+# No data/ files ship: the starter loads V-Dem from the vdemdata package, which is on GitHub
+# only. hw-check.yml maps library(vdemdata) to github::vdeminstitute/vdemdata for the CI render.
+slug: hw-05
+week: "05"
+title: "Homework 05: Visualising democracy with V-Dem"
+released: 2026-10-07
+due: 2026-10-14
+# Which of the 8 workflow steps this homework exercises: the data summary, as a figure.
+steps: [2]
+data: []
