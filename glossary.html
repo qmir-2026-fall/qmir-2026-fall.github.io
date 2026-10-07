@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -395,6 +414,18 @@ Tip
 <section id="sec-glossary-a" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-a">A</h2>
 <dl>
+<dt><span id="gl-aesthetic-mapping">Aesthetic mapping</span></dt>
+<dd>
+The link between a variable and a visual property of a plot, such as position, colour, size or shape, written inside <code>aes()</code>. Inside <code>aes()</code> a property follows the data, outside it is one fixed value for every mark.
+Documentation: <a href="https://ggplot2.tidyverse.org/reference/aes.html">ggplot2: aesthetic mappings</a>
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-annotation">Annotation</span></dt>
+<dd>
+Marks added to a figure that are not rows of the data, such as a text note, a reference line or a label on a single point. Annotate the few things the reader should notice, not everything, so the annotation carries information instead of clutter.
+See also: <a href="#gl-data-ink-ratio">Data-ink ratio</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">interpretation</span>
+</dd>
 <dt><span id="gl-array-and-tensor">Array and tensor</span></dt>
 <dd>
 The generalisation of a matrix to three or more dimensions, created in R with <code>array()</code>. In mathematics it is called a tensor and written in calligraphic as <span class="math inline">\(\mathcal{X}\)</span>, and this course rarely needs one.
@@ -412,11 +443,23 @@ Documentation: <a href="https://search.r-project.org/R/refmans/base/html/assignO
 <section id="sec-glossary-b" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-b">B</h2>
 <dl>
+<dt><span id="gl-bar-chart">Bar chart</span></dt>
+<dd>
+A chart that shows a value per category by the length of a bar, either a count of rows or a value computed beforehand. Because length carries the value, bars start at zero, and their order is a decision, set through the levels of a <a href="#gl-factor">factor</a>.
+See also: <a href="#gl-truncated-axis">Truncated axis</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
 <dt><span id="gl-base-r">Base R</span></dt>
 <dd>
 The functions R ships with before any package is installed, such as <code>mean()</code>, <code>round()</code> and <code>data.frame()</code>. Everything in week 3 was base R.
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/00Index.html">R documentation: the base package</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-box-plot">Box plot</span></dt>
+<dd>
+A compact summary of a numeric variable, often one box per group: the line marks the <a href="#gl-median">median</a>, the box holds the middle half of the observations, and whiskers and points show the rest. With few observations, draw the points themselves on top, because a box hides how many there are.
+See also: <a href="#gl-violin-plot">Violin plot</a>, <a href="#gl-jitter">Jitter</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
 </dl>
 </section>
@@ -446,6 +489,18 @@ R’s type for text, also called a string, always written in quotes: <code>"Germ
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/character.html">R documentation: character vectors</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-chartjunk">Chartjunk</span></dt>
+<dd>
+Tufte’s word for decoration in a figure that carries no information and distracts from the data: 3D effects, heavy borders, gradients, ornamental grids <span class="citation" data-cites="tufte1983visual">(<a href="#ref-tufte1983visual" role="doc-biblioref">Tufte 1983</a>)</span>. It lowers the <a href="#gl-data-ink-ratio">data-ink ratio</a> and often distorts what the reader perceives.
+See also: <a href="#gl-graphical-perception">Graphical perception</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">interpretation</span>
+</dd>
+<dt><span id="gl-choropleth">Choropleth</span></dt>
+<dd>
+A map that colours each area, such as a country, by the value of a variable. The values usually arrive through a <a href="#gl-join">join</a> by name, so an area without a match shows up empty, which looks like missing data but may be a spelling difference.
+See also: <a href="#gl-simple-features">Simple features</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
 <dt><span id="gl-clone">Clone</span></dt>
 <dd>
 Making a local copy of a <a href="#gl-remote">remote</a> repository, including its full history. It is how a homework repository gets from GitHub onto your computer.
@@ -468,6 +523,13 @@ The documentation of a dataset, listing every variable with what it measures, it
 <dd>
 R changing values from one <a href="#gl-data-type">type</a> to another automatically, most often when a vector mixes types, without anyone asking for it. <code>c(1, 2, "three")</code> becomes all text and <code>c(1, TRUE, FALSE)</code> becomes the numbers 1, 1 and 0, whereas <a href="#gl-type-conversion">type conversion</a> is the same change made on purpose.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-colour-palette">Colour palette</span></dt>
+<dd>
+The set of colours a figure uses for a variable, matched to its kind: qualitative for categories without an order, sequential for values from low to high, diverging for values above and below a meaningful midpoint. Avoid letting red against green carry a distinction, and prefer palettes such as viridis that stay distinct for colourblind readers and in greyscale.
+See also: <a href="#gl-redundant-encoding">Redundant encoding</a>.
+Documentation: <a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">ggplot2: viridis colour scales</a>
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
 <dt><span id="gl-column-type">Column type</span></dt>
 <dd>
@@ -565,6 +627,12 @@ See also: <a href="#gl-double-and-integer">Double and integer</a>, <a href="#gl-
 Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Basic-types">R Language Definition: basic types</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-data-ink-ratio">Data-ink ratio</span></dt>
+<dd>
+Edward Tufte’s measure of a figure: the share of its ink that shows data rather than decoration <span class="citation" data-cites="tufte1983visual">(<a href="#ref-tufte1983visual" role="doc-biblioref">Tufte 1983</a>)</span>. Raising it means removing every mark that carries no information, such as heavy grids, backgrounds and redundant legends, and choosing deliberately what stays.
+See also: <a href="#gl-chartjunk">Chartjunk</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">interpretation</span>
+</dd>
 <dt><span id="gl-date">Date</span></dt>
 <dd>
 R’s type for calendar dates, created from text in the form year-month-day, as in <code>as.Date("1957-03-25")</code>. A date knows about the calendar, so dates can be sorted and subtracted.
@@ -575,6 +643,11 @@ Documentation: <a href="https://search.r-project.org/R/refmans/base/html/Dates.h
 <dd>
 The value an argument takes when the call does not supply one, set in the function definition, as <code>digits = 0</code> is for <code>round()</code>. It is why many functions work with a single argument, and the Usage section of a <a href="#gl-help-page">help page</a> lists every default.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-density-plot">Density plot</span></dt>
+<dd>
+A smooth curve estimated from the data that shows the shape of a numeric variable, an alternative to the <a href="#gl-histogram">histogram</a> without bins. The area under the curve is 1, so its height is a <a href="#gl-probability-density">probability density</a>, not a count.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">probability</span>
 </dd>
 <dt><span id="gl-diff">Diff</span></dt>
 <dd>
@@ -659,6 +732,12 @@ Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro
 <section id="sec-glossary-g" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-g">G</h2>
 <dl>
+<dt><span id="gl-geom">Geom</span></dt>
+<dd>
+The kind of mark that represents the data in a plot, such as points, lines, bars or boxes, added as a <code>geom_*()</code> layer. Several geoms can be stacked on the same <a href="#gl-aesthetic-mapping">aesthetic mappings</a>, for example points with a line through them.
+Documentation: <a href="https://ggplot2.tidyverse.org/reference/index.html#layers">ggplot2: layers</a>
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
+</dd>
 <dt><span id="gl-git">Git</span></dt>
 <dd>
 A free and open-source distributed <a href="#gl-version-control">version control</a> system that records the history of a project as a series of <a href="#gl-commit">commits</a>. It answers what changed, when, and why, and it lets you go back.
@@ -670,6 +749,17 @@ Documentation: <a href="https://git-scm.com/book/en/v2/Getting-Started-What-is-G
 A cloud-based platform where you can store, share and work together with others on <a href="#gl-git">Git</a> repositories. Git is the version control system on your computer, and GitHub is the service that hosts the <a href="#gl-remote">remote</a> copy, which is how homework is distributed and submitted in this course.
 Documentation: <a href="https://docs.github.com/en/get-started/start-your-journey/about-github-and-git">GitHub Docs: about GitHub and Git</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
+</dd>
+<dt><span id="gl-grammar-of-graphics">Grammar of graphics</span></dt>
+<dd>
+The idea that every statistical figure is built from the same few parts: data, <a href="#gl-aesthetic-mapping">aesthetic mappings</a>, <a href="#gl-geom">geoms</a>, <a href="#gl-scale">scales</a>, facets, labels and a <a href="#gl-theme">theme</a> <span class="citation" data-cites="wilkinson2005grammar wickham2010layered">(<a href="#ref-wilkinson2005grammar" role="doc-biblioref">Wilkinson 2005</a>; <a href="#ref-wickham2010layered" role="doc-biblioref">Wickham 2010</a>)</span>. <code>ggplot2</code> implements it, so a plot starts with <code>ggplot()</code> and grows one <a href="#gl-layer">layer</a> at a time with <code>+</code>.
+Documentation: <a href="https://ggplot2.tidyverse.org/">ggplot2</a>
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-graphical-perception">Graphical perception</span></dt>
+<dd>
+How accurately readers decode the visual encodings of a chart: positions on a common axis and lengths best, angles, areas, depth and colour shades worst <span class="citation" data-cites="cleveland1984graphical">(<a href="#ref-cleveland1984graphical" role="doc-biblioref">Cleveland and McGill 1984</a>)</span>. It is the reason pie charts and 3D charts mislead, and why most charts show values by position or length.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">interpretation</span>
 </dd>
 <dt><span id="gl-grouped-summary">Grouped summary</span></dt>
 <dd>
@@ -687,6 +777,12 @@ Documentation: <a href="https://dplyr.tidyverse.org/articles/grouping.html">dply
 The documentation every R function has, opened with <code>?mean</code> or <code>help(mean)</code>. Its sections say what the function does, which arguments it takes and their defaults (Usage and Arguments) and what it returns (Value), and the Examples at the bottom are usually the fastest way in.
 Documentation: <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Getting-help-with-functions-and-features">An Introduction to R: getting help</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-histogram">Histogram</span></dt>
+<dd>
+A chart of one numeric variable that cuts its range into bins and draws a bar for the number of observations in each. The bin width is a choice that changes what the shape seems to say, so try several, and compare it with a smooth <a href="#gl-probability-density">density</a> curve.
+See also: <a href="#gl-density-plot">Density plot</a>, <a href="#gl-skewed-distribution">Skewed distribution</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">probability</span>
 </dd>
 </dl>
 </section>
@@ -716,6 +812,11 @@ Documentation: <a href="https://quarto.org/docs/computations/inline-code.html">Q
 <section id="sec-glossary-j" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-j">J</h2>
 <dl>
+<dt><span id="gl-jitter">Jitter</span></dt>
+<dd>
+Small random shifts added to the position of points so that points on top of each other become visible, a remedy for <a href="#gl-overplotting">overplotting</a>. Because the shifts are random, set a seed with <code>set.seed()</code> so the figure looks the same on every render.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
+</dd>
 <dt><span id="gl-join">Join</span></dt>
 <dd>
 Combining two tables by matching rows on a shared <a href="#gl-key">key</a>, so the result has the columns of both. The four joins differ only in which rows survive when a key has no partner: a left join keeps every row of the first table, a right join every row of the second, an inner join only the matches, and a full join everything.
@@ -749,6 +850,23 @@ A high-quality typesetting system, the last layer of a PDF render, which turns t
 Documentation: <a href="https://www.latex-project.org/">The LaTeX Project</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
+<dt><span id="gl-layer">Layer</span></dt>
+<dd>
+One component of a <code>ggplot2</code> figure, such as a <a href="#gl-geom">geom</a>, a <a href="#gl-scale">scale</a> or a <a href="#gl-theme">theme</a>, stacked onto the plot with <code>+</code>. The <a href="#gl-native-pipe">native pipe</a> only carries the data into <code>ggplot()</code>, and every step after that is a layer added with <code>+</code>.
+See also: <a href="#gl-grammar-of-graphics">Grammar of graphics</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-legend-and-direct-labels">Legend and direct labels</span></dt>
+<dd>
+A legend is the key that decodes an <a href="#gl-aesthetic-mapping">aesthetic mapping</a>, such as which colour stands for which continent. Direct labels write the name next to the data instead, which spares the reader from looking back and forth.
+See also: <a href="#gl-annotation">Annotation</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-line-plot">Line plot</span></dt>
+<dd>
+A chart that connects points in the order of the x axis, the natural choice for change over time. With several units, such as countries, each needs its own line through a grouping variable, and <a href="#gl-small-multiples">small multiples</a> keep many lines readable.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
 <dt><span id="gl-list">List</span></dt>
 <dd>
 R’s flexible container, created with <code>list()</code>, which can hold anything, including other lists. You will rarely build one yourself, but every fitted model in this course comes back as one.
@@ -764,6 +882,12 @@ Writing code, the prose that explains it and its results in a single document, s
 <dd>
 The copy of a repository on your own computer, where you edit files and make commits. Your commits live only here until you <a href="#gl-push-and-pull">push</a> them to the <a href="#gl-remote">remote</a>.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
+</dd>
+<dt><span id="gl-log-scale">Log scale</span></dt>
+<dd>
+An axis on which equal distances multiply the value instead of adding to it, so the steps from 1,000 to 10,000 and from 10,000 to 100,000 are equally long. It spreads out a <a href="#gl-skewed-distribution">right-skewed</a> variable such as income, where an extra dollar matters more to the poor than to the rich.
+See also: <a href="#gl-scale">Scale</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
 <dt><span id="gl-logical">Logical</span></dt>
 <dd>
@@ -890,6 +1014,11 @@ The kind of document a <a href="#gl-render">render</a> produces, such as HTML, P
 Documentation: <a href="https://quarto.org/docs/output-formats/all-formats.html">Quarto: all formats</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
+<dt><span id="gl-overplotting">Overplotting</span></dt>
+<dd>
+Marks drawn on top of each other, so a plot hides how many observations sit in one place. Transparency, small points, jitter or <a href="#gl-small-multiples">small multiples</a> make the hidden density visible again.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
 </dl>
 </section>
 <section id="sec-glossary-p" class="level2">
@@ -958,6 +1087,11 @@ Documentation: <a href="https://quarto.org/docs/get-started/hello/positron.html"
 <section id="sec-glossary-r" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-r">R</h2>
 <dl>
+<dt><span id="gl-redundant-encoding">Redundant encoding</span></dt>
+<dd>
+Showing the same variable through two visual properties at once, such as colour and point shape, so that colour is never the only cue. It keeps a figure readable for colourblind readers and in a black and white print.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
 <dt><span id="gl-remote">Remote</span></dt>
 <dd>
 A version of your repository hosted on the internet, normally on <a href="#gl-github">GitHub</a>, that you push to and pull from. The remote is what makes the work shared rather than local.
@@ -1014,6 +1148,17 @@ A complete worked answer to a homework, published for everyone after the due dat
 A single value, written in italic lowercase as <span class="math inline">\(x\)</span> in this course. R has no scalars: a single value is a <a href="#gl-vector">vector</a> of length 1, so everything that works on a vector works on one value too.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-scale">Scale</span></dt>
+<dd>
+The rule that turns data values into visual values: positions on an axis, colours, sizes, and the breaks and labels of axes and legends. A log scale, for example, gives equal space to every multiplication of a value, which suits skewed variables such as income.
+Documentation: <a href="https://ggplot2.tidyverse.org/reference/index.html#scales">ggplot2: scales</a>
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-scatter-plot">Scatter plot</span></dt>
+<dd>
+A chart of two numeric variables, one point per observation, which shows the direction, shape and strength of their relationship. With many points, watch for <a href="#gl-overplotting">overplotting</a>.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
 <dt><span id="gl-scientific-notation">Scientific notation</span></dt>
 <dd>
 Writing a very large or very small number as a number times a power of ten, where <code>e</code> means “times ten to the”: <code>1e6</code> is a million and <code>2.5e-3</code> is 0.0025. R prints large numbers this way too, so <code>8.4e+07</code> is 84 million.
@@ -1024,6 +1169,24 @@ Documentation: <a href="https://search.r-project.org/R/refmans/base/html/Numeric
 <dd>
 Signal is the real pattern in the world that we want to learn about, and noise is random variation from measurement or data collection. Telling the two apart, and saying how certain we can be that we have, is the fundamental task of learning from data.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">interpretation</span>
+</dd>
+<dt><span id="gl-simple-features">Simple features</span></dt>
+<dd>
+The standard way to store geographic shapes as a column of a table, one row per area, so maps work with the same verbs as any other data. In R the <code>sf</code> package reads them, and <code>ggplot2</code> draws them with <code>geom_sf()</code>.
+See also: <a href="#gl-choropleth">Choropleth</a>.
+Documentation: <a href="https://r-spatial.github.io/sf/">sf: simple features for R</a>
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-skewed-distribution">Skewed distribution</span></dt>
+<dd>
+A distribution with a long tail on one side, such as income: many small values and a few very large ones make it right-skewed. In a skewed variable the <a href="#gl-mean-and-standard-deviation">mean</a> is pulled towards the tail, so the <a href="#gl-median">median</a> or a <a href="#gl-log-scale">log scale</a> often describes it better.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-small-multiples">Small multiples</span></dt>
+<dd>
+A series of small panels that show the same plot for each group, with the same axes, so the eye can compare them at a glance. In <code>ggplot2</code> they are made with <code>facet_wrap()</code> or <code>facet_grid()</code>, and free axes per panel trade cross-panel comparison for detail within a panel.
+Documentation: <a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">ggplot2: facet_wrap()</a>
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
 </dd>
 <dt><span id="gl-source-control-pane">Source Control pane</span></dt>
 <dd>
@@ -1069,6 +1232,13 @@ Documentation: <a href="https://docs.github.com/en/repositories/creating-and-man
 A text interface to your computer’s operating system, where you type commands such as <code>ls</code> (list files), <code>cd</code> (change directory, <code>cd ..</code> for one folder up) and <code>clear</code>. It is not the <a href="#gl-console">console</a>: the terminal runs system commands such as <code>quarto render</code>, and the console runs R.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span>
 </dd>
+<dt><span id="gl-theme">Theme</span></dt>
+<dd>
+The look of everything in a plot that is not data: background, grid lines, fonts and the position of the legend. Pick a complete theme first, such as <code>theme_classic()</code>, the course default, then adjust single elements with <code>theme()</code>.
+See also: <a href="#gl-data-ink-ratio">Data-ink ratio</a>.
+Documentation: <a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">ggplot2: complete themes</a>
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
 <dt><span id="gl-tidy-data">Tidy data</span></dt>
 <dd>
 Data in which every column is a <a href="#gl-variable">variable</a>, every row is an <a href="#gl-observation">observation</a>, and every cell holds a single value. Most tools assume this shape, and most of the work of an analysis is getting data into it.
@@ -1082,6 +1252,11 @@ An opinionated collection of R packages designed for data science, which share a
 See also: <a href="#gl-tidy-data">Tidy data</a>, <a href="#gl-data-cycle">Data cycle</a>.
 Documentation: <a href="https://www.tidyverse.org/packages/">tidyverse: packages</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-truncated-axis">Truncated axis</span></dt>
+<dd>
+An axis that starts well above zero, which exaggerates differences when values are shown as lengths, as in a <a href="#gl-bar-chart">bar chart</a>. For points and lines, which show values by position, zooming in on the range of the data is fine.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">interpretation</span>
 </dd>
 <dt><span id="gl-type-conversion">Type conversion</span></dt>
 <dd>
@@ -1129,6 +1304,11 @@ A system that records changes to a file or set of files over time, so that you c
 Documentation: <a href="https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control">Pro Git: about version control</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
+<dt><span id="gl-violin-plot">Violin plot</span></dt>
+<dd>
+A <a href="#gl-density-plot">density plot</a> per group, mirrored around its axis, so each group’s whole distribution is visible side by side. It shows shape, such as two peaks, where a <a href="#gl-box-plot">box plot</a> shows only five numbers, but with very few observations the smooth shape can mislead.
+<span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
 </dl>
 </section>
 <section id="sec-glossary-w" class="level2">
@@ -1175,9 +1355,23 @@ gets its own {#gl-...} anchor, so entries can link to each other with [text](#gl
 -->
 
 
+
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-cleveland1984graphical" class="csl-entry" role="listitem">
+Cleveland, William S., and Robert McGill. 1984. <span>“Graphical Perception: Theory, Experimentation, and Application to the Development of Graphical Methods.”</span> <em>Journal of the American Statistical Association</em> 79 (387): 531–54. <a href="https://doi.org/10.1080/01621459.1984.10478080">https://doi.org/10.1080/01621459.1984.10478080</a>.
+</div>
+<div id="ref-tufte1983visual" class="csl-entry" role="listitem">
+Tufte, Edward R. 1983. <em>The Visual Display of Quantitative Information</em>. Graphics Press.
+</div>
+<div id="ref-wickham2010layered" class="csl-entry" role="listitem">
+Wickham, Hadley. 2010. <span>“A Layered Grammar of Graphics.”</span> <em>Journal of Computational and Graphical Statistics</em> 19 (1): 3–28. <a href="https://doi.org/10.1198/jcgs.2009.07098">https://doi.org/10.1198/jcgs.2009.07098</a>.
+</div>
+<div id="ref-wilkinson2005grammar" class="csl-entry" role="listitem">
+Wilkinson, Leland. 2005. <em>The Grammar of Graphics</em>. 2nd ed. Springer. <a href="https://doi.org/10.1007/0-387-28695-0">https://doi.org/10.1007/0-387-28695-0</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
