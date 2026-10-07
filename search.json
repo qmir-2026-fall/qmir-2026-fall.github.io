@@ -1572,7 +1572,7 @@
     "href": "slides/week05.html#sec-aes-inside-outside",
     "title": "Week 5: Data visualisation",
     "section": "Inside aes() or outside?",
-    "text": "Inside aes() or outside?\n\n\nOutside: a fixed value for every point.\n\ngapminder_2007 |&gt;\n  ggplot(aes(x = gdpPercap, y = lifeExp)) +\n  geom_point(colour = col_1) +\n  scale_x_log10()\n\n\n\n\n\n\n\nFigure 5: colour set outside aes(): every point is the same blue.\n\n\n\n\n\n\nInside: mapped to a variable.\n\ngapminder_2007 |&gt;\n  ggplot(aes(x = gdpPercap, y = lifeExp,\n             colour = continent)) +\n  geom_point() +\n  scale_x_log10()\n\n\n\n\n\n\n\nFigure 6: colour mapped inside aes(): each continent gets its own colour, and a legend appears.\n\n\n\n\n\n\n\nAsk: what happens with aes(colour = \"blue\")? Red points, and a legend that says “blue”: the text became a one-value variable."
+    "text": "Inside aes() or outside?\n\n\nOutside: a fixed value for every point.\n\ngapminder_2007 |&gt;\n  ggplot(aes(x = gdpPercap, y = lifeExp)) +\n  geom_point(colour = \"steelblue\") +\n  scale_x_log10()\n\n\n\n\n\n\n\nFigure 5: colour set outside aes(): every point is the same blue.\n\n\n\n\n\n\nInside: mapped to a variable.\n\ngapminder_2007 |&gt;\n  ggplot(aes(x = gdpPercap, y = lifeExp,\n             colour = continent)) +\n  geom_point() +\n  scale_x_log10()\n\n\n\n\n\n\n\nFigure 6: colour mapped inside aes(): each continent gets its own colour, and a legend appears.\n\n\n\n\n\n\n\nAsk: what happens with aes(colour = \"blue\")? Red points, and a legend that says “blue”: the text became a one-value variable."
   },
   {
     "objectID": "slides/week05.html#sec-practice-grammar",
@@ -1621,7 +1621,7 @@
     "href": "slides/week05.html#sec-density",
     "title": "Week 5: Data visualisation",
     "section": "Density plot: the shape, smoothed",
-    "text": "Density plot: the shape, smoothed\n\n\ngapminder_2007 |&gt;\n  ggplot(aes(x = lifeExp)) +\n  geom_density(fill = col_1, alpha = 0.5)\n\n\n\n\n\n\n\n\nFigure 13: A density plot of life expectancy in 2007, which shows the same two humps as the histogram as one smooth curve.\n\n\n\n\n\n\n\n\nA smooth version of the histogram, and the area under the curve is 1.\nalpha sets transparency, from 0 (invisible) to 1 (solid).\nFrom next week on, a curve like this says how plausible each value is."
+    "text": "Density plot: the shape, smoothed\n\n\ngapminder_2007 |&gt;\n  ggplot(aes(x = lifeExp)) +\n  geom_density(fill = \"steelblue\", alpha = 0.5)\n\n\n\n\n\n\n\n\nFigure 13: A density plot of life expectancy in 2007, which shows the same two humps as the histogram as one smooth curve.\n\n\n\n\n\n\n\n\nA smooth version of the histogram, and the area under the curve is 1.\nalpha sets transparency, from 0 (invisible) to 1 (solid).\nFrom next week on, a curve like this says how plausible each value is."
   },
   {
     "objectID": "slides/week05.html#sec-practice-one-variable",
@@ -1712,14 +1712,14 @@
     "href": "slides/week05.html#sec-practice-many-variables",
     "title": "Week 5: Data visualisation",
     "section": "Practice: many variables",
-    "text": "Practice: many variables\n\nFive minutes. The solution is the starting point for the styling practice, so everybody should keep the code.\n\nDo this now.\n\nPlot life expectancy over time for every country, one line per country. Use group = country and a low alpha.\nSplit the plot into one panel per continent.\nStretch: draw Rwanda on top in col_2, the orange of our palette (col_2 &lt;- \"#E07B39\"). Hint: a second geom_line() with its own data =."
+    "text": "Practice: many variables\n\nFive minutes. The solution is the starting point for the styling practice, so everybody should keep the code.\n\nDo this now.\n\nPlot life expectancy over time for every country, one line per country. Use group = country and a low alpha.\nSplit the plot into one panel per continent.\nStretch: draw Rwanda on top in orange (colour = \"#E07B39\"). Hint: a second geom_line() with its own data =."
   },
   {
     "objectID": "slides/week05.html#sec-practice-many-variables-solution",
     "href": "slides/week05.html#sec-practice-many-variables-solution",
     "title": "Week 5: Data visualisation",
     "section": "Practice: many variables, solution",
-    "text": "Practice: many variables, solution\n\ngapminder |&gt;\n  ggplot(aes(x = year, y = lifeExp, group = country)) +\n  geom_line(alpha = 0.3) +\n  geom_line(\n    data = filter(gapminder, country == \"Rwanda\"),\n    colour = col_2,\n    linewidth = 1\n  ) + # stretch\n  facet_wrap(~continent, nrow = 1)\n\n\n\nFigure 26: Life expectancy over time for all 142 countries, one panel per continent, with Rwanda in orange. Nearly every line rises, and the dips in Africa stand out.\n\n\nGrey context plus one highlighted line answers the question every figure must answer: compared to what?"
+    "text": "Practice: many variables, solution\n\ngapminder |&gt;\n  ggplot(aes(x = year, y = lifeExp, group = country)) +\n  geom_line(alpha = 0.3) +\n  geom_line(\n    data = filter(gapminder, country == \"Rwanda\"),\n    colour = \"#E07B39\",\n    linewidth = 1\n  ) + # stretch\n  facet_wrap(~continent, nrow = 1)\n\n\n\nFigure 26: Life expectancy over time for all 142 countries, one panel per continent, with Rwanda in orange. Nearly every line rises, and the dips in Africa stand out.\n\n\nGrey context plus one highlighted line answers the question every figure must answer: compared to what?"
   },
   {
     "objectID": "slides/week05.html#sec-data-ink",
@@ -1754,7 +1754,7 @@
     "href": "slides/week05.html#sec-annotate",
     "title": "Week 5: Data visualisation",
     "section": "Annotate what matters",
-    "text": "Annotate what matters\n\n\nmedian_life &lt;- median(gapminder_2007$lifeExp)\nsouth_africa &lt;- gapminder_2007 |&gt;\n  filter(country == \"South Africa\")\n\ngapminder_2007 |&gt;\n  ggplot(aes(x = gdpPercap, y = lifeExp)) +\n  geom_point(colour = \"grey60\") +\n  geom_hline(yintercept = median_life,\n             linetype = \"dashed\") +\n  annotate(\"text\", x = 300, y = 74,\n           label = \"Median\", hjust = 0) +\n  geom_point(data = south_africa,\n             colour = col_2) +\n  geom_text(data = south_africa,\n            aes(label = country), colour = col_2,\n            hjust = -0.1) +\n  scale_x_log10() +\n  theme_classic()\n\n\n\n\n\n\n\n\nFigure 30: A reference line at the median life expectancy and one labelled outlier, South Africa.\n\n\n\n\n\n\n\nannotate() adds a mark that is not in the data, geom_text() labels points from the data. Label a few points directly, so the reader need not hunt through a legend."
+    "text": "Annotate what matters\n\n\nmedian_life &lt;- median(gapminder_2007$lifeExp)\nsouth_africa &lt;- gapminder_2007 |&gt;\n  filter(country == \"South Africa\")\n\ngapminder_2007 |&gt;\n  ggplot(aes(x = gdpPercap, y = lifeExp)) +\n  geom_point(colour = \"grey60\") +\n  geom_hline(yintercept = median_life,\n             linetype = \"dashed\") +\n  annotate(\"text\", x = 300, y = 74,\n           label = \"Median\", hjust = 0) +\n  geom_point(data = south_africa,\n             colour = \"#E07B39\") +\n  geom_text(data = south_africa,\n            aes(label = country), colour = \"#E07B39\",\n            hjust = -0.1) +\n  scale_x_log10() +\n  theme_classic()\n\n\n\n\n\n\n\n\nFigure 30: A reference line at the median life expectancy and one labelled outlier, South Africa.\n\n\n\n\n\n\n\nannotate() adds a mark that is not in the data, geom_text() labels points from the data. Label a few points directly, so the reader need not hunt through a legend."
   },
   {
     "objectID": "slides/week05.html#sec-finished-figure",
@@ -1775,7 +1775,7 @@
     "href": "slides/week05.html#sec-practice-styling-solution",
     "title": "Week 5: Data visualisation",
     "section": "Practice: publication-ready, solution",
-    "text": "Practice: publication-ready, solution\n\ngapminder |&gt;\n  ggplot(aes(x = year, y = lifeExp, group = country)) +\n  geom_line(alpha = 0.3) +\n  geom_line(\n    data = filter(gapminder, country == \"Rwanda\"),\n    colour = col_2,\n    linewidth = 1\n  ) +\n  geom_text(\n    data = filter(gapminder, country == \"Rwanda\", year == 1992),\n    aes(label = country),\n    colour = col_2,\n    hjust = 1.15\n  ) + # stretch\n  facet_wrap(~continent, nrow = 1) +\n  labs(\n    title = \"Life expectancy rose almost everywhere, but not without setbacks\",\n    subtitle = \"142 countries, 1952 to 2007, one line per country\",\n    x = NULL,\n    y = \"Life expectancy (years)\",\n    caption = \"Data: Gapminder, via the gapminder R package\"\n  ) +\n  theme_minimal() +\n  theme(panel.grid.minor = element_blank())\n\n\n\nThe label is a geom_text() with a one-row data frame, so it lands in the Africa panel only. annotate() would print it in every panel, because it does not know about facets."
+    "text": "Practice: publication-ready, solution\n\ngapminder |&gt;\n  ggplot(aes(x = year, y = lifeExp, group = country)) +\n  geom_line(alpha = 0.3) +\n  geom_line(\n    data = filter(gapminder, country == \"Rwanda\"),\n    colour = \"#E07B39\",\n    linewidth = 1\n  ) +\n  geom_text(\n    data = filter(gapminder, country == \"Rwanda\", year == 1992),\n    aes(label = country),\n    colour = \"#E07B39\",\n    hjust = 1.15\n  ) + # stretch\n  facet_wrap(~continent, nrow = 1) +\n  labs(\n    title = \"Life expectancy rose almost everywhere, but not without setbacks\",\n    subtitle = \"142 countries, 1952 to 2007, one line per country\",\n    x = NULL,\n    y = \"Life expectancy (years)\",\n    caption = \"Data: Gapminder, via the gapminder R package\"\n  ) +\n  theme_minimal() +\n  theme(panel.grid.minor = element_blank())\n\n\n\nThe label is a geom_text() with a one-row data frame, so it lands in the Africa panel only. annotate() would print it in every panel, because it does not know about facets."
   },
   {
     "objectID": "slides/week05.html#sec-practice-styling-solution-output",
@@ -1810,7 +1810,7 @@
     "href": "slides/week05.html#sec-pitfall-pie-fix",
     "title": "Week 5: Data visualisation",
     "section": "The fix for both pies",
-    "text": "The fix for both pies\n\n\nView source\npop_continent |&gt;\n  mutate(continent = fct_reorder(continent, pop_bn)) |&gt;\n  ggplot(aes(x = pop_bn, y = continent)) +\n  geom_col(fill = col_1) +\n  labs(\n    title = \"Asia is home to most of the world's population\",\n    x = \"Population in 2007 (billions)\",\n    y = NULL,\n    caption = \"Data: Gapminder\"\n  ) +\n  theme_classic()\n\n\n\n\nFigure 35: Population by continent in 2007 as sorted horizontal bars: Asia dwarfs the rest, and Africa is slightly ahead of the Americas, which no pie showed.\n\nSorted with fct_reorder(), horizontal so the labels need no tilt."
+    "text": "The fix for both pies\n\n\nView source\npop_continent |&gt;\n  mutate(continent = fct_reorder(continent, pop_bn)) |&gt;\n  ggplot(aes(x = pop_bn, y = continent)) +\n  geom_col(fill = \"steelblue\") +\n  labs(\n    title = \"Asia is home to most of the world's population\",\n    x = \"Population in 2007 (billions)\",\n    y = NULL,\n    caption = \"Data: Gapminder\"\n  ) +\n  theme_classic()\n\n\n\n\nFigure 35: Population by continent in 2007 as sorted horizontal bars: Asia dwarfs the rest, and Africa is slightly ahead of the Americas, which no pie showed.\n\nSorted with fct_reorder(), horizontal so the labels need no tilt."
   },
   {
     "objectID": "slides/week05.html#sec-pitfall-truncated",

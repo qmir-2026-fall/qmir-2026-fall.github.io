@@ -1700,7 +1700,7 @@ display:block!important;
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>gapminder_2007 <span class="sc">|&gt;</span></span>
 <span id="cb10-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> gdpPercap, <span class="at">y =</span> lifeExp)) <span class="sc">+</span></span>
-<span id="cb10-3"><a></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> col_1) <span class="sc">+</span></span>
+<span id="cb10-3"><a></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> <span class="st">&quot;steelblue&quot;</span>) <span class="sc">+</span></span>
 <span id="cb10-4"><a></a>  <span class="fu">scale_x_log10</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-aes-outside" class="quarto-float quarto-figure quarto-figure-center">
@@ -2057,7 +2057,7 @@ Figure 12: The same data in bins of 5 years: two humps appear, around 50 and ar
 <div class="column">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>gapminder_2007 <span class="sc">|&gt;</span></span>
 <span id="cb18-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> lifeExp)) <span class="sc">+</span></span>
-<span id="cb18-3"><a></a>  <span class="fu">geom_density</span>(<span class="at">fill =</span> col_1, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb18-3"><a></a>  <span class="fu">geom_density</span>(<span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div id="fig-density" class="quarto-float quarto-figure quarto-figure-center">
@@ -2608,7 +2608,7 @@ display:block!important;
 <ol type="1">
 <li class="fragment">Plot life expectancy over time for <strong>every</strong> country, one line per country. Use <code>group = country</code> and a low <code>alpha</code>.</li>
 <li class="fragment">Split the plot into one panel per continent.</li>
-<li class="fragment"><strong>Stretch:</strong> draw Rwanda on top in <code>col_2</code>, the orange of our palette (<code>col_2 &lt;- &quot;#E07B39&quot;</code>). Hint: a second <code>geom_line()</code> with its own <code>data =</code>.</li>
+<li class="fragment"><strong>Stretch:</strong> draw Rwanda on top in orange (<code>colour = &quot;#E07B39&quot;</code>). Hint: a second <code>geom_line()</code> with its own <code>data =</code>.</li>
 </ol>
 </section>
 <section id="sec-practice-many-variables-solution" class="slide level2 smaller">
@@ -2619,7 +2619,7 @@ display:block!important;
 <span id="cb31-3"><a></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
 <span id="cb31-4"><a></a>  <span class="fu">geom_line</span>(</span>
 <span id="cb31-5"><a></a>    <span class="at">data =</span> <span class="fu">filter</span>(gapminder, country <span class="sc">==</span> <span class="st">&quot;Rwanda&quot;</span>),</span>
-<span id="cb31-6"><a></a>    <span class="at">colour =</span> col_2,</span>
+<span id="cb31-6"><a></a>    <span class="at">colour =</span> <span class="st">&quot;#E07B39&quot;</span>,</span>
 <span id="cb31-7"><a></a>    <span class="at">linewidth =</span> <span class="dv">1</span></span>
 <span id="cb31-8"><a></a>  ) <span class="sc">+</span> <span class="co"># stretch</span></span>
 <span id="cb31-9"><a></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>continent, <span class="at">nrow =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2807,9 +2807,9 @@ display:block!important;
 <span id="cb34-10"><a></a>  <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x =</span> <span class="dv">300</span>, <span class="at">y =</span> <span class="dv">74</span>,</span>
 <span id="cb34-11"><a></a>           <span class="at">label =</span> <span class="st">&quot;Median&quot;</span>, <span class="at">hjust =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
 <span id="cb34-12"><a></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> south_africa,</span>
-<span id="cb34-13"><a></a>             <span class="at">colour =</span> col_2) <span class="sc">+</span></span>
+<span id="cb34-13"><a></a>             <span class="at">colour =</span> <span class="st">&quot;#E07B39&quot;</span>) <span class="sc">+</span></span>
 <span id="cb34-14"><a></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> south_africa,</span>
-<span id="cb34-15"><a></a>            <span class="fu">aes</span>(<span class="at">label =</span> country), <span class="at">colour =</span> col_2,</span>
+<span id="cb34-15"><a></a>            <span class="fu">aes</span>(<span class="at">label =</span> country), <span class="at">colour =</span> <span class="st">&quot;#E07B39&quot;</span>,</span>
 <span id="cb34-16"><a></a>            <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>) <span class="sc">+</span></span>
 <span id="cb34-17"><a></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
 <span id="cb34-18"><a></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2904,13 +2904,13 @@ display:block!important;
 <span id="cb36-3"><a></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
 <span id="cb36-4"><a></a>  <span class="fu">geom_line</span>(</span>
 <span id="cb36-5"><a></a>    <span class="at">data =</span> <span class="fu">filter</span>(gapminder, country <span class="sc">==</span> <span class="st">&quot;Rwanda&quot;</span>),</span>
-<span id="cb36-6"><a></a>    <span class="at">colour =</span> col_2,</span>
+<span id="cb36-6"><a></a>    <span class="at">colour =</span> <span class="st">&quot;#E07B39&quot;</span>,</span>
 <span id="cb36-7"><a></a>    <span class="at">linewidth =</span> <span class="dv">1</span></span>
 <span id="cb36-8"><a></a>  ) <span class="sc">+</span></span>
 <span id="cb36-9"><a></a>  <span class="fu">geom_text</span>(</span>
 <span id="cb36-10"><a></a>    <span class="at">data =</span> <span class="fu">filter</span>(gapminder, country <span class="sc">==</span> <span class="st">&quot;Rwanda&quot;</span>, year <span class="sc">==</span> <span class="dv">1992</span>),</span>
 <span id="cb36-11"><a></a>    <span class="fu">aes</span>(<span class="at">label =</span> country),</span>
-<span id="cb36-12"><a></a>    <span class="at">colour =</span> col_2,</span>
+<span id="cb36-12"><a></a>    <span class="at">colour =</span> <span class="st">&quot;#E07B39&quot;</span>,</span>
 <span id="cb36-13"><a></a>    <span class="at">hjust =</span> <span class="fl">1.15</span></span>
 <span id="cb36-14"><a></a>  ) <span class="sc">+</span> <span class="co"># stretch</span></span>
 <span id="cb36-15"><a></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>continent, <span class="at">nrow =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
@@ -3040,7 +3040,7 @@ Figure 34: A deliberately bad figure: the same population shares as a flat pie 
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>pop_continent <span class="sc">|&gt;</span></span>
 <span id="cb37-2"><a></a>  <span class="fu">mutate</span>(<span class="at">continent =</span> <span class="fu">fct_reorder</span>(continent, pop_bn)) <span class="sc">|&gt;</span></span>
 <span id="cb37-3"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pop_bn, <span class="at">y =</span> continent)) <span class="sc">+</span></span>
-<span id="cb37-4"><a></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> col_1) <span class="sc">+</span></span>
+<span id="cb37-4"><a></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>) <span class="sc">+</span></span>
 <span id="cb37-5"><a></a>  <span class="fu">labs</span>(</span>
 <span id="cb37-6"><a></a>    <span class="at">title =</span> <span class="st">&quot;Asia is home to most of the world&#39;s population&quot;</span>,</span>
 <span id="cb37-7"><a></a>    <span class="at">x =</span> <span class="st">&quot;Population in 2007 (billions)&quot;</span>,</span>
