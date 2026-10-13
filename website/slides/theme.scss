@@ -109,3 +109,20 @@ $link-accent: #DE7E50; // the only non-blue in the deck
 .reveal .columns {
   gap: 1.5rem;
 }
+
+/* The globe dashboard of week 6 (apps/_bayes-globe-*.qmd) runs on a slide. Observable Inputs
+   take the deck's font size, so the controls column uses .xsmall, and these rules only tighten
+   the spacing of the form rows so all controls fit beside the three panels. */
+.reveal .globe-dashboard form {
+  margin: 0.15em 0;
+  --label-width: 7em;
+}
+
+.reveal .globe-dashboard p {
+  margin: 0.2em 0;
+}
+
+/* Start the panels below the Mannheim logo. */
+.reveal .globe-dashboard .column:last-child {
+  padding-top: 1.5em;
+}

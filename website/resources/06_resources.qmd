@@ -14,5 +14,7 @@ nocite: |
   @hoekstra2014robust
 ---
 
+**Interactive:** [Bayesian updating: the globe toss](../apps/bayes-globe.qmd), the dashboard from the session.
+
 ::: {#refs}
 :::

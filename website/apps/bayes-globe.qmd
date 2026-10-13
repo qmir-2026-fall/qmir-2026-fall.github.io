@@ -1,0 +1,84 @@
+---
+title: "Bayesian updating: the globe toss"
+description: "Choose a prior, add tosses, and watch prior and likelihood combine into the posterior."
+echo: false
+toc: false
+page-layout: full
+---
+
+What proportion $\theta$ of the Earth's surface is water?
+Pick a prior on the left, set the data, and watch the three curves of Bayes' theorem respond.
+This page goes with week 6, the logic of Bayesian inference.
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-lg-4}
+
+A preset fills in the two shape parameters of a Beta prior.
+Their ratio sets where it sits, and their sum sets how sure it is.
+The data are tosses of a simulated globe whose true proportion of water you choose.
+
+{{< include _bayes-globe-controls.qmd >}}
+
+:::
+
+::: {.g-col-12 .g-col-lg-8}
+
+```{ojs}
+//| label: page-size
+panelWidth = 720
+panelHeight = 160
+```
+
+```{ojs}
+//| label: fig-globe-update
+//| fig-cap: "The three curves of Bayes' theorem for the proportion of water. The prior (top) is a density over theta before the data. The likelihood (middle) is rescaled so its peak is 1. The posterior (bottom) is prior times likelihood divided by their sum, with its 90 percent interval shaded. The solid line marks the observed share W/N, and the dashed line the true theta."
+panels()
+```
+
+```{ojs}
+//| label: readouts
+html`<table class="table table-sm">
+  <tbody>
+    <tr><td>Data</td><td>W = ${data.W} water in N = ${data.N} tosses</td></tr>
+    <tr><td>Posterior mean</td><td>${fmt(grid.mean)}</td></tr>
+    <tr><td>90 percent interval</td><td>${fmt(grid.lo)} to ${fmt(grid.hi)}</td></tr>
+    <tr><td><strong>P(θ &gt; 0.5 | data)</strong></td><td><strong>${fmtProb(grid.above)}</strong></td></tr>
+  </tbody>
+</table>`
+```
+
+:::
+
+:::
+
+## Things to try {#sec-try}
+
+Predict first, then move the control.
+
+1. The defaults (10 water in 15 tosses), uniform prior, then informative prior.
+   Where does the posterior sit relative to the prior and the likelihood?
+2. Weakly informative prior, then slide the tosses from 1 to 1000.
+   What happens to the prior's influence, and to the width of the posterior?
+3. Dogmatic prior with the true $\theta$ at 0.71.
+   How many tosses does it take before the posterior leaves 0.5?
+4. Rule out $\theta$ below 0.75 and keep the true $\theta$ at 0.71.
+   What does the posterior do as the tosses grow, and why can it never reach the truth?
+
+Simulated tosses are added to one fixed sequence, so moving the slider right means observing more of the same globe, and moving it left takes tosses back.
+**New sequence** starts a fresh one, and **Reset to defaults** restores every control.
+The cutoff toggle sets the prior to exactly zero below the cutoff: a belief held with certainty, which no amount of data can revive.
+
+## How the curves are computed {#sec-how}
+
+The page uses exactly the four ingredients from the session, on a grid of 1000 values of $\theta$.
+At each grid value, prior times likelihood is computed, and dividing by the sum of all of them, the normalising constant, turns the result into a posterior that sums to 1.
+
+$$
+P(\theta_i \mid \text{data}) = \frac{P(\text{data} \mid \theta_i) \, P(\theta_i)}{\sum_{j} P(\text{data} \mid \theta_j) \, P(\theta_j)}
+$$ {#eq-grid-posterior}
+
+@eq-grid-posterior is Bayes' theorem with the integral in the denominator replaced by a sum over the grid.
+The likelihood is binomial, so $P(\text{data} \mid \theta) \propto \theta^{W} (1 - \theta)^{N - W}$, and the binomial coefficient cancels in the division.
+
+{{< include _bayes-globe-engine.qmd >}}

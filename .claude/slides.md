@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-09-30
+last_modified: 2026-10-13
 scope: slide canvas, size ladder, columns, deck grammar and YAML, the two check stages
 ---
 
@@ -26,6 +26,8 @@ There is one size ladder and nothing outside it.
 
 `.small` is 0.80em and `.xsmall` is 0.70em, both defined in `website/slides/theme.scss`.
 
+- `.globe-dashboard` (also in `theme.scss`) wraps the week 6 dashboard slide. It only adjusts
+  spacing, and its controls column uses `.xsmall`.
 - Inline `style="font-size: ..."` is an error (`E031`). The previous course iteration used 20
   different ad-hoc values between 0.5em and 0.92em, which is exactly the drift this ladder exists
   to prevent.

@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-10-02
+last_modified: 2026-10-13
 scope: repo topology, term pipeline, feedback policy, naming, layout, staging, automation contracts
 ---
 
@@ -92,6 +92,7 @@ Homework distribution repo `hw-NN` (zero-padded, no day suffix), exam repo `exam
 | `website/slides/_weekNN.qmd` | **Staging.** The 2026 spring deck for that week, ported verbatim, not yet converted to the style guide. See below. |
 | `website/slides/images/`, `website/slides/data/` | Deck assets, carried over from the spring course. The paths a `_weekNN.qmd` body already expects. |
 | `website/_freeze/` | **Committed on purpose.** Frozen deck renders so the site rebuilds identically anywhere without re-running models. **Decks only**: pages always re-render, because they read files and dates their own source does not contain, and a frozen schedule silently stops updating. |
+| `website/apps/` | Interactive Observable JS pages (`apps/*.qmd` in the `_quarto.yml` render list). The OJS cells live in `_`-prefixed partials, which a page and a deck both `{{< include >}}`, so the same dashboard runs on a slide. OJS needs http(s): from `file://` it shows an error box, and the `-Fit` stage (which loads `file://`) reports such a slide as overflowing. Check it by screenshot instead. No R, so nothing to freeze. |
 | `homework/_template/` | Skeleton copied to start each `hw-NN`, including the `.github/workflows/hw-check.yml` that ships to students. |
 | `homework/_import/hw-NN/` | **Staging.** Ported spring homework in `hw-NN` shape. Provenance and known gaps are in `homework/_import/README.md`. |
 | `homework/hw-NN/` | Per-week **student-facing** sources (starter, README, meta.yml, data). No solutions here. |

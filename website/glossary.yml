@@ -1323,3 +1323,124 @@
     Data that observe the same units again and again over time, such as countries in every year, so one row is one unit at one point in time.
     A panel can show how each unit changes, which a single cross-section of one year cannot.
   see: [gl-observation, gl-tidy-data]
+
+# --- Week 6: The logic of Bayesian inference ---------------------------------
+# Probability recapped and simulated, counting the ways on the six-faced globe, the four
+# ingredients of Bayes' theorem, the dashboard, and why exact computation breaks.
+
+- term: "Probability"
+  week: 6
+  tags: [probability]
+  def: |
+    A number between 0 and 1 that says how plausible something is, where 0 is impossible and 1 is certain.
+    It can be read as a long-run frequency of a repeatable process or as a degree of belief given what we know, and both readings obey the same rules.
+  see: [gl-conditional-probability, gl-probability-distribution]
+
+- term: "Conditional probability"
+  week: 6
+  tags: [probability]
+  def: |
+    The probability of one thing given that another holds, written $P(A \mid B)$ and read "A given B".
+    Every way of telling [signal from noise](#gl-signal-and-noise) is a statement of this kind, and the schools of inference differ in what they put on each side of the bar.
+
+- term: "Parameter"
+  week: 6
+  tags: [model, probability]
+  def: |
+    An unknown quantity in a model that we want to learn about from data, such as the proportion of the Earth covered by water.
+    In Bayesian inference it is uncertain to us, so it gets a [probability distribution](#gl-probability-distribution), while the observed data are fixed.
+
+- term: "Probability mass function"
+  week: 6
+  tags: [probability]
+  def: |
+    The [probability distribution](#gl-probability-distribution) of a discrete quantity, such as a count, which gives every possible value its own probability.
+    The probabilities of all values add up to 1, unlike a [density](#gl-probability-density), where only areas are probabilities.
+
+- term: "Binomial distribution"
+  week: 6
+  tags: [probability, model]
+  def: |
+    The distribution of the number of successes in $N$ independent trials, each a success with the same probability $\theta$, such as water tosses of a globe.
+    It is the [likelihood](#gl-likelihood) of the globe toss, and in R `dbinom()` computes it.
+
+- term: "Simulation"
+  week: 6
+  tags: [probability, r]
+  def: |
+    Drawing many random values from a distribution and counting what happens, to approximate a probability that would be hard to compute directly.
+    The more draws, the better the approximation, which is the idea that MCMC builds on.
+
+- term: "Prior"
+  week: 6
+  tags: [prior]
+  def: |
+    The [probability distribution](#gl-probability-distribution) of a [parameter](#gl-parameter) before the data are seen: how plausible each value is to begin with.
+    It is a commitment that has to be defended on principled grounds, and a prior that is wide, narrow or exactly zero somewhere changes what the data can teach us.
+  see: [gl-bayes-theorem, gl-cromwell-s-rule]
+
+- term: "Likelihood"
+  week: 6
+  tags: [model]
+  def: |
+    How probable the observed data are under each possible value of the [parameter](#gl-parameter), read as a function of the parameter with the data held fixed.
+    It ranks the values by how well they account for what we saw, but it is not a distribution over the parameter and need not add up to 1.
+  see: [gl-bayes-theorem]
+
+- term: "Normalising constant"
+  week: 6
+  tags: [model, mcmc]
+  def: |
+    The denominator of [Bayes' theorem](#gl-bayes-theorem), $P(\text{data})$: [prior](#gl-prior) times [likelihood](#gl-likelihood), summed over every value of the parameter, which counts every way the data could have been produced.
+    Dividing by it makes the [posterior](#gl-posterior) add up to 1, and it is what becomes impossible to compute exactly as parameters are added.
+
+- term: "Posterior"
+  week: 6
+  tags: [model, interpretation]
+  def: |
+    The [probability distribution](#gl-probability-distribution) of a [parameter](#gl-parameter) after the data are seen, which combines the [prior](#gl-prior) with the [likelihood](#gl-likelihood).
+    Because it is a whole distribution, it answers questions such as "how probable is it that more than half the Earth is water?" directly.
+
+- term: "Bayes' theorem"
+  week: 6
+  tags: [probability, model]
+  def: |
+    The rule that turns a [prior](#gl-prior) into a [posterior](#gl-posterior): $P(\theta \mid \text{data}) = P(\text{data} \mid \theta) \, P(\theta) / P(\text{data})$.
+    It follows from the rules of probability alone, and its four ingredients are the prior, the [likelihood](#gl-likelihood), the [normalising constant](#gl-normalising-constant) and the posterior.
+
+- term: "Bayesian updating"
+  week: 6
+  tags: [probability, model]
+  def: |
+    Learning from data one piece at a time: today's [posterior](#gl-posterior) becomes tomorrow's [prior](#gl-prior).
+    Updating observation by observation gives exactly the same posterior as using all the data at once, and with enough data every prior that rules nothing out is pulled towards the truth.
+
+- term: "Grid approximation"
+  week: 6
+  tags: [model, mcmc]
+  def: |
+    Computing a [posterior](#gl-posterior) by evaluating prior times likelihood at a finite set of parameter values and dividing by their sum.
+    It is exact for a handful of values, but the number of grid points grows exponentially with the number of parameters, which is why realistic models need MCMC.
+
+- term: "Beta distribution"
+  week: 6
+  tags: [probability, prior]
+  def: |
+    A distribution for a proportion between 0 and 1, with two shape parameters $\alpha$ and $\beta$.
+    Their ratio sets where it sits and their sum sets how concentrated it is, which makes it a natural [prior](#gl-prior) for something like the share of water on the globe.
+
+- term: "Falsification"
+  week: 6
+  tags: [interpretation, probability]
+  def: |
+    Ruling a hypothesis out because the data are impossible under it, as one black swan refutes "all swans are white".
+    In [Bayes' theorem](#gl-bayes-theorem) it is the case of a zero [likelihood](#gl-likelihood): the posterior of that hypothesis becomes zero, while confirming data only ever raise a posterior gradually.
+  see: [gl-cromwell-s-rule]
+
+- term: "Cromwell's rule"
+  week: 6
+  tags: [prior]
+  def: |
+    Never give a [prior](#gl-prior) probability of exactly 0 or 1 to anything that is not logically impossible or certain.
+    A value with prior 0 keeps posterior 0 whatever the data show, so a dogmatic prior can never learn.
+  see: [gl-falsification]

@@ -1,0 +1,1013 @@
+---
+title: "Week 6: The logic of Bayesian inference"
+---
+
+<!-- Shared format options live in _metadata.yml, so this deck's YAML carries only the title.
+
+     Arc: counting first. A live globe toss opens the session and parks one question on the board
+     ("what is the probability that more than half the Earth is water?"). Probability is recapped
+     and simulated in R, then the globe becomes a six-faced die and we COUNT the ways each
+     conjecture could have produced the tosses. Counting gives sequential updating, falsification
+     and the four ingredients for free, and only then is Bayes' theorem written down. A finer grid
+     turns the bars into a curve, the dashboard (website/apps/bayes-globe.qmd) shows what prior and
+     data do, and the parked question is answered as P(theta > 0.5 | data). The close is why exact
+     computation explodes with the number of parameters, which is next week's MCMC.
+
+     Ruling out appears twice: a zero likelihood (W L W rules out the all-land and all-water globes,
+     falsification, Popper) in the counting section, and a zero prior (Cromwell's rule, Lindley)
+     in the dashboard section.
+
+     Data: decks are frozen, so every computed slide uses one fixed EXAMPLE sequence of 15 tosses
+     (10 water). The real class tally goes on the board for the counting. The dashboard runs on
+     its own slide (apps/_bayes-globe-*.qmd partials) and its default sequence is also 10 in 15.
+     Its Plot and Inputs libraries load from a CDN, so that one slide needs internet.
+
+     Time budget (90 min): opening 3, globe toss 7, probability 10, R 13 (4 demo, 6 practice,
+     3 debrief), counting 22, curve and dashboard 18, why it breaks 7, wrap-up 7, buffer 3.
+     If the room runs slow, shrink "why it breaks" to its first slide, then drop the density
+     slide (week 1 covered the area rule). -->
+
+```{r}
+#| label: setup
+#| include: false
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(knitr) # tables
+library(patchwork) # stack two plots
+
+# _quarto.yml is a project-root marker, so anchor here() at the repo root.
+here::i_am("website/slides/week06.qmd")
+
+# Shared palette. Reused verbatim across slides, homework and solutions so a
+# chain colour means the same thing in every artefact of the course.
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+
+# The example sequence used on every computed slide (10 water in 15).
+example_tosses <- c("W", "L", "W", "W", "W", "L", "W", "W", "L", "W", "W", "L", "W", "W", "L")
+example_w <- sum(example_tosses == "W")
+example_n <- length(example_tosses)
+```
+
+## Week 6 goals {#sec-week06-goals .smaller}
+
+By the end of today, you will be able to:
+
+1. Distinguish probability as long-run frequency from probability as degree of belief, and state the rules both share.
+2. Use R to simulate random draws and compute probabilities from a distribution, and tell a probability mass function from a density.
+3. Explain statistical inference as reasoning with conditional probabilities, and say what the Bayesian approach treats as fixed and what as uncertain.
+4. Name the four ingredients of Bayes' theorem, say what each does, and compute a posterior by counting.
+5. Describe how the prior and the amount of data shape the posterior, why updating one observation at a time gives the same answer, and how Bayesian updating recovers falsification.
+6. Explain why computing the posterior exactly becomes infeasible as parameters are added.
+
+## Today {#sec-today .smaller}
+
+1. **The globe toss:** a question we cannot yet answer
+2. **What probability is:** two interpretations, one set of rules
+3. **Simulating probability in R:** counting simulated outcomes
+4. **Counting the ways:** from tosses to Bayes' theorem
+5. **From seven conjectures to a curve:** priors, data and the dashboard
+6. **Why exact computation breaks:** and what next week does about it
+
+::: notes
+Say it: the code gets easier from today, the thinking gets harder.
+:::
+
+## Where today fits {#sec-where-today-fits .smaller}
+
+Today is the logic behind **step 3**.
+
+The formal model is a likelihood for the data and a prior for the unknown.
+Every model from week 8 onwards is this same logic with more parameters.
+
+{{< include _workflow-8step.qmd >}}
+
+::: notes
+One minute.
+Point at step 3, then at step 5: fitting is computing today's posterior.
+:::
+
+# The globe toss {#sec-globe-toss}
+
+## Catch, look, call {#sec-catch}
+
+::: notes
+Slides on blank.
+About 15 tosses, everyone catches at least once.
+Write the SEQUENCE on the board in order (W L W ...), not just a tally: the counting section needs the order.
+Keep the pace brisk.
+:::
+
+1. Catch the globe.
+2. Look at the spot under your right index finger.
+3. Call out **water** or **land**.
+4. Throw it on.
+
+## What do we know now? {#sec-toss-questions .smaller}
+
+::: notes
+Take answers without judging them.
+Write the fourth question on the board and leave it there: it is answered in the dashboard section.
+:::
+
+- What proportion of the Earth's surface is water?
+- How sure are you?
+- Would 3 tosses have convinced you?
+  Would 300?
+
+. . .
+
+- **What is the probability that more than half of the Earth is water?**
+
+. . .
+
+- And before the first toss: what did you already believe?
+  - Probably that the Earth is neither all land nor all water.
+  - And probably that more than half of it is water.
+
+. . .
+
+::: {.callout-note}
+**A belief held before the data is called a prior.**
+It is uncertain, and it has a shape: some proportions of water seem more plausible than others, and some seem ruled out.
+Today we write such beliefs down as probability distributions and work out how data change them.
+:::
+
+# What is probability? {#sec-probability}
+
+## Two interpretations {#sec-two-interpretations .smaller}
+
+::: notes
+No straw man.
+Both are coherent, and both obey the same mathematics.
+:::
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Long-run frequency**
+
+The share of favourable outcomes when a process is repeated many times.
+
+$$
+P(A) = \lim_{n \to \infty} \frac{\text{count}(A)}{n}
+$$ {#eq-frequency}
+
+- A property of a repeatable process.
+- Natural for coins, dice and random samples.
+:::
+
+::: {.column width="50%"}
+**Degree of belief**
+
+How plausible a proposition is to an agent, given the information $I$ the agent has.
+
+$$
+P(A \mid I)
+$$ {#eq-belief}
+
+- A property of a state of knowledge.
+- Applies to one-off events, parameters and hypotheses.
+:::
+
+::::
+
+. . .
+
+There is only one Earth, so "the probability that more than half the Earth is water" is a one-off question.
+It needs the second reading.
+
+## The rules both share {#sec-probability-rules .smaller}
+
+Whatever probability *means*, it obeys the same rules.
+
+- Every probability lies **between 0 and 1**: $0 \leq P(A) \leq 1$.
+- 0 means impossible, 1 means certain, and everything in between is graded.
+- The probabilities of all possible outcomes **add up to 1**.
+  For a continuous quantity, the **area under the density** is 1.
+
+$$
+\sum_{k} P(X = k) = 1 \qquad \int p(x) \, dx = 1
+$$ {#eq-sum-to-one}
+
+. . .
+
+::: {.callout-important}
+**A probability can take any value from 0 to 1.**
+A probability is a graded statement.
+That is exactly what lets us say a hypothesis is "0.9 probable".
+:::
+
+## Inference is conditional {#sec-conditional .smaller}
+
+::: notes
+Callback to week 1, the slide "Fundamental issue in statistics".
+:::
+
+Week 1: separate **signal** from **noise**.
+
+That is the fundamental task of statistics.
+
+. . .
+
+Every way of doing that is a statement about a **conditional probability**, read "given":
+
+$$
+P(A \mid B) = \text{the probability of } A \text{, given that } B \text{ holds}
+$$ {#eq-conditional}
+
+. . .
+
+The two schools of inference ask the same question in two directions.
+What goes to the right of the bar, and what to the left, is the whole difference.
+
+## Fixed or uncertain? {#sec-fixed-uncertain .smaller}
+
+::: {.small}
+|  | Frequentist inference | Bayesian inference |
+|---|---|---|
+| The parameter $\theta$ | A fixed, unknown constant | Uncertain, so it gets a probability distribution |
+| The data | One random draw from many hypothetical repetitions | Observed, so fixed once seen |
+| The question | How surprising are data like these, if $\theta$ had a given value? | How plausible is each value of $\theta$, given the data? |
+| A typical answer | A p-value | $P(\theta > 0.5 \mid \text{data})$ |
+
+: Two schools of inference and what each treats as fixed. {#tbl-two-schools}
+:::
+
+. . .
+
+::: {.callout-note}
+**A p-value is a statement about data, given a hypothesis.**
+It is the probability, computed as if the null hypothesis held, of a test statistic at least as extreme as the one from our data.
+Week 8 and week 13 return to it.
+:::
+
+::: notes
+Keep it to a contrast, then move on.
+With enough data the two schools usually give similar numbers.
+Their interpretations never merge.
+:::
+
+## The central idea {#sec-central-insight .smaller}
+
+::: notes
+The most important slide of the session.
+Expect "but there IS a true value": yes, and we do not know it.
+:::
+
+The tosses happened.
+
+They are facts, and we condition on them.
+
+. . .
+
+The proportion of water $\theta$ has one true value, but **we do not know it**.
+Our uncertainty about it has structure: some values are more plausible than others.
+
+. . .
+
+A probability distribution over $\theta$ describes **what we know** about $\theta$.
+Learning from data means that distribution changes as the data come in.
+
+. . .
+
+$$
+P(\theta \mid \text{data})
+$$ {#eq-posterior-notation}
+
+::: {.callout-note}
+**Read @eq-posterior-notation as "the probability of the parameter $\theta$, given the observed data".**
+:::
+
+# Simulating probability in R {#sec-simulating}
+
+## The r, d, p, q functions {#sec-rdpq .smaller}
+
+::: notes
+Two minutes.
+Type along in a fresh `.qmd`.
+:::
+
+Four functions per distribution.
+
+A prefix says which one you get.
+
+::: {.xsmall}
+| Prefix | Gives | In words | Binomial: coin flips | Normal: height (mean 170 cm, sd 10 cm) |
+|---|---|---|---|---|
+| `r` | **r**andom draws | Simulate the process | `rbinom(10, 1, 0.5)`: ten flips, 1 is heads | `rnorm(5, 170, 10)`: five heights |
+| `d` | mass or **d**ensity | Probability of exactly this value, or the density there | `dbinom(6, 10, 0.5)`: 0.205 for exactly 6 heads in 10 | `dnorm(180, 170, 10)`: 0.024, the density at 180 cm |
+| `p` | cumulative **p**robability | Probability of this value or less | `pbinom(3, 10, 0.5)`: 0.172 for 3 heads or fewer | `pnorm(160, 170, 10)`: 0.159 of people are below 160 cm |
+| `q` | **q**uantile | The value below which a given share lies | `qbinom(0.5, 10, 0.5)`: 5 heads is the median | `qnorm(0.9, 170, 10)`: 90 percent are below 182.8 cm |
+
+: The four distribution functions in R, with everyday examples. The arguments are, in order, the value, then size and prob for the binomial, mean and sd for the normal. {#tbl-rdpq}
+:::
+
+. . .
+
+The globe toss is a **binomial** process: $N$ tosses, each water with probability $\theta$.
+
+## The long run {#sec-long-run .smaller}
+
+Simulation can **test a claim about probability**.
+
+After how many tosses is the share of water close to the true 0.71?
+
+```{r}
+#| label: fig-long-run
+#| fig-cap: "The share of water in 1000 simulated tosses, on an ordinary and a log axis (true value dashed). Each extra toss helps less than the one before."
+#| code-fold: false
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 3.9
+#| dpi: 500
+
+set.seed(3594)
+tosses <- rbinom(1000, size = 1, prob = 0.71)
+
+long_run <- tibble(
+  n = 1:1000,
+  share = cummean(tosses) # share of water so far
+) |>
+  ggplot(aes(x = n, y = share)) +
+  geom_hline(yintercept = 0.71, linetype = "dashed") +
+  geom_line(colour = "steelblue") +
+  theme_classic() +
+  labs(x = "Tosses", y = "Share of water")
+
+# The same plot again, with a log x-axis.
+long_run / (long_run + scale_x_log10() +
+  labs(x = "Tosses (log scale)"))
+```
+
+## Probability of a count {#sec-pmf .smaller}
+
+`dbinom()` gives the probability of each count.
+
+**How probable is each number of water tosses in 15?**
+
+```{r}
+#| label: fig-pmf
+#| fig-cap: "Water tosses out of 15 when theta is 0.71. Each bar is a probability, and the 16 bars add up to 1."
+#| code-fold: false
+#| output-location: column
+#| fig-width: 5
+#| fig-height: 2.6
+#| dpi: 500
+
+tibble(water = 0:15) |>
+  mutate(prob = dbinom(water, size = 15, prob = 0.71)) |>
+  ggplot(aes(x = water, y = prob)) +
+  geom_col(fill = "steelblue") +
+  theme_classic() +
+  labs(
+    x = "Water tosses out of 15",
+    y = "Probability",
+    title = "Ten or eleven is most likely"
+  )
+```
+
+. . .
+
+```{r}
+#| label: pmf-sum
+#| code-fold: false
+
+sum(dbinom(0:15, size = 15, prob = 0.71))
+```
+
+A count is **discrete**, so each outcome gets a probability: a **probability mass function**.
+
+## A density {#sec-density .smaller}
+
+Height is continuous: nobody is exactly 170.000 cm tall.
+
+A continuous quantity has infinitely many values, so a single exact value has probability 0.
+A **density** has the same job as the bars of a probability mass function, but for a continuous quantity: it shows where values are concentrated, and **probability is the area** under it.
+
+```{r}
+#| label: fig-density
+#| fig-cap: "The density of adult height, normal with mean 170 cm and standard deviation 10 cm. The shaded area between 160 and 180 cm is the probability that a person's height falls in that range, about 0.68."
+#| fig-height: 2.8
+#| dpi: 500
+
+tibble(height = seq(130, 210, by = 0.5)) |>
+  mutate(density = dnorm(height, mean = 170, sd = 10)) |>
+  ggplot(aes(x = height, y = density)) +
+  geom_area(
+    data = \(d) filter(d, height >= 160, height <= 180),
+    fill = "steelblue",
+    alpha = 0.4
+  ) +
+  geom_line(colour = "steelblue") +
+  annotate("text", x = 170, y = 0.015, label = "area = 0.68") +
+  theme_classic() +
+  labs(x = "Height (cm)", y = "Density", title = "Probability is area under the curve")
+```
+
+## Density values and areas {#sec-density-values .smaller}
+
+`dnorm()` gives the height of the curve, `pnorm()` gives an area.
+
+```{r}
+#| label: density-values
+#| code-fold: false
+
+dnorm(170, mean = 170, sd = 10) # density at 170 cm
+dnorm(1.70, mean = 1.70, sd = 0.10) # the same, in metres
+pnorm(180, mean = 170, sd = 10) - pnorm(160, mean = 170, sd = 10) # area: a probability
+```
+
+. . .
+
+::: {.callout-warning}
+**Probabilities are areas under the density, so they always lie between 0 and 1.**
+A density value is the height of the curve, and it depends on the units: in metres the same heights have a density of almost 4.
+The 95 percent from week 1 is the area `pnorm(2) - pnorm(-2)`.
+:::
+
+## Practice: counting {#sec-practice-probability .smaller}
+
+::: notes
+Six minutes in pairs, then three to debrief.
+Point at (b): two routes to the same number, by formula and by counting simulations.
+:::
+
+**Do this now.**
+
+1. Simulate 15 tosses of a globe that is 71 percent water.
+   Compare with our tally on the board.
+2. What is the probability of 10 or more water tosses in 15?
+   Compute it with `dbinom()`, then by simulating 10,000 rounds of 15 tosses and counting.
+3. What share of a standard normal lies within one standard deviation of the mean?
+4. **Stretch:** what is the most likely number of water tosses in 150?
+
+::: {.callout-tip}
+**Start with `set.seed(3594)`.**
+R's random numbers come from a generator, and `set.seed()` fixes its starting point.
+The same code then gives the same draws on every run and on every laptop, so results are reproducible.
+The number itself is arbitrary, and this course uses 3594.
+:::
+
+## Practice: solution {#sec-practice-probability-solution .smaller}
+
+```{r}
+#| label: practice-probability-solution
+#| code-fold: false
+
+# Fix the generator's starting point, so these draws are reproducible.
+set.seed(3594)
+
+# 1. Draw 15 random values, each the outcome of 1 toss (size = 1)
+#    that comes up water (1) with probability 0.71.
+rbinom(15, size = 1, prob = 0.71)
+
+# 2a. The probability of exactly 10, 11, ..., 15 water in 15 tosses, added up.
+sum(dbinom(10:15, size = 15, prob = 0.71))
+
+# 2b. Simulate 10,000 rounds of 15 tosses, each giving a count of water.
+#     ">= 10" marks each round TRUE or FALSE, and mean() is the share of TRUE.
+mean(rbinom(1e4, size = 15, prob = 0.71) >= 10)
+```
+
+## Practice: solution, continued {#sec-practice-probability-solution-2 .smaller}
+
+```{r}
+#| label: practice-probability-solution-2
+#| code-fold: false
+
+# 3. The area of a standard normal below 1, minus the area below -1,
+#    leaves the area between -1 and 1.
+pnorm(1) - pnorm(-1)
+
+# 4. The probability of each count from 0 to 150, then the position of the largest.
+#    Positions start at 1 and counts at 0, so subtract 1.
+which.max(dbinom(0:150, size = 150, prob = 0.71)) - 1
+```
+
+. . .
+
+Counting simulated outcomes approximates the probability, and more simulations approximate it better.
+Next week this idea carries the whole of Bayesian computation.
+
+# Counting the ways {#sec-counting}
+
+## A globe with six faces {#sec-six-faces .smaller}
+
+::: notes
+Every model simplifies.
+This one simplifies so far that we can count everything by hand.
+:::
+
+Imagine the Earth as a **six-faced die**.
+
+Each face is water or land.
+The unknown $\theta$ is the share of water faces, so there are exactly **seven conjectures**:
+
+$$
+\theta \in \left\{ \tfrac{0}{6}, \tfrac{1}{6}, \tfrac{2}{6}, \tfrac{3}{6}, \tfrac{4}{6}, \tfrac{5}{6}, \tfrac{6}{6} \right\}
+$$ {#eq-conjectures}
+
+. . .
+
+The plan is the one from week 1: statistics is counting.
+For each conjecture, **count the ways it could have produced the tosses we saw**.
+A conjecture with more ways is more plausible [@mcelreath2020rethinking-ch2].
+
+## Counting paths {#sec-counting-paths .smaller}
+
+::: notes
+On the board first, with the FIRST THREE tosses of the real sequence.
+Do one row together, then let pairs fill in the rest.
+The slide shows the example W L W.
+:::
+
+Take the first three tosses: **W L W**.
+
+Now take the conjecture with 4 water faces.
+The first toss can land on any of 4 water faces, the second on any of 2 land faces, the third on any of 4 water faces again.
+
+$$
+4 \times 2 \times 4 = 32 \text{ ways}
+$$ {#eq-ways-four}
+
+. . .
+
+With $k$ water faces, W L W can happen in $k \times (6 - k) \times k$ ways.
+
+::: {.small}
+| Water faces $k$ | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Ways to see W L W | 0 | 5 | 16 | 27 | 32 | 25 | 0 |
+
+: Ways each conjecture produces W L W. {#tbl-ways-wlw}
+:::
+
+::: {.callout-tip}
+**Check a row in R.**
+`dbinom(2, size = 3, prob = 4/6)` is $3 \times 32 / 6^3$, so the counts are proportional to the binomial probabilities.
+:::
+
+## Ruled out for good {#sec-ruled-out .smaller}
+
+::: notes
+Point at the two zeros in the table.
+Ask: which tosses killed which row?
+The first W ruled out the all-land globe, the L ruled out the all-water globe.
+:::
+
+Look at the ends of @tbl-ways-wlw.
+
+The first **W** gives the all-land globe ($k = 0$) **zero ways**, and the **L** does the same for the all-water globe ($k = 6$).
+Every later count is multiplied onto that zero, so those two conjectures stay ruled out for good.
+
+$$
+P(\theta = 0 \mid \text{W L W}) = \frac{P(\text{W L W} \mid \theta = 0) \, P(\theta = 0)}{P(\text{W L W})} = \frac{0 \times P(\theta = 0)}{P(\text{W L W})} = 0
+$$ {#eq-ruled-out}
+
+. . .
+
+This is **falsification** [@popper1959logic]: one observation can rule a conjecture out for good, while every confirmation only raises its plausibility a little.
+In Bayesian updating it is the special case of a **zero likelihood**.
+
+::: {.callout-note}
+**Real refutations are usually softer.**
+Measurements can be wrong, so an observation that a hypothesis forbids usually has a tiny likelihood under it.
+The hypothesis then keeps only a tiny share of its plausibility.
+:::
+
+## A new toss: multiply {#sec-sequential .smaller}
+
+::: notes
+Add the fourth toss of the real sequence on the board.
+Say it: the old counts ARE the prior.
+Learning should look like this: keep what you knew, weigh it by what you see.
+:::
+
+The fourth toss is **W**.
+
+With $k$ water faces it can happen in $k$ ways, so multiply.
+
+::: {.small}
+| Water faces $k$ | Ways for W L W | Ways for the new W | Updated ways |
+|:-:|:-:|:-:|:-:|
+| 0 | 0 | 0 | 0 |
+| 1 | 5 | 1 | 5 |
+| 2 | 16 | 2 | 32 |
+| 3 | 27 | 3 | 81 |
+| 4 | 32 | 4 | 128 |
+| 5 | 25 | 5 | 125 |
+| 6 | 0 | 6 | 0 |
+
+: Sequential updating by counting. The old counts are multiplied by the ways the new toss could happen. {#tbl-ways-update}
+:::
+
+. . .
+
+- **Yesterday's counts are today's prior.**
+- Multiplication does not care about order, so updating toss by toss gives the same answer as counting all four at once.
+
+## The four ingredients {#sec-four-ingredients .smaller}
+
+Divide each count by the sum.
+
+That turns counts into probabilities.
+Here with W L W, and every conjecture equally plausible beforehand.
+
+::: {.small}
+| $k$ | Prior | Ways (likelihood) | Prior times ways | Posterior |
+|:-:|:-:|:-:|:-:|:-:|
+| 0 | 1 | 0 | 0 | 0.000 |
+| 1 | 1 | 5 | 5 | 0.048 |
+| 2 | 1 | 16 | 16 | 0.152 |
+| 3 | 1 | 27 | 27 | 0.257 |
+| 4 | 1 | 32 | 32 | 0.305 |
+| 5 | 1 | 25 | 25 | 0.238 |
+| 6 | 1 | 0 | 0 | 0.000 |
+|  |  |  | **Sum: 105** | **Sum: 1** |
+
+: From counts to a posterior. Each row of prior times ways is divided by their sum, 105, so the posterior adds up to 1. {#tbl-four-ingredients}
+:::
+
+## Naming the ingredients {#sec-ingredients-named .smaller}
+
+Each column of @tbl-four-ingredients is one ingredient.
+
+1. **Prior**: plausibility before the data.
+2. **Likelihood**: the ways the data could arise under each conjecture.
+3. **Normalising constant**: the sum, every way the data could have been produced.
+4. **Posterior**: plausibility after the data, now a proper probability distribution.
+
+## Bayes' theorem {#sec-bayes .smaller}
+
+The table is Bayes' theorem, one column at a time.
+
+$$
+\underbrace{P(\theta \mid \text{data})}_{\text{posterior}} = \frac{\overbrace{P(\text{data} \mid \theta)}^{\text{likelihood}} \; \overbrace{P(\theta)}^{\text{prior}}}{\underbrace{P(\text{data})}_{\text{normalising constant}}}
+$$ {#eq-bayes}
+
+. . .
+
+The normalising constant sums the numerator over every conjecture:
+
+$$
+P(\text{data}) = \sum_{\theta} P(\text{data} \mid \theta) \, P(\theta)
+$$ {#eq-normalising-constant}
+
+It is the same number for every $\theta$.
+Its only job is to make the posterior add up to 1.
+
+::: notes
+Point from each term to its column in the previous table.
+The derivation from the product rule is in the appendix.
+:::
+
+## All fifteen tosses {#sec-whole-sequence .smaller}
+
+Fifteen tosses, `r example_w` of them water.
+
+The likelihood is binomial, so `dbinom()` computes it.
+
+::: {.small}
+```{r}
+#| label: tbl-globe-posterior
+#| tbl-cap: "The six-faced globe after 10 water tosses in 15, from a flat prior. The likelihood column is the probability of the data under each conjecture, the posterior is prior times likelihood divided by their sum."
+
+globe <- tibble(water_faces = 0:6) |>
+  mutate(
+    theta = water_faces / 6,
+    prior = 1 / 7,
+    likelihood = dbinom(example_w, size = example_n, prob = theta),
+    posterior = prior * likelihood / sum(prior * likelihood)
+  )
+
+globe |>
+  kable(digits = 3)
+```
+:::
+
+. . .
+
+The likelihood column adds up to `r round(sum(globe$likelihood), 3)`.
+The likelihood **scores how well each conjecture fits the data**, and the normalising constant turns those scores into a distribution.
+
+# From seven conjectures to a curve {#sec-curve}
+
+## A finer globe {#sec-finer-grid .smaller}
+
+A real globe has far more than six faces.
+
+More faces mean more conjectures, and the bars fill in a curve.
+
+```{r}
+#| label: fig-finer-grid
+#| fig-cap: "The posterior for the proportion of water after 10 water tosses in 15, from a flat prior, computed on grids of 7, 21, 101 and 1001 conjectures. As the grid gets finer, the bars approach a smooth curve over every value between 0 and 1."
+#| fig-height: 2.6
+#| dpi: 500
+
+grid_posterior <- function(points) {
+  tibble(theta = seq(0, 1, length.out = points)) |>
+    mutate(
+      likelihood = dbinom(example_w, size = example_n, prob = theta),
+      posterior = likelihood / sum(likelihood),
+      grid = paste(points, "conjectures"),
+      width = case_when(points <= 7 ~ 2, points <= 21 ~ 1, .default = 0.3)
+    )
+}
+
+c(7, 21, 101, 1001) |>
+  map(grid_posterior) |>
+  list_rbind() |>
+  mutate(grid = fct_inorder(grid)) |>
+  ggplot(aes(x = theta, y = posterior)) +
+  geom_segment(aes(xend = theta, yend = 0, linewidth = width), colour = col_2) +
+  scale_linewidth_identity() +
+  facet_wrap(~grid, nrow = 1, scales = "free_y") +
+  scale_x_continuous(breaks = c(0, 0.5, 1)) +
+  theme_classic() +
+  labs(
+    x = expression(theta ~ "(proportion of water)"),
+    y = "Posterior probability",
+    title = "Same posterior, finer grid"
+  )
+```
+
+## The dashboard {#sec-dashboard .smaller}
+
+::: notes
+Ask everyone to open the page on their laptop too.
+The next slide runs the same dashboard (it needs internet).
+Offline, use the link instead.
+:::
+
+Open **[the dashboard](../apps/bayes-globe.qmd)** on your laptop.
+
+- Pick a **prior**: uniform, weakly informative, informative or dogmatic, then move $\alpha$ and $\beta$.
+- Set the **data**: a simulated globe with a true $\theta$ and up to 1000 tosses, starting from 10 water in 15.
+- Watch the **prior**, the **likelihood** and the **posterior**, computed on a grid of 1000 conjectures.
+
+. . .
+
+Three rounds.
+**Predict first, then move the control.**
+
+1. The defaults, uniform prior, then informative prior.
+   Where does the posterior sit?
+2. Weakly informative prior, tosses from 1 to 1000.
+   What happens to the prior's influence?
+3. Dogmatic prior, true $\theta$ 0.71, 1000 tosses.
+   Where is the posterior now?
+
+## Try it {#sec-try-it .smaller}
+
+::: {.globe-dashboard}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+::: {.xsmall}
+{{< include ../apps/_bayes-globe-controls.qmd >}}
+:::
+:::
+
+::: {.column width="60%"}
+```{ojs}
+//| label: slide-size
+//| echo: false
+panelWidth = 600
+panelHeight = 115
+```
+
+```{ojs}
+//| label: fig-globe-slide
+//| echo: false
+//| fig-cap: "Prior, likelihood and posterior for the proportion of water."
+panels()
+```
+
+```{ojs}
+//| label: slide-readout
+//| echo: false
+html`<p class="xsmall">W = ${data.W} in N = ${data.N}, posterior mean ${fmt(grid.mean)}, <strong>P(θ &gt; 0.5 | data) = ${fmtProb(grid.above)}</strong></p>`
+```
+:::
+
+::::
+
+:::
+
+{{< include ../apps/_bayes-globe-engine.qmd >}}
+
+## Prior versus data {#sec-what-shapes .smaller}
+
+```{r}
+#| label: fig-prior-and-data
+#| fig-cap: "Prior (dashed) and posterior (solid) for three Beta priors, weak Beta(2, 2), informative Beta(14, 6) and dogmatic Beta(500, 500), and growing amounts of simulated data from a globe that is 71 percent water (vertical line). With 15 tosses the prior matters a lot, with 1000 tosses the weakly informative and informative priors agree, and the dogmatic prior has still not reached the truth."
+#| fig-height: 4.3
+#| dpi: 500
+
+set.seed(3594)
+sim_tosses <- rbinom(1000, size = 1, prob = 0.71)
+
+priors <- tibble(
+  prior = c("Weak", "Informative", "Dogmatic"),
+  a = c(2, 14, 500),
+  b = c(2, 6, 500)
+)
+
+expand_grid(priors, tosses = c(15, 150, 1000), theta = (1:999) / 1000) |>
+  mutate(
+    water = map_dbl(tosses, \(n) sum(sim_tosses[1:n])),
+    prior_density = dbeta(theta, a, b),
+    unnormalised = prior_density * dbinom(water, size = tosses, prob = theta)
+  ) |>
+  group_by(prior, tosses) |>
+  mutate(posterior_density = unnormalised / sum(unnormalised) * 1000) |>
+  ungroup() |>
+  mutate(
+    prior = fct_inorder(prior),
+    tosses = paste(tosses, "tosses") |> fct_inorder()
+  ) |>
+  ggplot(aes(x = theta)) +
+  geom_vline(xintercept = 0.71, colour = "grey60") +
+  geom_line(aes(y = prior_density), colour = col_1, linetype = "dashed") +
+  geom_line(aes(y = posterior_density), colour = col_2) +
+  facet_grid(prior ~ tosses, scales = "free_y") +
+  scale_x_continuous(breaks = c(0, 0.5, 1)) +
+  theme_classic() +
+  labs(
+    x = expression(theta ~ "(proportion of water)"),
+    y = "Density",
+    title = "Data pull every open-minded prior to the truth"
+  )
+```
+
+## Zero never learns {#sec-cromwell .smaller}
+
+::: notes
+Show it on the dashboard: rule out theta below 0.75 with the truth at 0.71.
+The posterior piles up against the cutoff for every N.
+:::
+
+Ruling out, the other way round.
+
+If the prior says a value is **impossible**, the posterior agrees, whatever the data:
+
+$$
+P(\theta) = 0 \quad \Rightarrow \quad P(\theta \mid \text{data}) = \frac{P(\text{data} \mid \theta) \times 0}{P(\text{data})} = 0
+$$ {#eq-cromwell}
+
+. . .
+
+- **A zero likelihood** is falsification: the data rule a conjecture out.
+- **A zero prior** is dogma: you ruled it out before looking.
+- **A near-dogmatic prior** moves only under overwhelming data.
+
+. . .
+
+::: {.callout-important}
+**Cromwell's rule: never give exactly 0 or 1 to anything that is not logically impossible or certain [@lindley1985making].**
+It is why it is so hard to change the mind of someone who is completely sure.
+Bayes describes how a coherent learner should update.
+:::
+
+## The opening question {#sec-answer .smaller}
+
+```{r}
+#| label: answer-values
+#| include: false
+
+theta_fine <- ((0:999) + 0.5) / 1000 # grid midpoints, as on the dashboard
+posterior_fine <- dbinom(example_w, size = example_n, prob = theta_fine)
+posterior_fine <- posterior_fine / sum(posterior_fine)
+p_above_half <- sum(posterior_fine[theta_fine > 0.5])
+```
+
+A flat prior and the example sequence.
+
+With `r example_w` water in `r example_n` tosses:
+
+$$
+P(\theta > 0.5 \mid \text{data}) \approx `r round(p_above_half, 3)`
+$$ {#eq-answer}
+
+. . .
+
+::: {.callout-note}
+**In words: given our data, the model and a flat prior, the probability that more than half of the Earth is water is about `r round(100 * p_above_half)` percent.**
+Equally: given our measurements, we can be about `r round(100 * p_above_half)` percent certain that the true proportion of water is greater than 0.5.
+:::
+
+. . .
+
+- A **graded statement about the hypothesis itself**.
+- It holds given the data, the model and the prior, all three written down.
+
+::: notes
+Go back to the question on the board and answer it.
+:::
+
+# Why exact computation breaks {#sec-breaks}
+
+## Why grids explode {#sec-explodes .smaller}
+
+The sum runs over **every** parameter value.
+
+The normalising constant adds prior times likelihood for each combination of parameter values.
+With $g$ grid points per parameter and $k$ parameters, that is $g^k$ terms.
+
+::: {.small}
+| Model | Parameters $k$ | Terms with 1000 points each |
+|---|:-:|:-:|
+| The globe | 1 | $10^{3}$ |
+| A linear regression ($\alpha$, $\beta$, $\sigma$) | 3 | $10^{9}$ |
+| A regression with 10 predictors | 12 | $10^{36}$ |
+| A modest multilevel model | 50 | $10^{150}$ |
+
+: Grid size grows exponentially in the number of parameters. The observable universe holds about 10^80 atoms. {#tbl-grid-explodes}
+:::
+
+. . .
+
+::: {.callout-note}
+**The cost grows exponentially with the number of parameters.**
+The paths the tosses could take grow as $6^N$ too, and the binomial formula counts them all in one step.
+The sum over parameters has such a shortcut only in a few special models.
+:::
+
+## Next week {#sec-next-week}
+
+**Markov chain Monte Carlo**
+
+- Instead of computing the posterior everywhere, **draw samples** from it.
+- The normalising constant is never computed at all.
+- Counting samples replaces counting ways, as in today's R practice.
+
+# Wrap-up {#sec-wrap-up}
+
+## Summary {#sec-summary .smaller}
+
+Six things to keep.
+
+- **Two notions of probability**, frequency and degree of belief, with the same rules.
+- **Two schools of inference**, the same goal of separating signal from noise, and a different answer to what is fixed and what is uncertain.
+- **Four ingredients**: prior, likelihood, normalising constant, posterior.
+  Prior and likelihood together set where the posterior sits and how wide it is.
+- **Updating is sequential**, and more data pull every open-minded prior towards the truth.
+- **Falsification** is a zero likelihood, **dogma** a zero prior.
+- **Exact posteriors explode** with the number of parameters, so next week we sample.
+
+## Homework {#sec-homework .smaller}
+
+One homework this week.
+
+- `hw-06`: today's updating logic, applied to a new question, due 21 October.
+  Linked from the Schedule.
+- A sample solution is published after the due date.
+
+::: {.callout-important}
+**Individual feedback is only available through the opt-in path.**
+Add an open-source `license.md` to your submission repo to opt in.
+:::
+
+## References {#sec-references .smaller}
+
+::: {#refs}
+:::
+
+# Appendix {#sec-appendix}
+
+## Where Bayes comes from {#sec-product-rule .smaller}
+
+Bayes' theorem follows from the product rule of probability, which holds under both interpretations.
+
+$$
+P(A \text{ and } B) = P(A \mid B) \, P(B) = P(B \mid A) \, P(A)
+$$ {#eq-product-rule}
+
+. . .
+
+Divide both sides by $P(B)$:
+
+$$
+P(A \mid B) = \frac{P(B \mid A) \, P(A)}{P(B)}
+$$ {#eq-bayes-general}
+
+. . .
+
+With $A = \theta$ and $B = \text{data}$, this is @eq-bayes.
+Inference becomes Bayesian when the theorem is applied to a parameter.
+
+```{r}
+#| label: session-info
+#| include: false
+
+sessionInfo()
+Sys.time() - start_time
+```

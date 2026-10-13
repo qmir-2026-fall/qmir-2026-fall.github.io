@@ -1,0 +1,65 @@
+<!--
+Inputs of the globe-toss dashboard, read by _bayes-globe-engine.qmd.
+Included by apps/bayes-globe.qmd and slides/week06.qmd.
+Every input cell references `reset`, so a click on the reset button rebuilds them all at their defaults.
+-->
+
+```{ojs}
+//| label: prior-inputs
+//| echo: false
+viewof reset = Inputs.button("Reset to defaults")
+
+presets = ({
+  "Uniform": { a: 1, b: 1 },
+  "Weakly informative": { a: 2, b: 2 },
+  "Informative": { a: 14, b: 6 },
+  "Dogmatic": { a: 500, b: 500 }
+})
+
+viewof preset = (reset, Inputs.select(Object.keys(presets), {
+  label: "Prior preset",
+  value: "Uniform"
+}))
+
+// Rebuilt whenever the preset changes, so a preset resets both sliders.
+viewof a = (reset, Inputs.range([0.5, 1000], {
+  label: "α",
+  value: presets[preset].a,
+  step: 0.5,
+  transform: Math.log
+}))
+
+viewof b = (reset, Inputs.range([0.5, 1000], {
+  label: "β",
+  value: presets[preset].b,
+  step: 0.5,
+  transform: Math.log
+}))
+
+viewof zeroOn = (reset, Inputs.toggle({ label: "Rule out θ below cutoff", value: false }))
+
+viewof cutoff = (reset, Inputs.range([0.05, 0.95], {
+  label: "Cutoff",
+  value: 0.75,
+  step: 0.01
+}))
+```
+
+```{ojs}
+//| label: data-inputs
+//| echo: false
+viewof trueTheta = (reset, Inputs.range([0, 1], {
+  label: "True θ",
+  value: 0.71,
+  step: 0.01
+}))
+
+viewof nSim = (reset, Inputs.range([1, 1000], {
+  label: "Tosses (N)",
+  value: 15,
+  step: 1,
+  transform: Math.log
+}))
+
+viewof redraw = (reset, Inputs.button("New sequence"))
+```

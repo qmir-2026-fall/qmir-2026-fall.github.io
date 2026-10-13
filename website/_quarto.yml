@@ -5,6 +5,8 @@ project:
     - "*.qmd"
     - "slides/*.qmd"
     - "resources/*.qmd"
+    # Interactive pages (Observable JS) that a deck embeds and students open on their laptops.
+    - "apps/*.qmd"
 
 # Pages are NOT frozen. schedule.qmd, syllabus.qmd, index.qmd and glossary.qmd are built from
 # files and dates their own source does not contain (weekNN.qmd existing, meta.yml, course.yml,
