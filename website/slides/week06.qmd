@@ -50,7 +50,23 @@ col_4 <- "goldenrod3"
 chain_cols <- c(col_1, col_2, col_3, col_4)
 
 # The example sequence used on every computed slide (10 water in 15).
-example_tosses <- c("W", "L", "W", "W", "W", "L", "W", "W", "L", "W", "W", "L", "W", "W", "L")
+example_tosses <- c(
+  "W",
+  "L",
+  "W",
+  "W",
+  "W",
+  "L",
+  "W",
+  "W",
+  "L",
+  "W",
+  "W",
+  "L",
+  "W",
+  "W",
+  "L"
+)
 example_w <- sum(example_tosses == "W")
 example_n <- length(example_tosses)
 ```
@@ -235,6 +251,7 @@ What goes to the right of the bar, and what to the left, is the whole difference
 | The parameter $\theta$ | A fixed, unknown constant | Uncertain, so it gets a probability distribution |
 | The data | One random draw from many hypothetical repetitions | Observed, so fixed once seen |
 | The question | How surprising are data like these, if $\theta$ had a given value? | How plausible is each value of $\theta$, given the data? |
+| In notation | $P(\text{data} \mid \theta)$ | $P(\theta \mid \text{data})$ |
 | A typical answer | A p-value | $P(\theta > 0.5 \mid \text{data})$ |
 
 : Two schools of inference and what each treats as fixed. {#tbl-two-schools}
@@ -245,7 +262,6 @@ What goes to the right of the bar, and what to the left, is the whole difference
 ::: {.callout-note}
 **A p-value is a statement about data, given a hypothesis.**
 It is the probability, computed as if the null hypothesis held, of a test statistic at least as extreme as the one from our data.
-Week 8 and week 13 return to it.
 :::
 
 ::: notes
@@ -342,8 +358,7 @@ long_run <- tibble(
   labs(x = "Tosses", y = "Share of water")
 
 # The same plot again, with a log x-axis.
-long_run / (long_run + scale_x_log10() +
-  labs(x = "Tosses (log scale)"))
+long_run / (long_run + scale_x_log10() + labs(x = "Tosses (log scale)"))
 ```
 
 ## Probability of a count {#sec-pmf .smaller}
@@ -408,7 +423,11 @@ tibble(height = seq(130, 210, by = 0.5)) |>
   geom_line(colour = "steelblue") +
   annotate("text", x = 170, y = 0.015, label = "area = 0.68") +
   theme_classic() +
-  labs(x = "Height (cm)", y = "Density", title = "Probability is area under the curve")
+  labs(
+    x = "Height (cm)",
+    y = "Density",
+    title = "Probability is area under the curve"
+  )
 ```
 
 ## Density values and areas {#sec-density-values .smaller}
@@ -452,7 +471,8 @@ Point at (b): two routes to the same number, by formula and by counting simulati
 **Start with `set.seed(3594)`.**
 R's random numbers come from a generator, and `set.seed()` fixes its starting point.
 The same code then gives the same draws on every run and on every laptop, so results are reproducible.
-The number itself is arbitrary, and this course uses 3594.
+The number itself is arbitrary, but avoid common picks like `1234`, `42` or the current year, because everyone who uses them gets the same "random" draws.
+For a truly random seed, draw one at [random.org](https://www.random.org/), and read @heiss2026seeds for why it matters.
 :::
 
 ## Practice: solution {#sec-practice-probability-solution .smaller}
@@ -746,7 +766,7 @@ The next slide runs the same dashboard (it needs internet).
 Offline, use the link instead.
 :::
 
-Open **[the dashboard](../apps/bayes-globe.qmd)** on your laptop.
+Experiment with the **[interactive dashboard](../apps/bayes-globe.qmd)** on the next slide:
 
 - Pick a **prior**: uniform, weakly informative, informative or dogmatic, then move $\alpha$ and $\beta$.
 - Set the **data**: a simulated globe with a true $\theta$ and up to 1000 tosses, starting from 10 water in 15.
