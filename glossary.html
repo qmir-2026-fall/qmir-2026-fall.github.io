@@ -455,6 +455,26 @@ The functions R ships with before any package is installed, such as <code>mean()
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/00Index.html">R documentation: the base package</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
+<dt><span id="gl-bayes-theorem">Bayes’ theorem</span></dt>
+<dd>
+The rule that turns a <a href="#gl-prior">prior</a> into a <a href="#gl-posterior">posterior</a>: <span class="math inline">\(P(\theta \mid \text{data}) = P(\text{data} \mid \theta) \, P(\theta) / P(\text{data})\)</span>. It follows from the rules of probability alone, and its four ingredients are the prior, the <a href="#gl-likelihood">likelihood</a>, the <a href="#gl-normalising-constant">normalising constant</a> and the posterior.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">model</span>
+</dd>
+<dt><span id="gl-bayesian-updating">Bayesian updating</span></dt>
+<dd>
+Learning from data one piece at a time: today’s <a href="#gl-posterior">posterior</a> becomes tomorrow’s <a href="#gl-prior">prior</a>. Updating observation by observation gives exactly the same posterior as using all the data at once, and with enough data every prior that rules nothing out is pulled towards the truth.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">model</span>
+</dd>
+<dt><span id="gl-beta-distribution">Beta distribution</span></dt>
+<dd>
+A distribution for a proportion between 0 and 1, with two shape parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>. Their ratio sets where it sits and their sum sets how concentrated it is, which makes it a natural <a href="#gl-prior">prior</a> for something like the share of water on the globe.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">prior</span>
+</dd>
+<dt><span id="gl-binomial-distribution">Binomial distribution</span></dt>
+<dd>
+The distribution of the number of successes in <span class="math inline">\(N\)</span> independent trials, each a success with the same probability <span class="math inline">\(\theta\)</span>, such as water tosses of a globe. It is the <a href="#gl-likelihood">likelihood</a> of the globe toss, and in R <code>dbinom()</code> computes it.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">model</span>
+</dd>
 <dt><span id="gl-box-plot">Box plot</span></dt>
 <dd>
 A compact summary of a numeric variable, often one box per group: the line marks the <a href="#gl-median">median</a>, the box holds the middle half of the observations, and whiskers and points show the rest. With few observations, draw the points themselves on top, because a box hides how many there are.
@@ -567,6 +587,11 @@ Operators that return <code>TRUE</code> or <code>FALSE</code>: <code>&lt;</code>
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/Comparison.html">R documentation: relational operators</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
 </dd>
+<dt><span id="gl-conditional-probability">Conditional probability</span></dt>
+<dd>
+The probability of one thing given that another holds, written <span class="math inline">\(P(A \mid B)\)</span> and read “A given B”. Every way of telling <a href="#gl-signal-and-noise">signal from noise</a> is a statement of this kind, and the schools of inference differ in what they put on each side of the bar.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span>
+</dd>
 <dt><span id="gl-console">Console</span></dt>
 <dd>
 The interactive R session in Positron, where code runs line by line and prints its result straight away. Use it to try things out and for one-off commands such as <code>install.packages()</code>, and keep everything that belongs to the analysis in the document.
@@ -578,6 +603,12 @@ See also: <a href="#gl-fresh-r-session">Fresh R session</a>.
 The Comprehensive R Archive Network, a network of servers around the world that store identical, up-to-date versions of R and of more than 20,000 contributed <a href="#gl-package">packages</a>. <code>install.packages()</code> downloads from it.
 Documentation: <a href="https://cran.r-project.org/">CRAN</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-cromwell-s-rule">Cromwell’s rule</span></dt>
+<dd>
+Never give a <a href="#gl-prior">prior</a> probability of exactly 0 or 1 to anything that is not logically impossible or certain. A value with prior 0 keeps posterior 0 whatever the data show, so a dogmatic prior can never learn.
+See also: <a href="#gl-falsification">Falsification</a>.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">prior</span>
 </dd>
 <dt><span id="gl-cross-reference">Cross-reference</span></dt>
 <dd>
@@ -709,6 +740,12 @@ R’s type for categories, a vector encoded with a fixed set of levels, such as 
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/factor.html">R documentation: factors</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-falsification">Falsification</span></dt>
+<dd>
+Ruling a hypothesis out because the data are impossible under it, as one black swan refutes “all swans are white”. In <a href="#gl-bayes-theorem">Bayes’ theorem</a> it is the case of a zero <a href="#gl-likelihood">likelihood</a>: the posterior of that hypothesis becomes zero, while confirming data only ever raise a posterior gradually.
+See also: <a href="#gl-cromwell-s-rule">Cromwell’s rule</a>.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">interpretation</span> <span class="glossary-tag">probability</span>
+</dd>
 <dt><span id="gl-file-extension">File extension</span></dt>
 <dd>
 The ending of a file name, such as <code>.csv</code>, <code>.xlsx</code>, <code>.dta</code> or <code>.qmd</code>, which tells you and your software what format the file is in. Each data format has its own reading function, so the extension tells you which one to reach for.
@@ -760,6 +797,11 @@ Documentation: <a href="https://ggplot2.tidyverse.org/">ggplot2</a>
 <dd>
 How accurately readers decode the visual encodings of a chart: positions on a common axis and lengths best, angles, areas, depth and colour shades worst <span class="citation" data-cites="cleveland1984graphical">(<a href="#ref-cleveland1984graphical" role="doc-biblioref">Cleveland and McGill 1984</a>)</span>. It is the reason pie charts and 3D charts mislead, and why most charts show values by position or length.
 <span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">interpretation</span>
+</dd>
+<dt><span id="gl-grid-approximation">Grid approximation</span></dt>
+<dd>
+Computing a <a href="#gl-posterior">posterior</a> by evaluating prior times likelihood at a finite set of parameter values and dividing by their sum. It is exact for a handful of values, but the number of grid points grows exponentially with the number of parameters, which is why realistic models need MCMC.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">model</span> <span class="glossary-tag">mcmc</span>
 </dd>
 <dt><span id="gl-grouped-summary">Grouped summary</span></dt>
 <dd>
@@ -861,6 +903,12 @@ See also: <a href="#gl-grammar-of-graphics">Grammar of graphics</a>.
 A legend is the key that decodes an <a href="#gl-aesthetic-mapping">aesthetic mapping</a>, such as which colour stands for which continent. Direct labels write the name next to the data instead, which spares the reader from looking back and forth.
 See also: <a href="#gl-annotation">Annotation</a>.
 <span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-likelihood">Likelihood</span></dt>
+<dd>
+How probable the observed data are under each possible value of the <a href="#gl-parameter">parameter</a>, read as a function of the parameter with the data held fixed. It ranks the values by how well they account for what we saw, but it is not a distribution over the parameter and need not add up to 1.
+See also: <a href="#gl-bayes-theorem">Bayes’ theorem</a>.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">model</span>
 </dd>
 <dt><span id="gl-line-plot">Line plot</span></dt>
 <dd>
@@ -976,6 +1024,11 @@ The symmetric bell-shaped distribution, written <span class="math inline">\(\mat
 See also: <a href="#gl-rule-of-68-and-95-percent">Rule of 68 and 95 percent</a>, <a href="#gl-standard-normal-distribution">Standard normal distribution</a>.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span>
 </dd>
+<dt><span id="gl-normalising-constant">Normalising constant</span></dt>
+<dd>
+The denominator of <a href="#gl-bayes-theorem">Bayes’ theorem</a>, <span class="math inline">\(P(\text{data})\)</span>: <a href="#gl-prior">prior</a> times <a href="#gl-likelihood">likelihood</a>, summed over every value of the parameter, which counts every way the data could have been produced. Dividing by it makes the <a href="#gl-posterior">posterior</a> add up to 1, and it is what becomes impossible to compute exactly as parameters are added.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">model</span> <span class="glossary-tag">mcmc</span>
+</dd>
 </dl>
 </section>
 <section id="sec-glossary-o" class="level2">
@@ -1043,6 +1096,11 @@ Data that observe the same units again and again over time, such as countries in
 See also: <a href="#gl-observation">Observation</a>, <a href="#gl-tidy-data">Tidy data</a>.
 <span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-parameter">Parameter</span></dt>
+<dd>
+An unknown quantity in a model that we want to learn about from data, such as the proportion of the Earth covered by water. In Bayesian inference it is uncertain to us, so it gets a <a href="#gl-probability-distribution">probability distribution</a>, while the observed data are fixed.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">model</span> <span class="glossary-tag">probability</span>
+</dd>
 <dt><span id="gl-pipeline">Pipeline</span></dt>
 <dd>
 A sequence of steps chained with the <a href="#gl-native-pipe">native pipe</a>, each taking the previous result, from reading a file to a finished table. Pipelines are powerful, so build them one step at a time and check the result at every step.
@@ -1055,6 +1113,23 @@ A free data science environment, an IDE (integrated development environment), fo
 Documentation: <a href="https://positron.posit.co/layout.html">Positron: layout</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">workflow</span>
 </dd>
+<dt><span id="gl-posterior">Posterior</span></dt>
+<dd>
+The <a href="#gl-probability-distribution">probability distribution</a> of a <a href="#gl-parameter">parameter</a> after the data are seen, which combines the <a href="#gl-prior">prior</a> with the <a href="#gl-likelihood">likelihood</a>. Because it is a whole distribution, it answers questions such as “how probable is it that more than half the Earth is water?” directly.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">model</span> <span class="glossary-tag">interpretation</span>
+</dd>
+<dt><span id="gl-prior">Prior</span></dt>
+<dd>
+The <a href="#gl-probability-distribution">probability distribution</a> of a <a href="#gl-parameter">parameter</a> before the data are seen: how plausible each value is to begin with. It is a commitment that has to be defended on principled grounds, and a prior that is wide, narrow or exactly zero somewhere changes what the data can teach us.
+See also: <a href="#gl-bayes-theorem">Bayes’ theorem</a>, <a href="#gl-cromwell-s-rule">Cromwell’s rule</a>.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">prior</span>
+</dd>
+<dt><span id="gl-probability">Probability</span></dt>
+<dd>
+A number between 0 and 1 that says how plausible something is, where 0 is impossible and 1 is certain. It can be read as a long-run frequency of a repeatable process or as a degree of belief given what we know, and both readings obey the same rules.
+See also: <a href="#gl-conditional-probability">Conditional probability</a>, <a href="#gl-probability-distribution">Probability distribution</a>.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span>
+</dd>
 <dt><span id="gl-probability-density">Probability density</span></dt>
 <dd>
 The height of the curve of a continuous <a href="#gl-probability-distribution">probability distribution</a>. The density itself is not a probability: the area under the curve between two values is.
@@ -1064,6 +1139,11 @@ The height of the curve of a continuous <a href="#gl-probability-distribution">p
 <dd>
 A description of how plausible each possible value of a quantity is. For a continuous quantity it is drawn as a <a href="#gl-probability-density">density</a> curve, and the area under the curve between two values is the probability of landing between them.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span>
+</dd>
+<dt><span id="gl-probability-mass-function">Probability mass function</span></dt>
+<dd>
+The <a href="#gl-probability-distribution">probability distribution</a> of a discrete quantity, such as a count, which gives every possible value its own probability. The probabilities of all values add up to 1, unlike a <a href="#gl-probability-density">density</a>, where only areas are probabilities.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span>
 </dd>
 <dt><span id="gl-project-root">Project root</span></dt>
 <dd>
@@ -1182,6 +1262,11 @@ The standard way to store geographic shapes as a column of a table, one row per 
 See also: <a href="#gl-choropleth">Choropleth</a>.
 Documentation: <a href="https://r-spatial.github.io/sf/">sf: simple features for R</a>
 <span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-simulation">Simulation</span></dt>
+<dd>
+Drawing many random values from a distribution and counting what happens, to approximate a probability that would be hard to compute directly. The more draws, the better the approximation, which is the idea that MCMC builds on.
+<span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">r</span>
 </dd>
 <dt><span id="gl-skewed-distribution">Skewed distribution</span></dt>
 <dd>
