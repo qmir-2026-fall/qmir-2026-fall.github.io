@@ -1362,7 +1362,7 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "Your roadmap for the term. One session per week, and each row links the slides, the homework starter repo, and, after the due date, the sample solution.\nThe term runs in three blocks. Week 1 sits outside them, because it shows the whole workflow up front."
+    "text": "Your roadmap for the term. One session per week, and each row links the slides, the homework starter repo, and, after the due date, the sample solution. Your attendance and homework progress can be seen here, on the course organisation’s page on GitHub (sign in to see it).\nThe term runs in three blocks. Week 1 sits outside them, because it shows the whole workflow up front."
   },
   {
     "objectID": "schedule.html#sec-exam",
