@@ -99,6 +99,7 @@ the style files.
 | `.claude/r-code.md` | writing or editing R code in any `.qmd` or script (paths, tidyverse, setup chunk, figures, tables, `brms`) | 2026-10-07 |
 | `.claude/slides.md` | anything under `website/slides/`, or acting on a `check-authoring.ps1` finding (canvas, size ladder, columns, deck grammar and YAML, the two check stages) | 2026-10-13 |
 | `.claude/github.md` | the org, template repos, the student link, org permissions, rosters, attendance or progress tracking | 2026-09-30 |
+| `.claude/week06-notes.md` | editing the week 6 deck or the globe dashboard under `website/apps/` (decisions, dashboard structure, open items) | 2026-10-14 |
 | `.claude/feedback.md` | the opt-in AI feedback job or exam grading (trigger, inputs, output, safety) | 2026-09-30 |
 
 ## Maintaining this system

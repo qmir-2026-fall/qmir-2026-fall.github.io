@@ -1,0 +1,391 @@
+---
+title: "Homework 06: The logic of Bayesian inference"
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+#| label: setup
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+
+set.seed(3594)
+
+# Shared course palette.
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+
+# The probe log: D is a democracy, N is not.
+probe_log <- str_split_1("DNNDNNDDNNNDNDNNDNND", "")
+
+# Grid posterior: Beta(a, b) prior, zero below `lower`.
+posterior_grid <- function(W, N, a = 1, b = 1, lower = 0) {
+  tibble(theta = ((0:999) + 0.5) / 1000) |>
+    mutate(
+      prior = dbeta(theta, a, b) * (theta >= lower),
+      prior = prior / sum(prior),
+      likelihood = dbinom(W, size = N, prob = theta),
+      posterior = prior * likelihood / sum(prior * likelihood)
+    )
+}
+
+# Prior, likelihood and posterior in one plot.
+plot_update <- function(W, N, a = 1, b = 1, lower = 0) {
+  posterior_grid(W, N, a, b, lower) |>
+    mutate(likelihood = likelihood / sum(likelihood)) |>
+    pivot_longer(
+      c(prior, likelihood, posterior),
+      names_to = "curve",
+      values_to = "probability"
+    ) |>
+    mutate(
+      curve = factor(curve, levels = c("prior", "likelihood", "posterior")),
+      density = probability * 1000
+    ) |>
+    ggplot(aes(x = theta, y = density, colour = curve, linetype = curve)) +
+    geom_line(linewidth = 0.8) +
+    scale_colour_manual(values = c(col_1, col_4, col_2)) +
+    scale_linetype_manual(values = c("dashed", "dotted", "solid")) +
+    theme_classic() +
+    theme(legend.position = "bottom") +
+    labs(
+      x = expression(theta ~ "(share of land in democracies)"),
+      y = "Density",
+      colour = NULL,
+      linetype = NULL,
+      title = str_glue("Beta({a}, {b}) prior, {W} democratic landings in {N}")
+    )
+}
+```
+
+# The setting {#sec-setting}
+
+An alien civilisation wants to answer a question about Earth: **what share of Earth's land belongs to democracies?**
+
+Their method is simple.
+They send probes that land at a random spot on land, every spot equally likely.
+Each probe identifies the country it landed in, looks it up in V-Dem's Regimes of the World (as in homework 05), and records one letter:
+
+- **D** if the country is an electoral or a liberal democracy
+- **N** if it is not
+
+Call the unknown share of land that belongs to democracies $\theta$.
+It is the globe toss from the session with a new question: a probe landing is a toss, and D is water.
+
+The setup chunk stores the first 20 landings in `probe_log` and defines two helpers.
+`posterior_grid()` computes prior, likelihood and posterior on a grid of 1000 values of $\theta$, as on the dashboard.
+`plot_update()` draws the three curves.
+You do not need to change either.
+You only call them with different numbers: `W` democratic landings in `N`, and a Beta(`a`, `b`) prior.
+
+::: {.callout-important}
+**This homework is about reasoning, not about code.**
+Most questions need two to four sentences and no code at all.
+Where you do run code, predict the result first and write the prediction down, then explain what you see.
+A number or a plot on its own is never an answer.
+:::
+
+This homework practises **step 1** of the workflow, the estimand, and the logic behind **step 3**, the formal model: a likelihood for the data and a prior for the unknown.
+
+Use AI tools to explain an error message or a function, not to write your answers.
+The point of this homework is the thinking.
+
+# The estimand {#sec-estimand}
+
+1. Say in your own words what $\theta$ is.
+   Is it the same as the share of the world's **countries** that are democracies?
+   Is it the same as the share of the world's **people** who live in a democracy?
+   Use Russia and India to explain why the three numbers differ.
+
+2. Which of the three would you want to know if your question were "how many people can vote their government out?", and which if it were "how much of the planet's territory, resources and borders do democracies control?"
+
+3. About a tenth of Earth's land is Antarctica, which belongs to no country.
+   What should a probe record when it lands there?
+   Say how your choice changes what $\theta$ means.
+
+4. In the session, the parameter has one true value, but we do not know it.
+   Apply this to $\theta$: in what sense is it fixed, and in what sense is it uncertain?
+   Would sending more probes change $\theta$?
+   What does it change instead?
+
+5. The aliens treat landings as independent, each D with the same probability $\theta$.
+   Name one way this could fail in practice.
+
+# Probability warm-up {#sec-warm-up}
+
+Suppose, for this section only, that $\theta = 0.4$, and a mission sends 20 probes.
+
+1. **Before running anything:** what is the most likely number of D landings?
+   Would you expect to see exactly that number most of the time?
+
+2. Compute the probability of exactly 8 D landings with `dbinom()`, and the probability of at most 5 with `pbinom()`.
+
+```{r}
+#| label: ex-warm-up-exact
+```
+
+3. The most likely count has a probability far below one half.
+   Explain how both can be true.
+
+4. Now approximate the probability of at most 5 by simulating 10,000 missions of 20 probes with `rbinom()` and counting.
+   Why do the simulated and the computed answer agree, and why not exactly?
+   What would happen with a million missions?
+
+```{r}
+#| label: ex-warm-up-simulate
+```
+
+5. `dbeta(0.5, 20, 20)` returns a number above 5, while no value of `dbinom()` can ever exceed 1.
+   Run it, then explain why the first is not a mistake.
+
+```{r}
+#| label: ex-warm-up-density
+```
+
+6. Every function in this section takes $\theta$ as known and tells you about the data.
+   Write the quantity they compute in the notation of the session, $P(\cdot \mid \cdot)$.
+   The aliens want the opposite: what they know is the data.
+   Write down the quantity they want.
+
+# The four ingredients {#sec-ingredients}
+
+No code and no numbers in this section.
+
+1. For each of the four ingredients of Bayes' theorem (the **prior**, the **likelihood**, the **normalising constant** and the **posterior**), write two or three sentences:
+   - what it is, in your own words
+   - what job it does in Bayes' theorem
+   - what it means for the aliens and their probes
+
+2. Write Bayes' theorem for the aliens, with $\theta$ and "the probe log", and label each of its four terms.
+
+3. The likelihood gives a probability for every value of $\theta$, yet these probabilities need not add up to 1.
+   Why not?
+   What do they add up to 1 over instead?
+
+4. The normalising constant is the same number for every value of $\theta$.
+   Why?
+   And if it is the same everywhere, why do we need it at all?
+
+# Counting the ways {#sec-counting}
+
+The aliens start with a crude model: Earth as a **four-faced die**, each face democratic or not.
+There are five conjectures, $\theta \in \{0, \tfrac{1}{4}, \tfrac{2}{4}, \tfrac{3}{4}, 1\}$, where $k$ is the number of democratic faces.
+The first three probes of the log landed **D N N**.
+
+Do this section by hand, as in the session.
+Fill in the table directly in this document.
+
+1. With $k$ democratic faces, in how many ways can D N N happen?
+   Write the general expression, then fill in the table with every conjecture equally plausible beforehand.
+
+| $k$ | $\theta$ | Prior | Ways to see D N N | Prior times ways | Posterior |
+|:-:|:-:|:-:|:-:|:-:|:-:|
+| 0 | 0 | 1 | | | |
+| 1 | 1/4 | 1 | | | |
+| 2 | 2/4 | 1 | | | |
+| 3 | 3/4 | 1 | | | |
+| 4 | 1 | 1 | | | |
+
+: The four-faced alien globe after D N N, from a flat prior. {#tbl-counting-dnn}
+
+2. Which column of @tbl-counting-dnn is which of the four ingredients?
+   Where is the normalising constant?
+
+3. Which conjectures are ruled out, and by which landing?
+   Why can no later landing bring them back?
+   What is this called?
+
+4. The fourth landing is **D**.
+   Update by multiplying your counts from @tbl-counting-dnn by the ways a single D can happen under each conjecture.
+   Then count the ways for all four landings, D N N D, at once.
+   Show that both routes give the same posterior, and explain why the order of updating cannot matter.
+
+5. Start again from D N N, now with the prior 1, 2, 3, 2, 1 for $k = 0, \dots, 4$.
+   What belief does this prior encode?
+   Recompute the posterior and say in one or two sentences what the prior changed and what it could not change.
+
+6. `posterior_grid()` in the setup chunk does on 1000 conjectures what your table did on five.
+   Point to the line that computes each of the four ingredients.
+
+7. **Optional check in R:** `dbinom(1, size = 3, prob = (0:4) / 4)` is proportional to your ways column.
+   Why proportional and not equal?
+
+```{r}
+#| label: ex-counting-check
+```
+
+# Priors as commitments {#sec-priors}
+
+Three alien scientists disagree before any probe lands.
+Each writes down a Beta prior for $\theta$, the same priors as on the dashboard:
+
+- **Uniform**, Beta(1, 1)
+- **Weakly informative**, Beta(2, 2)
+- **Dogmatic**, Beta(500, 500)
+
+1. Draw each prior alone with `plot_update(W = 0, N = 0, a = , b = )`.
+   Why does the posterior equal the prior when `N = 0`?
+
+```{r}
+#| label: ex-priors-uniform
+```
+
+```{r}
+#| label: ex-priors-weak
+```
+
+```{r}
+#| label: ex-priors-dogmatic
+```
+
+2. For each prior, one or two sentences: what does the scientist commit to about $\theta$, and could the scientist defend it to a political scientist on Earth?
+
+3. Now choose your own prior for $\theta$.
+   Pick `a` and `b`, draw it, and defend it in three to four sentences on principled grounds: what do you know about Earth before any probe lands, and how sure are you?
+   The Beta mean is $a / (a + b)$, and a larger $a + b$ makes it more concentrated.
+
+```{r}
+#| label: ex-priors-own
+```
+
+# Prior versus data {#sec-prior-data}
+
+The log has 8 D landings in 20.
+Suppose the aliens send more probes and keep seeing the same share: 80 in 200, then 800 in 2000.
+
+1. **Predict first:** with the weakly informative and the dogmatic prior, where will the posterior sit after 20, 200 and 2000 landings, and how wide will it be?
+   Write your prediction down before you run anything.
+
+2. Run `plot_update()` for both priors and all three sample sizes.
+
+```{r}
+#| label: ex-prior-data-weak-20
+```
+
+```{r}
+#| label: ex-prior-data-weak-200
+```
+
+```{r}
+#| label: ex-prior-data-weak-2000
+```
+
+```{r}
+#| label: ex-prior-data-dogmatic-20
+```
+
+```{r}
+#| label: ex-prior-data-dogmatic-200
+```
+
+```{r}
+#| label: ex-prior-data-dogmatic-2000
+```
+
+3. Where was your prediction right, and where wrong?
+
+4. Explain **why** the posterior moves the way it does as the data grow.
+   Use the four ingredients, not a description of the curves.
+
+5. Under the weakly informative prior, the prior barely matters at 2000 landings.
+   Under the dogmatic prior, it still matters.
+   What is it about a prior that decides how much data it takes to overrule it?
+
+# Zero never learns {#sec-zero}
+
+A senior scientist is certain that democracies hold at least half of Earth's land.
+Her prior is uniform on $[0.5, 1]$ and exactly zero below 0.5.
+`plot_update(W, N, lower = 0.5)` draws it.
+
+1. **Predict first:** where will her posterior sit after 8 D landings in 20, and after 800 in 2000?
+
+2. Run both.
+
+```{r}
+#| label: ex-zero-20
+```
+
+```{r}
+#| label: ex-zero-2000
+```
+
+3. Explain what you see with Bayes' theorem.
+   Why does her posterior pile up against 0.5, however many probes land?
+
+4. In @sec-counting, a likelihood of zero ruled out two conjectures.
+   Here a prior of zero rules out half of them.
+   Both end with a posterior of zero.
+   Explain the difference between the two, and say which is falsification and which is dogma.
+
+5. When is a prior of exactly zero defensible?
+   Give one statement about $\theta$ that deserves a prior of exactly zero, and explain why.
+
+6. Rewrite her belief so that it respects Cromwell's rule but still says that more than half is likely.
+   Give `a` and `b` and say why.
+
+# Answering the question {#sec-answer}
+
+The aliens' question was: **do democracies hold more than half of Earth's land?**
+
+1. Compute $P(\theta > 0.5 \mid \text{probe log})$ for the 20 landings of the log, once with the uniform prior and once with your own prior from @sec-priors.
+   One short pipeline each is enough.
+   Hint: filter the rows of `posterior_grid()` with `theta > 0.5` and add up their `posterior`.
+
+```{r}
+#| label: ex-answer
+```
+
+2. Answer the aliens' question in one or two sentences, in plain language, with your own prior.
+
+3. Three junior scientists summarise the result with the uniform prior.
+   For each, say whether it is right, and if not, what exactly is wrong.
+   - **(a)** "Given our 20 landings, our binomial model and a uniform prior, the probability that democracies hold more than half of Earth's land is about 0.19."
+   - **(b)** "If democracies held more than half of Earth's land, there would be a 0.19 probability of seeing a probe log like ours."
+   - **(c)** "The probability is below one half, so democracies hold less than half of Earth's land."
+
+# Why grids explode {#sec-explode}
+
+1. The aliens now want $\theta$ separately for each of six continents, with a grid of 1000 values for each.
+   How many terms does the normalising constant add up?
+   Write the number as a power of 10.
+
+2. In @sec-counting you could count every path by hand.
+   Why does that stop working here, and what does the session say the aliens should do instead?
+
+# Reflection {#sec-reflection .unnumbered}
+
+Which idea from this homework was the hardest to put in your own words?
+Is there a part of Bayes' theorem you are still unsure about?
+
+# Session info and execution time {#sec-session .unnumbered}
+
+```{r}
+#| label: session-info
+
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+
+end_time <- Sys.time()
+cat(
+  "Total execution time:",
+  round(difftime(end_time, start_time, units = "mins"), 1),
+  "minutes\n"
+)
+```

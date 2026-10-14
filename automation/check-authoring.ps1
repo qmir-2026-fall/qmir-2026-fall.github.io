@@ -429,7 +429,8 @@ function Test-File {
       Add-Finding $File $n 'E020' 'chunk without a #| label:'
     }
 
-    $makesPlot = $bodyText -match '\bggplot\s*\(|\bpp_check\s*\(|\bmcmc_\w+\s*\(|\bplot\s*\('
+    # A setup chunk may define a plotting helper (hw-06), but it never draws.
+    $makesPlot = $label -ne 'setup' -and $bodyText -match '\bggplot\s*\(|\bpp_check\s*\(|\bmcmc_\w+\s*\(|\bplot\s*\('
     $makesTable = $bodyText -match '\bkable\s*\(|\bmodelsummary\s*\('
 
     if ($makesPlot) {
