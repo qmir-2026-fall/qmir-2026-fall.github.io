@@ -23,6 +23,7 @@ cfg <- read_course()
 
 Your roadmap for the term.
 One session per week, and each row links the slides, the homework starter repo, and, after the due date, the sample solution.
+Your attendance and homework progress can be seen [here](https://github.com/`r cfg$github$org`), on the course organisation's page on GitHub (sign in to see it).
 
 ::: {.schedule-legend}
 | | |
