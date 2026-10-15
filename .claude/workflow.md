@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-10-13
+last_modified: 2026-10-15
 scope: repo topology, term pipeline, feedback policy, naming, layout, staging, automation contracts
 ---
 
@@ -49,7 +49,9 @@ with `automation/hooks/install-hooks.ps1`) and the payload assertion inside
    Write the sample solution in `solutions/hw-NN/solution.qmd` (private submodule).
 2. `automation/release-homework.ps1 -Week NN` creates or refreshes the **public distribution repo
    `hw-NN`** in the org (starter, data, and the mechanical check workflow) and marks it a
-   template.
+   template. Run it **before** `released:` passes. If `template_name` names a missing repo,
+   GitHub silently creates an empty one (hw-06, 2026-10-14). `publish-site.ps1` refuses to
+   publish while a released week has no template repo on the org.
 3. The schedule links the create-from-template flow automatically once `meta.yml` exists.
    Students work in `hw-NN-<username>` **on the org** (`github.md` has the canonical link shape).
 4. **After the due date:** `automation/release-solution.ps1 -Week NN` renders the sample solution

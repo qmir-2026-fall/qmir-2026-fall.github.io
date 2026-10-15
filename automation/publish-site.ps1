@@ -40,6 +40,22 @@ if (-not $SkipChecks) {
   }
 }
 
+# --- guard: a released homework must have its template repo on the org ---
+# schedule.qmd links hw-NN as soon as `released:` has passed, but GitHub's /new page
+# silently creates an EMPTY repo when template_name points at a repo that does not exist.
+# That shipped for hw-06, so check every released week before the link goes live.
+Get-ChildItem (Join-Path $root "homework") -Directory |
+  Where-Object { $_.Name -match '^hw-\d+$' } | ForEach-Object {
+    $m = Select-String -Path (Join-Path $_.FullName "meta.yml") -Pattern '^\s*released:\s*(\S+)' |
+         Select-Object -First 1
+    if (-not $m -or [datetime]$m.Matches.Groups[1].Value -gt (Get-Date)) { return }
+    $hw = $_.Name
+    $isTemplate = Get-NativeOutput { gh api "repos/$Org/$hw" --jq '.is_template' }
+    if ($isTemplate -ne "true") {
+      throw "$hw is marked released but $Org/$hw is missing or not a template: run release-homework.ps1 -Week $($hw.Substring(3))."
+    }
+  }
+
 # --- guard: publishing from a dirty tree makes the live site untraceable to a commit ---
 Push-Location $root
 try {
