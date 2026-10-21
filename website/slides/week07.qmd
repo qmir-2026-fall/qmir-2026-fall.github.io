@@ -2,314 +2,324 @@
 title: "Week 7: Markov chain Monte Carlo"
 ---
 
-<!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
+<!-- Shared format options live in _metadata.yml, so this deck's YAML carries only the title.
 
-     This file is staged: the leading underscore keeps it out of the Quarto render, off
-     the schedule (which looks for weekNN.qmd), and out of check-authoring.ps1. The body
-     below is the spring deck verbatim, so it does NOT yet follow the style guide in .claude/
+     Arc: week 6 ended on why exact posteriors explode. Today replaces computing with sampling.
+     Monte Carlo first (the pi example, animated), then Markov chains through the island king
+     (animated), which gives the Metropolis rule and the cancelling P(data). A random walk maps
+     a landscape slowly, so the posterior becomes a landscape and HMC a ball we kick across it
+     (three sequential trajectories of one chain, animated). Multiple chains, warm-up and the
+     diagnostics follow, and the session closes by assessing the convergence of the week 1 fit.
+     There is no session next week, and week 8 fits the first brms model together.
 
-     To put this week live:
-       1. Convert the body to the style guide in .claude/ (em dashes, inline font-size, {#sec-} labels,
-          chunk labels and captions, the size ladder).
-       2. git mv website/slides/_weekNN.qmd website/slides/weekNN.qmd
-       3. ./automation/check-authoring.ps1 -Week NN -Fit
-     Nothing else moves: images/, data/ and theme.scss are already at the paths this
-     body expects, and the shared format block lives in _metadata.yml.
--->
+     Animations: make_gif() in the setup chunk renders one PNG per frame and joins them with
+     gifski. Each animated slide is followed by its static twin, drawn by the same function,
+     so the printed deck and the fit check see the final state.
 
+     The Back to week 1 section reads data/week01-fit.rds, which is git-ignored and written
+     by rendering week01.qmd. The deck is frozen, so this only matters on a fresh re-render.
+
+     Time budget (90 min): opening 3, where we left off 5, origins 5, Monte Carlo 12,
+     Markov chains and the island king 18, landscape and HMC 18, chains and convergence 15,
+     synthesis 3, week 1 diagnostics 8, wrap-up 3.
+     If the room runs slow, skip the origins slides and show only one HMC trajectory animation
+     before the combined one. -->
 
 ```{r}
 #| label: setup
 #| include: false
-#| eval: true
 
-library(tidyverse)
-library(brms)
-library(bayesplot)
-library(patchwork)
+start_time <- Sys.time()
 
-# ─────────────────────────────────────────────────────────────────────────────
-# SHARED COLOURS (consistent with week 6)
-# ─────────────────────────────────────────────────────────────────────────────
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(brms) # reading the week 1 fit
+library(patchwork) # multi-panel figures
+library(gifski) # frames to animated GIF
+
+# _quarto.yml is a project-root marker, so anchor here() at the repo root.
+here::i_am("website/slides/week07.qmd")
+
+# Shared palette. Reused verbatim across slides, homework and solutions so a
+# chain colour means the same thing in every artefact of the course.
 col_1 <- "steelblue"
 col_2 <- "#E07B39"
 col_3 <- "#7B3F9E"
 col_4 <- "goldenrod3"
-
 chain_cols <- c(col_1, col_2, col_3, col_4)
+
+# Animation helper. draw_frame(frame) returns one ggplot or patchwork. Every frame
+# is saved as a PNG, the last one is held for `hold` seconds, and gifski joins
+# them into a GIF inside knitr's figure directory, so the deck freeze keeps it.
+make_gif <- function(
+  draw_frame,
+  frames,
+  width = 9,
+  height = 4,
+  fps = 12,
+  hold = 2
+) {
+  png_dir <- tempfile("frames-")
+  dir.create(png_dir)
+  pngs <- map_chr(seq_along(frames), function(i) {
+    path <- file.path(png_dir, sprintf("frame-%04d.png", i))
+    ggsave(
+      path,
+      draw_frame(frames[[i]]),
+      width = width,
+      height = height,
+      dpi = 100,
+      bg = "white"
+    )
+    path
+  })
+  pngs <- c(pngs, rep(last(pngs), round(hold * fps)))
+  gif_path <- knitr::fig_path(".gif")
+  dir.create(dirname(gif_path), recursive = TRUE, showWarnings = FALSE)
+  gifski(
+    pngs,
+    gif_file = gif_path,
+    width = width * 100,
+    height = height * 100,
+    delay = 1 / fps,
+    progress = FALSE
+  )
+  knitr::include_graphics(gif_path)
+}
 ```
 
-## QMIR 2026
+## Week 7 goals {#sec-week07-goals .smaller}
 
-### Week 7: Markov Chain Monte Carlo
+By the end of today, you will be able to:
 
-![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
-
-::: notes
-- Opening slide. Welcome back. Give a one-sentence orientation: "Last week: Bayesian foundations and grid approximation. Today: why grid fails and how MCMC solves it."
-- Logistics reminder: this session is more lecture-heavy than usual. Hands-on component arrives in week 8. Today is about building the mental model.
-- Estimated session arc: Parts I-III (~20 min), Part IV (~20 min), Part V (~15 min), Parts VI-VII (~15 min), Part VIII (~20 min).
-:::
-
----
-
-## Week 7 Learning Goals {.smaller}
-
-By the end of today, you should be able to:
-
-1. Articulate why grid approximation is computationally intractable for realistic models, and why an alternative is necessary
-2. Explain the **Monte Carlo idea**: approximating integrals by random sampling and counting, and describe its convergence properties
-3. Define a **Markov Chain** and explain what a *stationary distribution* is
-4. State the **Metropolis acceptance rule**, explain why it produces the correct stationary distribution, and show why $P(\text{data})$ cancels
-5. Explain qualitatively how **Hamiltonian Monte Carlo (HMC)** differs from random-walk Metropolis and why it is more efficient
-6. Interpret `brms` output: trace plots, $\hat{R}$, ESS, and posterior distributions
-7. Understand that **MCMC convergence cannot be proven**, only falsified, and recognize what non-convergence looks like
+1. Articulate why grid approximation is intractable for realistic models.
+2. Explain the **Monte Carlo idea**: approximating integrals by random sampling and counting.
+3. Define a **Markov chain** and explain what a *stationary distribution* is.
+4. State the **Metropolis acceptance rule** and show why the normalising constant cancels.
+5. Explain qualitatively how **Hamiltonian Monte Carlo** differs from random-walk Metropolis, and why it is more efficient.
+6. Assess whether a `brms` model has converged, using trace plots, R-hat and effective sample size.
+7. Understand that convergence cannot be proven, only falsified, and recognise what non-convergence looks like.
 
 ::: notes
-- Read goals aloud at the start; return to this slide in Part VII to show which section addressed each goal.
-- Goal-to-section mapping: Goals 1-2 covered in Parts I-III; Goals 3-4 in Part IV; Goal 5 in Part V; Goals 6-7 in Parts VI and VIII.
-- The take-home exam will engage directly with Goals 4, 6, and 7.
-- Verb choice signals expected depth: "articulate," "explain," "define," "state," "interpret," "understand." Students do not need to derive acceptance criteria from scratch but do need to explain in plain language why P(data) cancels.
+Read the goals aloud and come back to them at the end.
+Goals 4, 6 and 7 matter most for the exam.
 :::
 
-# Part I: Where We Left Off
+## Today {#sec-today .smaller}
 
-## Statistics Is (Still) Counting {.smaller}
+1. **Where we left off:** why we cannot compute the posterior everywhere
+2. **Monte Carlo:** learning from random samples
+3. **Markov chains:** the island king and the Metropolis rule
+4. **The posterior as a landscape:** Hamiltonian Monte Carlo
+5. **Chains, warm-up and convergence:** how we know something went wrong
+6. **Back to week 1:** did that model converge?
 
-Before we move forward, a brief ritual re-activation.
+## Where today fits {#sec-where-today-fits .smaller}
 
-. . .
+Today is the machinery behind **step 5** and the checks of **step 6a**.
+
+Every `brm()` call from week 8 onwards runs what we build today.
+
+{{< include _workflow-8step.qmd >}}
+
+::: notes
+One minute.
+Point at step 5, then at step 6a: today explains both.
+:::
+
+# Where we left off {#sec-left-off}
+
+## Statistics is (still) counting {#sec-still-counting .smaller}
+
+::: notes
+Activation slide, two minutes at most.
+Speak it, do not read it.
+:::
 
 Last week's core claim:
 
-::: {.callout-note style="font-size: 0.8em"}
+::: {.callout-note}
 **Statistics, at its heart, is counting.**
-
-- *What happened* the data we actually observed
-- *What did not happen* alternative outcomes that were possible
-- *What could have happened* the full space of hypotheses about the data-generating process
-- *How much we have counted* the precision and remaining uncertainty of our inferences
+We count what happened, what did not happen, and what could have happened.
+How much we have counted tells us how much uncertainty remains.
 :::
 
 . . .
 
-And the **key conceptual move** of Bayesian inference:
+And the key conceptual move of Bayesian inference:
 
-> Probability is a **degree of rational belief** — not a long-run frequency. Parameters are uncertain; they get probability distributions. The data is fixed; it is observed.
+> Probability is a **degree of belief**.
+> Parameters are uncertain, so they get probability distributions.
+> The data are observed, so they are fixed.
+
+## Bayes' theorem, proportional form {#sec-bayes-proportional .smaller}
 
 ::: notes
-- Activation slide. Speak it rather than read it. Students should recognize it from last week. Goal: wake up relevant neural pathways. Budget ~2 minutes max.
-- "Statistics is counting" framing is from McElreath's Statistical Rethinking. Grounds everything in one simple idea from which all Bayesian machinery follows.
-- Quick diagnostic question if students look uncertain: "Someone remind me: what is the difference between a frequentist confidence interval and a Bayesian credible interval?" This surfaces remaining confusion before new material.
-- Key contrast to reinforce: in frequentist thinking, parameters are fixed unknowns; the data are random. In Bayesian thinking, parameters are uncertain and get distributions; the observed data are fixed.
+Read the equation left to right.
+The proportional form is the science, the denominator is bookkeeping.
+Close with: if we cannot compute this integral, how do we learn the shape of the posterior?
 :::
-
----
-
-## Bayes' Theorem: The Proportional Form {.smaller}
-
-The three ingredients of Bayesian inference:
 
 $$
 \underbrace{P(\theta \mid \text{data})}_{\text{Posterior}}
-= \frac{\underbrace{P(\text{data} \mid \theta)}_{\text{Likelihood}} \cdot \underbrace{P(\theta)}_{\text{Prior}}}{\underbrace{P(\text{data})}_{\text{Normalizing constant}}}
+= \frac{\underbrace{P(\text{data} \mid \theta)}_{\text{Likelihood}} \cdot \underbrace{P(\theta)}_{\text{Prior}}}{\underbrace{P(\text{data})}_{\text{Normalising constant}}}
 \propto P(\text{data} \mid \theta) \cdot P(\theta)
 $$ {#eq-bayes}
 
 . . .
 
-The **proportional form** captures everything about the posterior's *shape*. The normalizing constant $P(\text{data})$ merely rescales the numerator so the posterior is a valid probability distribution.
+The proportional form fixes the posterior's **shape**.
+The normalising constant only rescales it so that it integrates to one.
 
 . . .
 
-::: {.callout-important style="font-size: 0.72em"}
-**Last week's problem.** $P(\text{data})$ is an integral over the entire parameter space:
+::: {.callout-important}
+**The normalising constant is an integral over the whole parameter space.**
+
 $$
 P(\text{data}) = \int_{\Theta} P(\text{data} \mid \theta) \cdot P(\theta) \, d\theta
 $$ {#eq-marginal-likelihood}
-We approximated it on a discrete grid. With 7 hypotheses: trivial. With realistic models: **computationally impossible**. Today we fix this.
+
+With seven conjectures we added it up on a grid, and for realistic models that is impossible.
 :::
+
+## The dimensional explosion {#sec-explosion .smaller}
 
 ::: notes
-- Re-state the mathematical objects clearly before showing why the denominator becomes a problem.
-- @eq-bayes: read the equation left to right. Left side is what we want (posterior). Right numerator is what we can compute (likelihood times prior). Denominator is the normalizing constant.
-- @eq-marginal-likelihood: this integral is the source of all the trouble. For 50 parameters, a 50-dimensional integral. This is why grid approximation fails.
-- Emphasize: the proportional form (the last expression) is the scientific content. The denominator is just bookkeeping -- but bookkeeping we cannot do analytically for realistic models.
-- Transition: "So -- if we cannot compute this integral, how do we learn the shape of the posterior?" Pause. "The answer is MCMC. And it is genuinely clever."
+Let the numbers land row by row.
+Close with the crowd analogy: to find the busiest floor you follow the crowd, you do not count every room.
 :::
 
----
-
-## The Dimensional Explosion {.smaller}
-
-Grid approximation: evaluate the posterior at every point on a grid.
-
-. . .
-
-| Parameters | Grid points per dim. | Total grid cells | Feasible? |
+::: {.small}
+| Parameters | Grid points per parameter | Total grid cells | Feasible? |
 |:---:|:---:|:---:|:---:|
 | 1 | 1,000 | $10^3$ | ✓ |
 | 3 | 1,000 | $10^9$ | Barely |
 | 10 | 1,000 | $10^{30}$ | No |
 | 50 | 1,000 | $10^{150}$ | Never |
 
-. . .
-
-The observable universe contains approximately $10^{80}$ atoms.
-
-. . .
-
-::: {.callout-note style="font-size: 0.72em"}
-A simple bivariate linear regression model has **three continuous parameters** ($\alpha$, $\beta$, $\sigma$). A multilevel model with 50 groups might easily have 50+ parameters. Grid approximation is not merely slow at scale -- it is **categorically impossible** regardless of hardware.
+: Grid approximation evaluates the posterior at every cell, so its cost grows exponentially with the number of parameters. The observable universe holds about 10^80 atoms. {#tbl-explosion}
 :::
 
 . . .
 
-::: {style="font-size: 0.9em; text-align: center; padding: 0.4em"}
-**The key insight:** we do not need to visit every point in parameter space.  
-We need to *spend time* where the posterior mass actually is.
+A bivariate regression already has three continuous parameters ($\alpha$, $\beta$, $\sigma$).
+A multilevel model easily has 50.
+
+. . .
+
+::: {.callout-tip}
+**We do not need to visit every point of the parameter space.**
+We need to spend our time where the posterior mass actually is.
 :::
+
+# MCMC: name and origins {#sec-name-origins}
+
+## Unpacking the acronym {#sec-acronym .smaller}
 
 ::: notes
-- Present the table row by row, letting the numbers land. Do not rush.
-- The universe comparison ($10^{80}$ atoms) is not hyperbole. $10^{150}$ is genuinely beyond any physical scale we can imagine.
-- The key insight in the final box: drive it home with an analogy: "Imagine you want to know which floor of a building is most occupied. You do not need to count every room. You can find out by following the crowd. MCMC is the mathematical version of following the crowd."
+Map the session onto the two columns.
+Promise: by the end of the island king you will see why P(data) never needs computing.
 :::
 
-# Part II: MCMC — Name and Origins
+**MCMC = Markov chain Monte Carlo**, two ideas combined.
 
-## Unpacking the Acronym {.smaller}
+:::: {.columns}
 
-**MCMC = Markov Chain Monte Carlo**
-
-. . .
-
-Two ideas, combined:
-
-:::::: columns
 ::: {.column width="50%"}
-
 **Monte Carlo**
 
-Using *random sampling* to approximate quantities that are hard to compute analytically.
+Using *random sampling* to approximate quantities that are hard to compute exactly.
 
-Taught first in **Part III**
-
-The philosophical engine: approximate integrals by counting random draws.
-
+The engine: approximate integrals by counting random draws.
 :::
 
 ::: {.column width="50%"}
+**Markov chain**
 
-**Markov Chain**
+A sequence of states where the *next state depends only on the current one*.
 
-A sequence of states where the *next state depends only on the current state*.
-
-Taught second in **Part IV**
-
-The structural mechanism: construct a random walk whose long-run behavior is the target distribution.
-
+The mechanism: a random walk whose long-run behaviour is the distribution we want.
 :::
-::::::
+
+::::
 
 . . .
 
-::: {.callout-note style="font-size: 0.72em"}
-**MCMC combines both:** we design a Markov Chain whose random wandering -- when run long enough -- produces samples from the target posterior. Crucially, this never requires computing $P(\text{data})$.
-
-We teach Monte Carlo first, Markov Chains second, then show how they combine. The order of teaching is the reverse of the acronym.
+::: {.callout-note}
+**MCMC designs a Markov chain whose wandering produces samples from the posterior.**
+It never requires computing $P(\text{data})$.
+We teach Monte Carlo first and Markov chains second, the reverse of the acronym.
 :::
+
+## Origins I: Los Alamos, 1946 {#sec-origins-1 .smaller}
 
 ::: notes
-- This slide maps the session structure explicitly. Point to each column as you introduce it.
-- Key promise to make explicit: "By the end of Part IV, you will see exactly why P(data) never needs to be computed." Do not explain it yet -- let the anticipation build through the Island King story.
-- Budget: ~3 minutes for this slide.
+Tell it as a story: solitaire, the insight, Los Alamos, the casino name.
+One sentence on the Manhattan Project, then move on.
 :::
 
----
+:::: {.columns}
 
-## Origins I: Los Alamos, 1946 {.smaller}
+::: {.column width="60%"}
+**Stanisław Ulam**, recovering from illness, plays solitaire and wonders: *what is the probability of a successful deal?*
 
-:::::: columns
-::: {.column width="75%"}
+Calculating it exactly is intractable, but simulating many games and counting is natural.
 
-**Stanisław Ulam**, recovering from illness, plays solitaire.
+The insight: **random simulation can replace analytical integration**.
 
-He wonders: *what is the probability of a successful deal?*
+Ulam shares the idea with **John von Neumann** and **Nicholas Metropolis** at Los Alamos, where it is applied to neutron diffusion in weapons design.
 
-Analytical calculation: intractable. Simulate many games and count: natural.
-
-The insight: **random simulation can replace analytical integration**. The law of large numbers guarantees convergence.
-
-Ulam shares the idea with **John von Neumann** and **Nicholas Metropolis** at Los Alamos National Laboratory. The method is applied to neutron diffusion calculations for nuclear weapons design.
-
-The name *"Monte Carlo"* -- after the [casino in Monaco](https://en.wikipedia.org/wiki/Monte_Carlo_Casino) -- is coined by Metropolis as a code name for classified work [@metropolis1949monte].
-
+Metropolis coins the code name *Monte Carlo*, after the [casino in Monaco](https://en.wikipedia.org/wiki/Monte_Carlo_Casino) [@metropolis1949monte].
 :::
 
-::: {.column width="25%"}
-
-::: {.callout-note style="font-size: 0.68em"}
-
-**The physical problem:** how do neutrons travel through fissile material? The collision events are random. Tracking individual particles analytically is impossible. Simulating millions of random neutron paths and averaging outcomes: feasible.
-
-The same logic that models nuclear reactors will, fifty years later, power Bayesian inference in political science.
-
+::: {.column width="40%"}
+::: {.callout-note}
+**The physical problem: how do neutrons travel through fissile material?**
+Collisions are random, so tracking particles analytically is impossible.
+Simulating millions of random paths and averaging is feasible.
+The same logic will, decades later, power Bayesian inference in the social sciences.
+:::
 :::
 
-:::
-::::::
+::::
+
+## Origins II: from physics to statistics {#sec-origins-2 .smaller}
 
 ::: notes
-- Tell this as a story, not as bullet points. Key narrative beats:
-  1. Ulam plays solitaire while recovering from illness, 1946 -- a mundane, relatable origin.
-  2. The insight: simulation beats closed-form integration.
-  3. Los Alamos context: classified, wartime, high stakes -- signals the method's power.
-  4. The casino name: memorable.
-- Connection to the course: "The same mathematical idea Ulam used to simulate neutron collisions in 1946 is what Stan uses to compute your posterior distributions in 2026. The tools your bachelor's thesis will use share a direct intellectual lineage with the Manhattan Project." This lands every time.
-- Do not get drawn into discussion of the Manhattan Project itself. One sentence of context, then move on.
+Physicists invent it, statisticians ignore it for 37 years, then it transforms Bayesian computation.
 :::
 
----
+:::: {.columns}
 
-## Origins II: From Physics to Statistics {.smaller}
-
-:::::: columns
 ::: {.column width="50%"}
+**1953: the Metropolis algorithm**
 
-**1953 -- The Metropolis Algorithm**
-
-Metropolis, Rosenbluth, Rosenbluth, Teller and Teller publish the first MCMC algorithm [@metropolis1953equation]. Written by physicists, for physics. The method computes equilibrium properties of particle systems.
-
-The acceptance rule -- accept moves probabilistically in proportion to relative density -- is the key innovation. We will see it today.
+Metropolis, Rosenbluth, Rosenbluth, Teller and Teller publish the first MCMC algorithm, written by physicists for physics [@metropolis1953equation].
+The key innovation is the **acceptance rule**: accept a move with a probability that depends on the relative density.
+We will meet it today.
 
 **Three decades of dormancy**
 
-The method was essentially unknown to statisticians. The connection to Bayesian inference was not made.
-
+Statisticians barely knew the method.
 :::
 
 ::: {.column width="50%"}
+**1990: the Bayesian revolution**
 
-**1990 -- The Bayesian Revolution**
+@gelfand1990sampling bring Gibbs sampling to statisticians and show that MCMC computes posteriors for realistic models.
+For a full treatment, see @gelman2013bda-ch11 and @gelman2013bda-ch12.
 
-@gelfand1990sampling introduce Gibbs sampling to statisticians, demonstrating that MCMC can compute marginal posterior distributions for realistic Bayesian models. The paper ignites a transformation of applied statistics. For a comprehensive treatment, see @gelman2013bda-ch11 and @gelman2013bda-ch12.
+**2012 to today: Stan and `brms`**
 
-**2012--present -- Stan and brms**
-
-Stan [@carpenter2017stan] implements **Hamiltonian Monte Carlo / NUTS** -- a dramatically more efficient algorithm. `brms` [@burkner2017brms] provides a formula interface accessible to applied researchers. This is what we use.
-
-:::
-::::::
-
-::: notes
-- The historical arc tells a story of cross-disciplinary fertilization: physicists invent the method, statisticians ignore it for 37 years, then it revolutionizes Bayesian computation.
-- Point students to BDA3 (Gelman et al.) chapters 11-12 for a rigorous treatment if they want the mathematical depth.
-- Stan (2012): Columbia, led by Andrew Gelman and Bob Carpenter. brms translates R formula syntax to Stan code.
-- Budget: ~3 minutes.
+Stan implements **Hamiltonian Monte Carlo** with NUTS, a far more efficient algorithm [@carpenter2017stan].
+`brms` gives it a formula interface [@burkner2017brms].
+This is what we use.
 :::
 
-# Part III: Monte Carlo — Random Sampling as Integration
+::::
+
+# Monte Carlo: random sampling as integration {#sec-monte-carlo}
 
 ```{r}
 #| label: data-pi
@@ -317,222 +327,216 @@ Stan [@carpenter2017stan] implements **Hamiltonian Monte Carlo / NUTS** -- a dra
 
 set.seed(2026)
 n_pi <- 5000
+
 pi_pts <- tibble(x = runif(n_pi), y = runif(n_pi)) |>
-  mutate(inside = (x^2 + y^2) <= 1)
-pi_conv <- tibble(
-  n = seq_len(n_pi),
-  pi_est = cumsum(pi_pts$inside) / seq_len(n_pi) * 4
+  mutate(
+    draw = row_number(),
+    inside = x^2 + y^2 <= 1,
+    location = factor(if_else(inside, "Inside", "Outside"), c("Inside", "Outside")),
+    pi_est = 4 * cumsum(inside) / draw
+  )
+
+quarter_circle <- tibble(
+  x = cos(seq(0, pi / 2, length.out = 300)),
+  y = sin(seq(0, pi / 2, length.out = 300))
 )
 ```
 
-## The Core Idea {.smaller}
+## The core idea {#sec-core-idea .smaller}
 
-**Monte Carlo integration:** replace an intractable integral with an average over random samples.
+::: notes
+f can be anything: the parameter itself gives the mean, an indicator gives a tail probability.
+The error rate does not depend on the number of parameters, which is why Monte Carlo wins at scale.
+:::
 
-. . .
+**Monte Carlo integration** replaces an intractable integral with an average over random samples.
 
-If $\theta^{(1)}, \theta^{(2)}, \ldots, \theta^{(S)} \overset{\text{iid}}{\sim} p(\theta)$, then by the law of large numbers:
+If $\theta^{(1)}, \ldots, \theta^{(S)}$ are independent draws from $p(\theta)$, the law of large numbers gives
 
 $$
 \mathbb{E}_{p}[f(\theta)] = \int f(\theta)\, p(\theta)\, d\theta \approx \frac{1}{S} \sum_{s=1}^{S} f\!\left(\theta^{(s)}\right)
-\quad \text{as } S \to \infty
 $$ {#eq-mc-estimator}
 
-. . .
+<details>
+<summary>How to read the Monte Carlo estimator</summary>
 
-The approximation error decreases at rate $1/\!\sqrt{S}$: doubling the samples halves the standard error.
-
-. . .
-
-::: {.callout-note style="font-size: 0.72em"}
-**Why does this help us?** We want to summarize the posterior -- compute its mean, credible intervals, tail probabilities. If we could draw *samples* from the posterior, we could compute any such quantity by averaging (@eq-mc-estimator). The samples replace the integral.
-
-The posterior *itself* is the hard object; its *summaries* become easy once we have samples. The challenge is to generate those samples without being able to evaluate the posterior at every point.
+::: {.callout-note}
+**@eq-mc-estimator in words.**
+The average value of some quantity $f(\theta)$ over the whole distribution $p(\theta)$, an integral, is approximately the plain average of that quantity over $S$ random draws from $p(\theta)$.
+The more draws, the better the approximation, and the error shrinks with $1/\sqrt{S}$.
 :::
+
+</details>
+
+. . .
+
+::: {.callout-note}
+**Samples let us learn a distribution we cannot write down.**
+With enough draws from the posterior, a histogram of them approximates its shape.
+And from that shape every summary follows by averaging: means, spreads, credible intervals.
+:::
+
+## The $\pi$ example: setup {#sec-pi-setup .smaller}
 
 ::: notes
-- @eq-mc-estimator: walk through the notation carefully.
-  - $f(\theta)$ is any function of the parameter: the posterior mean ($f(\theta) = \theta$), posterior variance, a tail probability, a derived quantity.
-  - The left side is an integral -- hard. The right side is an average over samples -- easy.
-  - The law of large numbers guarantees the right side converges to the left as S grows.
-- Critical advantage: the convergence rate $1/\sqrt{S}$ is **independent of dimension**. Grid approximation costs $k^d$ (exponential in number of parameters). Monte Carlo costs $1/\sqrt{S}$ regardless. This is why Monte Carlo wins at scale.
-- Budget: ~4 minutes.
+Show the picture first, then the strategy.
+We never compute the area, we count.
 :::
 
----
+:::: {.columns}
 
-## The $\pi$ Example: Setup {.smaller}
-
-Monte Carlo can approximate the value of $\pi$ -- a deterministic constant -- using random sampling.
-
-. . .
-
-:::::: columns
-::: {.column width="75%"}
-
-**Geometry:** A quarter-circle of radius 1 is inscribed in the unit square.
+::: {.column width="55%"}
+A quarter circle of radius 1 sits inside the unit square.
 
 $$
-\text{Area of quarter-circle} = \frac{\pi}{4}
-\quad
-\text{Area of square} = 1
-$$
+\text{Area of the quarter circle} = \frac{\pi}{4}, \qquad \text{Area of the square} = 1
+$$ {#eq-pi-areas}
 
-**Strategy:**
-
-1. Draw points $(x, y)$ uniformly at random in $[0, 1]^2$
-2. A point falls *inside* the quarter-circle if $x^2 + y^2 \leq 1$
-3. The fraction of points inside converges to $\pi/4$:
+1. Draw points $(x, y)$ uniformly at random in the square.
+2. A point is *inside* if $x^2 + y^2 \leq 1$.
+3. The share of points inside approaches $\pi / 4$:
 
 $$
-\hat{\pi} \approx 4 \cdot \frac{\text{points inside}}{S}
+\hat{\pi} = 4 \cdot \frac{\text{points inside}}{S}
 $$ {#eq-pi-estimator}
-
 :::
 
-::: {.column width="25%"}
+::: {.column width="45%"}
+```{r}
+#| label: fig-pi-setup
+#| fig-cap: "The unit square with the quarter circle of radius 1 inside it. The shaded area is pi/4 and the whole square has area 1, so the share of the square covered by the quarter circle is pi/4."
+#| fig-height: 4
+#| dpi: 500
 
-::: {.callout-note style="font-size: 0.7em"}
-**We never computed $\pi/4$ analytically.** We counted. This is Monte Carlo integration: approximate the area of a region by the fraction of random points that fall inside it.
-
-The same logic applied to Bayesian posteriors: approximate the posterior by counting where random samples land -- once we know how to generate those samples.
+ggplot() +
+  geom_polygon(
+    data = bind_rows(tibble(x = 0, y = 0), quarter_circle),
+    aes(x = x, y = y),
+    fill = col_1,
+    alpha = 0.2
+  ) +
+  geom_path(data = quarter_circle, aes(x = x, y = y), colour = "grey20", linewidth = 1) +
+  annotate("text", x = 0.4, y = 0.4, label = "Area == pi/4", parse = TRUE, size = 6) +
+  annotate("text", x = 0.88, y = 0.94, label = "Square: area 1", size = 4) +
+  coord_equal(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE) +
+  theme_classic() +
+  labs(x = "x", y = "y", title = "The quarter circle in the unit square")
+```
 :::
 
-:::
-::::::
+::::
+
+## The $\pi$ example: simulation {#sec-pi-animation .smaller}
+
+```{r}
+#| label: fig-pi-anim
+#| fig-cap: "Animation of the pi simulation, from 10 to 5,000 draws. Left: each draw is a point, blue inside the quarter circle and orange outside. Right: four times the share of points inside, which settles toward the true value of pi as the draws accumulate."
+#| fig-height: 4
+
+# Both pi panels after the first n draws, for the animation and its static twin.
+plot_pi <- function(n) {
+  shown <- filter(pi_pts, draw <= n)
+
+  p_scatter <- ggplot(shown, aes(x = x, y = y, colour = location)) +
+    geom_path(
+      data = quarter_circle,
+      aes(x = x, y = y),
+      inherit.aes = FALSE,
+      colour = "grey20",
+      linewidth = 1
+    ) +
+    geom_point(alpha = 0.65, size = 0.8) +
+    scale_colour_manual(values = c(Inside = col_1, Outside = col_2), drop = FALSE) +
+    coord_equal(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE) +
+    theme_classic() +
+    labs(
+      x = "x",
+      y = "y",
+      colour = NULL,
+      title = "Random points in the unit square",
+      subtitle = paste(format(n, big.mark = ","), "draws")
+    )
+
+  p_conv <- ggplot(shown, aes(x = draw, y = pi_est)) +
+    geom_hline(yintercept = pi, colour = col_2, linetype = "dashed", linewidth = 1) +
+    geom_line(colour = col_1, linewidth = 0.7) +
+    scale_x_log10(limits = c(1, n_pi), labels = scales::comma) +
+    coord_cartesian(ylim = c(2.4, 4)) +
+    theme_classic() +
+    labs(
+      x = "Number of draws (log scale)",
+      y = expression(hat(pi)),
+      title = "Running estimate of pi",
+      subtitle = "Dashed line: the true value, 3.14159"
+    )
+
+  p_scatter | p_conv
+}
+
+pi_frames <- unique(round(10^seq(1, log10(n_pi), length.out = 70)))
+make_gif(plot_pi, pi_frames)
+```
+
+## The $\pi$ example: result {#sec-pi-result .smaller}
 
 ::: notes
-- @eq-pi-estimator: the fraction of points inside the arc, multiplied by 4, is the Monte Carlo estimate of $\pi$.
-- Present the geometry visually before the formula. Draw the quarter-circle on the board if helpful.
-- Budget: ~3 minutes.
+Early estimates jump around, later ones settle.
+Never exact, but reliably close.
+Ask: does this remind you of last week?
+The grid was deterministic, this is random.
 :::
-
----
-
-## The $\pi$ Example: Simulation {.smaller}
 
 ```{r}
 #| label: fig-pi-sim
-#| echo: false
-#| fig-height: 3.6
-#| fig-cap: "Left: 1,000 random points in the unit square, colored by location relative to the quarter-circle. Right: the Monte Carlo estimate of π converges toward the true value as sample size grows."
+#| fig-cap: "The pi simulation after all 5,000 draws. Left: the points, blue inside the quarter circle and orange outside. Right: the running estimate of pi approaches the true value, with an error that shrinks with the square root of the number of draws."
+#| fig-height: 4
+#| dpi: 500
 
-p_scatter <- pi_pts[1:1000, ] |>
-  ggplot(aes(x = x, y = y, color = inside)) +
-  annotate(
-    "path",
-    x = cos(seq(0, pi / 2, length.out = 300)),
-    y = sin(seq(0, pi / 2, length.out = 300)),
-    color = "gray20",
-    linewidth = 1
-  ) +
-  geom_point(alpha = 0.65, size = 0.85) +
-  scale_color_manual(
-    values = c(col_2, col_1),
-    labels = c("Outside", "Inside")
-  ) +
-  coord_equal(xlim = c(0, 1), ylim = c(0, 1)) +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    legend.position = "right",
-    aspect.ratio = 1
-  ) +
-  labs(
-    x = "x",
-    y = "y",
-    color = NULL,
-    title = "Random draws in the unit square",
-    subtitle = "1,000 of 5,000 total draws"
-  )
-
-p_conv <- pi_conv |>
-  ggplot(aes(x = n, y = pi_est)) +
-  geom_line(color = col_1, linewidth = 0.7) +
-  geom_hline(
-    yintercept = pi,
-    color = col_2,
-    linetype = "dashed",
-    linewidth = 1
-  ) +
-  annotate(
-    "text",
-    x = 4200,
-    y = pi + 0.12,
-    label = "True π ≈ 3.14159",
-    color = col_2,
-    size = 3.2
-  ) +
-  scale_x_continuous(labels = scales::comma) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 0.9) +
-  labs(
-    x = "Sample size (S)",
-    y = expression(hat(pi)),
-    title = "Convergence of MC estimate",
-    subtitle = "Error decreases as ~ 1/√S"
-  )
-
-p_scatter | p_conv
+plot_pi(n_pi)
 ```
 
 . . .
 
-::: {style="font-size: 0.78em"}
-Approximation error $\propto 1/\!\sqrt{S}$: independent of dimension. This is the crucial advantage over grid approximation (cost $\propto k^d$, exponential in $d$).
-:::
+The error shrinks with $1 / \sqrt{S}$, **whatever the number of parameters**.
+A grid costs $k^d$, exponential in the number of parameters $d$.
+
+## Bridge: from $\pi$ to the posterior {#sec-bridge .smaller}
 
 ::: notes
-- **Left panel:** blue points fall inside the arc ($x^2 + y^2 \leq 1$); orange points fall outside.
-- **Right panel:** the estimated $\hat{\pi}$ starts noisy for small S and stabilizes near the true value (orange dashed). The estimate is never exact -- residual error always exists -- but it converges reliably.
-- Bridge: "Does this remind you of anything from last week?" Grid approximation was deterministic; this is random. Both are approximation strategies. Monte Carlo has better scaling.
-- Budget: ~3 minutes.
+Go column by column.
+The key difference: with pi we knew where to scatter points, with a posterior we do not.
 :::
 
----
+:::: {.columns}
 
-## Bridge: From $\pi$ to the Posterior {.smaller}
-
-:::::: columns
 ::: {.column width="50%"}
-
 **The $\pi$ problem**
 
-- Sample uniformly in the unit square
-- Count the fraction inside the quarter-circle
-- The fraction approximates $\pi/4$
-- We counted; we never integrated analytically
-
+- Scatter points uniformly in the square.
+- Count the share inside the quarter circle.
+- The share approximates $\pi / 4$.
+- We counted, we never integrated.
 :::
 
 ::: {.column width="50%"}
-
 **The posterior problem**
 
-- We want to summarize $P(\theta \mid \text{data})$
-- If we had samples $\theta^{(s)} \sim P(\theta \mid \text{data})$, we could compute any posterior quantity by averaging
-- We cannot sample uniformly -- the posterior is not uniform
-- **We need a smart sampler that concentrates on high-posterior regions**
-
+- We want to *learn* the posterior: its shape, and from that its summaries.
+- Samples from it would give us both.
+- Scattering points uniformly fails: we do not know where the posterior's mass is, and most uniform points land where it is practically zero.
+- **We need a sampler that finds the mass by itself.**
 :::
-::::::
+
+::::
 
 . . .
 
-::: {.callout-important style="font-size: 0.72em"}
-**The gap:** we know that random samples from the posterior would let us approximate any quantity of interest. But *how do we generate samples from a distribution we cannot evaluate everywhere?*
-
-The Markov Chain answers this question. It constructs a random process that, over many steps, *spends time in regions in proportion to their posterior probability* -- without ever needing to compute $P(\text{data})$.
+::: {.callout-important}
+**The gap: how do we sample from a distribution we cannot evaluate everywhere?**
+A Markov chain spends time in each region in proportion to its posterior probability, without ever computing $P(\text{data})$.
 :::
 
-::: notes
-- This is the conceptual hinge between Parts III and IV. Drive the parallel home explicitly, column by column.
-- Key difference to highlight: for $\pi$, we could sample uniformly in the square and then check which points fall inside. For the posterior, "sampling uniformly in parameter space" wastes almost all effort in low-probability regions -- exactly the grid approximation problem.
-- Transition line: "The Markov Chain is a random walk that is designed to be intelligent. It moves around parameter space in a way that naturally concentrates on high-probability regions, without ever needing a map of the entire landscape."
-- Budget: ~3 minutes.
-:::
-
-# Part IV: Markov Chains and the Metropolis Algorithm
+# Markov chains and the Metropolis algorithm {#sec-markov}
 
 ```{r}
 #| label: data-island-king
@@ -559,397 +563,482 @@ for (t in 2:n_steps) {
 }
 
 king_df <- tibble(step = seq_len(n_steps), island = king_pos)
-king_hist <- tibble(
+
+islands <- tibble(
   island = seq_len(n_islands),
-  sampled = tabulate(king_pos, nbins = n_islands) / n_steps,
-  true_prop = island_pop / sum(island_pop)
+  pop = island_pop,
+  target = island_pop / sum(island_pop),
+  angle = pi / 2 - 2 * pi * (island - 1) / n_islands,
+  x = cos(angle),
+  y = sin(angle)
 )
 ```
 
-## What Is a Markov Chain? {.smaller}
+## What is a Markov chain? {#sec-what-markov .smaller}
 
-**Definition:** A Markov Chain is a sequence of random variables $\theta^{(1)}, \theta^{(2)}, \theta^{(3)}, \ldots$ satisfying the **Markov property:**
+::: notes
+Weather example: today's weather depends on yesterday's, not directly on two weeks ago.
+A stationary chain: the distribution of its position has stopped changing.
+:::
+
+A **Markov chain** is a sequence $\theta^{(1)}, \theta^{(2)}, \theta^{(3)}, \ldots$ with the **Markov property**:
 
 $$
 P\!\left(\theta^{(t+1)} \mid \theta^{(t)},\, \theta^{(t-1)},\, \ldots,\, \theta^{(1)}\right) = P\!\left(\theta^{(t+1)} \mid \theta^{(t)}\right)
 $$ {#eq-markov}
 
-The next state depends *only* on the current state. The chain has no long-term memory.
+<details>
+<summary>How to read the Markov property</summary>
 
-. . .
-
-**Stationary distribution:** For a well-constructed chain, after sufficiently many steps, the probability of being in any state $\theta$ stabilizes and no longer depends on the starting point. This limiting distribution is called the **stationary distribution** $\pi(\theta)$.
-
-. . .
-
-::: {.callout-tip style="font-size: 0.72em"}
-**The key insight we will exploit:**  
-We can design a Markov Chain whose stationary distribution is *exactly* our posterior $P(\theta \mid \text{data})$.
-
-After enough steps, samples from this chain are draws from the posterior -- even though we never computed $P(\text{data})$.
+::: {.callout-note}
+**@eq-markov in words.**
+The probability of where the chain goes next, given its whole history, is the same as the probability given only where it is now.
+The chain has no memory beyond its current state.
 :::
+
+</details>
+
+. . .
+
+**Stationary distribution:** after enough steps, the probability of being in any state stops depending on where the chain started.
+This long-run distribution is the chain's stationary distribution.
+
+. . .
+
+::: {.callout-tip}
+**We can design a Markov chain whose stationary distribution is exactly our posterior.**
+After enough steps, its states are draws from the posterior, and $P(\text{data})$ was never computed.
+:::
+
+## The island king: setup {#sec-king-setup .smaller}
 
 ::: notes
-- @eq-markov: the Markov property in formal notation. Conditional on the present state at time $t$, the future state at $t+1$ is independent of all past states. This is a memoryless property.
-- Intuitive example: today's weather depends on yesterday's, but not directly on the weather two weeks ago (given yesterday). That is a Markov Chain over discrete states.
-- Stationary distribution: if a chain has been running long enough that the distribution of its current position has stopped changing, it has reached its stationary distribution. Every step from then on is a draw from that distribution.
-- For deeper formal treatment, point students to @gelman2013bda-ch11, Chapter 11.
-- Budget: ~4 minutes.
+Tell the story before showing the figure.
+Island 5 is the most populous, islands 1 and 8 the least.
+Say the analogy explicitly: populations are posterior probabilities, visits are samples.
 :::
 
----
-
-## The Island King: Setup {.smaller}
-
-*Adapted from @mcelreath2020rethinking-ch9.*
-
-. . .
-
-A king governs a **ring of 10 islands**, each with a different population. He wants to visit each island in proportion to its population -- spending more time on larger islands.
-
-. . .
-
-**The constraint:** he cannot see the full population list. He can only ask about his *current* island and one *proposed neighboring* island at a time.
+A king rules a **ring of 10 islands** and wants to visit each in proportion to its population [adapted from @mcelreath2020rethinking-ch9].
+He can only compare his *current* island with one *proposed neighbour* at a time.
 
 ```{r}
 #| label: fig-king-setup
-#| echo: false
-#| fig-height: 2.4
-#| fig-cap: "Island populations. The king does not know the total; he can only compare adjacent islands."
+#| fig-cap: "The ten islands and their populations, coloured by population in both panels. Left: as a bar chart. Right: as the ring the king travels, where each island has two neighbours and island 10 neighbours island 1. The king never sees the whole list, he only compares neighbours."
+#| fig-height: 3.2
+#| dpi: 500
 
-tibble(island = factor(1:n_islands), pop = island_pop) |>
-  ggplot(aes(x = island, y = pop, fill = island)) +
-  geom_col(width = 0.7, show.legend = FALSE) +
+p_bar <- islands |>
+  ggplot(aes(x = factor(island), y = pop, fill = pop)) +
+  geom_col(width = 0.7) +
   geom_text(aes(label = pop), vjust = -0.4, size = 3.5) +
-  scale_fill_manual(
-    values = colorRampPalette(c("steelblue", "#7B3F9E"))(n_islands)
-  ) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    panel.grid.major.x = element_blank()
-  ) +
+  theme_classic() +
   labs(
     x = "Island",
     y = "Population",
-    subtitle = "The king's goal: visit island k with probability ∝ population(k)"
+    fill = "Population",
+    title = "Island populations",
+    subtitle = "Goal: time on each island in proportion to its population"
   )
+
+p_ring <- islands |>
+  ggplot(aes(x = x, y = y)) +
+  annotate(
+    "path",
+    x = cos(seq(0, 2 * pi, length.out = 200)),
+    y = sin(seq(0, 2 * pi, length.out = 200)),
+    colour = "grey75",
+    linewidth = 0.8
+  ) +
+  geom_point(aes(fill = pop, size = pop), shape = 21, colour = "grey20") +
+  geom_text(aes(x = 1.3 * x, y = 1.3 * y, label = island), size = 3.5) +
+  scale_size(range = c(4, 11), guide = "none") +
+  coord_equal(xlim = c(-1.4, 1.4), ylim = c(-1.4, 1.4)) +
+  theme_void() +
+  theme(legend.position = "none") +
+  labs(title = "The ring of islands")
+
+(p_bar | p_ring) +
+  plot_layout(guides = "collect", widths = c(1.4, 1)) &
+  scale_fill_gradient(low = "#DCE6F2", high = "#08306B", limits = c(1, 5))
 ```
 
-. . .
-
-::: {style="font-size: 0.8em"}
-**The analogy:** population plays the role of *posterior probability*; the king's position plays the role of the *current parameter value*.
-:::
+## The island king: the rule {#sec-king-rule .smaller}
 
 ::: notes
-- **Figure:** bar chart of island populations {1, 2, 3, 4, 5, 3, 2, 1, 2, 3}. Island 5 is most populous; islands 1 and 8 least.
-- Introduce the story before showing the bar chart. Let students visualize it.
-- The asymmetric populations are more interesting than a simple ramp: they have a non-obvious maximum and are not monotone.
-- State the analogy line explicitly and clearly: "Every piece of this story maps onto Bayesian inference. Island populations are posterior probabilities. The king's visits are the MCMC samples."
-- The total population is unknown to the king -- that is the key. He can only compare neighbors.
-- Budget: ~3 minutes.
+The conceptual core of the session, slow down.
+Three cases: always go uphill, go downhill with probability equal to the ratio, otherwise stay.
 :::
 
----
+At each step the king:
 
-## The Island King: The Rule
-
-::: {style="font-size: 0.7em"}
-The king follows a single, simple decision rule at each step:
-:::
+1. proposes a neighbouring island at random (a coin flip: left or right),
+2. **always goes** if it is more populated than his current island,
+3. otherwise **goes with probability equal to the population ratio**, and stays if not.
 
 . . .
-
-::: {style="font-size: 0.5em; border-left: 3px solid steelblue; padding-left: 1em"}
-1. Propose a random step to an adjacent island (flip a coin: left or right)
-2. If the proposed island is **more populated** than the current: *always go*
-3. If the proposed island is **less populated**: *go with probability equal to the population ratio*; otherwise stay
-:::
-
-. . .
-
-::: {style="font-size: 0.7em"}
-Formally, accept the proposed move with probability:
 
 $$
-p(\text{accept}) = \min\!\left(1,\; \frac{\text{pop}_{\text{proposed}}}{\text{pop}_{\text{current}}}\right)
+P(\text{accept}) = \min\!\left(1,\; \frac{\text{pop}_{\text{proposed}}}{\text{pop}_{\text{current}}}\right)
 = \min\!\left(1,\; \frac{P(\theta^* \mid \text{data})}{P(\theta^{(t)} \mid \text{data})}\right)
 $$ {#eq-metropolis}
+
+<details>
+<summary>How to read the acceptance rule</summary>
+
+::: {.callout-note}
+**@eq-metropolis in words.**
+The probability of accepting the proposed move is the ratio of the proposed to the current population, but never more than 1.
+For a parameter, population becomes posterior probability: $\theta^*$ is the proposed value and $\theta^{(t)}$ the current one.
 :::
 
-. . .
+</details>
 
-::: {style="font-size: 0.7em"}
-Now substitute the full Bayes' theorem and watch what happens:
+## Why $P(\text{data})$ cancels {#sec-pdata-cancels .smaller}
+
+::: notes
+P(data) is a constant, the same number for every theta.
+It appears above and below the line and cancels exactly.
+The proof that the rule gives the right stationary distribution is in the appendix.
+:::
+
+Substitute Bayes' theorem (@eq-bayes) into the ratio of @eq-metropolis:
 
 $$
 \frac{P(\theta^* \mid \text{data})}{P(\theta^{(t)} \mid \text{data})}
 = \frac{P(\text{data} \mid \theta^*) \cdot P(\theta^*) \,/\, P(\text{data})}{P(\text{data} \mid \theta^{(t)}) \cdot P(\theta^{(t)}) \,/\, P(\text{data})}
 = \frac{P(\text{data} \mid \theta^*) \cdot P(\theta^*)}{P(\text{data} \mid \theta^{(t)}) \cdot P(\theta^{(t)})}
 $$ {#eq-pdata-cancels}
-:::
 
 . . .
 
-::: {.callout-important style="font-size: 0.5em"}
-$P(\text{data})$ **cancels exactly** in the ratio (@eq-pdata-cancels). The acceptance rule only ever needs the *proportional form* of the posterior -- likelihood $\times$ prior. The intractable integral is never evaluated.
+::: {.callout-important}
+**$P(\text{data})$ cancels exactly in the ratio.**
+The acceptance rule only needs likelihood times prior, which we can always compute.
+The intractable integral of @eq-marginal-likelihood is never evaluated.
 :::
+
+## The island king: demonstration {#sec-king-animation .smaller}
+
+```{r}
+#| label: fig-king-anim
+#| fig-cap: "Animation of the king's first 1,000 steps. Left: his position at every step, a random walk. Right: the share of his visits to each island so far (blue) against each island's share of the population (orange)."
+#| fig-height: 4
+
+# Trace of the first n_trace steps and the share of visits after n_hist steps.
+plot_king <- function(n_trace, n_hist = n_trace, x_max = 1000) {
+  p_trace <- king_df |>
+    filter(step <= n_trace) |>
+    ggplot(aes(x = step, y = island)) +
+    geom_line(colour = col_1, linewidth = 0.5, alpha = 0.8) +
+    geom_point(colour = col_1, size = 0.7) +
+    scale_x_continuous(limits = c(1, x_max)) +
+    scale_y_continuous(breaks = 1:n_islands, limits = c(1, n_islands)) +
+    theme_classic() +
+    labs(
+      x = "Step",
+      y = "Island",
+      title = "The king's position",
+      subtitle = "A random walk, not a systematic tour"
+    )
+
+  visits <- king_df |>
+    filter(step <= n_hist) |>
+    count(island) |>
+    complete(island = 1:n_islands, fill = list(n = 0)) |>
+    mutate(share = n / sum(n))
+
+  p_hist <- islands |>
+    left_join(visits, by = "island") |>
+    pivot_longer(c(target, share), names_to = "type", values_to = "proportion") |>
+    mutate(
+      type = factor(
+        type,
+        levels = c("target", "share"),
+        labels = c("Target: population share", "Chain: share of visits")
+      )
+    ) |>
+    ggplot(aes(x = factor(island), y = proportion, fill = type)) +
+    geom_col(position = "dodge", width = 0.7) +
+    scale_fill_manual(values = c(col_2, col_1)) +
+    coord_cartesian(ylim = c(0, 0.4)) +
+    theme_classic() +
+    theme(legend.position = "bottom") +
+    labs(
+      x = "Island",
+      y = "Proportion",
+      fill = NULL,
+      title = paste("Share of visits after", format(n_hist, big.mark = ","), "steps")
+    )
+
+  p_trace | p_hist
+}
+
+make_gif(plot_king, seq(10, 1000, by = 10), width = 10.5, height = 4.4)
+```
+
+## The island king: result {#sec-king-result .smaller}
 
 ::: notes
-- This is the most important slide of the session. Walk through it slowly and deliberately.
-- **Step 1 (plain language rule):** three cases -- always go uphill, go probabilistically downhill (with probability = the ratio), stay otherwise.
-- **@eq-metropolis:** the formal acceptance probability. It uses the posterior ratio -- one posterior for the proposed state, one for the current state.
-- **@eq-pdata-cancels:** expand both posteriors using Bayes' theorem. P(data) appears in both numerator and denominator with the same value (it is a constant with respect to $\theta$). It cancels exactly.
-- **The punchline:** the Metropolis algorithm only needs $P(\text{data} \mid \theta)$ and $P(\theta)$ -- both computable. It never needs $P(\text{data})$.
-- The mathematical guarantee is detailed balance -- proven in Appendix A.
-- Budget: ~6 minutes. This is the conceptual core.
+Point at island 5, visited often, and islands 1 and 8, visited rarely.
+Say it: the king never knew the total population, yet the long run is right.
 :::
-
----
-
-## The Island King: Demonstration {.smaller}
 
 ```{r}
 #| label: fig-king-demo
-#| echo: false
-#| fig-height: 3.6
-#| fig-cap: "Left: king's position during the first 300 steps. Right: fraction of time spent on each island after 10,000 steps vs. true target proportions."
+#| fig-cap: "The island king after the animation. Left: his position during the first 1,000 steps. Right: the share of visits after 10,000 steps (blue) matches each island's share of the population (orange), although the king only ever compared neighbours."
+#| fig-height: 4.4
+#| fig-width: 10.5
+#| dpi: 500
 
-p_trace <- king_df |>
-  filter(step <= 300) |>
-  ggplot(aes(x = step, y = island)) +
-  geom_line(color = col_1, linewidth = 0.5, alpha = 0.8) +
-  geom_point(color = col_1, size = 0.7, alpha = 0.7) +
-  scale_y_continuous(breaks = 1:n_islands) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 0.8) +
-  labs(
-    x = "Step",
-    y = "Island",
-    title = "King's position: first 300 steps",
-    subtitle = "A random walk — not a systematic tour"
-  )
-
-p_hist <- king_hist |>
-  pivot_longer(
-    c(sampled, true_prop),
-    names_to = "type",
-    values_to = "proportion"
-  ) |>
-  mutate(
-    type = factor(
-      type,
-      levels = c("true_prop", "sampled"),
-      labels = c("Target (pop / total)", "MCMC (fraction of visits)")
-    )
-  ) |>
-  ggplot(aes(x = factor(island), y = proportion, fill = type)) +
-  geom_col(position = "dodge", width = 0.7) +
-  scale_fill_manual(values = c(col_2, col_1)) +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    legend.position = "right",
-    aspect.ratio = 0.8
-  ) +
-  labs(
-    x = "Island",
-    y = "Proportion",
-    fill = NULL,
-    title = "MCMC samples vs. target (10,000 steps)",
-    subtitle = "The chain visits each island ~ proportional to its population"
-  )
-
-p_trace | p_hist
+plot_king(1000, n_steps)
 ```
 
+## From islands to parameters {#sec-islands-parameters .smaller}
+
 ::: notes
-- **Left panel:** the king's path over 300 steps. It is a random walk -- irregular, backtracking -- but it frequently visits island 5 (most populous) and rarely lingers at islands 1 and 8 (least populous). Point this out explicitly.
-- **Right panel:** after 10,000 steps, the MCMC distribution (blue) closely matches the target proportions (orange).
-- Critical observation to verbalize: "The king never knew the total population. He only compared his current island to a proposed neighbor. Yet the long-run behavior is exactly right."
-- Budget: ~3 minutes.
+Every row of the story has a Bayesian counterpart.
+The last row is the punchline.
 :::
 
----
-
-## From Islands to Parameters {.smaller}
-
-The translation is exact and complete:
-
-::: {style="font-size: 0.72em"}
-
+::: {.small}
 | Island world | Bayesian inference |
 |:---|:---|
-| Ring of 10 islands | Parameter space $\Theta$ (the range of plausible $\theta$ values) |
+| Ring of 10 islands | Parameter space, the plausible values of $\theta$ |
 | Population of island $k$ | Posterior probability $P(\theta_k \mid \text{data})$ |
-| King's current position | Current parameter sample $\theta^{(t)}$ |
-| Proposed neighboring island | Proposed new parameter value $\theta^*$ |
-| Population ratio (acceptance rule) | Posterior ratio: $P(\theta^*\mid\text{data}) \,/\, P(\theta^{(t)}\mid\text{data})$ |
-| Fraction of time on island $k$ | Posterior probability of $\theta_k$ |
-| **Total population (unknown)** | **$P(\text{data})$ -- never needed, always cancels** |
+| King's current island | Current parameter value $\theta^{(t)}$ |
+| Proposed neighbouring island | Proposed parameter value $\theta^*$ |
+| Population ratio | Posterior ratio $P(\theta^* \mid \text{data}) \,/\, P(\theta^{(t)} \mid \text{data})$ |
+| Share of time on island $k$ | Posterior probability of $\theta_k$ |
+| **Total population (unknown)** | **$P(\text{data})$: never needed, always cancels** |
 
+: Every element of the island king story and its counterpart in Bayesian inference. {#tbl-islands-parameters}
 :::
 
 . . .
 
-::: {.callout-note style="font-size: 0.72em"}
-**Result:** The Metropolis algorithm constructs a Markov Chain over parameter space whose **stationary distribution is the posterior** $P(\theta \mid \text{data})$. After warm-up, its samples are draws from the posterior -- without ever computing $P(\text{data})$.
-
-The samples can then be used as Monte Carlo estimates (@eq-mc-estimator) of any posterior quantity: means, credible intervals, tail probabilities, derived quantities.
+::: {.callout-note}
+**The Metropolis algorithm builds a Markov chain whose stationary distribution is the posterior.**
+Its samples approximate the shape of the posterior, and *therefore* any posterior quantity: means, credible intervals, tail probabilities.
 :::
-
-::: notes
-- Walk through each row of the table carefully. Every element of the story has a precise Bayesian counterpart.
-- The last row is the punchline. Bold font is deliberate. The king's ignorance of the total population is not a limitation -- it is precisely what makes the algorithm computationally tractable. P(data) cancels in the ratio.
-- Synthesis statement: "When brms runs your model next week, this is what is happening."
-- Budget: ~4 minutes.
-:::
-
-# Part V: The Posterior as a Landscape and HMC
 
 ```{r}
 #| label: data-landscape
 #| include: false
 
-# ── 1D landscape ──────────────────────────────────────────────────────────────
-mu_tgt <- 1.0
-sd_tgt <- 1.2
+# The 2D posterior: two correlated parameters (sd 1 and 1.5, correlation 0.7).
+Sigma_2d <- matrix(c(1, 0.7 * 1.5, 0.7 * 1.5, 1.5^2), 2, 2)
+Sigma_2d_inv <- solve(Sigma_2d)
 
-land1d <- tibble(
-  theta = seq(-3.5, 5.5, length.out = 400),
-  density = dnorm(theta, mu_tgt, sd_tgt),
-  neg_log = -dnorm(theta, mu_tgt, sd_tgt, log = TRUE)
-)
-
-# ── 2D landscape ──────────────────────────────────────────────────────────────
-bvn_density <- function(x, y, sx = 1, sy = 1.5, rho = 0.7) {
-  z <- ((x / sx)^2 - 2 * rho * (x / sx) * (y / sy) + (y / sy)^2)
-  exp(-z / (2 * (1 - rho^2))) / (2 * pi * sx * sy * sqrt(1 - rho^2))
+neg_log_2d <- function(x, y) {
+  0.5 * (Sigma_2d_inv[1, 1] * x^2 + 2 * Sigma_2d_inv[1, 2] * x * y + Sigma_2d_inv[2, 2] * y^2)
 }
+
 land2d <- expand_grid(
   x = seq(-3.5, 3.5, length.out = 150),
   y = seq(-4.5, 4.5, length.out = 150)
 ) |>
-  mutate(density = bvn_density(x, y))
+  mutate(neg_log = neg_log_2d(x, y), density = exp(-neg_log))
 
-# ── 1D HMC trajectories ───────────────────────────────────────────────────────
-U_1d <- function(theta) (theta - mu_tgt)^2 / (2 * sd_tgt^2)
-dU_1d <- function(theta) (theta - mu_tgt) / sd_tgt^2
-
-leapfrog_1d <- function(theta0, p0, eps = 0.18, L = 28) {
-  theta <- theta0
-  p <- p0
-  out <- tibble(theta = theta, potential = U_1d(theta), step = 0L)
-  p <- p - eps / 2 * dU_1d(theta)
-  for (i in seq_len(L)) {
-    theta <- theta + eps * p
-    if (i < L) {
-      p <- p - eps * dU_1d(theta)
-    }
-    out <- add_row(out, theta = theta, potential = U_1d(theta), step = i)
+# Random-walk Metropolis with small steps.
+run_rw_2d <- function(start, n_iter, step = 0.12) {
+  chain <- matrix(NA_real_, n_iter, 2)
+  chain[1, ] <- start
+  for (t in 2:n_iter) {
+    prop <- chain[t - 1, ] + rnorm(2, 0, step)
+    log_alpha <- neg_log_2d(chain[t - 1, 1], chain[t - 1, 2]) - neg_log_2d(prop[1], prop[2])
+    chain[t, ] <- if (log(runif(1)) < log_alpha) prop else chain[t - 1, ]
   }
-  out
+  tibble(iteration = seq_len(n_iter), x = chain[, 1], y = chain[, 2])
 }
 
-set.seed(77)
-hmc_traj_A <- leapfrog_1d(-2.8, 0.9, L = 28) |> mutate(traj = "A")
-hmc_traj_B <- leapfrog_1d(3.2, -0.7, L = 28) |> mutate(traj = "B")
-hmc_traj_C <- leapfrog_1d(0.2, 1.6, L = 28) |> mutate(traj = "C")
-
-# ── 2D random-walk Metropolis vs. HMC ─────────────────────────────────────────
-Sigma_2d <- matrix(c(1, 0.7 * 1 * 1.5, 0.7 * 1 * 1.5, 1.5^2), 2, 2)
-Sigma_2d_inv <- solve(Sigma_2d)
-
-log_post_2d <- function(q) {
-  q <- as.numeric(q)
-  -0.5 * as.numeric(t(q) %*% Sigma_2d_inv %*% q)
-}
-
-n_samp <- 3000
-rw_chain <- matrix(NA_real_, n_samp, 2)
-rw_chain[1, ] <- c(-3, 3)
-
-set.seed(42)
-for (t in 2:n_samp) {
-  prop <- rw_chain[t - 1, ] + rnorm(2, 0, 0.12)
-  log_alpha <- log_post_2d(prop) - log_post_2d(rw_chain[t - 1, ])
-  rw_chain[t, ] <- if (log(runif(1)) < log_alpha) prop else rw_chain[t - 1, ]
-}
-rw_df <- as_tibble(rw_chain, .name_repair = "minimal") |>
-  setNames(c("x", "y")) |>
-  mutate(step = row_number())
-
-leapfrog_2d <- function(q, p, eps = 0.22, L = 12) {
-  q <- as.numeric(q)
-  p <- as.numeric(p)
+# HMC: a random kick, then leapfrog steps, then the energy-based accept step.
+leapfrog_2d <- function(q, p, eps = 0.22, n_leap = 12) {
   p <- p - eps / 2 * as.numeric(Sigma_2d_inv %*% q)
-  for (i in seq_len(L)) {
+  for (i in seq_len(n_leap)) {
     q <- q + eps * p
-    if (i < L) p <- p - eps * as.numeric(Sigma_2d_inv %*% q)
+    if (i < n_leap) p <- p - eps * as.numeric(Sigma_2d_inv %*% q)
   }
   p <- p - eps / 2 * as.numeric(Sigma_2d_inv %*% q)
   list(q = q, p = p)
 }
 
-hmc_chain <- matrix(NA_real_, n_samp, 2)
-hmc_chain[1, ] <- c(-3, 3)
-
-set.seed(42)
-for (t in 2:n_samp) {
-  q_cur <- hmc_chain[t - 1, ]
-  p_cur <- rnorm(2)
-  lf <- leapfrog_2d(q_cur, p_cur)
-  U_cur <- -log_post_2d(q_cur)
-  U_prop <- -log_post_2d(lf$q)
-  K_cur <- sum(p_cur^2) / 2
-  K_prop <- sum(lf$p^2) / 2
-  hmc_chain[t, ] <- if (log(runif(1)) < -(U_prop + K_prop) + (U_cur + K_cur)) {
-    lf$q
-  } else {
-    q_cur
+run_hmc_2d <- function(start, n_iter) {
+  chain <- matrix(NA_real_, n_iter, 2)
+  chain[1, ] <- start
+  for (t in 2:n_iter) {
+    q_cur <- chain[t - 1, ]
+    p_cur <- rnorm(2)
+    lf <- leapfrog_2d(q_cur, p_cur)
+    h_cur <- neg_log_2d(q_cur[1], q_cur[2]) + sum(p_cur^2) / 2
+    h_prop <- neg_log_2d(lf$q[1], lf$q[2]) + sum(lf$p^2) / 2
+    chain[t, ] <- if (log(runif(1)) < h_cur - h_prop) lf$q else q_cur
   }
+  tibble(iteration = seq_len(n_iter), x = chain[, 1], y = chain[, 2])
 }
-hmc_df <- as_tibble(hmc_chain, .name_repair = "minimal") |>
-  setNames(c("x", "y")) |>
-  mutate(step = row_number())
+
+n_samp <- 3000
+set.seed(42)
+rw_df <- run_rw_2d(c(-3, 3), n_samp)
+set.seed(42)
+hmc_df <- run_hmc_2d(c(-3, 3), n_samp)
 ```
 
-## The Posterior as a Landscape (1D) {.smaller}
+## Mapping a landscape on foot {#sec-on-foot .smaller}
 
-The posterior distribution has a **spatial interpretation**: think of probability as height.
+::: notes
+Analogy: map a mountain range blindfolded, one random step at a time.
+You get there eventually, but it takes forever.
+End on the opener line, then move to the next part.
+:::
+
+The king's random walk works, but it is **slow**.
+Imagine mapping a mountain range blindfolded, one small random step at a time.
+
+```{r}
+#| label: fig-rw-struggle
+#| fig-cap: "Random-walk Metropolis on a posterior of two correlated parameters, drawn as grey contour lines. Left: the first 200 steps barely leave the starting corner. Right: after 3,000 samples, large parts of the posterior are still unvisited."
+#| fig-height: 3.4
+#| fig-width: 8
+#| dpi: 500
+
+# Samples drawn over the contour lines of the 2D posterior.
+plot_samples_2d <- function(df, colour, title, subtitle, path = FALSE, path_alpha = 0.7) {
+  p <- ggplot() +
+    geom_contour(
+      data = land2d,
+      aes(x = x, y = y, z = density),
+      colour = "grey70",
+      bins = 8
+    )
+  if (path) {
+    p <- p +
+      geom_path(
+        data = df,
+        aes(x = x, y = y),
+        colour = colour,
+        alpha = path_alpha,
+        linewidth = 0.4
+      ) +
+      geom_point(data = df[1, ], aes(x = x, y = y), colour = colour, size = 2.5)
+  } else {
+    p <- p + geom_point(data = df, aes(x = x, y = y), colour = colour, alpha = 0.15, size = 0.5)
+  }
+  p +
+    coord_equal(xlim = c(-3.5, 3.5), ylim = c(-4.5, 4.5)) +
+    theme_classic() +
+    labs(x = expression(theta[1]), y = expression(theta[2]), title = title, subtitle = subtitle)
+}
+
+p_rw_path <- plot_samples_2d(
+  rw_df[1:200, ],
+  col_2,
+  "Random walk: first 200 steps",
+  "Slow and meandering",
+  path = TRUE
+)
+p_rw_all <- plot_samples_2d(
+  rw_df,
+  col_2,
+  "Random walk: all 3,000 samples",
+  "Large parts of the posterior never visited"
+)
+
+p_rw_path + plot_spacer() + p_rw_all + plot_layout(widths = c(1, 0.05, 1))
+```
+
+. . .
+
+Many proposals are rejected, successive samples are nearly identical, and 3,000 samples carry little information.
+
+. . .
+
+**We can be much more efficient than walking randomly.**
+
+# The posterior as a landscape and HMC {#sec-landscape}
+
+```{r}
+#| label: data-hmc-1d
+#| include: false
+
+# 1D posterior: Normal(1, 1.2). U is the negative log-posterior up to a constant.
+mu_tgt <- 1
+sd_tgt <- 1.2
+U_1d <- function(theta) (theta - mu_tgt)^2 / (2 * sd_tgt^2)
+dU_1d <- function(theta) (theta - mu_tgt) / sd_tgt^2
+
+land1d <- tibble(
+  theta = seq(-3.5, 5.5, length.out = 400),
+  density = dnorm(theta, mu_tgt, sd_tgt),
+  U = U_1d(theta)
+)
+
+leapfrog_1d <- function(theta, p, eps = 0.18, n_leap = 28) {
+  out <- tibble(step = 0L, theta = theta, p = p)
+  for (i in seq_len(n_leap)) {
+    p <- p - eps / 2 * dU_1d(theta)
+    theta <- theta + eps * p
+    p <- p - eps / 2 * dU_1d(theta)
+    out <- add_row(out, step = i, theta = theta, p = p)
+  }
+  out
+}
+
+# Three consecutive trajectories of one chain. Each starts at the previous endpoint.
+# The kicks are hand-picked so the three legs differ, a sampler draws them at random.
+kicks <- c(0.9, 1.4, -1.75)
+theta_now <- -2.8
+hmc_legs <- vector("list", length(kicks))
+for (k in seq_along(kicks)) {
+  leg <- leapfrog_1d(theta_now, kicks[k])
+  h_start <- U_1d(first(leg$theta)) + first(leg$p)^2 / 2
+  h_end <- U_1d(last(leg$theta)) + last(leg$p)^2 / 2
+  hmc_legs[[k]] <- leg |> mutate(traj = k, accept = min(1, exp(h_start - h_end)))
+  theta_now <- last(leg$theta)
+}
+hmc_traj <- bind_rows(hmc_legs) |>
+  mutate(potential = U_1d(theta), t = row_number(), traj = factor(traj))
+
+traj_cols <- c(`1` = col_1, `2` = col_2, `3` = col_3)
+traj_end <- function(k) max(hmc_traj$t[hmc_traj$traj == k])
+```
+
+## The posterior as a landscape (1D) {#sec-landscape-1d .smaller}
+
+::: notes
+Left is familiar, right is the same curve negated on the log scale.
+High probability becomes a deep valley.
+:::
+
+Think of probability as **height**.
 
 ```{r}
 #| label: fig-land1d
-#| echo: false
-#| fig-height: 3.0
-#| fig-cap: "The same posterior, two framings. Left: the standard distribution curve — height = probability density. Right: the negative log-posterior — high-probability regions become valleys."
+#| fig-cap: "The same posterior in two framings. Left: the density, where height is probability density and the peak is the most plausible value. Right: the negative log-posterior, where that peak becomes the bottom of a valley."
+#| fig-height: 2.9
+#| dpi: 500
 
 p_density <- land1d |>
   ggplot(aes(x = theta, y = density)) +
-  geom_line(color = col_1, linewidth = 1.1) +
   geom_area(fill = col_1, alpha = 0.18) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 0.65) +
+  geom_line(colour = col_1, linewidth = 1.1) +
+  theme_classic() +
   labs(
     x = expression(theta),
     y = expression(p(theta ~ "|" ~ data)),
     title = "Posterior distribution",
-    subtitle = "Height = probability density"
+    subtitle = "Height is probability density"
   )
 
 p_neglog <- land1d |>
-  ggplot(aes(x = theta, y = neg_log)) +
-  geom_line(color = "gray25", linewidth = 1.1) +
-  geom_area(fill = "gray25", alpha = 0.12) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 0.65) +
+  ggplot(aes(x = theta, y = U)) +
+  geom_line(colour = "grey25", linewidth = 1.1) +
+  theme_classic() +
   labs(
     x = expression(theta),
     y = expression(U(theta) == -log ~ p(theta ~ "|" ~ data)),
     title = "Negative log-posterior",
-    subtitle = "High probability → low valley"
+    subtitle = "High probability becomes a low valley"
   )
 
 p_density | p_neglog
@@ -957,550 +1046,364 @@ p_density | p_neglog
 
 . . .
 
-The **negative log-posterior** $U(\theta) = -\log P(\theta \mid \text{data})$ is the *potential energy* landscape. High-probability regions become valleys; low-probability regions become peaks. **Stan works entirely in log-probability space** for numerical stability.
-
-::: notes
-- **Left panel:** familiar posterior distribution. Peak at $\theta \approx 1$ is the posterior mode.
-- **Right panel:** negate and log-transform. The peak becomes a valley -- the lowest point of the bowl. High probability region = deep valley.
-- Why log? Products of many probabilities quickly underflow to numerical zero in floating-point arithmetic. Logs convert products to sums. Stan works in log space for this reason.
-- Why negate? Stan minimizes $U(\theta)$, which is minimized where the posterior is maximized. This allows gradient-based computation.
-- Budget: ~3 minutes.
+::: {.callout-note}
+**The negative log is used mainly for computational reasons.**
+Conceptually it only flips the problem: instead of hills and peaks, we look for valleys and lows.
+The reasons are in [the appendix](#sec-log-probability).
 :::
 
----
+## The posterior as a landscape (2D) {#sec-landscape-2d .smaller}
 
-## The Posterior as a Landscape (2D) {.smaller}
-
-With **two parameters**, the posterior becomes a **surface** -- a 2D landscape.
+::: notes
+Top row: the map view.
+Bottom row: the same surfaces in 3D.
+The bell on the left is the posterior, the bowl on the right its negative log.
+The elongated shape is the correlation, which is exactly where the random walk struggled.
+:::
 
 ```{r}
 #| label: fig-land2d
-#| echo: false
-#| fig-height: 3.5
-#| fig-cap: "Left: posterior surface for two correlated parameters (top-down view; lighter = higher probability). Right: the same surface as a negative log-posterior — darker = deeper valley = higher probability."
+#| fig-cap: "A posterior for two correlated parameters, seen from above (top) and in 3D (bottom). Left: the posterior density, a bell whose peak is the most plausible pair of values (yellow is high). Right: the negative log-posterior, a bowl whose lowest point is that same pair (dark is low)."
+#| fig-height: 5.2
+#| fig-width: 7.5
+#| dpi: 500
 
-p_contour <- land2d |>
-  ggplot(aes(x = x, y = y, z = density)) +
-  geom_contour_filled(bins = 11) +
-  coord_equal() +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    legend.position = "none",
-    aspect.ratio = 1
-  ) +
-  labs(
-    x = expression(theta[1]),
-    y = expression(theta[2]),
-    title = "2D posterior (top-down contour map)",
-    subtitle = "Lighter = higher probability"
-  )
+# Project a surface given as quadrilateral cells (cell, corner, x, y, z) into 2D,
+# and sort the cells from far to near so nearer ones are painted on top.
+project_surface <- function(cells, azimuth = 35, elevation = 30) {
+  az <- azimuth * pi / 180
+  el <- elevation * pi / 180
+  cells |>
+    mutate(
+      sx = x * cos(az) - y * sin(az),
+      depth = x * sin(az) + y * cos(az),
+      sy = z * cos(el) + depth * sin(el),
+      dist = depth * cos(el) - z * sin(el)
+    ) |>
+    group_by(cell) |>
+    mutate(height = mean(z), cell_dist = mean(dist)) |>
+    ungroup() |>
+    arrange(desc(cell_dist), cell, corner) |>
+    mutate(cell = fct_inorder(as.character(cell)))
+}
 
-p_neglog2d <- land2d |>
-  mutate(neg_log = -log(density + 1e-12)) |>
-  ggplot(aes(x = x, y = y, z = neg_log)) +
-  geom_contour_filled(bins = 11) +
-  coord_equal() +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    legend.position = "none",
-    aspect.ratio = 1
-  ) +
-  labs(
-    x = expression(theta[1]),
-    y = expression(theta[2]),
-    title = expression("Negative log-posterior U(" * theta * ")"),
-    subtitle = "Darker = deeper valley = higher probability"
-  )
+# Quadrilateral cells of a (u, v) grid, mapped to (x, y) by to_xy.
+grid_cells <- function(u, v, to_xy, z_fun) {
+  expand_grid(i = seq_along(u)[-1], j = seq_along(v)[-1]) |>
+    mutate(cell = row_number()) |>
+    cross_join(tibble(corner = 1:4, di = c(-1, 0, 0, -1), dj = c(-1, -1, 0, 0))) |>
+    mutate(to_xy(u[i + di], v[j + dj])) |>
+    mutate(z = z_fun(x, y))
+}
 
-p_contour | p_neglog2d
+# The bell on a rectangle, the bowl on ellipses that follow its contours.
+chol_2d <- t(chol(Sigma_2d))
+bell <- grid_cells(
+  seq(-3.5, 3.5, length.out = 45),
+  seq(-4.5, 4.5, length.out = 45),
+  function(u, v) tibble(x = u, y = v),
+  function(x, y) 4 * exp(-neg_log_2d(x, y))
+) |>
+  project_surface()
+bowl <- grid_cells(
+  seq(0, 2.8, length.out = 16),
+  seq(0, 2 * pi, length.out = 49),
+  function(u, v) {
+    tibble(
+      x = chol_2d[1, 1] * u * cos(v),
+      y = chol_2d[2, 1] * u * cos(v) + chol_2d[2, 2] * u * sin(v)
+    )
+  },
+  function(x, y) 0.55 * neg_log_2d(x, y)
+) |>
+  project_surface()
+
+plot_contour <- function(z_var, title, subtitle) {
+  land2d |>
+    ggplot(aes(x = x, y = y, z = .data[[z_var]])) +
+    geom_contour_filled(bins = 11) +
+    coord_equal(expand = FALSE) +
+    theme_classic() +
+    theme(legend.position = "none") +
+    labs(x = expression(theta[1]), y = expression(theta[2]), title = title, subtitle = subtitle)
+}
+
+plot_surface <- function(surface, title) {
+  ggplot(surface, aes(x = sx, y = sy, group = cell, fill = height)) +
+    geom_polygon(colour = "grey25", linewidth = 0.08) +
+    scale_fill_viridis_c() +
+    coord_equal() +
+    theme_void() +
+    theme(legend.position = "none") +
+    labs(title = title)
+}
+
+(plot_contour("density", "Posterior, from above", "Yellow is high probability") |
+  plot_contour("neg_log", "Negative log-posterior, from above", "Dark is high probability")) /
+  (plot_surface(bell, "Posterior in 3D: a bell") |
+    plot_surface(bowl, "Negative log-posterior in 3D: a bowl"))
+```
+
+## HMC: the ball on the landscape {#sec-hmc-ball .smaller}
+
+::: notes
+Contrast with the random walk: the walker takes blind steps, the ball is kicked and then follows the curvature.
+Energy is conserved, so the ball runs fast through the valley and slows down on the slopes.
+:::
+
+**Hamiltonian Monte Carlo** (HMC) simulates *Hamiltonian dynamics*, the physics of a frictionless ball rolling on the negative log-posterior [@hoffman2014no; @gelman2013bda-ch12].
+
+. . .
+
+- **Random walk:** the chain takes a sequence of small, blind random steps.
+- **HMC:** the chain gets *momentum*, like a ball we kick across the curved surface.
+  Each step is one kick in a random direction and strength, after which the ball rolls for a fixed simulated time.
+  Where it stops is the proposed next sample.
+
+. . .
+
+The parameter value is the ball's position, the negative log-posterior its **potential energy**, and the kick gives it **kinetic energy**.
+The total stays constant, so the ball speeds up through the valley and slows down on the slopes.
+
+. . .
+
+::: {.callout-note}
+**The next slides show three consecutive trajectories of one chain.**
+Each trajectory starts where the previous one stopped, with a fresh kick.
+:::
+
+## HMC: trajectory 1 {#sec-hmc-traj-1 .smaller}
+
+::: notes
+Start on the left shoulder, kick to the right.
+The ball rolls down, overshoots the valley, climbs the right side and stops when the simulated time runs out.
+:::
+
+```{r}
+#| label: fig-hmc-traj-1
+#| fig-cap: "Animation of the first HMC trajectory. The ball starts on the left shoulder of the negative log-posterior, is kicked to the right, rolls through the valley and stops on the right side. Its endpoint is the next sample."
+#| fig-height: 4
+
+# The ball on the landscape at time t_now. Trajectories before `fade_before` are grey.
+plot_hmc_frame <- function(t_now, fade_before = 1, show = 1:3) {
+  shown <- filter(hmc_traj, t <= t_now, traj %in% show)
+  active <- filter(shown, as.integer(traj) >= fade_before)
+  faded <- filter(shown, as.integer(traj) < fade_before)
+  # The ball rolls until the endpoint, where the triangle takes over.
+  ball <- slice_tail(shown, n = 1) |> filter(step < 28)
+  ends <- shown |> group_by(traj) |> filter(step == 28) |> ungroup()
+
+  ggplot() +
+    geom_line(data = land1d, aes(x = theta, y = U), colour = "grey25", linewidth = 1) +
+    geom_path(
+      data = faded,
+      aes(x = theta, y = potential, group = traj),
+      colour = "grey70",
+      linewidth = 1
+    ) +
+    geom_path(data = active, aes(x = theta, y = potential, colour = traj), linewidth = 1) +
+    geom_point(
+      data = filter(active, step == 0),
+      aes(x = theta, y = potential, colour = traj),
+      shape = 21,
+      fill = "white",
+      size = 4,
+      stroke = 1.5
+    ) +
+    geom_point(data = ends, aes(x = theta, y = potential, colour = traj), shape = 17, size = 4) +
+    geom_rug(
+      data = ends,
+      aes(x = theta, colour = traj),
+      sides = "b",
+      linewidth = 1.5,
+      length = unit(0.05, "npc")
+    ) +
+    geom_point(data = ball, aes(x = theta, y = potential, colour = traj), size = 6) +
+    scale_colour_manual(values = traj_cols, limits = names(traj_cols)) +
+    coord_cartesian(xlim = c(-3.5, 5.5), ylim = c(-0.4, 7)) +
+    theme_classic() +
+    theme(legend.position = "none") +
+    labs(
+      x = expression(theta),
+      y = expression(U(theta) == -log ~ p(theta ~ "|" ~ data)),
+      title = "A ball rolling on the negative log-posterior",
+      subtitle = "Open circle: start of a trajectory. Triangle: its endpoint, the next sample."
+    )
+}
+
+# The same trajectories as positions over simulated time, like a trace plot.
+plot_hmc_time <- function(t_now) {
+  shown <- filter(hmc_traj, t <= t_now)
+  ends <- filter(shown, step == 28)
+  ggplot(shown, aes(x = t, y = theta, colour = traj)) +
+    geom_hline(yintercept = mu_tgt, colour = "grey70", linetype = "dashed") +
+    geom_path(linewidth = 1) +
+    geom_point(data = ends, shape = 17, size = 4) +
+    scale_colour_manual(values = traj_cols, limits = names(traj_cols)) +
+    coord_cartesian(xlim = c(1, nrow(hmc_traj)), ylim = c(-3.5, 5.5)) +
+    theme_classic() +
+    theme(legend.position = "none") +
+    labs(
+      x = "Leapfrog step, over all three trajectories",
+      y = expression(theta),
+      title = "Position over simulated time",
+      subtitle = "Dashed line: the posterior mode"
+    )
+}
+
+make_gif(plot_hmc_frame, seq_len(traj_end(1)), fps = 10)
+```
+
+## HMC: trajectory 2 {#sec-hmc-traj-2 .smaller}
+
+::: notes
+It starts where trajectory 1 stopped, now grey.
+A rightward kick sends it up the right shoulder, gravity pulls it back, and it crosses to the left side.
+:::
+
+```{r}
+#| label: fig-hmc-traj-2
+#| fig-cap: "Animation of the second HMC trajectory, starting where the first one (grey) stopped. A kick to the right sends the ball up the right shoulder, the slope turns it back, and it ends on the left side of the valley."
+#| fig-height: 4
+
+make_gif(
+  function(t_now) plot_hmc_frame(t_now, fade_before = 2),
+  (traj_end(1) + 1):traj_end(2),
+  fps = 10
+)
+```
+
+## HMC: trajectory 3 {#sec-hmc-traj-3 .smaller}
+
+::: notes
+A kick to the left this time.
+Up the left shoulder, back down, across the valley, and far up the right side.
+Ask: is that endpoint plausible?
+It is less likely, and HMC still visits it sometimes, which is how the tails get sampled.
+:::
+
+```{r}
+#| label: fig-hmc-traj-3
+#| fig-cap: "Animation of the third HMC trajectory, starting where the second one stopped. A kick to the left sends the ball up the left shoulder, back across the valley and high onto the right shoulder, a less plausible but still possible sample."
+#| fig-height: 4
+
+make_gif(
+  function(t_now) plot_hmc_frame(t_now, fade_before = 3),
+  (traj_end(2) + 1):traj_end(3),
+  fps = 10
+)
+```
+
+## HMC: one chain, three trajectories {#sec-hmc-traj-all .smaller}
+
+::: notes
+The same three trajectories in one go, one colour each.
+The bottom panel is the chain over simulated time: three samples, each far from the last.
+Compare with the random walk, which needed hundreds of steps to cross the posterior.
+:::
+
+```{r}
+#| label: fig-hmc-traj-all
+#| fig-cap: "Animation of all three trajectories in sequence, one colour each. Top: the ball on the negative log-posterior. Bottom: its position over simulated time. Each triangle is an accepted sample, and consecutive samples land far apart."
+#| fig-height: 5
+
+make_gif(
+  function(t_now) plot_hmc_frame(t_now) / plot_hmc_time(t_now),
+  seq(1, nrow(hmc_traj), by = 2),
+  height = 5.5,
+  fps = 10
+)
+```
+
+## HMC: the three trajectories {#sec-hmc-traj-static .smaller}
+
+```{r}
+#| label: fig-hmc-traj-static
+#| fig-cap: "The three consecutive HMC trajectories of the animations, one per panel. Each starts at the open circle, where the previous one ended, and its endpoint (triangle) is the next sample. All three were accepted, because the simulated physics conserves energy almost exactly."
+#| fig-height: 3
+#| dpi: 500
+
+map(1:3, function(k) {
+  plot_hmc_frame(traj_end(k), show = k) +
+    labs(
+      y = expression(U(theta)),
+      title = paste("Trajectory", k),
+      subtitle = paste0(
+        "From ",
+        round(first(hmc_traj$theta[hmc_traj$traj == k]), 1),
+        " to ",
+        round(last(hmc_traj$theta[hmc_traj$traj == k]), 1)
+      )
+    )
+}) |>
+  wrap_plots(nrow = 1)
 ```
 
 . . .
 
-For $k$ parameters: a $k$-dimensional landscape. We cannot visualize it, but the metaphor holds in any dimension. MCMC **explores** this landscape rather than evaluating it everywhere.
+The kicks are random, the rolling is physics.
+Even a kick into an unlikely region explores the landscape on the way.
+
+## HMC against the random walk {#sec-hmc-vs-rw .smaller}
 
 ::: notes
-- **Left panel:** top-down contour map. The oval shape reflects correlation between the two parameters. Center = highest posterior probability.
-- **Right panel:** the oval becomes a bowl. The center is the MAP estimate -- the deepest point of the valley.
-- Key point for transition to HMC: the correlation creates an elongated bowl. Random-walk Metropolis will struggle here.
-- Budget: ~2 minutes.
+Same target, same number of samples, same starting point.
+The left panel is the random walk again, for reference.
+HMC follows the curvature, so the correlation does not slow it down.
 :::
-
----
-
-## HMC: The Ball on the Landscape {.smaller}
-
-**Hamiltonian Monte Carlo** introduces *momentum* into the sampler -- a frictionless ball rolling on the potential energy landscape [@hoffman2014no; @gelman2013bda-ch12].
-
-Each trajectory: a **random momentum kick** launches the ball; leapfrog integration simulates Newtonian physics; the trajectory endpoint is proposed as the next sample.
-
-::: {.callout-note style="font-size: 0.72em"}
-The three panels on the next slides show **three independent illustrative examples**, each starting from a different hand-chosen position on the landscape. They are not consecutive MCMC steps -- they are thought experiments showing how the ball behaves from different starting positions on the same landscape.
-:::
-
-::: notes
-- This callout preempts the natural student question: "Why does trajectory B not start where trajectory A ended?" The answer is that these are independent illustrations, not a sequential chain.
-- Introduce the figure conventions before showing each panel: open circle = start, filled triangle = proposed sample after L leapfrog steps.
-- Budget for all three panels together: ~6 minutes.
-:::
-
----
-
-## HMC: Trajectory A {.smaller}
-
-```{r}
-#| label: fig-hmc-traj-A
-#| echo: false
-#| fig-height: 3.0
-#| fig-cap: "Trajectory A: ball starts at θ ≈ −2.8 on the left shoulder. A positive momentum kick sends it rightward. It rolls down, overshoots the valley bottom, climbs the right side, slows, turns back under gravity, and the L = 28 leapfrog steps run out on the return journey."
-
-ggplot() +
-  geom_line(
-    data = land1d,
-    aes(x = theta, y = neg_log),
-    color = "gray25",
-    linewidth = 1.1
-  ) +
-  geom_path(
-    data = hmc_traj_A,
-    aes(x = theta, y = potential),
-    color = col_1,
-    linewidth = 1.0,
-    alpha = 0.9
-  ) +
-  geom_point(
-    data = hmc_traj_A |> filter(step == 0),
-    aes(x = theta, y = potential),
-    color = col_1,
-    size = 5,
-    shape = 21,
-    fill = "white",
-    stroke = 2
-  ) +
-  geom_point(
-    data = hmc_traj_A |> filter(step == max(step)),
-    aes(x = theta, y = potential),
-    color = col_1,
-    size = 5,
-    shape = 17
-  ) +
-  annotate(
-    "text",
-    x = -2.8,
-    y = 5.3,
-    label = "Start (open circle)\nθ ≈ −2.8",
-    color = col_1,
-    size = 3.0,
-    hjust = 0.5
-  ) +
-  annotate(
-    "text",
-    x = 0.5,
-    y = 4.6,
-    label = "Proposed sample (triangle)\nsteps run out here",
-    color = col_1,
-    size = 3.0,
-    hjust = 0
-  ) +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    aspect.ratio = 0.45,
-    legend.position = "none"
-  ) +
-  labs(
-    x = expression(theta),
-    y = expression(U(theta) == -log ~ p(theta ~ "|" ~ data)),
-    title = "Trajectory A: starts left, rolls right, turns back",
-    subtitle = "Valley bottom ≈ θ = 1 (the posterior mode). Ball overshoots then returns."
-  )
-```
-
-::: notes
-- Walk through the physics step by step:
-  1. Ball starts at $\theta \approx -2.8$ on the **left shoulder** (high $U$, low probability).
-  2. Positive momentum kick flicks it **rightward** (downhill).
-  3. Ball **accelerates** rolling into the valley, gains kinetic energy.
-  4. It **overshoots** the valley bottom ($\theta \approx 1$) because it has momentum.
-  5. It **climbs the right side**, slowing as potential energy increases.
-  6. "Gravity" (the gradient of $U$) pulls it back -- the ball **turns around**.
-  7. The leapfrog counter hits L = 28 steps **on the way back**, and the trajectory stops wherever the ball is at that moment. That position is the proposed sample (triangle).
-- Key point: the ball does not stop at the valley bottom. It follows physics until the step counter runs out.
-- Budget: ~3 minutes.
-:::
-
----
-
-## HMC: Trajectory B {.smaller}
-
-```{r}
-#| label: fig-hmc-traj-B
-#| echo: false
-#| fig-height: 3.0
-#| fig-cap: "Trajectory B: ball starts at θ ≈ 3.2 on the right shoulder. A negative momentum kick sends it leftward. It rolls down, crosses the valley, climbs the left side, turns back under gravity, and the steps run out partway through the return journey."
-
-ggplot() +
-  geom_line(
-    data = land1d,
-    aes(x = theta, y = neg_log),
-    color = "gray25",
-    linewidth = 1.1
-  ) +
-  geom_path(
-    data = hmc_traj_B,
-    aes(x = theta, y = potential),
-    color = col_2,
-    linewidth = 1.0,
-    alpha = 0.9
-  ) +
-  geom_point(
-    data = hmc_traj_B |> filter(step == 0),
-    aes(x = theta, y = potential),
-    color = col_2,
-    size = 5,
-    shape = 21,
-    fill = "white",
-    stroke = 2
-  ) +
-  geom_point(
-    data = hmc_traj_B |> filter(step == max(step)),
-    aes(x = theta, y = potential),
-    color = col_2,
-    size = 5,
-    shape = 17
-  ) +
-  annotate(
-    "text",
-    x = 3.2,
-    y = 5.3,
-    label = "Start (open circle)\nθ ≈ 3.2",
-    color = col_2,
-    size = 3.0,
-    hjust = 0.5
-  ) +
-  annotate(
-    "text",
-    x = -2.8,
-    y = 4.6,
-    label = "Proposed sample (triangle)\nsteps run out here",
-    color = col_2,
-    size = 3.0,
-    hjust = 0.5
-  ) +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    aspect.ratio = 0.45,
-    legend.position = "none"
-  ) +
-  labs(
-    x = expression(theta),
-    y = expression(U(theta)),
-    title = "Trajectory B: starts right, rolls left, turns back",
-    subtitle = "Mirror image of A: negative kick sends ball leftward across the valley."
-  )
-```
-
-::: notes
-- Walk through the physics: ball starts on the **right shoulder** ($\theta \approx 3.2$), receives a **negative** (leftward) momentum kick, rolls down into the valley from the right, overshoots the bottom, climbs the left side, turns back under gravity, and the steps run out on the way back.
-- Point out the parallel to Trajectory A: same physics, different starting side of the valley, different kick direction.
-- Key efficiency point: both trajectories crossed the full width of the posterior in a single proposal. A random-walk sampler would need many small steps to achieve this.
-- Budget: ~2 minutes.
-:::
-
----
-
-## HMC: Trajectory C {.smaller}
-
-```{r}
-#| label: fig-hmc-traj-C
-#| echo: false
-#| fig-height: 3.0
-#| fig-cap: "Trajectory C: ball starts near the valley bottom (θ ≈ 0.2), close to the posterior mode. A strong rightward kick sends it far up the right shoulder. The steps run out high on the right side — proposing a low-probability sample. The Metropolis step may reject this proposal."
-
-ggplot() +
-  geom_line(
-    data = land1d,
-    aes(x = theta, y = neg_log),
-    color = "gray25",
-    linewidth = 1.1
-  ) +
-  geom_path(
-    data = hmc_traj_C,
-    aes(x = theta, y = potential),
-    color = col_3,
-    linewidth = 1.0,
-    alpha = 0.9
-  ) +
-  geom_point(
-    data = hmc_traj_C |> filter(step == 0),
-    aes(x = theta, y = potential),
-    color = col_3,
-    size = 5,
-    shape = 21,
-    fill = "white",
-    stroke = 2
-  ) +
-  geom_point(
-    data = hmc_traj_C |> filter(step == max(step)),
-    aes(x = theta, y = potential),
-    color = col_3,
-    size = 5,
-    shape = 17
-  ) +
-  annotate(
-    "text",
-    x = 0.2,
-    y = 3.3,
-    label = "Start (open circle)\nnear valley bottom",
-    color = col_3,
-    size = 3.0,
-    hjust = 0.5
-  ) +
-  annotate(
-    "text",
-    x = 3.8,
-    y = 6.6,
-    label = "Proposed sample (triangle)\nhigh on right shoulder",
-    color = col_3,
-    size = 3.0,
-    hjust = 0.5
-  ) +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    aspect.ratio = 0.45,
-    legend.position = "none"
-  ) +
-  labs(
-    x = expression(theta),
-    y = expression(U(theta)),
-    title = "Trajectory C: starts near mode, strong kick explores right shoulder",
-    subtitle = "Proposed sample lands in a low-probability region — may be rejected by Metropolis step."
-  )
-```
-
-. . .
-
-::: {style="font-size: 0.78em"}
-Each trajectory receives a fresh **random momentum kick** and rolls for exactly L steps. The endpoint is the proposed sample. Even when rejected, the trajectory itself explored the landscape efficiently.
-:::
-
-::: notes
-- Trajectory C illustrates an important case: the ball starts near the high-probability valley bottom but receives a strong kick that sends it far into a low-probability region. The proposed sample (triangle) ends up high on the right shoulder, where $U(\theta)$ is large (low probability).
-- In this case, the Metropolis acceptance step is likely to **reject** the proposal -- the chain would stay at the start (open circle). But even so, this trajectory explored the landscape.
-- This is also the case that illustrates why the random momentum kick is essential: without it, the ball would just sit at the bottom of the valley (the MAP estimate) and never explore uncertainty.
-- Summary sentence to say aloud: "Every trajectory is an independent thought experiment: different starting point, different momentum kick, different path. In a real chain, the start of each trajectory is the accepted endpoint of the previous one."
-- Budget: ~3 minutes.
-:::
-
----
-
-## Why Random-Walk Metropolis Struggles {.smaller}
-
-The basic Metropolis algorithm proposes *small, random steps* in parameter space.
-
-```{r}
-#| label: fig-rw-struggle
-#| echo: false
-#| fig-height: 3.2
-#| fig-cap: "Random-walk Metropolis on the 2D correlated posterior. Left: the first 200 steps as a path. Right: all 3,000 samples. The chain moves slowly and struggles to explore the correlated, elongated posterior."
-
-p_rw_path <- ggplot() +
-  geom_contour(
-    data = land2d,
-    aes(x = x, y = y, z = density),
-    color = "gray70",
-    bins = 8
-  ) +
-  geom_path(
-    data = rw_df[1:200, ],
-    aes(x = x, y = y),
-    color = col_2,
-    alpha = 0.7,
-    linewidth = 0.5
-  ) +
-  geom_point(
-    data = rw_df[1, ],
-    aes(x = x, y = y),
-    color = col_2,
-    size = 2.5,
-    shape = 16
-  ) +
-  coord_cartesian(xlim = c(-3.5, 3.5), ylim = c(-4.5, 4.5)) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 1) +
-  labs(
-    x = expression(theta[1]),
-    y = expression(theta[2]),
-    title = "Random walk: first 200 steps",
-    subtitle = "Slow, meandering, low acceptance"
-  )
-
-p_rw_all <- ggplot() +
-  geom_contour(
-    data = land2d,
-    aes(x = x, y = y, z = density),
-    color = "gray70",
-    bins = 8
-  ) +
-  geom_point(
-    data = rw_df,
-    aes(x = x, y = y),
-    color = col_2,
-    alpha = 0.15,
-    size = 0.5
-  ) +
-  coord_cartesian(xlim = c(-3.5, 3.5), ylim = c(-4.5, 4.5)) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 1) +
-  labs(
-    x = expression(theta[1]),
-    y = expression(theta[2]),
-    title = "Random walk: all 3,000 samples",
-    subtitle = "High autocorrelation; poor coverage"
-  )
-
-p_rw_path | p_rw_all
-```
-
-. . .
-
-Problems: many proposals rejected; chain moves slowly; high autocorrelation between successive samples; effective sample size is low relative to raw sample count.
-
-::: notes
-- **Left panel:** the path is jagged and mostly stays in a small neighborhood. After 200 steps, the chain has barely moved from the upper-left corner.
-- **Right panel:** after 3,000 steps, coverage is poor. The chain has not reached the lower-right tail of the posterior ellipse.
-- Root cause: random-walk proposals are blind. They do not use any information about the shape of the posterior.
-- Budget: ~3 minutes.
-:::
-
----
-
-## HMC vs. Random-Walk on the 2D Posterior {.smaller}
 
 ```{r}
 #| label: fig-hmc-rw-compare
-#| echo: false
-#| fig-height: 3.4
-#| fig-cap: "Same target distribution; same number of samples (3,000); same starting point. HMC explores the posterior much more efficiently than random-walk Metropolis."
+#| fig-cap: "The same posterior, the same 3,000 iterations and the same starting point for both samplers. Left: random-walk Metropolis, for reference. Middle: the first 200 HMC steps already cross the whole posterior. Right: all 3,000 HMC samples cover it evenly."
+#| fig-height: 3.3
+#| dpi: 500
 
-p_hmc_path <- ggplot() +
-  geom_contour(
-    data = land2d,
-    aes(x = x, y = y, z = density),
-    color = "gray70",
-    bins = 8
-  ) +
-  geom_path(
-    data = hmc_df[1:200, ],
-    aes(x = x, y = y),
-    color = col_1,
-    alpha = 0.7,
-    linewidth = 0.5
-  ) +
-  geom_point(
-    data = hmc_df[1, ],
-    aes(x = x, y = y),
-    color = col_1,
-    size = 2.5,
-    shape = 16
-  ) +
-  coord_cartesian(xlim = c(-3.5, 3.5), ylim = c(-4.5, 4.5)) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 1) +
-  labs(
-    x = expression(theta[1]),
-    y = expression(theta[2]),
-    title = "HMC: first 200 steps",
-    subtitle = "Long trajectories, fast exploration"
-  )
+p_rw_ref <- p_rw_all + labs(title = "Random walk", subtitle = "3,000 samples, for reference")
+p_hmc_path <- plot_samples_2d(
+  hmc_df[1:200, ],
+  col_1,
+  "HMC: 200 steps",
+  "Long jumps across the posterior",
+  path = TRUE,
+  path_alpha = 0.45
+)
+p_hmc_all <- plot_samples_2d(hmc_df, col_1, "HMC: 3,000 samples", "Even coverage")
 
-p_hmc_all <- ggplot() +
-  geom_contour(
-    data = land2d,
-    aes(x = x, y = y, z = density),
-    color = "gray70",
-    bins = 8
-  ) +
-  geom_point(
-    data = hmc_df,
-    aes(x = x, y = y),
-    color = col_1,
-    alpha = 0.15,
-    size = 0.5
-  ) +
-  coord_cartesian(xlim = c(-3.5, 3.5), ylim = c(-4.5, 4.5)) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 1) +
-  labs(
-    x = expression(theta[1]),
-    y = expression(theta[2]),
-    title = "HMC: all 3,000 samples",
-    subtitle = "Good coverage; low autocorrelation"
-  )
-
-p_hmc_path | p_hmc_all
+p_rw_ref +
+  plot_spacer() +
+  p_hmc_path +
+  plot_spacer() +
+  p_hmc_all +
+  plot_layout(widths = c(1, 0.08, 1, 0.08, 1))
 ```
 
-::: notes
-- The contrast with the previous slide (random-walk Metropolis) should be stark.
-- **Left panel:** HMC's path covers much more of the posterior in the first 200 steps.
-- **Right panel:** all 3,000 samples are much better distributed across the posterior. Both center and tails are adequately sampled.
-- Why does it handle correlation? HMC uses the gradient of the log-posterior, which accounts for the direction of the correlation.
-- Technical comparison: HMC's higher ESS per raw sample means 3,000 HMC samples may be equivalent to 10,000+ random-walk samples on a correlated posterior.
-- Budget: ~3 minutes.
-:::
-
----
-
-## Log-Probability: A Technical Note
-
-::: {style="font-size: 0.6em"}
-
-Stan (and therefore `brms`) works **entirely in log-probability space**. Three reasons:
-:::
-
-. . .
-
-::: {style="font-size: 0.6em"}
-**1. Numerical stability**
-
-Likelihoods of large datasets involve products of many small probabilities:
-$$
-P(\text{data} \mid \theta) = \prod_{i=1}^{N} P(y_i \mid \theta)
-$$ {#eq-likelihood-product}
-
-For $N = 200$ and each factor $\approx 0.3$, the product $\approx 10^{-105}$ -- underflows to zero in floating point. The log-likelihood is $\sum_i \log P(y_i \mid \theta)$ -- numerically well-behaved.
-:::
-
-. . .
-
-::: {style="font-size: 0.6em"}
-**2. Gradient computation**
-
-HMC requires the gradient $\nabla_\theta \log P(\theta \mid \text{data})$ at every leapfrog step. This is tractable for standard likelihood families; the product form becomes a sum in log space.
-:::
-
-. . .
-
-::: {style="font-size: 0.6em"}
-**3. The sign convention**
-
-Stan minimizes $U(\theta) = -\log P(\theta \mid \text{data})$ (the negative log-posterior). High-probability regions are **valleys**; the ball rolls *toward* high-probability regions. This is **not** gradient descent -- the ball keeps rolling and exploring the full landscape. It does not converge to a single point.
-:::
+## What Stan adds {#sec-what-stan-adds .smaller}
 
 ::: notes
-- **@eq-likelihood-product:** demonstrate with numbers. $0.3^{200} \approx 3.7 \times 10^{-105}$. Log converts products to sums: $\log \prod_i P(y_i \mid \theta) = \sum_i \log P(y_i \mid \theta)$.
-- **Gradient:** Stan uses automatic differentiation to compute $\partial / \partial\theta \log p(\theta \mid \text{data})$ exactly. Required at every leapfrog step.
-- **Critical distinction to emphasize:** students often confuse HMC with gradient descent. Gradient descent always moves downhill -- it converges to a minimum (a single point estimate). HMC uses the gradient to propose trajectories, but the ball has momentum and can move uphill. It explores the full landscape in proportion to the posterior.
-- Connection: the MAP estimate is what you would get from gradient descent. MCMC gives you the full posterior.
-- Budget: ~3 minutes.
+Reassure: nobody sets these by hand in this course.
+The appendix is for the curious.
 :::
 
-# Part VI: Multiple Chains, Warm-Up and Convergence
+What you saw is a **conceptual** introduction to HMC.
+
+. . .
+
+The full algorithm has more moving parts:
+
+- the **step size** of the simulated physics, how far the ball moves per update,
+- the **number of steps**, how long the ball rolls (NUTS chooses this anew for every trajectory),
+- the **mass matrix**, which rescales the landscape so that correlated parameters are as easy as uncorrelated ones,
+- the **accept step**, which corrects for the small errors of the simulation,
+- **divergence detection**, which flags trajectories where the simulation broke down.
+
+. . .
+
+::: {.callout-tip}
+**Stan tunes all of these automatically.**
+The formal version is in [the appendix](#sec-hmc-formal).
+:::
+
+# Multiple chains, warm-up and convergence {#sec-chains}
 
 ```{r}
 #| label: data-chains
@@ -1529,59 +1432,56 @@ bad_chains <- map_dfr(1:4, function(id) {
   }
   tibble(iteration = 1:1000, value = x, chain = factor(id))
 })
+
+# Four HMC chains on the 2D posterior, from dispersed starting points.
+n_warm <- 8
+set.seed(7)
+four_chains <- map_dfr(1:4, function(id) {
+  starts <- list(c(-3, 4), c(3, -4), c(-3, -4), c(3, 4))
+  run_hmc_2d(starts[[id]], n_warm + 15) |> mutate(chain = factor(id))
+})
 ```
 
-## Why One Chain Is Not Enough
-
-::: {style="font-size: 0.6em"}
-Running a single MCMC chain has three fundamental problems:
-:::
-. . .
-
-::: {style="font-size: 0.6em"}
-**1. Starting-point sensitivity**
-
-Every chain must begin somewhere. Early samples reflect the starting point, not the posterior. These samples are misleading and must be discarded. But how many? One chain alone cannot tell you when it has "found" the posterior.
-:::
-. . .
-
-::: {style="font-size: 0.6em"}
-**2. Invisible local trapping**
-
-A single chain might explore only a subset of the posterior -- a local neighborhood or one mode of a multimodal distribution -- without visiting other high-probability regions. With only one chain, this failure is completely invisible.
-:::
-
-. . .
-
-::: {style="font-size: 0.6em"}
-**3. No internal benchmark for convergence**
-
-Whether a chain has converged can only be assessed by comparing *multiple* chains started from *different*, overdispersed starting points. If all chains agree after warm-up, that is evidence of convergence. If they disagree, non-convergence is visible.
-:::
-
-. . .
-
-::: {.callout-note style="font-size: 0.6em"}
-**Standard practice in `brms`:** 4 chains, 2,000 iterations each (1,000 warm-up, 1,000 post-warm-up), for a total of 4,000 posterior draws. The 4 chains start from different dispersed points and must converge to the same distribution.
-:::
+## Why one chain is not enough {#sec-one-chain .smaller}
 
 ::: notes
-- Island king analogy for point 1: "Imagine dropping the king onto a remote island far from the high-population islands. His first 100 steps will reflect where he started, not the population-proportional distribution. We discard those steps. But with only one chain, how long do we wait?"
-- For point 2: "If the posterior has two well-separated modes, a single chain might find one and never discover the other. The chain looks perfectly converged -- stationary, well-mixed -- but it represents only half the posterior."
-- The 4-chain default in brms reflects current best practice as described in @gelman2013bda-ch11.
-- The next slide illustrates problem 2 graphically.
-- Budget: ~2 minutes.
+Point 1: drop the king on a remote island, his first steps reflect where he started.
+Point 2: with two modes, one chain can find one and never the other.
 :::
 
----
+A single chain has three problems:
 
-## Why One Chain Is Not Enough: Illustrated {.smaller}
+. . .
+
+**1. Starting-point sensitivity.**
+Every chain starts somewhere, and early samples reflect the start rather than the posterior.
+One chain alone cannot tell us when it has arrived.
+
+. . .
+
+**2. Invisible trapping.**
+A chain may explore only part of the posterior, for example one of two peaks.
+With one chain, this failure is invisible.
+
+. . .
+
+**3. No benchmark.**
+Convergence can only be judged by comparing *several* chains started at *different* points.
+If they agree, that is evidence of convergence.
+If they disagree, non-convergence is visible.
+
+## Why one chain is not enough: illustrated {#sec-one-chain-illustrated .smaller}
+
+::: notes
+Each chain alone looks healthy: stationary, well mixed.
+Together they show the problem, and R-hat would flag it at once.
+:::
 
 ```{r}
 #| label: fig-local-trap
-#| echo: false
-#| fig-height: 3.6
-#| fig-cap: "A bimodal posterior with two separated modes. The orange chain starts near the left mode and never discovers the right mode. The blue chain starts near the right mode and never discovers the left. Each chain looks healthy in isolation — but each tells only half the story."
+#| fig-cap: "A posterior with two separated peaks. Top: trace plots of two chains, each stationary but stuck near the peak it started at. Bottom: the true posterior with each chain's samples as ticks, orange below and blue above. Each chain alone looks healthy and tells only half the story."
+#| fig-height: 4
+#| dpi: 500
 
 set.seed(42)
 
@@ -1600,20 +1500,12 @@ metropolis_bimodal <- function(start, n = 1000, step = 0.3) {
   x
 }
 
-chain_left <- metropolis_bimodal(start = -2.3, n = 1000)
-chain_right <- metropolis_bimodal(start = 2.3, n = 1000)
+chain_left <- metropolis_bimodal(start = -2.3)
+chain_right <- metropolis_bimodal(start = 2.3)
 
 chain_df <- bind_rows(
-  tibble(
-    iteration = 1:1000,
-    value = chain_left,
-    chain = "Chain A: starts near left mode"
-  ),
-  tibble(
-    iteration = 1:1000,
-    value = chain_right,
-    chain = "Chain B: starts near right mode"
-  )
+  tibble(iteration = 1:1000, value = chain_left, chain = "Chain A: starts near the left peak"),
+  tibble(iteration = 1:1000, value = chain_right, chain = "Chain B: starts near the right peak")
 )
 
 dens_df <- tibble(
@@ -1622,35 +1514,24 @@ dens_df <- tibble(
 )
 
 p_trace_local <- chain_df |>
-  ggplot(aes(x = iteration, y = value, color = chain)) +
+  ggplot(aes(x = iteration, y = value, colour = chain)) +
   geom_line(alpha = 0.8, linewidth = 0.5) +
-  scale_color_manual(values = c(col_2, col_1)) +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    legend.position = "bottom",
-    legend.title = element_blank(),
-    aspect.ratio = 0.32
-  ) +
+  scale_colour_manual(values = c(col_2, col_1)) +
+  theme_classic() +
+  theme(legend.position = "right", legend.title = element_blank()) +
   labs(
     x = "Iteration",
     y = expression(theta),
-    title = "Trace plot: each chain is stationary — but trapped",
-    subtitle = "Neither chain crosses the low-density valley between the two modes"
+    title = "Trace plot: each chain is stationary, but trapped"
   )
 
 p_density_local <- ggplot() +
-  geom_line(
-    data = dens_df,
-    aes(x = x, y = y),
-    color = "gray30",
-    linewidth = 1.1
-  ) +
-  geom_area(data = dens_df, aes(x = x, y = y), fill = "gray30", alpha = 0.12) +
+  geom_area(data = dens_df, aes(x = x, y = y), fill = "grey30", alpha = 0.12) +
+  geom_line(data = dens_df, aes(x = x, y = y), colour = "grey30", linewidth = 1.1) +
   geom_rug(
     data = tibble(v = chain_left),
     aes(x = v),
-    color = col_2,
+    colour = col_2,
     alpha = 0.35,
     sides = "b",
     length = unit(0.07, "npc")
@@ -1658,71 +1539,38 @@ p_density_local <- ggplot() +
   geom_rug(
     data = tibble(v = chain_right),
     aes(x = v),
-    color = col_1,
+    colour = col_1,
     alpha = 0.35,
     sides = "t",
     length = unit(0.07, "npc")
   ) +
-  annotate(
-    "text",
-    x = -2.5,
-    y = 0.58,
-    label = "Left mode\n(Chain A only)",
-    color = col_2,
-    size = 2.9,
-    hjust = 0.5
-  ) +
-  annotate(
-    "text",
-    x = 2.5,
-    y = 0.58,
-    label = "Right mode\n(Chain B only)",
-    color = col_1,
-    size = 2.9,
-    hjust = 0.5
-  ) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 0.45) +
+  theme_classic() +
   labs(
     x = expression(theta),
     y = "Density",
-    title = "True bimodal posterior and samples from each chain",
-    subtitle = "Orange rug (bottom) = Chain A samples; blue rug (top) = Chain B samples"
+    title = "The true posterior and where each chain sampled"
   )
 
-p_trace_local + p_density_local
+p_trace_local / p_density_local
 ```
 
+## Warm-up {#sec-warmup .smaller}
+
 ::: notes
-- **Top panel:** both chains look perfectly stationary and well-mixed within their own neighborhood -- the "hairy caterpillar" shape is there. If you only ran Chain A (orange), you would diagnose convergence and be wrong.
-- **Bottom panel:** the true posterior has two equal-weight modes. Chain A (orange rug, bottom) covers only the left mode. Chain B (blue rug, top) covers only the right mode. Neither alone gives you the full posterior.
-- Key diagnostic implication: R-hat would be very large here. The two chains have means at $\approx -2.5$ and $\approx +2.5$ respectively, so between-chain variance >> within-chain variance. R-hat would flag this immediately.
-- Real-world context: multimodal posteriors arise in mixture models, some nonlinear models, and occasionally in poorly identified models. Running 4 chains from dispersed starts and checking R-hat is your main safeguard.
-- Budget: ~3 minutes.
+Warm-up does two jobs: the chain travels to the posterior, and Stan tunes its physics simulation.
+Details only for the curious, in the appendix.
 :::
-
----
-
-## Warm-Up and Adaptation {.smaller}
-
-Each chain goes through two distinct phases:
 
 ```{r}
 #| label: fig-warmup
-#| echo: false
+#| fig-cap: "The default brms run per chain: 2,000 iterations, of which the first 1,000 are warm-up and discarded. With four chains, the remaining 4 x 1,000 = 4,000 draws are the posterior samples."
 #| fig-height: 1.5
-#| fig-cap: "Default brms run: 4 chains × 2,000 iterations. The first 1,000 iterations of each chain are warm-up (discarded). The final 4 × 1,000 = 4,000 samples constitute the posterior."
+#| dpi: 500
 
 tibble(
   phase = factor(
-    c(
-      "Warm-up: burn-in + adaptation (discarded)",
-      "Sampling: posterior draws (kept)"
-    ),
-    levels = c(
-      "Warm-up: burn-in + adaptation (discarded)",
-      "Sampling: posterior draws (kept)"
-    )
+    c("Warm-up (discarded)", "Sampling (kept)"),
+    levels = c("Warm-up (discarded)", "Sampling (kept)")
   ),
   x_start = c(1, 1001),
   x_end = c(1000, 2000),
@@ -1731,664 +1579,465 @@ tibble(
   ggplot() +
   geom_rect(
     aes(xmin = x_start, xmax = x_end, ymin = 0, ymax = 1, fill = phase),
-    color = "white",
+    colour = "white",
     linewidth = 1.5
   ) +
   geom_text(
     aes(x = x_label, y = 0.5, label = phase),
-    color = "white",
+    colour = "white",
     fontface = "bold",
     size = 3.6
   ) +
-  scale_fill_manual(values = c("gray55", col_1)) +
+  scale_fill_manual(values = c("grey55", col_1)) +
   scale_x_continuous(breaks = c(1, 500, 1000, 1500, 2000)) +
-  theme_bw() +
+  theme_classic() +
   theme(
-    panel.grid = element_blank(),
+    axis.line.y = element_blank(),
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank(),
-    legend.position = "none",
-    aspect.ratio = 0.12
+    legend.position = "none"
   ) +
-  labs(x = "Iteration", y = NULL)
+  labs(x = "Iteration", y = NULL, title = "One chain, two phases")
 ```
 
 . . .
 
-**Burn-in / warm-up:** early samples discarded because the chain has not yet found the posterior. The chain is "traveling" from its starting point to the high-probability region.
+**Warm-up:** the chain travels from its starting point to the region where the posterior mass is.
+Meanwhile Stan **automatically tunes its physics simulation** to be efficient for this particular posterior ([details](#sec-hmc-formal)).
 
 . . .
 
-**Adaptation** (specific to HMC/NUTS): during warm-up, Stan automatically tunes two algorithmic parameters:
+**Sampling:** the tuning is frozen, and every draw is kept.
+By default `brms` runs **4 chains** of 2,000 iterations each, so 4,000 posterior draws.
 
-- **Step size** $\varepsilon$: how far the ball moves per leapfrog step
-- **Mass matrix** $M$: rescales parameter space to make the posterior more spherical, improving efficiency on correlated posteriors
-
-After warm-up, adaptation **freezes** and sampling begins. The tuned parameters remain fixed for the post-warm-up phase.
+## Four chains on the landscape {#sec-four-chains .smaller}
 
 ::: notes
-- **Figure:** a simple timeline bar. Gray = warm-up (discarded). Blue = sampling (kept). The split at iteration 1000 is the default.
-- Two distinct concepts under "warm-up": (1) burn-in -- universal to all MCMC; (2) adaptation -- specific to HMC/NUTS.
-- Step size $\varepsilon$: too small means many steps needed per trajectory, expensive. Too large means high rejection rate. Stan adapts $\varepsilon$ during warm-up to target ~80% acceptance rate.
-- Mass matrix $M$: estimates the posterior covariance during warm-up. In a correlated posterior, $M$ rescales the space to make it more spherical.
-- After warm-up: both $\varepsilon$ and $M$ freeze.
-- Budget: ~3 minutes.
+Back to the 2D landscape.
+Four starts in four corners, dashed warm-up lines lead into the posterior, then the chains mix.
 :::
 
----
+```{r}
+#| label: fig-chains-2d
+#| fig-cap: "Four HMC chains on the posterior of two correlated parameters, one colour each, started in four different corners. Dashed lines with open circles: the first 8 warm-up iterations, travelling into the posterior. Solid lines with filled points: the next 15 sampling iterations, where all four chains overlap."
+#| fig-height: 4.2
+#| fig-width: 6.5
+#| dpi: 500
 
-## Convergence: What We Can and Cannot Know
+chains_warm <- four_chains |>
+  filter(iteration <= n_warm + 1) |>
+  mutate(phase = "Warm-up")
+chains_samp <- four_chains |>
+  filter(iteration > n_warm) |>
+  mutate(phase = "Sampling")
+chains_phases <- bind_rows(chains_warm, chains_samp) |>
+  mutate(phase = factor(phase, levels = c("Warm-up", "Sampling")))
 
-::: {.callout-important style="font-size: 0.6em"}
-**A fundamental epistemological limit:**
+ggplot(chains_phases, aes(x = x, y = y, colour = chain)) +
+  geom_contour(
+    data = land2d,
+    aes(x = x, y = y, z = density),
+    inherit.aes = FALSE,
+    colour = "grey80",
+    bins = 8
+  ) +
+  geom_path(
+    aes(linetype = phase, group = interaction(chain, phase)),
+    linewidth = 0.5,
+    alpha = 0.7
+  ) +
+  geom_point(aes(shape = phase), size = 1.6) +
+  scale_colour_manual(values = chain_cols) +
+  scale_linetype_manual(values = c(`Warm-up` = "dashed", Sampling = "solid")) +
+  scale_shape_manual(values = c(`Warm-up` = 1, Sampling = 16)) +
+  coord_equal(xlim = c(-3.5, 3.5), ylim = c(-4.5, 4.5)) +
+  theme_classic() +
+  labs(
+    x = expression(theta[1]),
+    y = expression(theta[2]),
+    colour = "Chain",
+    linetype = "Phase",
+    shape = "Phase",
+    title = "Four chains, four starting points, one posterior"
+  )
+```
 
-**Convergence cannot be proven. It can only be falsified.**
-
-A chain that looks converged *might not be* -- it may not have discovered a distant mode, or may be stuck in a correlated region invisible to our diagnostics. No finite set of statistics certifies convergence; they can only fail to detect non-convergence.
-:::
-
-. . .
-
-::: {style="font-size: 0.6em"}
-This mirrors Karl Popper's falsificationism: we cannot confirm "the chain has converged," we can only fail to detect evidence of non-convergence.
-:::
-
-. . .
-
-::: {style="font-size: 0.6em"}
-**What diagnostics do:**
-
-> They are **tests for non-convergence**, not certificates of convergence. A model that passes all diagnostics has not been proven to have converged -- it has simply not been caught failing.
-:::
-
-. . .
-
-::: {style="font-size: 0.6em"}
-The practical implication: run diagnostics systematically, report them, and treat them as minimum requirements -- not as guarantees. Use multiple chains, long runs, and prior sensitivity analysis as additional safeguards.
-:::
+## Convergence: what we can and cannot know {#sec-convergence-limits .smaller}
 
 ::: notes
-- Deliver this slide with emphasis. Students consistently underestimate this point.
-- Popper analogy: just as science cannot verify a theory (only falsify it), MCMC diagnostics cannot verify convergence (only detect non-convergence).
-- Practical consequences to list out loud:
-  1. Always run multiple chains from dispersed starts.
-  2. Prefer longer runs over shorter ones.
-  3. Treat diagnostics as necessary but not sufficient.
-  4. When in doubt, refit with more iterations, different starts, or reparameterized model.
-- Budget: ~3 minutes.
+Students underestimate this point, so deliver it with emphasis.
+Popper: a theory is never verified, only not yet falsified.
 :::
 
----
-
-## Convergence Diagnostics
-
-::: {style="font-size: 0.6em"}
-Four key diagnostics -- **all reported automatically by `brms`:**
-:::
-. . .
-
-::: {style="font-size: 0.6em"}
-**Trace plot** -- plot of sampled values over iterations, one line per chain.
-A converged chain looks like a *stationary, noisy signal* -- the "hairy caterpillar." All chains overlap and interleave. Non-convergence looks like separated, trending, or stuck chains.
+::: {.callout-important}
+**Convergence cannot be proven, it can only be falsified.**
+A chain that looks converged might not be: it may have missed a distant peak.
+No finite set of statistics certifies convergence.
 :::
 
 . . .
 
-::: {style="font-size: 0.6em"}
-**$\hat{R}$ (R-hat, Gelman-Rubin)** -- ratio of between-chain to within-chain variance [@vehtari2021rank]:
+This mirrors Karl Popper's falsificationism: we cannot confirm that a chain has converged, we can only fail to detect that it has not.
+
+. . .
+
+> Diagnostics are **tests for non-convergence**, not certificates of convergence.
+
+. . .
+
+So run them every time, report them, and treat them as minimum requirements.
+Several chains and longer runs are further safeguards.
+
+## Convergence diagnostics {#sec-diagnostics .smaller}
+
+::: notes
+Students see all four in summary() and in trace plots.
+R-hat compares the chains with each other, ESS asks how much independent information the draws carry.
+Even one or two divergences deserve attention.
+:::
+
+Four diagnostics, all **reported by `brms`**:
+
+::: {.small}
+**Trace plot:** sampled values over iterations, one line per chain.
+Converged chains look like a stationary, noisy band, the "hairy caterpillar", and overlap.
+
+**$\hat{R}$ (R-hat):** compares the variance between chains with the variance within them [@vehtari2021rank].
+
 $$
 \hat{R} = \sqrt{\frac{\widehat{\text{Var}}^+(\theta \mid y)}{W}}
 $$ {#eq-rhat}
 
-If chains have converged to the same distribution, between-chain $\approx$ within-chain variance, so $\hat{R} \approx 1$.
-**Rule:** $\hat{R} < 1.01$ (improved split-$\hat{R}$, Vehtari et al. 2021). Values above this indicate non-convergence.
+If all chains sample the same distribution, $\hat{R} \approx 1$.
+**Rule of thumb:** $\hat{R} < 1.01$.
+
+**Effective sample size (ESS):** successive draws are correlated, so they carry less information than independent ones.
+ESS estimates the equivalent number of independent draws, as Bulk-ESS (centre) and Tail-ESS (tails).
+**Rule of thumb:** ESS above 400.
+
+**Divergent transitions:** HMC trajectories where the physics simulation broke down.
+Even a handful signals a problem with the model or the posterior's geometry.
 :::
 
-. . .
+<details>
+<summary>How to read R-hat</summary>
 
-::: {style="font-size: 0.6em"}
-**Effective Sample Size (ESS)** -- MCMC samples are *autocorrelated*: each depends on the previous. ESS estimates the equivalent number of independent samples.
-`brms` reports **Bulk-ESS** (central summaries) and **Tail-ESS** (extreme quantiles). **Rule:** ESS > 400 per parameter.
+::: {.callout-note}
+**@eq-rhat in words.**
+The numerator is an estimate of the posterior variance that pools all chains, so it grows if the chains disagree, and $W$ is the average variance within each chain.
+If the chains agree, both are about equal and the ratio is about 1.
 :::
 
-. . .
+</details>
 
-::: {style="font-size: 0.6em"}
-**Divergent transitions** -- HMC-specific: the ball trajectory became numerically unstable. Even a handful of divergences indicates a problem with the posterior geometry or model specification. `brms` highlights them prominently.
-:::
+## What convergence looks like {#sec-convergence-looks .smaller}
 
 ::: notes
-- Walk through each diagnostic. Students will see all four in `summary(fit)` output and in trace plots.
-- **@eq-rhat:** the Gelman-Rubin statistic. If chains all come from the same distribution, between-chain variance $\approx$ 0, so $\hat{R} \approx 1$. If chains differ, between-chain variance inflates the numerator, pushing $\hat{R}$ above 1. The 1.01 threshold is the current standard (Vehtari et al., 2021).
-- **ESS:** if successive samples have correlation $\rho$, ESS $\approx S \times (1 - \rho)/(1 + \rho)$. For $\rho = 0.5$, 4000 raw samples $\approx$ 1333 effective. Bulk-ESS for means/medians; Tail-ESS for credible interval endpoints.
-- **Divergences:** even 1-2 per chain warrants investigation. The fix is usually reparameterization, not more iterations.
-- Budget: ~5 minutes (important slide).
+Top: you cannot tell the chains apart by colour.
+Bottom: four separated chains, R-hat would be huge and ESS tiny.
 :::
-
----
-
-## What Convergence Looks Like {.smaller}
 
 ```{r}
 #| label: fig-trace-compare
-#| echo: false
+#| fig-cap: "Trace plots of four chains on the same Normal(0, 1) target. Top: well-mixed chains, stationary and overlapping, the hairy caterpillar. Bottom: chains with extreme starting points and a tiny step size stay separated, a clear diagnostic failure."
 #| fig-height: 3.8
-#| fig-cap: "Top: four well-mixed chains on a Normal(0,1) target — the 'hairy caterpillar.' Chains overlap and are stationary. Bottom: four non-converged chains — same target, tiny step size, extreme starting points. Chains remain separated."
+#| dpi: 500
 
-p_good <- good_chains |>
-  ggplot(aes(x = iteration, y = value, color = chain)) +
-  geom_line(alpha = 0.75, linewidth = 0.45) +
-  scale_color_manual(values = chain_cols) +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    legend.position = "none",
-    aspect.ratio = 0.28
-  ) +
-  labs(
-    x = "Iteration",
-    y = expression(theta),
-    title = "Converged chains: stationary, overlapping — the 'hairy caterpillar'",
-    subtitle = expression(
-      Normal(0, 1) ~ " target | 4 chains | sensible step size"
-    )
-  )
+plot_traces <- function(chains, title) {
+  chains |>
+    ggplot(aes(x = iteration, y = value, colour = chain)) +
+    geom_line(alpha = 0.75, linewidth = 0.45) +
+    scale_colour_manual(values = chain_cols) +
+    theme_classic() +
+    theme(legend.position = "none") +
+    labs(x = "Iteration", y = expression(theta), title = title)
+}
 
-p_bad <- bad_chains |>
-  ggplot(aes(x = iteration, y = value, color = chain)) +
-  geom_line(alpha = 0.75, linewidth = 0.45) +
-  scale_color_manual(values = chain_cols) +
-  theme_bw() +
-  theme(
-    panel.grid.minor = element_blank(),
-    legend.position = "none",
-    aspect.ratio = 0.28
-  ) +
-  labs(
-    x = "Iteration",
-    y = expression(theta),
-    title = "Non-converged chains: separated, trending — clear diagnostic failure",
-    subtitle = "Same target | extreme starts | tiny step size → chains cannot mix"
-  )
-
-p_good / p_bad
+plot_traces(good_chains, "Converged: stationary and overlapping") /
+  plot_traces(bad_chains, "Not converged: separated and trending")
 ```
 
-::: notes
-- **Top panel:** four chains of different colors interleaving densely. You cannot distinguish them by color alone -- they overlap completely. The "hairy caterpillar" description is apt: furry, dense, going nowhere in particular. This is what convergence looks like.
-- **Bottom panel:** four chains clearly separated at very different locations, barely moving. Starting points were at $\theta \in \{-9, -5, 5, 9\}$ and the tiny step size means they cannot traverse the parameter space to find each other.
-  - $\hat{R}$ for these chains would be large (between-chain variance >> within-chain variance).
-  - ESS would be very low (extreme within-chain autocorrelation due to near-zero step size).
-- After this slide: "In Part VIII, you will see actual trace plots from a brms model fit to real data. They should look like the top panel."
-- Budget: ~2 minutes.
-:::
+# The three moves of MCMC {#sec-three-moves}
 
-# Part VII: The Three Moves of MCMC
-
-## Synthesis {.smaller}
-
-**1. Monte Carlo:** approximate intractable integrals by drawing random samples and averaging. The law of large numbers guarantees convergence at rate $1/\!\sqrt{S}$, independent of dimension.
-
-. . .
-
-**2. Markov Chain:** design a sequence of states -- each depending only on the previous -- whose **stationary distribution** is the target posterior. After warm-up, the chain provides samples from the posterior.
-
-. . .
-
-**3. Metropolis / HMC:** a specific acceptance rule that ensures the stationary distribution is correct. The rule uses only the **ratio** of posterior values at two parameter values. $P(\text{data})$ **cancels** in this ratio and is never computed. HMC uses gradient information to propose efficient trajectories, rather than small random steps.
-
-. . .
-
-::: {.callout-note style="font-size: 0.72em"}
-**In practice:** specify a prior and a likelihood family. `brms` translates this to a log-posterior function. Stan simulates a frictionless ball rolling on the negative log-posterior landscape -- across **4 chains**, for **2,000 iterations** each (1,000 warm-up, 1,000 post-warm-up). After checking $\hat{R}$, ESS, and trace plots, the 4,000 post-warm-up samples are your posterior. No $P(\text{data})$ was computed.
-
-This workflow runs identically regardless of model complexity -- from a simple linear regression to a multilevel model with 50 parameters. Only the log-posterior function changes.
-:::
+## Synthesis {#sec-synthesis .smaller}
 
 ::: notes
-- Consolidation slide. Budget: ~3 minutes maximum. This is a summary, not new material.
-- The three bullets map onto learning goals 2, 3, and 4.
-- Connect each point back to its teaching story: (1) $\pi$ approximation, (2) Island King, (3) Island King + HMC landscape.
-- Final sentence is the course philosophy: "The machinery does not change. The science does. Starting next week, we focus on the science."
+Three minutes, no new material.
+Link each move to its story: pi, the island king, the ball.
 :::
 
-# Part VIII: `brms` in Practice
+**1. Monte Carlo:** learn a distribution from random samples, and approximate any quantity by averaging over them.
+The error shrinks with $1 / \sqrt{S}$, whatever the number of parameters.
+
+. . .
+
+**2. Markov chain:** a sequence of states, each depending only on the previous one, built so that its **stationary distribution** is the posterior.
+
+. . .
+
+**3. Metropolis and HMC:** an acceptance rule that uses only the **ratio** of posterior values, so $P(\text{data})$ **cancels** and is never computed.
+HMC makes the random exploration far more efficient by treating the posterior as a landscape and simulating a ball rolling across it, instead of taking blind steps.
+
+. . .
+
+::: {.callout-note}
+**In practice, Stan and `brms` take care of all of this.**
+You specify a likelihood and priors, and `brms` runs 4 chains of HMC on the resulting landscape.
+It is still good to know what happens behind the scenes, because that is what the diagnostics are about.
+:::
+
+# Back to week 1: did it converge? {#sec-week01-convergence}
 
 ```{r}
-#| label: data-synth-and-fit
+#| label: data-week01-fit
 #| include: false
 
-# ── Synthetic data ─────────────────────────────────────────────────────────────
-# n = 1000 gives tight posteriors clearly centred on the true values.
-# True parameters: alpha = 2, beta = 0.7, sigma = 1.
-# We use seed = 42 throughout this section for reproducibility.
-set.seed(42)
-n_obs <- 1000
-x_obs <- rnorm(n_obs, 0, 1)
-y_obs <- 2 + 0.7 * x_obs + rnorm(n_obs, 0, 1)
-df_synth <- tibble(x = x_obs, y = y_obs)
+fit_path <- here("website", "slides", "data", "week01-fit.rds")
+if (!file.exists(fit_path)) {
+  stop("Render website/slides/week01.qmd first, it writes ", fit_path)
+}
+fit_week01 <- readRDS(fit_path)
 
-# ── brms fit ───────────────────────────────────────────────────────────────────
-# Normal(0, 10) on alpha and beta: extremely broad relative to the true values
-# (2 and 0.7), so the likelihood completely dominates. With n = 1000 the
-# posterior lands essentially on the OLS estimates, very close to truth.
-fit_synth <- brm(
-  formula = y ~ x,
-  data = df_synth,
-  prior = c(
-    prior(normal(0, 10), class = Intercept),
-    prior(normal(0, 10), class = b),
-    prior(exponential(1), class = sigma)
-  ),
-  chains = 4,
-  iter = 2000,
-  warmup = 1000,
-  seed = 42,
-  silent = 2
-)
+# The numbers the verdict slide quotes.
+week01_draws <- posterior::summarise_draws(
+  fit_week01,
+  "rhat",
+  "ess_bulk",
+  "ess_tail"
+) |>
+  filter(variable %in% c("b_Intercept", "b_semester", "sigma"))
+week01_rhat <- max(week01_draws$rhat)
+week01_ess <- min(week01_draws$ess_bulk, week01_draws$ess_tail)
+week01_divergent <- nuts_params(fit_week01) |>
+  filter(Parameter == "divergent__") |>
+  pull(Value) |>
+  sum()
 ```
 
-## The Synthetic Dataset {.smaller}
-
-We generate data from a **known** data-generating process so we can verify that brms recovers the truth.
-
-```{r}
-#| label: fig-synth-data
-#| echo: true
-#| fig-height: 2.8
-#| code-fold: true
-#| fig-cap: "Synthetic data: 1,000 observations drawn from the true model. Dashed line = the true data-generating line. Our goal: recover α = 2, β = 0.7, σ = 1 from the data alone."
-
-df_synth |>
-  ggplot(aes(x = x, y = y)) +
-  geom_point(color = col_1, alpha = 0.35, size = 1.0) +
-  geom_abline(
-    intercept = 2,
-    slope = 0.7,
-    color = col_2,
-    linewidth = 1.1,
-    linetype = "dashed"
-  ) +
-  annotate(
-    "text",
-    x = 1.8,
-    y = 0.5,
-    label = "True line: y = 2 + 0.7 x",
-    color = col_2,
-    size = 3.2,
-    hjust = 0
-  ) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(), aspect.ratio = 0.55) +
-  labs(
-    x = "x",
-    y = "y",
-    title = "Synthetic dataset (n = 1,000)",
-    subtitle = "True parameters: α = 2,  β = 0.7,  σ = 1"
-  )
-```
-
-$$
-y_i = \underbrace{2}_{\alpha} + \underbrace{0.7}_{\beta} \cdot x_i + \varepsilon_i, \quad \varepsilon_i \sim \text{Normal}(0,\, 1), \quad i = 1, \ldots, 1000
-$$ {#eq-dgp}
+## The week 1 model {#sec-week01-summary .smaller}
 
 ::: notes
-- **Figure:** scatter of 1,000 data points around the dashed true regression line. The spread of points around the line reflects $\sigma = 1$. With n = 1000, the true line is clearly visible.
-- Explain the synthetic data strategy: "Because we generated the data ourselves, we know the true parameter values. If brms recovers $\alpha \approx 2$, $\beta \approx 0.7$, $\sigma \approx 1$, we have evidence the sampler is working correctly."
-- @eq-dgp: this is the data-generating process. A Gaussian linear regression -- the same model we study in depth in week 8.
-- Budget: ~3 minutes.
+Ignore the estimates today, they belong to week 8.
+Read only the last three columns against the rules of thumb.
 :::
 
----
+In week 1 we fitted a model of confidence on semester.
+Read only the **last three columns** of its summary: `Rhat`, `Bulk_ESS` and `Tail_ESS`.
 
-## The `brms` Model Call {.smaller}
+::: {.small}
+```{r}
+#| label: week01-summary
+#| echo: false
+
+summary(fit_week01)
+```
+:::
+
+## The week 1 trace plots {#sec-week01-trace .smaller}
+
+::: notes
+Ask the room: do these look like the top or the bottom panel of the convergence slide?
+Then give the verdict.
+:::
 
 ```{r}
-#| label: brms-code-display
-#| echo: true
-#| eval: false
+#| label: fig-week01-trace
+#| fig-cap: "Trace plots for the three parameters of the week 1 model, four chains each. The chains are stationary and overlap completely, the hairy caterpillar, so the plots show no sign of non-convergence."
+#| fig-height: 3.1
+#| dpi: 500
 
-fit_synth <- brm(
-  formula = y ~ x, # model structure: linear predictor
-  data = df_synth, # the data
-  prior = c(
-    prior(normal(0, 10), class = Intercept), # P(α): weakly informative
-    prior(normal(0, 10), class = b), # P(β): weakly informative
-    prior(exponential(1), class = sigma) # P(σ): positive-valued
-  ),
-  chains = 4, # 4 independent chains
-  iter = 2000, # 2000 total iterations per chain
-  warmup = 1000, # first 1000 are warm-up (discarded)
-  seed = 42 # reproducibility
-)
+mcmc_plot(fit_week01, type = "trace") +
+  scale_colour_manual(values = chain_cols) +
+  theme_classic()
 ```
 
 . . .
 
-::: {style="font-size: 0.78em"}
-- `formula`: the likelihood family (Gaussian by default) and the mean structure ($\mu_i = \alpha + \beta x_i$)
-- `prior`: `Normal(0, 10)` is extremely broad relative to the true values (2 and 0.7), so the posterior is driven almost entirely by the likelihood; with n = 1000 the priors are essentially irrelevant
-- `chains = 4, iter = 2000, warmup = 1000`: four chains $\times$ 1,000 post-warmup steps = **4,000 posterior draws**
-- `seed`: locks the random number generator for reproducibility (Week 2 principle!)
-:::
+Largest R-hat `r sprintf("%.3f", week01_rhat)`, smallest ESS `r round(week01_ess)`, `r week01_divergent` divergent transitions, overlapping chains.
+**No evidence of non-convergence**, and that is the strongest statement the diagnostics allow.
 
-. . .
+## Next time {#sec-next-time}
 
-brms translates this to Stan code, compiles to C++, and runs NUTS across all 4 chains.
+There is **no session next week**.
 
-::: notes
-- Walk through each argument. Students will write this code every week from now on.
-- `formula`: the tilde syntax encodes the linear predictor. `y ~ x` means model y as a function of x. Intercept included automatically.
-- `prior`: Normal(0, 10) is so broad that it barely constrains the posterior at all. With n = 1000 observations, the likelihood completely dominates -- the priors are irrelevant in practice.
-- `chains`, `iter`, `warmup`: 4 chains $\times$ 1000 post-warmup = 4000 total posterior draws.
-- `seed`: critical for reproducibility.
-- Budget: ~4 minutes.
-:::
+In week 8 we fit our **first `brms` model together**, a bivariate linear regression, and run it through the whole workflow.
 
----
+Everything from today runs underneath it.
 
-## Prior Specification
+# Wrap-up {#sec-wrap-up}
 
-::: {style="font-size: 0.6em"}
-Always verify the priors brms is using:
-
-```{r}
-#| label: prior-summary
-#| echo: true
-#| eval: true
-
-get_prior(formula = y ~ x, data = df_synth)
-```
-
-:::
-
-. . .
-
-::: {style="font-size: 0.6em"}
-
-```{r}
-#| label: prior-summary-fit
-#| echo: true
-#| eval: true
-
-prior_summary(fit_synth)
-```
-
-:::
-
-. . .
-
-::: {.callout-note style="font-size: 0.72em"}
-`get_prior()` shows what priors are available to set. `prior_summary()` shows what was actually used. Always check both: brms fills in defaults for any unspecified parameter. Understanding your priors is part of understanding your model.
-:::
+## Learning goals: achieved? {#sec-goals-achieved .smaller}
 
 ::: notes
-- Prior transparency is a key Bayesian principle: every analysis makes prior assumptions. Bayesian analysis makes them explicit and auditable.
-- `get_prior()`: shows all parameters in the model and which prior classes they belong to.
-- `prior_summary()`: shows the actual priors used in the fitted model.
-- Pedagogical point: you should always be able to answer "what did I assume before seeing the data?" for every parameter.
-- Budget: ~2 minutes.
+Walk down the table and ask for a show of hands on each goal.
+Flag goals 4, 6 and 7 for the exam.
 :::
 
----
-
-## The `summary()` Output {.smaller}
-
-```{r}
-#| label: brms-summary
-#| echo: true
-#| eval: true
-
-summary(fit_synth)
-```
-
-::: notes
-- Walk through the output line by line. This is the most important output to be able to read and interpret.
-- **Header:** model formula, number of observations (1000), likelihood family (gaussian), chain setup (4 chains, 2000 iterations, 1000 warmup).
-- **Population-Level Effects table (the key part):**
-  - `Estimate`: posterior mean -- should be very close to 2 (Intercept), 0.7 (b_x), and 1 (sigma).
-  - `Est.Error`: posterior standard deviation (uncertainty).
-  - `l-95% CI` and `u-95% CI`: 95% credible interval -- the true values should lie clearly inside.
-  - `Rhat`: should be 1.00 for all parameters.
-  - `Bulk_ESS` and `Tail_ESS`: should be well above 400.
-- **Check recovery:** with n = 1000 and weakly informative priors, the likelihood dominates completely. The posterior means should be essentially identical to the OLS estimates and very close to the true data-generating values.
-- Budget: ~4 minutes.
-:::
-
----
-
-## Trace Plots: Diagnosing Convergence {.smaller}
-
-```{r}
-#| label: fig-brms-trace
-#| echo: true
-#| eval: true
-#| fig-height: 3.5
-#| fig-cap: "Trace plots for the three model parameters. Four chains in different colours. All chains are stationary and overlapping — the hairy caterpillar."
-
-mcmc_plot(
-  fit_synth,
-  type = "trace",
-  variable = c("b_Intercept", "b_x", "sigma")
-)
-```
-
-::: notes
-- Three panels, one per parameter. x-axis = iteration (1 to 1000, post-warmup only). y-axis = parameter value. Four colored lines = four chains.
-- **What to look for:**
-  1. Stationarity: the mean and spread of each chain should not trend over time.
-  2. Mixing: the four chains should be interleaved -- you should not be able to visually identify them by color.
-  3. Consistent levels: all chains should explore the same region of parameter space.
-- **What to read off the figure:** Intercept chains centered around 2, b_x around 0.7, sigma around 1.
-- Connect back to the earlier trace plot comparison: "This looks like the good case from Part VI -- the hairy caterpillar. Not like the separated chains."
-- Budget: ~3 minutes.
-:::
-
----
-
-## Posterior Distributions {.smaller}
-
-```{r}
-#| label: fig-brms-posterior
-#| echo: true
-#| eval: true
-#| fig-height: 3.2
-#| fig-cap: "Posterior distributions for the three model parameters. Shaded region = 95% credible interval. Dashed lines = true data-generating values. All three true values lie clearly inside the 95% credible intervals."
-
-mcmc_plot(
-  fit_synth,
-  type = "areas",
-  variable = c("b_Intercept", "b_x", "sigma"),
-  prob = 0.95
-) +
-  geom_vline(
-    xintercept = c(2, 0.7, 1),
-    linetype = "dashed",
-    color = col_2,
-    linewidth = 0.9
-  ) +
-  labs(subtitle = "Dashed lines = true data-generating parameter values")
-```
-
-::: notes
-- Each panel shows the full posterior density for one parameter.
-- **What each element means:**
-  - The curve: full posterior density $p(\theta \mid \text{data})$.
-  - The shaded region: 95% credible interval. There is 95% posterior probability the true parameter lies in this range.
-  - The vertical solid line: posterior median.
-  - The orange dashed lines: true parameter values (only possible to show because we generated the data).
-- **What to check:** with n = 1000 and weakly informative priors, the posteriors should be narrow, centered very close to the true values, with the dashed lines clearly inside the shaded 95% regions.
-- Budget: ~4 minutes.
-:::
-
----
-
-## Posterior Predictive Check {.smaller}
-
-```{r}
-#| label: fig-pp-check
-#| echo: true
-#| eval: true
-#| fig-height: 3.0
-#| fig-cap: "Posterior predictive check: 50 datasets simulated from posterior draws (light blue) versus the observed data (dark blue). The observed data distribution should be well within the range of simulated datasets if the model fits well."
-
-pp_check(fit_synth, ndraws = 50)
-```
-
-. . .
-
-::: {style="font-size: 0.78em"}
-**Logic:** draw parameter values $\theta^{(s)}$ from the posterior, simulate a new dataset $y^{\text{rep}}$ from $P(y \mid \theta^{(s)})$, compare simulated datasets to the observed data $y$.
-
-If the model is well-specified, observed data should look like a *typical draw* from the posterior predictive distribution. A systematic discrepancy indicates model misspecification.
-:::
-
-::: notes
-- **Figure:** light blue lines = 50 simulated datasets. Dark blue line = observed data.
-- **What to look for:** the dark blue line should be similar to the light blue lines.
-- **What success looks like here:** a roughly bell-shaped distribution of $y$ values; the observed distribution (dark blue) falls within the range of simulated distributions (light blue).
-- Preview: we will develop more sophisticated checks in weeks 8-13.
-- Budget: ~3 minutes.
-:::
-
----
-
-## Reading the Output {.smaller}
-
-Connecting the `brms` output to the MCMC machinery:
-
-. . .
-
-- The **4,000 rows** in the posterior are samples from **4 chains $\times$ 1,000 post-warm-up steps**
-- Each step used the **NUTS algorithm** -- a frictionless ball rolling on the negative log-posterior surface -- to propose an accepted move
-- **Convergence** was assessed by $\hat{R}$ ($\approx 1.00$ for all parameters), $ESS$ ($> 400$ for all parameters) and visually by trace plots (stationary, mixed chains)
-- The **posterior distributions** directly encode our updated beliefs about $\alpha$, $\beta$, and $\sigma$ after combining the prior and the likelihood
-- $P(\text{data})$ **was never computed**. It cancelled in every acceptance ratio
-
-. . .
-
-::: {.callout-note style="font-size: 0.72em"}
-When `brms` prints `Compiling Stan program...` and `Chain 1: Iteration 1/2000`, you now know exactly what is happening and why. Next week, the model structure becomes more interesting. The MCMC machinery runs identically underneath.
-:::
-
-::: notes
-- Closing slide for the brms section. Connect each bullet back to the relevant part of the session.
-- "4,000 rows" = Part VI (multiple chains, warmup setup).
-- "NUTS algorithm" = Part V (ball on landscape, HMC).
-- "Convergence assessed by R-hat" = Part VI (diagnostics, falsificationism).
-- "Posterior distributions" = Part IV/V (stationary distribution, Monte Carlo estimator @eq-mc-estimator).
-- "P(data) never computed" = Part IV (@eq-pdata-cancels, the cancellation result).
-- Budget: ~3 minutes.
-:::
-
-# Session Summary
-
-## Learning Goals: Achieved? {.smaller}
-
-::: {style="font-size: 0.75em;"}
-| # | Learning Goal | Key Answer | Where |
+::: {.xsmall}
+| # | Learning goal | Key answer | Where |
 |:-:|:-----|:---------|:---:|
-| 1 | Why is grid approximation intractable? | Cost grows as $k^d$ (exponential in parameters); 50 params = $10^{150}$ cells | [Part I](#part-i-where-we-left-off) |
-| 2 | What is the Monte Carlo idea? | Approximate integrals by averaging over random samples; error $\propto 1/\sqrt{S}$, dimension-free | [Part III](#part-iii-monte-carlo-random-sampling-as-integration) |
-| 3 | What is a Markov Chain and its stationary distribution? | A memoryless sequence of states; stationary = the long-run distribution the chain converges to | [Part IV](#part-iv-markov-chains-and-the-metropolis-algorithm) |
-| 4 | Why does $P(\text{data})$ cancel? | The acceptance rule uses only a posterior *ratio*; $P(\text{data})$ appears in both numerator and denominator and cancels (@eq-pdata-cancels) | [Part IV](#part-iv-markov-chains-and-the-metropolis-algorithm) |
-| 5 | How does HMC differ from Metropolis? | HMC uses gradient of the log-posterior to propose long, physics-guided trajectories; much lower autocorrelation | [Part V](#part-v-the-posterior-as-a-landscape-and-hmc) |
-| 6 | How do I interpret `brms` output? | Check $\hat{R} < 1.01$, ESS $> 400$, trace plots for mixing; read Estimate/CI as posterior mean and 95% credible interval | [Part VIII](#part-viii-brms-in-practice) |
-| 7 | Why can convergence not be proven? | Diagnostics are tests for non-convergence, not certificates; a chain may pass all checks yet miss a distant mode | [Part VI](#part-vi-multiple-chains-warm-up-and-convergence) |
+| 1 | Why is grid approximation intractable? | Its cost grows exponentially with the number of parameters, 50 parameters means $10^{150}$ cells | [Where we left off](#sec-left-off) |
+| 2 | What is the Monte Carlo idea? | Learn a distribution from random samples and average over them, with an error that shrinks with $1/\sqrt{S}$ in any dimension | [Monte Carlo](#sec-monte-carlo) |
+| 3 | What is a Markov chain and its stationary distribution? | A memoryless sequence of states, whose long-run distribution no longer depends on the start | [Markov chains](#sec-markov) |
+| 4 | Why does $P(\text{data})$ cancel? | The acceptance rule uses a posterior *ratio*, and $P(\text{data})$ sits above and below the line | [Why it cancels](#sec-pdata-cancels) |
+| 5 | How does HMC differ from Metropolis? | It simulates a ball kicked across the posterior landscape instead of taking blind random steps, so samples land far apart | [The landscape](#sec-landscape) |
+| 6 | How do I assess whether a `brms` model converged? | $\hat{R} < 1.01$, ESS above 400, no divergences, overlapping trace plots | [Back to week 1](#sec-week01-convergence) |
+| 7 | Why can convergence not be proven? | Diagnostics test for non-convergence, they never certify convergence | [Convergence](#sec-convergence-limits) |
+
+: The week 7 learning goals, each with its key answer and the part of the session that covers it. {#tbl-goals-achieved}
 :::
 
-
-::: notes
-- Return to this slide at the end to close the session loop.
-- Walk down the table row by row. Ask students to indicate by a show of hands which goals they feel confident about vs. uncertain about -- this gives you quick formative feedback.
-- Goals 4, 6, and 7 are most likely to appear on the take-home exam. Flag this explicitly.
-- Budget: ~4 minutes.
-:::
-
-# Thank you for your attention and see you next week!
-
-<a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a>
+<!-- Scrollable on purpose: a reference slide (.claude/slides.md). This deck cites more
+     sources than fit on one canvas, and the refs div cannot be split across slides. -->
+## References {#sec-references .smaller .scrollable}
 
 ::: {#refs}
 :::
 
-# Appendix
+# Appendix {#sec-appendix}
 
-## Appendix A: Metropolis Algorithm -- Full Pseudocode
+## Appendix A: the Metropolis algorithm {#sec-metropolis-full .smaller}
 
-:::: columns
-::: {.column width="75%"}
+::: notes
+For the formal underpinning, present only if time permits.
+With a symmetric proposal, detailed balance holds, which fixes the stationary distribution.
+:::
 
-::: {style="font-size: 0.5em;"}
-The complete Metropolis algorithm for Bayesian inference:
+:::: {.columns}
 
-**Input:** unnormalized posterior $\tilde{p}(\theta) = P(\text{data} \mid \theta) \cdot P(\theta)$, proposal distribution $q(\theta^* \mid \theta^{(t)})$, starting point $\theta^{(1)}$, number of iterations $T$.
+::: {.column width="60%"}
+::: {.small}
+**Input:** the unnormalised posterior $\tilde{p}(\theta) = P(\text{data} \mid \theta) \cdot P(\theta)$, a symmetric proposal distribution $q(\theta^* \mid \theta^{(t)})$, a starting point $\theta^{(1)}$ and a number of iterations $T$.
 
-**For** $t = 1, 2, \ldots, T$:
+**For** $t = 1, \ldots, T$:
 
-1. **Propose:** draw $\theta^*$ from the proposal distribution $q(\theta^* \mid \theta^{(t)})$
+1. **Propose** $\theta^*$ from $q(\theta^* \mid \theta^{(t)})$.
+2. **Compute** the acceptance probability
 
-2. **Compute acceptance ratio:**
 $$
-r = \min\!\left(1,\; \frac{\tilde{p}(\theta^*)}{\tilde{p}(\theta^{(t)})}\right) = \min\!\left(1,\; \frac{P(\text{data} \mid \theta^*) \cdot P(\theta^*)}{P(\text{data} \mid \theta^{(t)}) \cdot P(\theta^{(t)})}\right)
+r = \min\!\left(1,\; \frac{\tilde{p}(\theta^*)}{\tilde{p}(\theta^{(t)})}\right)
 $$ {#eq-metropolis-full}
 
-3. **Accept or reject:** draw $u \sim \text{Uniform}(0, 1)$
-   - If $u \leq r$: set $\theta^{(t+1)} = \theta^*$ (accept)
-   - If $u > r$: set $\theta^{(t+1)} = \theta^{(t)}$ (reject, stay)
+3. **Accept or reject:** draw $u \sim \text{Uniform}(0, 1)$, set $\theta^{(t+1)} = \theta^*$ if $u \leq r$, and $\theta^{(t+1)} = \theta^{(t)}$ otherwise.
 
-**Output:** sequence $\theta^{(1)}, \theta^{(2)}, \ldots, \theta^{(T)}$ -- samples from the stationary distribution $P(\theta \mid \text{data})$ (after warm-up).
+**Output:** $\theta^{(1)}, \ldots, \theta^{(T)}$, samples from $P(\theta \mid \text{data})$ after warm-up.
+:::
 :::
 
-:::
+::: {.column width="40%"}
+::: {.callout-note}
+**Why it works: detailed balance.**
 
-::: {.column width="25%"}
-
-::: {.callout-note style="font-size: 0.5em"}
-**Why does this work?** The acceptance rule satisfies **detailed balance**: for any two states $\theta$ and $\theta'$, the probability of being in state $\theta$ and moving to $\theta'$ equals the probability of being in $\theta'$ and moving back to $\theta$:
 $$
 \pi(\theta) \cdot P(\theta \to \theta') = \pi(\theta') \cdot P(\theta' \to \theta)
 $$ {#eq-detailed-balance}
-Detailed balance implies that $\pi(\theta) = P(\theta \mid \text{data})$ is the stationary distribution. This is the mathematical guarantee that the Metropolis algorithm produces posterior samples.
-:::
 
+Moving from any $\theta$ to any $\theta'$ is as likely as moving back, once weighted by $\pi$.
+The acceptance rule guarantees this for $\pi(\theta) = P(\theta \mid \text{data})$, which makes the posterior the stationary distribution.
+:::
 :::
 
 ::::
 
-::: notes
-- Appendix slide for students wanting the formal underpinning. Present briefly if time permits; otherwise direct students to it as a reference.
-- @eq-metropolis-full: the full algorithm written out as pseudocode with the acceptance ratio made explicit. Point out: the unnormalized posterior $\tilde{p}(\theta)$ is all that is needed -- P(data) has already been dropped.
-- @eq-detailed-balance: the mathematical guarantee. Detailed balance is a sufficient condition for a Markov Chain to have a given stationary distribution.
-- Informal verification: suppose $p(\theta') > p(\theta)$. Then $P(\theta \to \theta') = q(\theta' \mid \theta) \times 1$ (always accept going uphill). And $P(\theta' \to \theta) = q(\theta \mid \theta') \times p(\theta)/p(\theta')$. With symmetric proposal $q$, detailed balance holds. QED (sketch).
-:::
+## Appendix B: MCMC algorithms compared {#sec-algorithms .smaller}
 
----
-
-## Appendix B: MCMC Algorithm Comparison {.smaller}
-
-::: {style="font-size: 0.65em;"}
-
+::: {.xsmall}
 | Algorithm | Year | Proposal | Key innovation | Limitation | Used in |
 |:---|:---:|:----|:------|:------|:---|
-| **Metropolis** | 1953 | Symmetric random walk | First MCMC algorithm; simple acceptance rule | Slow mixing; requires tuning of step size | Historical; rarely used in practice today |
-| **Metropolis-Hastings** | 1970 | Asymmetric proposals allowed | Generalises Metropolis to arbitrary proposals | Still requires manual tuning | Textbooks; simple models |
-| **Gibbs Sampler** | 1984/1990 | Conditional distributions | Acceptance rate = 1; dimension-by-dimension | Requires tractable conditionals; slow on correlated posteriors | BUGS, JAGS |
-| **HMC** | 1987/2011 | Leapfrog trajectory (gradient-guided) | Uses gradient information; large, efficient jumps | Requires differentiable posterior; trajectory length must be tuned | Stan (basic HMC) |
-| **NUTS** | 2014 | Adaptive leapfrog (no U-turn) | Eliminates trajectory length tuning; full automation | Computationally expensive per step vs. random walk | **Stan (default) → `brms`** |
+| **Metropolis** | 1953 | Symmetric random walk | First MCMC algorithm, simple acceptance rule | Slow mixing, step size needs tuning | Historical |
+| **Metropolis-Hastings** | 1970 | Asymmetric proposals | Generalises Metropolis to any proposal | Still tuned by hand | Textbooks, simple models |
+| **Gibbs sampler** | 1984/1990 | Conditional distributions | Every proposal accepted, one parameter at a time | Needs tractable conditionals, slow on correlated posteriors | BUGS, JAGS |
+| **HMC** | 1987/2011 | Simulated trajectory | Uses the slope of the landscape for long, efficient jumps | Needs a differentiable posterior, trajectory length needs tuning | Stan (basic HMC) |
+| **NUTS** | 2014 | Adaptive trajectory (no U-turn) | Chooses the trajectory length itself | More computation per iteration | **Stan's default, so `brms`** |
 
+: Sixty years of MCMC algorithms, each solving the main limitation of the one before. `brms` uses NUTS through Stan for every model [@metropolis1953equation; @gelfand1990sampling; @hoffman2014no; @burkner2017brms]. {#tbl-algorithms}
 :::
+
+## Appendix C: log-probability, a technical note {#sec-log-probability .smaller}
+
+::: notes
+Show the underflow with numbers: 0.3 to the power 200 is about 4 times 10 to the minus 105.
+HMC is not gradient descent: the ball has momentum and keeps exploring.
+:::
+
+Stan, and therefore `brms`, works entirely with **log-probabilities**, for three reasons.
+
+::: {.small}
+**1. Numerical stability.**
+A likelihood multiplies many small probabilities:
+
+$$
+P(\text{data} \mid \theta) = \prod_{i=1}^{N} P(y_i \mid \theta)
+$$ {#eq-likelihood-product}
+
+With $N = 200$ factors of about 0.3, the product is about $10^{-105}$, which a computer rounds to zero.
+The log-likelihood $\sum_i \log P(y_i \mid \theta)$ is a well-behaved sum.
+
+**2. Slopes.**
+HMC needs the slope $\nabla_\theta \log P(\theta \mid \text{data})$ at every step of the simulation, and in log space a product becomes a sum, which is easy to differentiate.
+
+**3. The sign.**
+Negating turns high probability into low valleys, the potential energy $U(\theta) = -\log P(\theta \mid \text{data})$.
+This is **not** gradient descent: the ball keeps rolling and explores the whole landscape instead of settling in one point.
+:::
+
+## Appendix D: HMC formally {#sec-hmc-formal .smaller}
+
+::: notes
+For the curious, not examined.
+:::
+
+HMC adds a momentum $\mathbf{p}$ to the parameter vector $\boldsymbol{\theta}$ and simulates the total energy [@neal2011mcmc; @betancourt2017conceptual]:
+
+$$
+H(\boldsymbol{\theta}, \mathbf{p}) = \underbrace{-\log \tilde{p}(\boldsymbol{\theta})}_{U(\boldsymbol{\theta}),\ \text{potential}} + \underbrace{\tfrac{1}{2}\, \mathbf{p}^\top \mathbf{M}^{-1} \mathbf{p}}_{K(\mathbf{p}),\ \text{kinetic}}
+$$ {#eq-hamiltonian}
 
 . . .
 
-::: {.callout-note style="font-size: 0.68em"}
-`brms` uses **NUTS** via Stan for all models. The progression from Metropolis to NUTS represents 60 years of algorithmic development: each generation solved the main limitation of the previous one. NUTS is currently the state of the art for general-purpose Bayesian computation with continuous parameters.
+Hamilton's equations move the ball, and the energy stays constant along the path:
 
-References: @metropolis1953equation; @gelfand1990sampling; @hoffman2014no; @burkner2017brms; @gelman2013bda-ch12.
+$$
+\frac{d\boldsymbol{\theta}}{dt} = \mathbf{M}^{-1} \mathbf{p}, \qquad \frac{d\mathbf{p}}{dt} = -\nabla_{\boldsymbol{\theta}}\, U(\boldsymbol{\theta})
+$$ {#eq-hamilton-equations}
+
+. . .
+
+One iteration: draw $\mathbf{p} \sim \mathcal{N}(\mathbf{0}, \mathbf{M})$, simulate @eq-hamilton-equations for $L$ leapfrog steps of size $\varepsilon$, then accept the endpoint with probability
+
+$$
+\min\!\left(1,\; \exp\!\left[H(\boldsymbol{\theta}, \mathbf{p}) - H(\boldsymbol{\theta}^*, \mathbf{p}^*)\right]\right)
+$$ {#eq-hmc-accept}
+
+## Appendix D: the leapfrog steps and tuning {#sec-hmc-tuning .smaller}
+
+One leapfrog step of size $\varepsilon$ updates momentum and position in turn:
+
+$$
+\mathbf{p} \leftarrow \mathbf{p} - \tfrac{\varepsilon}{2} \nabla U(\boldsymbol{\theta}), \qquad
+\boldsymbol{\theta} \leftarrow \boldsymbol{\theta} + \varepsilon\, \mathbf{M}^{-1} \mathbf{p}, \qquad
+\mathbf{p} \leftarrow \mathbf{p} - \tfrac{\varepsilon}{2} \nabla U(\boldsymbol{\theta})
+$$ {#eq-leapfrog}
+
+. . .
+
+::: {.small}
+- **Step size $\varepsilon$.**
+  Too large and the simulation is inaccurate, so proposals are rejected or diverge.
+  Too small and every trajectory is expensive.
+  Warm-up adapts it to a target acceptance rate (`adapt_delta`, 0.8 by default in `brms`).
+- **Number of steps $L$.**
+  NUTS grows each trajectory until it starts to turn back on itself, a U-turn, so $L$ is chosen anew every iteration [@hoffman2014no].
+- **Mass matrix $\mathbf{M}$.**
+  Warm-up estimates the posterior's variances, so that the rescaled landscape is roughly round and one step size fits all parameters.
+- **Divergences.**
+  If the energy $H$ changes sharply along a trajectory, the simulation has broken down, and Stan reports a divergent transition.
 :::
 
-::: notes
-- Reference table for students wanting to situate the session in the broader MCMC literature. Walk through it briefly if time permits.
-- **NUTS (2014):** automated HMC. The "no U-turn" criterion detects when the trajectory starts doubling back -- further simulation is wasteful. Stops automatically. This is what Stan implements.
-- Historical note: BUGS and JAGS (using Gibbs) dominated before Stan. Stan (2012) represented a generational change in computational efficiency.
-:::
+```{r}
+#| label: session-info
+#| include: false
+
+sessionInfo()
+Sys.time() - start_time
+```

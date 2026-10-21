@@ -222,7 +222,7 @@ weeks:
       - "Define a Markov chain and explain what a stationary distribution is."
       - "State the Metropolis acceptance rule and show why the normalising constant cancels."
       - "Explain qualitatively how Hamiltonian Monte Carlo differs from random-walk Metropolis, and why it is more efficient."
-      - "Interpret `brms` output: trace plots, R-hat, effective sample size and posterior distributions."
+      - "Assess whether a `brms` model has converged, using trace plots, R-hat and effective sample size."
       - "Understand that convergence cannot be proven, only falsified, and recognise what non-convergence looks like."
   - week: 8
     topic: "Bivariate linear regression"

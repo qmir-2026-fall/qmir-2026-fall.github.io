@@ -1,0 +1,92 @@
+---
+title: "Homework 07: Markov chain Monte Carlo"
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+---
+
+# The setting {#sec-setting}
+
+This homework is a short, written follow-up to week 7.
+There is no code and no data, only nine questions about the ideas behind MCMC.
+
+::: {.callout-important}
+**This homework is about reasoning, not about code.**
+Answer every question in your own words, in two to four sentences.
+Where a question asks for a number, show how you got it.
+:::
+
+This homework practises the logic behind **step 5** of the workflow, fitting a model, and **step 6a**, the MCMC diagnostics.
+The slides of week 7 are all you need.
+
+Use AI tools to check your understanding, not to write your answers.
+The point of this homework is the thinking.
+
+# Why grids fail {#sec-grids}
+
+1. A colleague says that grid approximation is only slow because computers are slow, and that with a computer a million times faster, a regression with 20 parameters would be no problem.
+   Respond to your colleague.
+   Use the number of grid cells you would need with 100 grid points per parameter.
+
+# Monte Carlo {#sec-monte-carlo}
+
+1. In the session, the estimate of $\pi$ came closer to the true value as we added random points, but it never became exact.
+   Why not?
+   And why is that no problem when we use samples to learn about a posterior?
+
+2. For $\pi$, we scattered points uniformly over the whole square and counted.
+   Why can we not do the same for a posterior, scattering parameter values uniformly over the whole parameter space?
+
+# Markov chains {#sec-markov}
+
+1. Use the island king to explain in your own words what the **Markov property** and the **stationary distribution** are.
+   Then explain why the king's first visits should not count when we compare his share of visits with the population shares.
+
+# The acceptance rule {#sec-acceptance}
+
+1. The king is on an island with population 4.
+   What is the probability that he moves if the coin proposes the neighbour with population 5?
+   And if it proposes the neighbour with population 2?
+   Explain each answer with the acceptance rule.
+
+2. The king never learns the total population of the ring.
+   Explain why he does not need it.
+   What plays the role of the total population when we use the same rule to learn a posterior?
+
+# Hamiltonian Monte Carlo {#sec-hmc}
+
+1. Explain the difference between random-walk Metropolis and Hamiltonian Monte Carlo, using the picture of the posterior as a landscape.
+   Why does the difference matter most when parameters are correlated?
+   And what would happen if the ball were never kicked, only released at rest?
+
+# Assessing convergence {#sec-assessing}
+
+A colleague fits a `brms` model with 4 chains of 2,000 iterations each and shows you the excerpt of its summary in @tbl-diagnostics.
+
+| Parameter | Estimate | Est.Error | Rhat | Bulk_ESS | Tail_ESS |
+|:---|---:|---:|---:|---:|---:|
+| Intercept | 2.41 | 0.31 | 1.00 | 3120 | 2870 |
+| democracy | 0.58 | 0.22 | 1.04 | 520 | 610 |
+| sigma | 1.12 | 0.09 | 1.00 | 180 | 240 |
+
+: An excerpt of a `brms` summary, 4 chains of 2,000 iterations with 1,000 warm-up. The sampler also reported 2 divergent transitions. {#tbl-diagnostics}
+
+1. Which estimates would you trust, which not, and why?
+   Go through every warning sign in @tbl-diagnostics.
+   What would you expect the trace plot of the `democracy` coefficient to look like?
+
+# Convergence cannot be proven {#sec-proof}
+
+1. Four chains started from very different points all overlap in the trace plots, every R-hat is 1.00, every ESS is above 1,000, and there are no divergent transitions.
+   Your colleague writes in a paper: "The model has converged."
+   Rewrite the sentence so that it claims exactly what the diagnostics support.
+   Then name one failure that could still be hiding.
+
+# Reflection {#sec-reflection .unnumbered}
+
+Which idea from week 7 was the hardest to put in your own words?

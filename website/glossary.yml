@@ -1444,3 +1444,107 @@
     Never give a [prior](#gl-prior) probability of exactly 0 or 1 to anything that is not logically impossible or certain.
     A value with prior 0 keeps posterior 0 whatever the data show, so a dogmatic prior can never learn.
   see: [gl-falsification]
+
+# --- Week 7: Markov chain Monte Carlo ----------------------------------------
+
+- term: "Monte Carlo"
+  week: 7
+  tags: [mcmc, probability]
+  def: |
+    Learning about a distribution from random draws instead of exact calculation: averaging over many draws approximates any quantity of it, such as a mean or an interval.
+    The error shrinks with the square root of the number of draws, however many parameters there are, which is why it scales where a [grid](#gl-grid-approximation) cannot.
+  see: [gl-simulation, gl-markov-chain-monte-carlo]
+
+- term: "Markov chain"
+  week: 7
+  tags: [mcmc]
+  def: |
+    A sequence of random states in which the next state depends only on the current one, not on how the chain got there.
+    Run long enough, a well-built chain settles into its [stationary distribution](#gl-stationary-distribution).
+
+- term: "Stationary distribution"
+  week: 7
+  tags: [mcmc]
+  def: |
+    The long-run distribution of a [Markov chain](#gl-markov-chain): the share of time it spends in each state once its starting point no longer matters.
+    MCMC builds chains whose stationary distribution is the [posterior](#gl-posterior).
+
+- term: "Markov chain Monte Carlo"
+  week: 7
+  tags: [mcmc]
+  def: |
+    Learning a [posterior](#gl-posterior) by running a [Markov chain](#gl-markov-chain) whose [stationary distribution](#gl-stationary-distribution) is that posterior, and treating its states as random draws from it ([Monte Carlo](#gl-monte-carlo)).
+    It only ever needs prior times likelihood, so the [normalising constant](#gl-normalising-constant) is never computed.
+  see: [gl-metropolis-algorithm, gl-hamiltonian-monte-carlo]
+
+- term: "Metropolis algorithm"
+  week: 7
+  tags: [mcmc]
+  def: |
+    The first MCMC algorithm: propose a random step, and accept it according to the [acceptance rule](#gl-acceptance-rule), otherwise stay put.
+    Its random, blind steps make it slow on correlated posteriors.
+
+- term: "Acceptance rule"
+  week: 7
+  tags: [mcmc]
+  def: |
+    Accept a proposed parameter value with probability equal to the ratio of its posterior to the current one, capped at 1: always move uphill, sometimes downhill.
+    Because only a ratio is needed, the [normalising constant](#gl-normalising-constant) cancels.
+
+- term: "Hamiltonian Monte Carlo"
+  week: 7
+  tags: [mcmc]
+  def: |
+    An MCMC algorithm that treats the negative log-posterior as a landscape and simulates a ball kicked across it, using the physics of momentum and energy.
+    Consecutive draws land far apart, so it explores a posterior far more efficiently than the [Metropolis algorithm](#gl-metropolis-algorithm), and Stan, hence `brms`, uses it.
+  see: [gl-divergent-transition]
+
+- term: "Chain"
+  week: 7
+  tags: [mcmc, diagnostics]
+  def: |
+    One run of an MCMC sampler from one starting point, producing one sequence of draws.
+    `brms` runs four chains by default, because only chains started in different places can reveal that something went wrong.
+  see: [gl-convergence, gl-r-hat]
+
+- term: "Warm-up"
+  week: 7
+  tags: [mcmc]
+  def: |
+    The first iterations of each [chain](#gl-chain), which are discarded: the chain travels from its starting point to where the posterior mass is, while Stan tunes its sampler.
+    By default `brms` uses the first 1,000 of 2,000 iterations as warm-up.
+
+- term: "Convergence"
+  week: 7
+  tags: [diagnostics, mcmc]
+  def: |
+    The state in which the [chains](#gl-chain) sample from the posterior itself, no longer from where they started.
+    It cannot be proven, only falsified: diagnostics such as [R-hat](#gl-r-hat) and [trace plots](#gl-trace-plot) can show non-convergence, never certify convergence.
+
+- term: "Trace plot"
+  week: 7
+  tags: [diagnostics]
+  def: |
+    The sampled values of a parameter plotted against iteration, one line per [chain](#gl-chain).
+    Converged chains overlap as one stationary, noisy band, the hairy caterpillar, and separated or trending chains signal non-[convergence](#gl-convergence).
+
+- term: "R-hat"
+  week: 7
+  tags: [diagnostics]
+  def: |
+    A diagnostic that compares the variation between [chains](#gl-chain) with the variation within them, about 1 when all chains sample the same distribution.
+    The rule of thumb is R-hat below 1.01, and larger values are evidence of non-[convergence](#gl-convergence).
+
+- term: "Effective sample size"
+  week: 7
+  tags: [diagnostics]
+  def: |
+    The number of independent draws that would carry as much information as the correlated draws of an MCMC run, reported as Bulk-ESS (centre of the posterior) and Tail-ESS (its tails).
+    The rule of thumb is at least 400.
+
+- term: "Divergent transition"
+  week: 7
+  tags: [diagnostics, mcmc]
+  def: |
+    A [Hamiltonian Monte Carlo](#gl-hamiltonian-monte-carlo) trajectory on which the simulated physics broke down, usually where the posterior curves too sharply.
+    Even a few signal a problem with the model or its parameterisation, not one that more iterations fix.
