@@ -57,3 +57,5 @@ Thumbs.db
 # Tristan's own notes and prompt material. Private, because this repo is public.
 /.claude/context/
 /.claude/settings.local.json
+
+.claude/prompt-canvas.md
