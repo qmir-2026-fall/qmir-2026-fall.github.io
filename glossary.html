@@ -414,6 +414,11 @@ Tip
 <section id="sec-glossary-a" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-a">A</h2>
 <dl>
+<dt><span id="gl-acceptance-rule">Acceptance rule</span></dt>
+<dd>
+Accept a proposed parameter value with probability equal to the ratio of its posterior to the current one, capped at 1: always move uphill, sometimes downhill. Because only a ratio is needed, the <a href="#gl-normalising-constant">normalising constant</a> cancels.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span>
+</dd>
 <dt><span id="gl-aesthetic-mapping">Aesthetic mapping</span></dt>
 <dd>
 The link between a variable and a visual property of a plot, such as position, colour, size or shape, written inside <code>aes()</code>. Inside <code>aes()</code> a property follows the data, outside it is one fixed value for every mark.
@@ -502,6 +507,12 @@ R treats upper and lower case as different, so <code>city</code> and <code>City<
 A <code>#|</code> line at the top of a <a href="#gl-code-cell">code cell</a> that controls it, such as <code>label:</code>, <code>echo: false</code> (hide the code), <code>eval: false</code> (do not run it), <code>include: false</code> (show nothing) or <code>error: true</code> (show the error and keep rendering). Set under <code>execute:</code> in the <a href="#gl-yaml-header">YAML header</a>, an option applies to every cell instead.
 Documentation: <a href="https://quarto.org/docs/computations/execution-options.html">Quarto: execution options</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
+</dd>
+<dt><span id="gl-chain">Chain</span></dt>
+<dd>
+One run of an MCMC sampler from one starting point, producing one sequence of draws. <code>brms</code> runs four chains by default, because only chains started in different places can reveal that something went wrong.
+See also: <a href="#gl-convergence">Convergence</a>, <a href="#gl-r-hat">R-hat</a>.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span> <span class="glossary-tag">diagnostics</span>
 </dd>
 <dt><span id="gl-character">Character</span></dt>
 <dd>
@@ -598,6 +609,11 @@ The interactive R session in Positron, where code runs line by line and prints i
 See also: <a href="#gl-fresh-r-session">Fresh R session</a>.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">workflow</span>
 </dd>
+<dt><span id="gl-convergence">Convergence</span></dt>
+<dd>
+The state in which the <a href="#gl-chain">chains</a> sample from the posterior itself, no longer from where they started. It cannot be proven, only falsified: diagnostics such as <a href="#gl-r-hat">R-hat</a> and <a href="#gl-trace-plot">trace plots</a> can show non-convergence, never certify convergence.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">diagnostics</span> <span class="glossary-tag">mcmc</span>
+</dd>
 <dt><span id="gl-cran">CRAN</span></dt>
 <dd>
 The Comprehensive R Archive Network, a network of servers around the world that store identical, up-to-date versions of R and of more than 20,000 contributed <a href="#gl-package">packages</a>. <code>install.packages()</code> downloads from it.
@@ -686,6 +702,11 @@ A comparison of two versions of a file, showing what was removed, what was added
 Documentation: <a href="https://git-scm.com/docs/git-diff">Git: git diff</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
+<dt><span id="gl-divergent-transition">Divergent transition</span></dt>
+<dd>
+A <a href="#gl-hamiltonian-monte-carlo">Hamiltonian Monte Carlo</a> trajectory on which the simulated physics broke down, usually where the posterior curves too sharply. Even a few signal a problem with the model or its parameterisation, not one that more iterations fix.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">diagnostics</span> <span class="glossary-tag">mcmc</span>
+</dd>
 <dt><span id="gl-double-and-integer">Double and integer</span></dt>
 <dd>
 R’s two numeric types: <code>double</code> for decimal numbers, the default, and <code>integer</code> for whole numbers, written with an <code>L</code> as in <code>42L</code>. The difference rarely matters here, but whether a value is numeric at all does, and <code>is.numeric()</code> answers that.
@@ -697,6 +718,11 @@ Documentation: <a href="https://search.r-project.org/R/refmans/base/html/numeric
 <section id="sec-glossary-e" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-e">E</h2>
 <dl>
+<dt><span id="gl-effective-sample-size">Effective sample size</span></dt>
+<dd>
+The number of independent draws that would carry as much information as the correlated draws of an MCMC run, reported as Bulk-ESS (centre of the posterior) and Tail-ESS (its tails). The rule of thumb is at least 400.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">diagnostics</span>
+</dd>
 <dt><span id="gl-eight-step-workflow">Eight-step workflow</span></dt>
 <dd>
 The fixed sequence every analysis in this course follows, from stating the <a href="#gl-estimand">estimand</a> to reflecting on limitations. It is also the shape of the take-home exam, and each week deepens one or two of its steps, starting with the <a href="#gl-data-summary">data summary</a>.
@@ -814,6 +840,12 @@ Documentation: <a href="https://dplyr.tidyverse.org/articles/grouping.html">dply
 <section id="sec-glossary-h" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-h">H</h2>
 <dl>
+<dt><span id="gl-hamiltonian-monte-carlo">Hamiltonian Monte Carlo</span></dt>
+<dd>
+An MCMC algorithm that treats the negative log-posterior as a landscape and simulates a ball kicked across it, using the physics of momentum and energy. Consecutive draws land far apart, so it explores a posterior far more efficiently than the <a href="#gl-metropolis-algorithm">Metropolis algorithm</a>, and Stan, hence <code>brms</code>, uses it.
+See also: <a href="#gl-divergent-transition">Divergent transition</a>.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span>
+</dd>
 <dt><span id="gl-help-page">Help page</span></dt>
 <dd>
 The documentation every R function has, opened with <code>?mean</code> or <code>help(mean)</code>. Its sections say what the function does, which arguments it takes and their defaults (Usage and Arguments) and what it returns (Value), and the Examples at the bottom are usually the fastest way in.
@@ -954,6 +986,17 @@ The plain-text formatting syntax used in the body of a <code>.qmd</code>: <code>
 Documentation: <a href="https://quarto.org/docs/authoring/markdown-basics.html">Quarto: Markdown basics</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span>
 </dd>
+<dt><span id="gl-markov-chain">Markov chain</span></dt>
+<dd>
+A sequence of random states in which the next state depends only on the current one, not on how the chain got there. Run long enough, a well-built chain settles into its <a href="#gl-stationary-distribution">stationary distribution</a>.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span>
+</dd>
+<dt><span id="gl-markov-chain-monte-carlo">Markov chain Monte Carlo</span></dt>
+<dd>
+Learning a <a href="#gl-posterior">posterior</a> by running a <a href="#gl-markov-chain">Markov chain</a> whose <a href="#gl-stationary-distribution">stationary distribution</a> is that posterior, and treating its states as random draws from it (<a href="#gl-monte-carlo">Monte Carlo</a>). It only ever needs prior times likelihood, so the <a href="#gl-normalising-constant">normalising constant</a> is never computed.
+See also: <a href="#gl-metropolis-algorithm">Metropolis algorithm</a>, <a href="#gl-hamiltonian-monte-carlo">Hamiltonian Monte Carlo</a>.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span>
+</dd>
 <dt><span id="gl-masking">Masking</span></dt>
 <dd>
 What happens when a loaded package has a function with the same name as one already available, so the newer one wins. <code>library(tidyverse)</code> reports, for example, that <code>dplyr::filter()</code> masks <code>stats::filter()</code>, and the <a href="#gl-namespace">namespace</a> operator <code>::</code> picks one explicitly.
@@ -975,11 +1018,22 @@ The mean <span class="math inline">\(\mu\)</span> is the centre of a distributio
 The middle value of a set of numbers once they are sorted, so half the values lie below it and half above. Unlike the <a href="#gl-mean-and-standard-deviation">mean</a>, it barely moves when a few values are extreme, which makes it the better summary of skewed data such as income.
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-metropolis-algorithm">Metropolis algorithm</span></dt>
+<dd>
+The first MCMC algorithm: propose a random step, and accept it according to the <a href="#gl-acceptance-rule">acceptance rule</a>, otherwise stay put. Its random, blind steps make it slow on correlated posteriors.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span>
+</dd>
 <dt><span id="gl-missing-values-in-calculations">Missing values in calculations</span></dt>
 <dd>
 Most summary functions, such as <code>mean()</code> or <code>sum()</code>, return <a href="#gl-na"><code>NA</code></a> if any value is missing, because the true answer is then unknown. Their argument <code>na.rm = TRUE</code> removes the missing values first, which is a decision about your data worth stating in the text.
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/mean.html">R documentation: mean</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-monte-carlo">Monte Carlo</span></dt>
+<dd>
+Learning about a distribution from random draws instead of exact calculation: averaging over many draws approximates any quantity of it, such as a mean or an interval. The error shrinks with the square root of the number of draws, however many parameters there are, which is why it scales where a <a href="#gl-grid-approximation">grid</a> cannot.
+See also: <a href="#gl-simulation">Simulation</a>, <a href="#gl-markov-chain-monte-carlo">Markov chain Monte Carlo</a>.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span> <span class="glossary-tag">probability</span>
 </dd>
 </dl>
 </section>
@@ -1173,6 +1227,11 @@ Documentation: <a href="https://quarto.org/docs/get-started/hello/positron.html"
 <section id="sec-glossary-r" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-r">R</h2>
 <dl>
+<dt><span id="gl-r-hat">R-hat</span></dt>
+<dd>
+A diagnostic that compares the variation between <a href="#gl-chain">chains</a> with the variation within them, about 1 when all chains sample the same distribution. The rule of thumb is R-hat below 1.01, and larger values are evidence of non-<a href="#gl-convergence">convergence</a>.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">diagnostics</span>
+</dd>
 <dt><span id="gl-redundant-encoding">Redundant encoding</span></dt>
 <dd>
 Showing the same variable through two visual properties at once, such as colour and point shape, so that colour is never the only cue. It keeps a figure readable for colourblind readers and in a black and white print.
@@ -1301,6 +1360,11 @@ The normal distribution with mean 0 and standard deviation 1, <span class="math 
 Subtracting the mean and dividing by the standard deviation, <span class="math inline">\(z_i = (x_i - \mu) / \sigma\)</span>, which turns any normal variable into a standard normal one. A value of <span class="math inline">\(z_i = 2\)</span> then means the same thing everywhere: two standard deviations above the mean.
 <span class="glossary-tag glossary-block">Week 1</span> <span class="glossary-tag glossary-block">Orientation</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-stationary-distribution">Stationary distribution</span></dt>
+<dd>
+The long-run distribution of a <a href="#gl-markov-chain">Markov chain</a>: the share of time it spends in each state once its starting point no longer matters. MCMC builds chains whose stationary distribution is the <a href="#gl-posterior">posterior</a>.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span>
+</dd>
 </dl>
 </section>
 <section id="sec-glossary-t" class="level2">
@@ -1343,6 +1407,11 @@ An opinionated collection of R packages designed for data science, which share a
 See also: <a href="#gl-tidy-data">Tidy data</a>, <a href="#gl-data-cycle">Data cycle</a>.
 Documentation: <a href="https://www.tidyverse.org/packages/">tidyverse: packages</a>
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-trace-plot">Trace plot</span></dt>
+<dd>
+The sampled values of a parameter plotted against iteration, one line per <a href="#gl-chain">chain</a>. Converged chains overlap as one stationary, noisy band, the hairy caterpillar, and separated or trending chains signal non-<a href="#gl-convergence">convergence</a>.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">diagnostics</span>
 </dd>
 <dt><span id="gl-truncated-axis">Truncated axis</span></dt>
 <dd>
@@ -1405,6 +1474,11 @@ A <a href="#gl-density-plot">density plot</a> per group, mirrored around its axi
 <section id="sec-glossary-w" class="level2">
 <h2 class="anchored" data-anchor-id="sec-glossary-w">W</h2>
 <dl>
+<dt><span id="gl-warm-up">Warm-up</span></dt>
+<dd>
+The first iterations of each <a href="#gl-chain">chain</a>, which are discarded: the chain travels from its starting point to where the posterior mass is, while Stan tunes its sampler. By default <code>brms</code> uses the first 1,000 of 2,000 iterations as warm-up.
+<span class="glossary-tag glossary-block">Week 7</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">mcmc</span>
+</dd>
 <dt><span id="gl-wide-and-long-format">Wide and long format</span></dt>
 <dd>
 Wide data spreads one variable across several columns, for example one column per year, and long data stacks it into one column with a second column saying which year. Going from one to the other is <a href="#gl-reshaping">reshaping</a>.
