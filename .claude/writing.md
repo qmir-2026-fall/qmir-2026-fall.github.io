@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-10-07
+last_modified: 2026-11-11
 scope: prose and typography, one sentence per line, cross-references, callouts, math notation
 ---
 
@@ -182,3 +182,32 @@ Consequences for the rest of the term:
   $\boldsymbol{\beta}$) use `\boldsymbol`, because `\mathbf` cannot bold Greek. `\bm` and `\vec`
   are not used (`E050`).
 - R has no scalars: a single value is a vector of length 1. Say so wherever the two meet.
+
+### Writing down a model
+
+Every model in the course is written the same way, at step 3 of the workflow, in decks,
+homework, solutions and the exam. The style follows McElreath's *Statistical Rethinking*.
+Introduced in week 8 (`#sec-model-card` in `website/slides/week08.qmd`).
+
+1. **Outcome distribution:** $y_i \sim \mathcal{N}(\mu_i, \sigma)$, read "drawn from a normal
+   distribution with mean $\mu_i$ and standard deviation $\sigma$".
+2. **Linear predictor:** $\mu_i = \alpha + \beta x_i$. A generalised linear model adds exactly
+   one link line here, such as $\operatorname{logit}(p_i) = \alpha + \beta x_i$. Nothing else
+   changes.
+3. **Posterior, proportional form:**
+   $P(\alpha, \beta, \sigma \mid \mathbf{y}, \mathbf{x}) \propto
+   \mathcal{L}(\alpha, \beta, \sigma \mid \mathbf{y}, \mathbf{x}) \times P(\alpha) P(\beta)
+   P(\sigma)$. Its left side lists every unknown, so it counts the priors needed.
+4. **The model card:** lines 1 and 2 plus one prior line per unknown, as one `aligned` block
+   with the labels `outcome distribution`, `linear predictor` and `prior` in a right-hand
+   column.
+
+Reading rules, said whenever a card appears:
+
+- `~` reads "is drawn from" (random), `=` reads "is defined as" (fixed).
+- No error term is added to the linear predictor. The randomness lives in the outcome line.
+  The classical form $y_i = \alpha + \beta x_i + \varepsilon_i$ is shown only as a translation.
+- $\mathcal{N}(\cdot, \cdot)$ takes the standard deviation second, as `brms` does. $\sigma^2$
+  appears only where a variance is meant.
+- The **error term** belongs to the model and is never observed. A **residual** is computed
+  from a fitted line. Say "residual", never "miss".

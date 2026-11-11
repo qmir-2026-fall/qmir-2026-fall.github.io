@@ -234,8 +234,8 @@ weeks:
       The first full model, deliberately the simplest one: one outcome, one predictor, and the
       whole workflow run around it. Every later model extends this one rather than replacing it.
     goals:
-      - "Frame a regression problem as estimand (what we want to know), estimator (the procedure) and estimate (the number we get)."
-      - "Explain what OLS assumes, and see where the classical and the Bayesian account of the same model meet."
+      - "Frame a regression problem as estimand (what we want to know), estimator (the procedure) and estimate (the result we get)."
+      - "Explain what OLS assumes, and see where the classical and the Bayesian account of the linear model meet."
       - "Specify weakly informative priors for regression coefficients and defend them on principled grounds."
       - "Understand `brms` as sampling from the posterior: an estimator that returns a distribution rather than one number."
       - "Interpret `brms` output and extract quantities of interest, such as predictions and marginal effects."

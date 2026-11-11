@@ -1,0 +1,1669 @@
+---
+title: "Week 8: Bivariate linear regression"
+---
+
+<!-- Shared format options live in _metadata.yml, so this deck's YAML carries only the title.
+
+     Arc: recap the three E terms, then the substantive question (does democracy protect
+     physical integrity?), then ALL EIGHT workflow steps on one real model. Step 3 is split in
+     two halves. First the likelihood (outcome distribution and linear predictor), which is
+     what Gauss knew: the detour to 1801 follows it, with the classical error-term form, Ceres,
+     least squares, a sneak preview of the Gauss-Markov assumptions, and the squared residual
+     found inside the normal likelihood. Then "What Bayes adds": posterior, the model card with
+     its priors, the bridge from one line to many simulated lines, and the generative reading
+     of the card that leads straight into step 4.
+     Step 7 always shows three quantities: expected values, predicted values, marginal effect.
+     After step 8 the Gauss-Markov assumptions are checked live on the model we just fitted.
+     The OLS = maximum likelihood derivation is in the appendix.
+
+     Data: V-Dem v16, year 2019, 179 countries. data/week08-vdem-2019.csv is written from the
+     vdemdata package by the data-vdem chunk if it is missing, and hw-08 reuses it.
+
+     Stan backend: rstan 2.32.7 does not compile against StanHeaders 2.39 on this machine, so
+     the setup chunk sets brms.backend to cmdstanr. The fit is cached in data/week08-fit.rds.
+
+     Time budget (90 min): opening 3, recap 3, question and data 5, steps 1 and 2 8,
+     step 3 likelihood 4, Gauss and Ceres 10, posterior and model card 7, one line to many 4,
+     step 4 5, steps 5 and 6 8, step 7 12, step 8 3, assumptions 17, wrap-up 3.
+     If behind: cut the data slide to the table, skip the SSR bowl, say A4 in one sentence
+     and narrate A5 from the notes only. -->
+
+```{r}
+#| label: setup
+#| include: false
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(brms) # Bayesian regression via Stan
+
+# _quarto.yml is a project-root marker, so anchor here() at the repo root.
+here::i_am("website/slides/week08.qmd")
+
+# rstan does not build against the installed StanHeaders, cmdstanr does.
+options(brms.backend = "cmdstanr")
+
+# Shared palette. Reused verbatim across slides, homework and solutions so a
+# chain colour means the same thing in every artefact of the course.
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+```
+
+```{r}
+#| label: data-vdem
+#| include: false
+
+# The snapshot is written once from the vdemdata package and committed, so the
+# deck and hw-08 render without the package.
+vdem_csv <- here("website", "slides", "data", "week08-vdem-2019.csv")
+if (!file.exists(vdem_csv)) {
+  vdemdata::vdem |>
+    filter(year == 2019) |>
+    transmute(
+      country = country_name,
+      region = case_match(
+        e_regionpol_6C,
+        1 ~ "Eastern Europe, Central Asia",
+        2 ~ "Latin America, Caribbean",
+        3 ~ "Middle East, North Africa",
+        4 ~ "Sub-Saharan Africa",
+        5 ~ "Western Europe, North America",
+        6 ~ "Asia, Pacific"
+      ),
+      democracy = round(100 * v2x_polyarchy, 1),
+      integrity = round(100 * v2x_clphy, 1)
+    ) |>
+    write_csv(vdem_csv)
+}
+
+vdem <- read_csv(vdem_csv, show_col_types = FALSE)
+n_countries <- nrow(vdem)
+
+# The least-squares line, used only in the Gauss section and the appendix.
+ls_fit <- lm(integrity ~ democracy, data = vdem)
+ls_alpha <- coef(ls_fit)[["(Intercept)"]]
+ls_beta <- coef(ls_fit)[["democracy"]]
+```
+
+## Week 8 goals {#sec-week08-goals .smaller}
+
+By the end of today, you will be able to:
+
+1. Frame a regression problem as **estimand** (what we want to know), **estimator** (the procedure) and **estimate** (the result we get).
+2. Explain what OLS assumes, and see where the classical and the Bayesian account of the linear model meet.
+3. Specify **weakly informative priors** for regression coefficients and defend them on principled grounds.
+4. Understand `brms` as **sampling from the posterior**: an estimator that returns a distribution rather than one number.
+5. Interpret `brms` output and extract **quantities of interest**, such as predictions and marginal effects.
+
+::: notes
+Read the goals aloud and come back to them at the end.
+Goals 3 and 5 matter most for the exam.
+:::
+
+## Today {#sec-today .smaller}
+
+1. **Recap:** estimand, estimator, estimate
+2. **The question:** does democracy protect people from their own state?
+3. **All eight steps, one model**, with a detour to 1801
+4. **Three ways to an answer:** expected values, predicted values, marginal effects
+5. **Checking the assumptions** of the model we just fitted
+
+## Where today fits {#sec-where-today-fits .smaller}
+
+Today we walk **all eight steps** on one real model, for the first time since week 1.
+
+{{< include _workflow-8step.qmd >}}
+
+::: notes
+One minute.
+Week 1 showed this whole table at speed.
+Today every step is ours, and week 7 explained what happens at step 5.
+:::
+
+# Recap {#sec-recap}
+
+## Estimand, estimator, estimate {#sec-three-e .smaller}
+
+::: notes
+Two minutes, a recap only.
+Ask the room for each definition before revealing the right-hand column.
+:::
+
+The three words from week 1, now filled in for today.
+
+::: {.small}
+| Term | Question it answers | Today |
+|---|---|---|
+| **Estimand** | What do we want to learn? | How physical integrity differs between countries that differ in democracy, the slope $\beta$ |
+| **Estimator** | How do we learn it from data? | Bayes' theorem, computed by MCMC in `brms` (week 7) |
+| **Estimate** | What do we get? | A posterior distribution for $\beta$, not one number |
+
+: The three terms of statistical inference, with today's model filled in. {#tbl-three-e}
+:::
+
+. . .
+
+::: {.callout-note}
+**The estimate is a distribution.**
+Every number we report today is a summary of that distribution, and it comes with its uncertainty.
+:::
+
+# The question {#sec-question}
+
+## Do democracies repress less? {#sec-democracies-repress .smaller}
+
+::: notes
+Ask first: who thinks democracies torture and kill their own citizens less, and why?
+Collect two or three mechanisms from the room before revealing them.
+Davenport calls the pattern the domestic democratic peace.
+:::
+
+> Do more democratic states respect the physical integrity of their citizens more?
+
+. . .
+
+Why we might expect it:
+
+- **Accountability:** leaders who kill or torture can be voted out.
+- **Constraints:** courts, a free press and a parliament make repression costly.
+- **Norms:** democracies settle conflict by voting and bargaining, not by force.
+
+. . .
+
+Political scientists call this the **domestic democratic peace** [@davenport2007state].
+
+## The data {#sec-data .smaller}
+
+::: notes
+V-Dem itself estimates both indices with a Bayesian measurement model, from thousands of expert ratings.
+So even our data are posterior summaries, which comes back at step 8.
+Read two rows aloud: Hungary and Mexico are the interesting ones.
+:::
+
+:::: {.columns}
+
+::: {.column width="55%"}
+V-Dem, year 2019, **`r n_countries` countries** [@vdem2026dataset].
+Two expert-coded indices, both rescaled to run from 0 to 100:
+
+- **Electoral democracy:** free and fair elections, suffrage, freedom of expression and association.
+- **Physical integrity:** freedom from political killing and torture by the state.
+  Higher means more respect.
+:::
+
+::: {.column width="45%"}
+```{r}
+#| label: tbl-countries
+#| tbl-cap: "Eight countries from the data, ordered by their democracy score."
+
+vdem |>
+  filter(
+    country %in%
+      c(
+        "Denmark",
+        "Germany",
+        "Hungary",
+        "Mexico",
+        "India",
+        "Russia",
+        "China",
+        "Saudi Arabia"
+      )
+  ) |>
+  arrange(desc(democracy)) |>
+  select(Country = country, Democracy = democracy, Integrity = integrity) |>
+  knitr::kable()
+```
+:::
+
+::::
+
+# All eight steps {#sec-eight-steps}
+
+## Step 1: Estimand {#sec-step1 .smaller}
+
+::: notes
+Read the question aloud, then the warning, once and firmly.
+Reverse causality is the easiest example: a regime that tortures also rigs elections.
+:::
+
+The research question:
+
+> What is the association between democracy and physical integrity?
+
+. . .
+
+What precisely do we want to learn?
+
+> How much higher, on average, is physical integrity in countries whose democracy score is one point higher?
+
+. . .
+
+That is a **slope**, and we call it $\beta$.
+
+. . .
+
+::: {.callout-warning}
+**An association is not a causal effect.**
+Nobody assigns countries their regime, and democracy and repression can shape each other.
+We compare different countries, we do not watch one country democratise.
+:::
+
+## Step 2: One variable at a time {#sec-step2-univariate .smaller}
+
+::: notes
+Ask: what do you notice about the right panel?
+Integrity piles up near the top of the scale, close to 100, the ceiling.
+Keep that ceiling in mind, it returns at steps 6b, 7 and 8.
+:::
+
+```{r}
+#| label: fig-distributions
+#| fig-cap: "The two variables one at a time, one bar per bin of five points. Democracy is
+#|   spread across the whole scale. Physical integrity piles up just below its ceiling of 100."
+#| fig-height: 3.4
+#| dpi: 500
+
+vdem |>
+  pivot_longer(
+    c(democracy, integrity),
+    names_to = "variable",
+    values_to = "value"
+  ) |>
+  mutate(
+    variable = case_match(
+      variable,
+      "democracy" ~ "Electoral democracy",
+      "integrity" ~ "Physical integrity"
+    )
+  ) |>
+  ggplot(aes(x = value)) +
+  geom_histogram(
+    binwidth = 5,
+    boundary = 0,
+    fill = col_1,
+    colour = "white"
+  ) +
+  facet_wrap(~variable) +
+  theme_classic() +
+  labs(x = "Score (0 to 100)", y = "Countries", title = "One variable at a time")
+```
+
+## Step 2: Both at once {#sec-step2-scatter .smaller}
+
+::: notes
+Let the room describe it before you do.
+Direction: up.
+Shape: roughly a straight line, perhaps a slight hump.
+Spread: wide on the left, very narrow on the right.
+Each of these observations becomes an assumption check at the end.
+:::
+
+```{r}
+#| label: fig-scatter
+#| fig-cap: "Physical integrity against electoral democracy, one point per country in 2019. The
+#|   cloud rises from left to right, and it is much wider among autocracies than among
+#|   democracies."
+#| fig-height: 3.6
+#| dpi: 500
+
+ggplot(vdem, aes(x = democracy, y = integrity)) +
+  geom_point(colour = col_1, alpha = 0.7, size = 2) +
+  scale_x_continuous(limits = c(0, 100)) +
+  scale_y_continuous(limits = c(0, 100)) +
+  theme_classic() +
+  labs(
+    x = "Electoral democracy",
+    y = "Physical integrity",
+    title = "Look before you fit"
+  )
+```
+
+## Step 3: Formal model {#sec-step3 .smaller}
+
+::: notes
+This three-part template is the one we write for every model from now on.
+In later models only a link function enters between the linear predictor and the outcome distribution.
+Say the words outcome, dependent, predictor, independent out loud.
+They will meet all four in papers, and they mean the same two roles.
+:::
+
+**1. Outcome distribution.**
+Integrity is drawn from a normal distribution with mean $\mu_i$ and standard deviation $\sigma$:
+
+$$
+y_i \sim \mathcal{N}(\mu_i, \sigma)
+$$ {#eq-likelihood}
+
+**2. Linear predictor.**
+The mean is a straight line in democracy:
+
+$$
+\mu_i = \alpha + \beta x_i
+$$ {#eq-linear-predictor}
+
+::: {.small}
+- $y_i$ is the physical integrity of country $i$, the **outcome**, or **dependent variable**.
+- $x_i$ is the democracy score of country $i$, the **predictor**, or **independent variable**.
+- $\alpha$ is the **intercept**, the expected integrity of a country with democracy 0, and $\beta$ is the **slope**, our estimand.
+- $\sigma$ is the **residual standard deviation**: how far, typically, countries lie from the line.
+:::
+
+Read $\sim$ as **is drawn from** (random) and $=$ as **is defined as** (fixed): all the randomness sits in the first line.
+
+. . .
+
+Where does the idea of a line plus normally distributed errors come from?
+
+# A detour to 1801 {#sec-gauss}
+
+## The same model, written classically {#sec-step3-error .smaller}
+
+::: notes
+Answer the question before it is asked: no error term is added to the linear predictor.
+In our model the randomness lives in the tilde of the first line.
+The classical form moves that randomness into a separate error term, which only works for normal outcomes.
+Two words, kept apart for the rest of the session: error term and residual.
+:::
+
+@eq-likelihood and @eq-linear-predictor say exactly the same thing as
+
+$$
+y_i = \alpha + \beta x_i + \varepsilon_i, \qquad \varepsilon_i \sim \mathcal{N}(0, \sigma)
+$$ {#eq-error-form}
+
+- The **error term** $\varepsilon_i$ is the distance between $y_i$ and the true line, which we never observe.
+- A **residual** is the distance between $y_i$ and a *fitted* line, which we can compute, so it is how we look at the errors.
+
+. . .
+
+Where do the errors come from?
+Everything the democracy score does not capture: conflict, history, wealth, and measurement error.
+
+. . .
+
+This is how Gauss wrote it, more than 200 years ago.
+
+## A lost planet {#sec-ceres .smaller}
+
+::: notes
+Tell it as a story, two minutes.
+Legendre published least squares first, in 1805.
+Gauss published his version in 1809 and claimed he had used it since 1795.
+The point to land: the observations were noisy, and Gauss used all of them at once.
+:::
+
+- **1 January 1801:** in Palermo, Giuseppe Piazzi spots a faint moving point of light, the dwarf planet **Ceres**.
+- He follows it for about six weeks, then it disappears into the glare of the Sun.
+- Astronomers hold a handful of positions, each a little off, and must predict where Ceres will reappear months later.
+
+. . .
+
+- **Carl Friedrich Gauss**, aged 24, uses **all** the observations at once.
+  He picks the orbit that makes the **squared residuals**, the squared distances between observed and predicted positions, as small as possible.
+- On the last night of 1801, Ceres is found again, close to where Gauss said it would be [@stigler1986history; @gauss1809theoria].
+
+. . .
+
+::: {.callout-note}
+**Every measurement contains a little error.**
+Gauss assumed these errors were normally distributed, which is exactly our $\varepsilon_i$ in @eq-error-form.
+:::
+
+## Our residuals {#sec-our-residuals .smaller}
+
+::: notes
+Point at one long purple segment and one short one.
+The line wants to make all of them short at once, and squaring makes the long ones count most.
+:::
+
+```{r}
+#| label: fig-residuals
+#| fig-cap: "The least-squares line through our data. Each purple segment is one country's
+#|   residual: the vertical distance between the observed integrity and the line."
+#| fig-height: 3.6
+#| dpi: 500
+
+vdem |>
+  mutate(fitted = fitted(ls_fit)) |>
+  ggplot(aes(x = democracy, y = integrity)) +
+  geom_segment(
+    aes(xend = democracy, yend = fitted),
+    colour = col_3,
+    alpha = 0.5
+  ) +
+  geom_abline(
+    intercept = ls_alpha,
+    slope = ls_beta,
+    colour = col_2,
+    linewidth = 1.2
+  ) +
+  geom_point(colour = col_1, size = 1.6) +
+  theme_classic() +
+  labs(
+    x = "Electoral democracy",
+    y = "Physical integrity",
+    title = "One line, 179 residuals"
+  )
+```
+
+## The least-squares line {#sec-least-squares .smaller}
+
+::: notes
+Skip the right-hand figure if behind.
+Two reasons for squares: large residuals count much more, and positive and negative residuals cannot cancel.
+:::
+
+:::: {.columns}
+
+::: {.column width="50%"}
+Add up the squared residuals:
+
+$$
+\text{SSR}(\alpha, \beta) = \sum_{i=1}^{n} (y_i - \alpha - \beta x_i)^2
+$$ {#eq-ssr}
+
+The **least-squares line** is the one pair $(\alpha, \beta)$ that makes @eq-ssr as small as possible.
+
+Squaring makes a large residual count far more than a small one, and positive and negative residuals cannot cancel.
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-ssr-bowl
+#| fig-cap: "The sum of squared residuals for different slopes, with the intercept held at its
+#|   least-squares value. The bowl has one lowest point, the least-squares slope."
+#| fig-height: 4
+#| fig-width: 5
+#| dpi: 500
+
+tibble(beta = seq(0.5, 1.25, length.out = 200)) |>
+  mutate(
+    ssr = map_dbl(
+      beta,
+      \(b) sum((vdem$integrity - ls_alpha - b * vdem$democracy)^2)
+    )
+  ) |>
+  ggplot(aes(x = beta, y = ssr / 1000)) +
+  geom_line(colour = col_1, linewidth = 1.2) +
+  geom_vline(xintercept = ls_beta, colour = col_2, linetype = "dashed") +
+  theme_classic() +
+  labs(
+    x = "Slope",
+    y = "SSR (thousands)",
+    title = "Finding the bottom of a bowl"
+  )
+```
+:::
+
+::::
+
+## Sneak preview: when is that line the best? {#sec-gm-preview .smaller}
+
+::: notes
+Only name them today, do not explain them.
+Each one gets its own slide at the end of the session, checked on our own model.
+The theorem itself needs only A1 to A5.
+A6 is the extra assumption of the classical linear model.
+:::
+
+The least-squares line is the **best linear unbiased estimator** when these conditions hold:
+
+::: {.xsmall}
+| | Assumption | In short |
+|---|---|---|
+| A1 | Linearity | The average of $y$ really is a straight line in $x$. |
+| A2 | Exogeneity | The error terms are unrelated to $x$. |
+| A3 | Homoscedasticity | The error terms have the same variance for every $x$. |
+| A4 | No perfect collinearity | The predictor actually varies. |
+| A5 | Independence | One country's error term tells us nothing about another's. |
+| A6 | Normality | The error terms are normally distributed. |
+
+: Six assumptions behind the least-squares line. {#tbl-gm-preview}
+:::
+
+A1 to A5 are the **Gauss-Markov assumptions**, A6 is our @eq-likelihood, and we check all six [after step 8](#sec-assumptions).
+
+## Back to our model: the likelihood {#sec-model-again .smaller}
+
+::: notes
+Point at the exponent with the pointer.
+The derivation is in the appendix for anyone who wants it, it is not exam material.
+:::
+
+@eq-likelihood and @eq-linear-predictor, applied to all $n$ countries at once, give the **likelihood**:
+
+$$
+\mathcal{L}(\alpha, \beta, \sigma \mid \mathbf{y}, \mathbf{x}) = \prod_{i=1}^{n} \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(y_i - \alpha - \beta x_i)^2}{2\sigma^2}\right)
+$$ {#eq-likelihood-product}
+
+. . .
+
+Look inside the exponent: it holds the **squared residual** of @eq-ssr.
+The smaller the residuals, the larger the likelihood.
+
+. . .
+
+::: {.callout-note}
+**The normal likelihood already contains Gauss's criterion.**
+The line with the smallest squared residuals is also the line that makes the data most likely.
+The full derivation is in [the appendix](#sec-ols-mle).
+:::
+
+. . .
+
+**Gauss stops here: one best line.**
+Bayes adds priors and keeps every plausible line.
+
+# What Bayes adds {#sec-bayes-adds}
+
+## Step 3: The posterior {#sec-step3-posterior .smaller}
+
+::: notes
+Read the left side first: these are all the unknowns.
+Count them out loud: three parameters, three priors.
+Bold means a whole column, as in week 3.
+:::
+
+**3. Posterior, proportional form.**
+
+$$
+P(\alpha, \beta, \sigma \mid \mathbf{y}, \mathbf{x}) \propto \mathcal{L}(\alpha, \beta, \sigma \mid \mathbf{y}, \mathbf{x}) \times P(\alpha) \, P(\beta) \, P(\sigma)
+$$ {#eq-posterior}
+
+- $\mathbf{y}$ is the whole integrity column and $\mathbf{x}$ the whole democracy column, `r n_countries` entries each.
+- The likelihood $\mathcal{L}$ is @eq-likelihood-product, the part Gauss already knew.
+
+. . .
+
+The left side lists every unknown: **three parameters, so three priors** to choose.
+
+<details>
+<summary>Standard deviation or variance?</summary>
+
+::: {.callout-note}
+**The second number in $\mathcal{N}(\mu, \sigma)$ is a standard deviation.**
+This is the convention of this course and of `brms`.
+The variance is its square, $\sigma^2$, and it appears only where a formula needs it.
+:::
+
+</details>
+
+## Step 3: The complete model {#sec-model-card .smaller}
+
+::: notes
+This card is the course format for step 3, in every homework and in the exam.
+Read it top to bottom: the outcome, its mean, then one prior per unknown.
+Priors are commitments, not conveniences, and every number is defended on the 0 to 100 scale.
+:::
+
+@eq-posterior told us we need **three priors**, one per unknown.
+With them, the whole model fits on one card:
+
+$$
+\begin{aligned}
+y_i &\sim \mathcal{N}(\mu_i, \sigma) && \text{outcome distribution} \\
+\mu_i &= \alpha + \beta x_i && \text{linear predictor} \\
+\alpha &\sim \mathcal{N}(50, 20) && \text{prior} \\
+\beta &\sim \mathcal{N}(0, 0.5) && \text{prior} \\
+\sigma &\sim \text{Exponential}(0.05) && \text{prior}
+\end{aligned}
+$$ {#eq-model}
+
+::: {.small}
+<details>
+<summary>How to read the prior on the intercept</summary>
+
+::: {.callout-note}
+**The prior on $\alpha$ in words.**
+A full autocracy (democracy 0) could sit anywhere on the integrity scale, so the prior is centred mid-scale.
+With 95 percent probability it lies between 10 and 90.
+:::
+
+</details>
+
+<details>
+<summary>How to read the prior on the slope</summary>
+
+::: {.callout-note}
+**The prior on $\beta$ in words.**
+Centred on no association, because the sign is what we want to learn.
+A slope of 1 would carry a country across the whole integrity scale as it moves from full autocracy to full democracy.
+The prior allows that, with 95 percent of its mass between $-1$ and $+1$, but little beyond.
+:::
+
+</details>
+
+<details>
+<summary>How to read the prior on the residual standard deviation</summary>
+
+::: {.callout-note}
+**The prior on $\sigma$ in words.**
+A standard deviation must be positive.
+An exponential with rate 0.05 has a mean of $1 / 0.05 = 20$ points, so countries typically lie a fifth of the scale from the line, and smaller standard deviations are more plausible than larger ones.
+:::
+
+</details>
+:::
+
+::: {.callout-tip}
+**This card is step 3, for every model in this course.**
+Later models change the outcome distribution and add a link line, the rest stays.
+:::
+
+## Step 3: The priors, drawn {#sec-priors-drawn .smaller}
+
+```{r}
+#| label: fig-priors
+#| fig-cap: "The three priors as curves. Each says how plausible each value of that parameter is
+#|   before we look at a single country."
+#| fig-height: 3.2
+#| dpi: 500
+
+bind_rows(
+  tibble(
+    parameter = "alpha: the intercept",
+    value = seq(-30, 130, length.out = 300),
+    density = dnorm(value, mean = 50, sd = 20)
+  ),
+  tibble(
+    parameter = "beta: the slope",
+    value = seq(-2, 2, length.out = 300),
+    density = dnorm(value, mean = 0, sd = 0.5)
+  ),
+  tibble(
+    parameter = "sigma: the residual standard deviation",
+    value = seq(0, 100, length.out = 300),
+    density = dexp(value, rate = 0.05)
+  )
+) |>
+  ggplot(aes(x = value, y = density)) +
+  geom_line(colour = col_3, linewidth = 1) +
+  facet_wrap(~parameter, scales = "free") +
+  theme_classic() +
+  labs(
+    x = "Value",
+    y = "Density",
+    title = "What we believe before seeing any country"
+  )
+```
+
+## From one line to many {#sec-one-to-many .smaller}
+
+::: notes
+This is the hinge of the session.
+Connect explicitly to week 7: the chain visits each region in proportion to its posterior plausibility.
+:::
+
+Gauss asks: **which single line** fits best?
+
+. . .
+
+We ask: **which lines are plausible**, and how plausible is each?
+
+- Bayes' theorem combines the likelihood (@eq-likelihood-product) with the priors of @eq-model.
+- MCMC (week 7) then **draws** thousands of lines, one per draw of $(\alpha, \beta, \sigma)$.
+- Lines that fit the data better turn up **more often**, because the chain spends more time where the posterior is high.
+
+. . .
+
+::: {.callout-important}
+**We do not fit one line.**
+We simulate a whole collection of lines, and how often a line appears is how plausible it is.
+:::
+
+## A model that generates data {#sec-generative .smaller}
+
+::: notes
+Read @eq-model top to bottom: draw the parameters, compute a mean, draw an outcome.
+Ask: which of the three made-up worlds looks most like the real one?
+This is the whole idea behind steps 4 and 6b.
+:::
+
+Read @eq-model as a **recipe**: choose $\alpha$, $\beta$ and $\sigma$, and the model produces a whole dataset.
+
+```{r}
+#| label: fig-generative
+#| fig-cap: "The observed data and three datasets made up by the model, each from one fixed
+#|   choice of the three parameters and the observed democracy scores. A generative model can
+#|   produce data, and comparing its data with ours is how we check it."
+#| fig-height: 3.2
+#| fig-width: 10
+#| dpi: 500
+
+set.seed(2026)
+worlds <- tribble(
+  ~world , ~alpha , ~beta , ~sigma ,
+  "A: alpha 25, beta 0.9, sigma 18" , 25 , 0.9 , 18 ,
+  "B: alpha 70, beta 0, sigma 15" , 70 , 0 , 15 ,
+  "C: alpha 95, beta -0.5, sigma 5" , 95 , -0.5 , 5
+)
+
+made_up <- expand_grid(worlds, democracy = vdem$democracy) |>
+  mutate(integrity = rnorm(n(), alpha + beta * democracy, sigma)) |>
+  select(world, democracy, integrity)
+
+bind_rows(
+  vdem |> transmute(world = "Observed", democracy, integrity),
+  made_up
+) |>
+  mutate(world = fct_inorder(world)) |>
+  ggplot(aes(x = democracy, y = integrity)) +
+  geom_point(colour = col_1, alpha = 0.6, size = 1) +
+  facet_wrap(~world, nrow = 1) +
+  theme_classic() +
+  labs(
+    x = "Electoral democracy",
+    y = "Physical integrity",
+    title = "One real world, three made-up ones"
+  )
+```
+
+## Step 4: Prior predictive check {#sec-step4 .smaller}
+
+```{r}
+#| label: prior-share
+#| include: false
+
+# Share of prior lines inside the scale at both ends, from many draws.
+set.seed(2026)
+prior_many <- tibble(
+  alpha = rnorm(1e4, mean = 50, sd = 20),
+  beta = rnorm(1e4, mean = 0, sd = 0.5)
+) |>
+  mutate(at_100 = alpha + 100 * beta)
+prior_in_band <- round(
+  100 *
+    mean(
+      between(prior_many$alpha, 0, 100) & between(prior_many$at_100, 0, 100)
+    )
+)
+```
+
+::: notes
+Lines are average worlds, so this checks alpha and beta.
+Point at the lines that leave the band: impossible, but not absurd.
+About two thirds stay inside, which is what weakly informative means here.
+:::
+
+What lines do our priors consider possible?
+
+```{r}
+#| label: fig-prior-lines
+#| fig-cap: "One hundred lines drawn from the priors alone. The shaded band is the 0 to 100
+#|   range the integrity index can take. Lines leaving the band describe impossible worlds."
+#| fig-height: 3
+#| dpi: 500
+
+set.seed(2026)
+tibble(
+  draw = 1:100,
+  alpha = rnorm(100, mean = 50, sd = 20),
+  beta = rnorm(100, mean = 0, sd = 0.5)
+) |>
+  expand_grid(democracy = c(0, 100)) |>
+  mutate(integrity = alpha + beta * democracy) |>
+  ggplot(aes(x = democracy, y = integrity, group = draw)) +
+  annotate(
+    "rect",
+    xmin = 0,
+    xmax = 100,
+    ymin = 0,
+    ymax = 100,
+    fill = col_2,
+    alpha = 0.3
+  ) +
+  geom_line(colour = col_3, alpha = 0.3) +
+  theme_classic() +
+  labs(
+    x = "Electoral democracy",
+    y = "Physical integrity",
+    title = "Average worlds our priors consider possible"
+  )
+```
+
+Of 10,000 prior lines, **`r prior_in_band` percent** stay inside the scale from end to end.
+
+## Step 4: Whole worlds from the priors {#sec-step4-worlds .smaller}
+
+::: notes
+Same recipe as before, but now the parameters come from the priors, not from us.
+Ask: are any of these worlds impossible?
+Points below 0 and above 100.
+Mild, and the data will overrule it, so we keep the priors.
+:::
+
+Draw $\alpha$, $\beta$ and $\sigma$ from the priors, then run the recipe.
+
+```{r}
+#| label: fig-prior-worlds
+#| fig-cap: "Three datasets generated by the model with parameters drawn from the priors. The
+#|   dashed lines mark the ends of the scale, so points beyond them are values no country can
+#|   have."
+#| fig-height: 3.2
+#| fig-width: 10
+#| dpi: 500
+
+set.seed(8)
+tibble(
+  world = paste("Prior draw", 1:3),
+  alpha = rnorm(3, mean = 50, sd = 20),
+  beta = rnorm(3, mean = 0, sd = 0.5),
+  sigma = rexp(3, rate = 0.05)
+) |>
+  expand_grid(democracy = vdem$democracy) |>
+  mutate(integrity = rnorm(n(), alpha + beta * democracy, sigma)) |>
+  ggplot(aes(x = democracy, y = integrity)) +
+  geom_hline(yintercept = c(0, 100), linetype = "dashed", colour = "grey50") +
+  geom_point(colour = col_3, alpha = 0.6, size = 1) +
+  facet_wrap(~world, nrow = 1) +
+  theme_classic() +
+  labs(
+    x = "Electoral democracy",
+    y = "Physical integrity",
+    title = "Datasets our priors consider possible"
+  )
+```
+
+## Step 5: Fit the model {#sec-step5 .smaller}
+
+::: notes
+Run it live if the room has time, the cached fit loads instantly otherwise.
+`0 + Intercept` keeps the intercept at democracy 0, so the prior on alpha means what the slide says.
+:::
+
+```{r}
+#| label: fit-model
+#| output: false
+#| code-fold: false
+
+week08_priors <- c(
+  prior(normal(50, 20), class = "b", coef = "Intercept"),
+  prior(normal(0, 0.5), class = "b", coef = "democracy"),
+  prior(exponential(0.05), class = "sigma")
+)
+
+fit <- brm(
+  integrity ~ 0 + Intercept + democracy,
+  data = vdem,
+  family = gaussian(),
+  prior = week08_priors,
+  chains = 4,
+  iter = 2000,
+  seed = 2026,
+  refresh = 0,
+  file = here("website", "slides", "data", "week08-fit"),
+  file_refit = "on_change"
+)
+```
+
+. . .
+
+Four chains of 1,000 draws after warm-up give **4,000 draws** of $(\alpha, \beta, \sigma)$.
+That is 4,000 plausible lines.
+
+## Step 6a: MCMC diagnostics {#sec-step6a .smaller}
+
+```{r}
+#| label: diagnostics-numbers
+#| include: false
+
+draw_checks <- posterior::summarise_draws(
+  fit,
+  "rhat",
+  "ess_bulk",
+  "ess_tail"
+) |>
+  filter(variable %in% c("b_Intercept", "b_democracy", "sigma"))
+max_rhat <- max(draw_checks$rhat)
+min_ess <- min(draw_checks$ess_bulk, draw_checks$ess_tail)
+n_divergent <- nuts_params(fit) |>
+  filter(Parameter == "divergent__") |>
+  pull(Value) |>
+  sum()
+```
+
+::: notes
+Week 7's rules, applied in one minute.
+Ask: top or bottom panel of the week 7 convergence slide?
+:::
+
+```{r}
+#| label: fig-trace
+#| fig-cap: "Trace plots for the three parameters, four chains each. The chains overlap and
+#|   wander around the same region, so the plots show no sign of non-convergence."
+#| fig-height: 2.8
+#| dpi: 500
+
+mcmc_plot(fit, type = "trace") +
+  scale_colour_manual(values = chain_cols) +
+  theme_classic()
+```
+
+Largest R-hat `r sprintf("%.3f", max_rhat)`, smallest ESS `r round(min_ess)`, `r n_divergent` divergent transitions.
+**No evidence of non-convergence.**
+
+## Step 6b: Posterior predictive check {#sec-step6b .smaller}
+
+::: notes
+The recipe again, now with parameters drawn from the posterior.
+Point at the right edge: the model puts mass above 100, and it fails to reproduce the pile-up just below 100.
+Name the cause: a normal likelihood does not know the scale ends at 100.
+:::
+
+The generative model once more, now with parameters drawn from the **posterior**.
+
+```{r}
+#| label: fig-ppc
+#| fig-cap: "Posterior predictive check. The dark line is the observed distribution of physical
+#|   integrity, the pale lines are datasets generated by the fitted model. The model spills past
+#|   the ceiling of 100 and fails to reproduce the pile-up just below it."
+#| fig-height: 3
+#| dpi: 500
+
+set.seed(2026)
+pp_check(fit, ndraws = 50) +
+  geom_vline(xintercept = 100, linetype = "dashed", colour = "grey50") +
+  theme_classic() +
+  labs(
+    x = "Physical integrity",
+    title = "Observed integrity against what the model generates"
+  )
+```
+
+# Step 7: Three ways to an answer {#sec-step7}
+
+```{r}
+#| label: quantities
+#| include: false
+
+anchors <- vdem |>
+  filter(country %in% c("Russia", "Germany")) |>
+  arrange(democracy)
+x_low <- anchors$democracy[1]
+x_high <- anchors$democracy[2]
+y_low_obs <- anchors$integrity[1]
+
+new_countries <- tibble(democracy = c(x_low, x_high))
+epred_draws <- posterior_epred(fit, newdata = new_countries)
+set.seed(2026)
+predict_draws <- posterior_predict(fit, newdata = new_countries)
+
+# Median and 90 percent interval, rounded for inline use.
+q3 <- function(v) round(quantile(v, c(0.05, 0.5, 0.95)))
+
+ep_low <- q3(epred_draws[, 1])
+ep_high <- q3(epred_draws[, 2])
+pr_low <- q3(predict_draws[, 1])
+pr_high <- q3(predict_draws[, 2])
+pr_high_above <- round(100 * mean(predict_draws[, 2] > 100))
+
+beta_draws <- as_draws_df(fit)$b_democracy
+beta_q <- round(quantile(beta_draws, c(0.05, 0.5, 0.95)), 2)
+beta_above_zero <- round(100 * mean(beta_draws > 0))
+```
+
+## Three questions, three quantities {#sec-three-quantities .smaller}
+
+::: notes
+This table is the habit to build.
+Every interpretation from now on reports all three.
+The difference between the first two is only sigma.
+Estimation uncertainty shrinks with more data, fundamental uncertainty does not: more countries would not make single countries more alike.
+:::
+
+::: {.small}
+| Quantity | The question it answers | From | Uncertainty about |
+|---|---|---|---|
+| **Expected value** | What integrity do we expect, on average, for countries with democracy $x$? | `posterior_epred()` | $\alpha$ and $\beta$: **estimation** (systematic) uncertainty |
+| **Predicted value** | Where would one new country with democracy $x$ fall? | `posterior_predict()` | $\alpha$, $\beta$ and $\sigma$: estimation plus **fundamental** (stochastic) uncertainty |
+| **Marginal effect** | How much does expected integrity change if democracy is one point higher? | the posterior of $\beta$ | $\beta$: **estimation** (systematic) uncertainty |
+
+: Three quantities of interest from one fitted model, each answering a different substantive question. {#tbl-three-quantities}
+:::
+
+. . .
+
+::: {.callout-tip}
+**Report all three, every time.**
+Each answers a different question, and together they show both the pattern and how much single countries vary around it.
+:::
+
+## Expected values {#sec-expected .smaller}
+
+::: notes
+Each grey line is one posterior draw.
+The orange intervals are the expected values at Russia's and Germany's democracy scores.
+Say: on average, among countries like these.
+:::
+
+:::: {.columns}
+
+::: {.column width="60%"}
+```{r}
+#| label: fig-expected
+#| fig-cap: "One hundred posterior lines over the data. The orange intervals are the expected
+#|   integrity, with 90 percent credible intervals, at the democracy scores of Russia and
+#|   Germany."
+#| fig-height: 4
+#| fig-width: 6
+#| dpi: 500
+
+set.seed(2026)
+posterior_lines <- as_draws_df(fit) |>
+  as_tibble() |>
+  slice_sample(n = 100)
+
+expected_points <- tibble(
+  democracy = c(x_low, x_high),
+  low = c(ep_low[1], ep_high[1]),
+  mid = c(ep_low[2], ep_high[2]),
+  high = c(ep_low[3], ep_high[3])
+)
+
+ggplot(vdem, aes(x = democracy, y = integrity)) +
+  geom_point(colour = col_1, alpha = 0.4, size = 1.4) +
+  geom_abline(
+    data = posterior_lines,
+    aes(intercept = b_Intercept, slope = b_democracy),
+    colour = "grey40",
+    alpha = 0.1
+  ) +
+  geom_pointrange(
+    data = expected_points,
+    aes(x = democracy, y = mid, ymin = low, ymax = high),
+    colour = col_2,
+    inherit.aes = FALSE
+  ) +
+  theme_classic() +
+  labs(
+    x = "Electoral democracy",
+    y = "Physical integrity",
+    title = "Lines that survive contact with the data"
+  )
+```
+:::
+
+::: {.column width="40%"}
+A country with **Russia's** democracy score (`r x_low`): expected integrity **`r ep_low[2]`**, 90 percent credible interval `r ep_low[1]` to `r ep_low[3]`.
+
+A country with **Germany's** score (`r x_high`): expected integrity **`r ep_high[2]`**, from `r ep_high[1]` to `r ep_high[3]`.
+
+These are **averages** over many countries with that score.
+Their intervals carry only **estimation uncertainty**: we do not know $\alpha$ and $\beta$ exactly.
+:::
+
+::::
+
+## Predicted values {#sec-predicted .smaller}
+
+```{r}
+#| label: prediction-bands
+#| include: false
+
+grid <- tibble(democracy = seq(0, 100, by = 2))
+grid_epred <- posterior_epred(fit, newdata = grid)
+set.seed(2026)
+grid_predict <- posterior_predict(fit, newdata = grid)
+
+bands <- grid |>
+  mutate(
+    ep_lo = apply(grid_epred, 2, quantile, probs = 0.05),
+    ep_hi = apply(grid_epred, 2, quantile, probs = 0.95),
+    pr_lo = apply(grid_predict, 2, quantile, probs = 0.05),
+    pr_hi = apply(grid_predict, 2, quantile, probs = 0.95),
+    mid = apply(grid_epred, 2, median)
+  )
+```
+
+::: notes
+The narrow band is estimation uncertainty about the average.
+The wide band adds sigma, the fundamental uncertainty of single countries.
+Russia's actual integrity sits inside its predicted interval.
+Then point at the top right: the band runs past 100, which step 8 picks up.
+:::
+
+:::: {.columns}
+
+::: {.column width="60%"}
+```{r}
+#| label: fig-predicted
+#| fig-cap: "Expected values (narrow band) and predicted values (wide band), both 90 percent
+#|   intervals. The wide band adds the residual standard deviation, so it shows where single countries
+#|   fall. The dashed line marks the ceiling of the scale."
+#| fig-height: 4
+#| fig-width: 6
+#| dpi: 500
+
+ggplot(bands, aes(x = democracy)) +
+  geom_ribbon(aes(ymin = pr_lo, ymax = pr_hi), fill = col_1, alpha = 0.2) +
+  geom_ribbon(aes(ymin = ep_lo, ymax = ep_hi), fill = col_2, alpha = 0.5) +
+  geom_line(aes(y = mid), colour = col_2, linewidth = 1) +
+  geom_point(
+    data = vdem,
+    aes(y = integrity),
+    colour = col_1,
+    alpha = 0.5,
+    size = 1.2
+  ) +
+  geom_hline(yintercept = 100, linetype = "dashed", colour = "grey50") +
+  theme_classic() +
+  labs(
+    x = "Electoral democracy",
+    y = "Physical integrity",
+    title = "The average and the single country"
+  )
+```
+:::
+
+::: {.column width="40%"}
+One new country with **Russia's** score: predicted integrity from **`r pr_low[1]` to `r pr_low[3]`** (90 percent).
+Russia itself has `r y_low_obs`.
+
+One new country with **Germany's** score: from **`r pr_high[1]` to `r pr_high[3]`**.
+
+These intervals add **fundamental uncertainty**: countries differ even at the same democracy score.
+
+**`r pr_high_above` percent** of those predictions lie above 100, a value no country can have.
+:::
+
+::::
+
+## Marginal effect {#sec-marginal .smaller}
+
+::: notes
+In a straight-line model the marginal effect is the same everywhere: it is beta.
+That will not always be so, which is why we build the habit now.
+Contrast once, briefly: the credible interval is a direct probability statement about beta given data and priors.
+A confidence interval does not make that statement.
+:::
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-marginal
+#| fig-cap: "The posterior of the slope, our estimand from step 1. The shaded area is the 90
+#|   percent credible interval."
+#| fig-height: 3.6
+#| fig-width: 5.5
+#| dpi: 500
+
+mcmc_plot(fit, variable = "b_democracy", type = "areas", prob = 0.9) +
+  theme_classic() +
+  labs(
+    x = "Points of integrity per point of democracy",
+    y = NULL,
+    title = "The posterior for the slope"
+  )
+```
+:::
+
+::: {.column width="45%"}
+A one point increase in democracy is, on average, associated with a **`r beta_q[2]` point** increase in physical integrity, with 90 percent probability that the value lies in [`r beta_q[1]`, `r beta_q[3]`].
+
+**`r beta_above_zero` percent** of the posterior lies above zero.
+:::
+
+::::
+
+## Step 8: Limitations {#sec-step8 .smaller}
+
+::: notes
+Ask the room for one limitation before revealing.
+Each bullet maps to an assumption we check next.
+:::
+
+- **One year, many countries:** this compares countries in 2019, it does not show what happens when a country democratises.
+- **Association, not effect:** repression silences elections too, and civil conflict lowers both scores.
+- **Measured with error:** both indices are themselves estimates from expert ratings.
+- **A scale with a ceiling:** the normal likelihood predicts impossible values above 100 (steps 6b and 7).
+
+. . .
+
+::: {.callout-note}
+**Models are always wrong, but some are useful.**
+Naming what this model cannot do is part of the answer, not an apology for it.
+:::
+
+# Checking the assumptions of our model {#sec-assumptions}
+
+```{r}
+#| label: residuals
+#| include: false
+
+model_resid <- vdem |>
+  mutate(
+    fitted = fitted(fit)[, "Estimate"],
+    residual = residuals(fit)[, "Estimate"]
+  )
+
+spread_low <- round(sd(model_resid$residual[model_resid$democracy < 50]))
+spread_high <- round(sd(model_resid$residual[model_resid$democracy >= 75]))
+```
+
+## Six assumptions, one model {#sec-assumptions-overview .smaller}
+
+::: notes
+The format for every slide: what it says, why it matters, why this check, then the room's verdict, then yours.
+Residuals here are the posterior mean residuals of our own fit.
+:::
+
+Back to the [sneak preview](#sec-gm-preview).
+The assumptions protect two different things:
+
+- **The line itself:** if A1 or A2 fails, the line points in the wrong place, and more data will not fix it.
+- **The uncertainty around the line:** if A3, A5 or A6 fails, the line can be fine but our intervals are too wide or too narrow.
+
+. . .
+
+For each assumption we ask:
+
+1. **What it says**, in words and as a formula
+2. **Why it matters**: what goes wrong if it fails
+3. **Why this check**: what in the data could reveal a violation
+4. **Your verdict**, then mine
+
+## A1: Linearity {#sec-a1 .smaller}
+
+::: notes
+Verdict: roughly holds.
+Look for a pattern in how the points leave the line, not for points far from it.
+There is a slight hump: the middle sits above the line, the ends below.
+Fein called this more murder in the middle: partly open regimes face dissent and still repress.
+A quadratic barely improves the fit here.
+:::
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-a1
+#| fig-cap: "The data with the posterior mean line of our model. If the average of integrity
+#|   follows a straight line, the points scatter around the line without a systematic bend."
+#| fig-height: 4
+#| fig-width: 5.5
+#| dpi: 500
+
+ggplot(vdem, aes(x = democracy, y = integrity)) +
+  geom_point(colour = col_1, alpha = 0.6, size = 1.6) +
+  geom_abline(
+    intercept = fixef(fit)["Intercept", "Estimate"],
+    slope = fixef(fit)["democracy", "Estimate"],
+    colour = col_2,
+    linewidth = 1.2
+  ) +
+  theme_classic() +
+  labs(
+    x = "Electoral democracy",
+    y = "Physical integrity",
+    title = "A1: Does a straight line fit?"
+  )
+```
+:::
+
+::: {.column width="45%"}
+**What it says.**
+The average of $y$ is a straight line in $x$: $E(y_i \mid x_i) = \alpha + \beta x_i$.
+
+**Why it matters.**
+If the true average bends, a straight line is wrong about the shape, and $\beta$ averages over slopes that differ along the scale.
+
+**Why this check.**
+Linearity is a claim about $y$ against $x$, so we look at exactly that: the data and the fitted line.
+:::
+
+::::
+
+. . .
+
+**Roughly holds**, with a slight hump in the middle, the "more murder in the middle" pattern [@fein1995more].
+
+## A2: Exogeneity {#sec-a2 .smaller}
+
+::: notes
+No plot on purpose.
+The fitted line is chosen so that the residuals are uncorrelated with x, by construction.
+So the data can never show a violation, however large.
+This is the assumption that matters most for any causal reading.
+:::
+
+**What it says.**
+The error terms are unrelated to the predictor: $E(\varepsilon_i \mid x_i) = 0$.
+
+**Why it matters.**
+If something in $\varepsilon_i$ also moves $x$, the line credits democracy with that something's effect, and $\beta$ is biased.
+
+. . .
+
+**Why there is no check.**
+The fitted line makes the residuals uncorrelated with $x$ by construction, so the data can never reveal a violation.
+We have to argue instead: what hides in our $\varepsilon_i$?
+Civil conflict, threats to the regime, wealth, colonial history, and each of them plausibly moves **democracy** as well.
+
+. . .
+
+::: {.callout-important}
+**No check in the data can confirm A2, and no prior can repair it.**
+It is a question of research design, which is why it belongs to steps 1 and 8.
+:::
+
+## A3: Homoscedasticity {#sec-a3 .smaller}
+
+::: notes
+Verdict: violated, clearly.
+Democracies almost all score near the top, autocracies range from brutal to calm.
+One sigma for all countries is too wide for democracies and too narrow for autocracies.
+:::
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-a3
+#| fig-cap: "Residuals against democracy. With a constant variance the cloud would be a band of
+#|   even height. It narrows sharply from left to right."
+#| fig-height: 4
+#| fig-width: 5.5
+#| dpi: 500
+
+ggplot(model_resid, aes(x = democracy, y = residual)) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_point(colour = col_1, alpha = 0.6, size = 1.6) +
+  theme_classic() +
+  labs(
+    x = "Electoral democracy",
+    y = "Residual",
+    title = "A3: Is the variance the same everywhere?"
+  )
+```
+:::
+
+::: {.column width="45%"}
+**What it says.**
+The error terms have the same variance for every $x$: $\operatorname{Var}(\varepsilon_i \mid x_i) = \sigma^2$.
+
+**Why it matters.**
+Our model has one $\sigma$ for all countries.
+If the true variation differs, predicted intervals are too wide in one place and too narrow in another.
+
+**Why this check.**
+Residuals take the line away, so what is left is the variation around it, and a change in its width becomes visible.
+:::
+
+::::
+
+. . .
+
+**Violated:** the residual standard deviation is `r spread_low` points below democracy 50, and `r spread_high` points above 75.
+
+## A4: No perfect collinearity {#sec-a4 .smaller}
+
+::: notes
+One sentence if behind.
+It becomes interesting only with several predictors.
+:::
+
+**What it says.**
+The predictor actually varies, and with several predictors, no predictor is an exact copy of the others.
+
+**Why it matters.**
+If every country had the same democracy score, the data could not tell us anything about a slope.
+
+**Why this check.**
+We look at the range of the predictor.
+
+. . .
+
+It runs from `r min(vdem$democracy)` to `r max(vdem$democracy)`: **holds, trivially.**
+
+## A5: Independence {#sec-a5 .smaller}
+
+::: notes
+Verdict: doubtful.
+Neighbours share history, alliances and conflicts, so their residuals move together.
+Consequence: 179 countries carry less independent information than 179, and we are more certain than we should be.
+:::
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-a5
+#| fig-cap: "Residuals by world region. With independent error terms every region would centre on
+#|   zero with a similar width. Regions differ in both."
+#| fig-height: 4
+#| fig-width: 5.5
+#| dpi: 500
+
+model_resid |>
+  mutate(region = fct_reorder(region, residual, .fun = sd)) |>
+  ggplot(aes(x = residual, y = region)) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_boxplot(fill = col_1, alpha = 0.3, outlier.colour = col_1) +
+  theme_classic() +
+  labs(
+    x = "Residual",
+    y = NULL,
+    title = "A5: Do neighbours share residuals?"
+  )
+```
+:::
+
+::: {.column width="45%"}
+**What it says.**
+One country's error term tells us nothing about another's.
+
+**Why it matters.**
+The likelihood multiplies one term per country, as if each were new information.
+If neighbours move together, we have less information than we count, and our intervals are too narrow.
+
+**Why this check.**
+Countries in one region share history and shocks, so if residuals cluster anywhere, they cluster by region.
+:::
+
+::::
+
+. . .
+
+**Doubtful:** regions differ in their typical residual and in how widely their residuals vary.
+
+## A6: Normality {#sec-a6 .smaller}
+
+::: notes
+Verdict: violated in the tails.
+Both ends bend away from the line: more large residuals than a normal distribution allows, in both directions.
+Mixing autocracies with large variation and democracies with tiny variation (A3) produces exactly these heavy tails.
+:::
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-a6
+#| fig-cap: "Quantile-quantile plot of the residuals. Normally distributed residuals would lie on
+#|   the orange line. Points bending away at the ends mean the tails are not normal."
+#| fig-height: 4
+#| fig-width: 5.5
+#| dpi: 500
+
+ggplot(model_resid, aes(sample = residual)) +
+  stat_qq(colour = col_1, alpha = 0.6) +
+  stat_qq_line(colour = col_2, linewidth = 1) +
+  theme_classic() +
+  labs(
+    x = "Quantiles of a normal distribution",
+    y = "Quantiles of the residuals",
+    title = "A6: Are the residuals normal?"
+  )
+```
+:::
+
+::: {.column width="45%"}
+**What it says.**
+The error terms are normally distributed, which is our outcome distribution, @eq-likelihood.
+
+**Why it matters.**
+The normal distribution decides how often large deviations happen, so it shapes every predicted value.
+
+**Why this check.**
+A Q-Q plot lines up the sorted residuals against what a normal distribution would give, so any departure shows as a bend.
+:::
+
+::::
+
+. . .
+
+**Violated in the tails:** both ends bend away, the large residuals of the autocracies from A3.
+
+## The verdicts {#sec-assumptions-summary .smaller}
+
+::: notes
+The punchline is the callout.
+A Bayesian model does not escape these assumptions, it states them in the open.
+:::
+
+::: {.small}
+| | Assumption | Our verdict | Where we saw it | What would help |
+|---|---|---|---|---|
+| A1 | Linearity | Roughly holds | Step 2, scatter plot | A curved term |
+| A2 | Exogeneity | Cannot be checked, doubtful | Steps 1 and 8 | Research design |
+| A3 | Homoscedasticity | Violated | Step 2, residuals against democracy | Let $\sigma$ depend on democracy |
+| A4 | No perfect collinearity | Holds | | |
+| A5 | Independence | Doubtful | Residuals by region | Model the regions |
+| A6 | Normality | Violated in the tails | Step 6b, Q-Q plot | Model the variance, or a heavier-tailed likelihood |
+
+: The six assumptions checked on today's model. {#tbl-assumption-verdicts}
+:::
+
+. . .
+
+::: {.callout-important}
+**Bayesian estimation does not make assumptions disappear.**
+It writes them into the model, where we can see them, check them and change them.
+:::
+
+# Wrap-up {#sec-wrap-up}
+
+## Learning goals: achieved? {#sec-goals-achieved .smaller}
+
+::: notes
+Walk down the table and ask for a show of hands on each goal.
+Flag goals 3 and 5 for the exam.
+:::
+
+::: {.xsmall}
+| # | Learning goal | Key answer | Where |
+|:-:|:-----|:---------|:---:|
+| 1 | Frame a regression as estimand, estimator, estimate | The slope $\beta$, Bayes plus MCMC, a posterior distribution | [Recap](#sec-three-e) |
+| 2 | What OLS assumes, and where it meets Bayes | Least squares minimises squared residuals, which the normal likelihood contains. Six assumptions, checked on our model | [Gauss](#sec-gauss), [Assumptions](#sec-assumptions) |
+| 3 | Weakly informative priors, defended | Each prior argued on the 0 to 100 scale and checked by simulating from it | [The model card](#sec-model-card), [Step 4](#sec-step4) |
+| 4 | `brms` samples from the posterior | 4,000 draws are 4,000 plausible lines, better lines appear more often | [One line to many](#sec-one-to-many) |
+| 5 | Quantities of interest | Expected values, predicted values and the marginal effect, all three every time | [Step 7](#sec-step7) |
+
+: The week 8 learning goals, each with its key answer and the part of the session that covers it. {#tbl-goals-achieved}
+:::
+
+## Homework {#sec-homework .smaller}
+
+- `hw-08`: the whole workflow on a second question from the same V-Dem data, due 18 November.
+  Linked from the Schedule.
+- A sample solution is published after the due date.
+
+::: {.callout-important}
+**Individual feedback is only available through the opt-in path.**
+To opt in, add an open-source `license.md` to your submission repo **and** mark your finished homework with a commit whose message is `final submission`.
+:::
+
+## References {#sec-references .smaller}
+
+::: {#refs}
+:::
+
+# Appendix {#sec-appendix}
+
+## Appendix A: least squares is maximum likelihood {#sec-ols-mle .smaller}
+
+::: {.small}
+Take the logarithm of @eq-likelihood-product.
+Products become sums, and the logarithm does not move the maximum:
+
+$$
+\ell(\alpha, \beta, \sigma) = -n \log\left(\sigma\sqrt{2\pi}\right) - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (y_i - \alpha - \beta x_i)^2
+$$ {#eq-log-likelihood}
+
+The first term does not contain $\alpha$ or $\beta$.
+In the second, $\frac{1}{2\sigma^2}$ is a positive constant with respect to $\alpha$ and $\beta$, and it carries a minus sign.
+So making $\ell$ as large as possible means making the sum as small as possible:
+
+$$
+\arg\max_{\alpha, \beta} \, \ell(\alpha, \beta, \sigma) = \arg\min_{\alpha, \beta} \sum_{i=1}^{n} (y_i - \alpha - \beta x_i)^2 = \arg\min_{\alpha, \beta} \, \text{SSR}(\alpha, \beta)
+$$ {#eq-mle-ols}
+
+The maximum likelihood line under normally distributed errors is the least-squares line of @eq-ssr.
+:::
+
+## Appendix A: the closed form {#sec-ols-closed-form .smaller}
+
+::: {.small}
+Setting the derivatives of @eq-ssr with respect to $\alpha$ and $\beta$ to zero and solving gives
+
+$$
+\hat{\beta} = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n} (x_i - \bar{x})^2} = \frac{\operatorname{Cov}(\mathbf{x}, \mathbf{y})}{\operatorname{Var}(\mathbf{x})}, \qquad \hat{\alpha} = \bar{y} - \hat{\beta} \bar{x}
+$$ {#eq-closed-form}
+
+For our data: $\hat{\beta} =$ `r round(ls_beta, 3)` and $\hat{\alpha} =$ `r round(ls_alpha, 2)`.
+The posterior medians are `r round(median(beta_draws), 3)` and `r round(median(as_draws_df(fit)$b_Intercept), 2)`.
+With `r n_countries` countries and weakly informative priors, the likelihood dominates, so the two nearly coincide.
+The difference is in what comes with them: one pair of numbers, or a whole distribution of lines.
+:::
+
+## Appendix B: the likelihood surface {#sec-likelihood-surface .smaller}
+
+```{r}
+#| label: fig-likelihood-surface
+#| fig-cap: "The log-likelihood over intercept and slope, with sigma fixed at its least-squares
+#|   value. Brighter is more likely. The cross marks the least-squares estimate, which sits at
+#|   the top of the surface."
+#| fig-height: 4
+#| dpi: 500
+
+sigma_ls <- sigma(ls_fit)
+
+expand_grid(
+  alpha = seq(ls_alpha - 12, ls_alpha + 12, length.out = 80),
+  beta = seq(ls_beta - 0.2, ls_beta + 0.2, length.out = 80)
+) |>
+  mutate(
+    log_lik = map2_dbl(
+      alpha,
+      beta,
+      \(a, b) {
+        sum(dnorm(
+          vdem$integrity,
+          mean = a + b * vdem$democracy,
+          sd = sigma_ls,
+          log = TRUE
+        ))
+      }
+    )
+  ) |>
+  ggplot(aes(x = beta, y = alpha, fill = log_lik)) +
+  geom_raster() +
+  scale_fill_viridis_c(option = "magma", name = "Log-\nlikelihood") +
+  annotate(
+    "point",
+    x = ls_beta,
+    y = ls_alpha,
+    colour = "white",
+    shape = 4,
+    size = 4,
+    stroke = 2
+  ) +
+  theme_classic() +
+  labs(x = "Slope", y = "Intercept", title = "The most likely line is the least-squares line")
+```

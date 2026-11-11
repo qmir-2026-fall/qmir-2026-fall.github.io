@@ -1,0 +1,180 @@
+country,region,democracy,integrity
+Mexico,"Latin America, Caribbean",68.4,49.7
+Suriname,"Latin America, Caribbean",74.1,84.4
+Sweden,"Western Europe, North America",89.9,98.9
+Switzerland,"Western Europe, North America",90.2,98.1
+Ghana,Sub-Saharan Africa,71.8,91.2
+South Africa,Sub-Saharan Africa,72.7,83.4
+Japan,"Asia, Pacific",83,96.4
+Burma/Myanmar,"Asia, Pacific",42.1,48.3
+Russia,"Eastern Europe, Central Asia",25.9,34.7
+Albania,"Eastern Europe, Central Asia",51.1,95.5
+Egypt,"Middle East, North Africa",17.4,11.4
+Yemen,"Middle East, North Africa",11.7,9.3
+Colombia,"Latin America, Caribbean",65.1,52.8
+Poland,"Eastern Europe, Central Asia",68.2,93
+Brazil,"Latin America, Caribbean",69.1,49.2
+United States of America,"Western Europe, North America",81.8,93.8
+Portugal,"Western Europe, North America",88.6,98.1
+El Salvador,"Latin America, Caribbean",59.9,69.9
+Bangladesh,"Asia, Pacific",25.1,18.7
+Bolivia,"Latin America, Caribbean",45.6,79.2
+Haiti,"Latin America, Caribbean",42.1,74.4
+Honduras,"Latin America, Caribbean",36.8,75
+Mali,Sub-Saharan Africa,51.6,74.4
+Pakistan,"Asia, Pacific",36.8,34.5
+Peru,"Latin America, Caribbean",80.1,91.8
+Senegal,Sub-Saharan Africa,69.7,86.9
+South Sudan,Sub-Saharan Africa,16,22.6
+Sudan,Sub-Saharan Africa,19.3,18.7
+Vietnam,"Asia, Pacific",21.1,54.5
+Afghanistan,"Asia, Pacific",32.9,39.5
+Argentina,"Latin America, Caribbean",77.9,80.6
+Ethiopia,Sub-Saharan Africa,32.9,51.1
+India,"Asia, Pacific",43,56.7
+Kenya,Sub-Saharan Africa,50.1,52.5
+North Korea,"Asia, Pacific",8.3,5
+South Korea,"Asia, Pacific",84.2,96.4
+Kosovo,"Eastern Europe, Central Asia",67.7,91.5
+Lebanon,"Middle East, North Africa",42.9,72.4
+Nigeria,Sub-Saharan Africa,52,25.9
+Philippines,"Asia, Pacific",42.8,30.4
+Tanzania,Sub-Saharan Africa,38.3,73.9
+Taiwan,"Asia, Pacific",83.4,97.1
+Thailand,"Asia, Pacific",20.8,25
+Uganda,Sub-Saharan Africa,28.4,22.7
+Venezuela,"Latin America, Caribbean",20.9,17
+Benin,Sub-Saharan Africa,45.2,89.1
+Bhutan,"Asia, Pacific",59.8,87.3
+Burkina Faso,Sub-Saharan Africa,65.7,85.4
+Cambodia,"Asia, Pacific",19.4,40
+Indonesia,"Asia, Pacific",59.6,75.6
+Mozambique,Sub-Saharan Africa,39.7,43.4
+Nepal,"Asia, Pacific",60.6,78.7
+Nicaragua,"Latin America, Caribbean",21.5,14.3
+Niger,Sub-Saharan Africa,52.8,81.4
+Zambia,Sub-Saharan Africa,35.8,83.7
+Zimbabwe,Sub-Saharan Africa,30.4,6.8
+Guinea,Sub-Saharan Africa,36,46.8
+Ivory Coast,Sub-Saharan Africa,53.4,77
+Mauritania,Sub-Saharan Africa,40.7,75.2
+Canada,"Western Europe, North America",85,96.6
+Australia,"Western Europe, North America",82.5,95.4
+Botswana,Sub-Saharan Africa,65.6,91.3
+Burundi,Sub-Saharan Africa,15.9,2.6
+Cape Verde,Sub-Saharan Africa,79,95.2
+Central African Republic,Sub-Saharan Africa,37.9,29.8
+Chile,"Latin America, Caribbean",82.9,79.7
+Costa Rica,"Latin America, Caribbean",89.3,96.4
+Timor-Leste,"Asia, Pacific",70.3,93.3
+Ecuador,"Latin America, Caribbean",61.7,95.7
+France,"Western Europe, North America",86.6,96.3
+Germany,"Western Europe, North America",87.8,97.4
+Guatemala,"Latin America, Caribbean",59.7,68.9
+Iran,"Middle East, North Africa",18.1,23.9
+Iraq,"Middle East, North Africa",39.3,15.5
+Ireland,"Western Europe, North America",88.7,97.4
+Italy,"Western Europe, North America",85.4,91.7
+Jordan,"Middle East, North Africa",26,72.6
+Latvia,"Eastern Europe, Central Asia",82.6,95.1
+Lesotho,Sub-Saharan Africa,62.1,58.8
+Liberia,Sub-Saharan Africa,62.3,77.1
+Malawi,Sub-Saharan Africa,48,84.9
+Maldives,"Asia, Pacific",57,84.5
+Mongolia,"Eastern Europe, Central Asia",65.3,92.8
+Morocco,"Middle East, North Africa",25.7,82.3
+Netherlands,"Western Europe, North America",86.6,97.7
+Panama,"Latin America, Caribbean",73.1,91.3
+Papua New Guinea,"Asia, Pacific",46.2,79.4
+Qatar,"Middle East, North Africa",4,87.4
+Sierra Leone,Sub-Saharan Africa,55.4,78.1
+Spain,"Western Europe, North America",87.1,97.6
+Syria,"Middle East, North Africa",13.6,1.2
+Tunisia,"Middle East, North Africa",72.5,73.3
+Türkiye,"Middle East, North Africa",28.9,42.4
+Ukraine,"Eastern Europe, Central Asia",52.8,68.7
+United Kingdom,"Western Europe, North America",85.4,91.6
+Uruguay,"Latin America, Caribbean",89.6,98
+Algeria,"Middle East, North Africa",29.3,71.7
+Angola,Sub-Saharan Africa,34.7,62.9
+Armenia,"Eastern Europe, Central Asia",79.6,92.6
+Azerbaijan,"Eastern Europe, Central Asia",19.5,48.6
+Belarus,"Eastern Europe, Central Asia",25.9,77.4
+Cameroon,Sub-Saharan Africa,28,44.5
+Chad,Sub-Saharan Africa,27,17.3
+China,"Asia, Pacific",7.5,42.9
+Democratic Republic of the Congo,Sub-Saharan Africa,34.4,53.9
+Republic of the Congo,Sub-Saharan Africa,25,14
+Djibouti,Sub-Saharan Africa,25.1,40.4
+Dominican Republic,"Latin America, Caribbean",56.9,84
+Eritrea,Sub-Saharan Africa,7,13.2
+Gabon,Sub-Saharan Africa,37.7,92
+The Gambia,Sub-Saharan Africa,52.4,85.5
+Georgia,"Eastern Europe, Central Asia",62.7,90.4
+Guinea-Bissau,Sub-Saharan Africa,52.9,86.9
+Jamaica,"Latin America, Caribbean",81,88.4
+Kazakhstan,"Eastern Europe, Central Asia",23.6,52.5
+Kyrgyzstan,"Eastern Europe, Central Asia",44.1,63.8
+Laos,"Asia, Pacific",12.7,14
+Libya,"Middle East, North Africa",26.3,11.1
+Madagascar,Sub-Saharan Africa,47.8,69.3
+Moldova,"Eastern Europe, Central Asia",58.8,83.6
+Namibia,Sub-Saharan Africa,64.7,90.3
+Palestine/West Bank,"Middle East, North Africa",27.2,73.8
+Rwanda,Sub-Saharan Africa,22.7,23.6
+Somalia,Sub-Saharan Africa,14.8,29.3
+Sri Lanka,"Asia, Pacific",56.4,76.8
+Eswatini,Sub-Saharan Africa,13.3,41
+Tajikistan,"Eastern Europe, Central Asia",16.4,20
+Togo,Sub-Saharan Africa,39.5,50.1
+Trinidad and Tobago,"Latin America, Caribbean",78.7,95
+Turkmenistan,"Eastern Europe, Central Asia",14.9,24.8
+Palestine/Gaza,"Middle East, North Africa",11.7,18.6
+Somaliland,Sub-Saharan Africa,39.5,83.3
+Uzbekistan,"Eastern Europe, Central Asia",20.3,49.1
+Austria,"Western Europe, North America",86.2,96.8
+Bahrain,"Middle East, North Africa",13.2,34.7
+Barbados,"Latin America, Caribbean",79.2,90.4
+Belgium,"Western Europe, North America",90.1,98.1
+Bosnia and Herzegovina,"Eastern Europe, Central Asia",51.5,84.5
+Bulgaria,"Eastern Europe, Central Asia",60.9,89.4
+Comoros,Sub-Saharan Africa,30.5,45.4
+Croatia,"Eastern Europe, Central Asia",73.4,93.6
+Cuba,"Latin America, Caribbean",18.1,51.7
+Cyprus,"Western Europe, North America",84,96.3
+Czechia,"Eastern Europe, Central Asia",80,97.9
+Denmark,"Western Europe, North America",91.6,97
+Equatorial Guinea,Sub-Saharan Africa,17.8,18.7
+Estonia,"Eastern Europe, Central Asia",89.8,97.5
+Fiji,"Asia, Pacific",39.1,79.1
+Finland,"Western Europe, North America",88.1,98.7
+Greece,"Western Europe, North America",86.4,96.5
+Guyana,"Latin America, Caribbean",64,84.6
+Hong Kong,"Asia, Pacific",30,77.5
+Iceland,"Western Europe, North America",85.9,98.9
+Israel,"Middle East, North Africa",70.8,86.7
+Kuwait,"Middle East, North Africa",32.3,71.3
+Lithuania,"Eastern Europe, Central Asia",81.7,97.5
+Luxembourg,"Western Europe, North America",87.2,96.1
+North Macedonia,"Eastern Europe, Central Asia",60.2,88.2
+Malaysia,"Asia, Pacific",47,79.5
+Malta,"Western Europe, North America",76.7,82.6
+Mauritius,Sub-Saharan Africa,69.4,90.3
+Montenegro,"Eastern Europe, Central Asia",48.3,86.7
+New Zealand,"Western Europe, North America",88.5,98.6
+Norway,"Western Europe, North America",88.9,98.8
+Oman,"Middle East, North Africa",17.6,71.1
+Paraguay,"Latin America, Caribbean",58.5,89.8
+Romania,"Eastern Europe, Central Asia",75,96.5
+Sao Tome and Principe,Sub-Saharan Africa,67,95.3
+Saudi Arabia,"Middle East, North Africa",1.5,20.9
+Serbia,"Eastern Europe, Central Asia",36.5,85.2
+Seychelles,Sub-Saharan Africa,62.1,86.7
+Singapore,"Asia, Pacific",40.3,93.2
+Slovakia,"Eastern Europe, Central Asia",84.1,89.1
+Slovenia,"Eastern Europe, Central Asia",81.4,94.8
+Solomon Islands,"Asia, Pacific",65.6,91.1
+Vanuatu,"Asia, Pacific",77.9,93.6
+United Arab Emirates,"Middle East, North Africa",10.2,74.2
+Hungary,"Eastern Europe, Central Asia",46.6,95.8
+Zanzibar,Sub-Saharan Africa,27.2,71.5

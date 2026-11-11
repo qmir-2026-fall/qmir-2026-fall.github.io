@@ -1,0 +1,519 @@
+---
+title: "Homework 08: Bivariate Bayesian linear regression"
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+<!-- STUDENT-FACING STARTER. No solution content here. Files named solution.* are stripped on
+     release, but this file ships as-is, so keep it clean.
+
+     Structure: one section per step of the 8-step workflow, then a final task that defends
+     the Gauss-Markov assumptions. The helpers in the setup chunk draw the harder plots, so
+     students write short code and spend their effort on predicting and explaining. -->
+
+```{r}
+#| label: setup
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(brms) # Bayesian regression via Stan
+
+# Shared course palette, the same as on the slides.
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+
+set.seed(2026)
+
+# ---------------------------------------------------------------------------
+# Helper functions. You only change their arguments, you never edit them.
+# ---------------------------------------------------------------------------
+
+# Step 4: lines implied by normal priors on the intercept and the slope.
+plot_prior_lines <- function(
+  alpha_mean,
+  alpha_sd,
+  beta_mean,
+  beta_sd,
+  n_lines = 100
+) {
+  tibble(
+    draw = 1:n_lines,
+    alpha = rnorm(n_lines, mean = alpha_mean, sd = alpha_sd),
+    beta = rnorm(n_lines, mean = beta_mean, sd = beta_sd)
+  ) |>
+    expand_grid(gov_effectiveness = c(-3, 3)) |>
+    mutate(fdi_pct_gdp = alpha + beta * gov_effectiveness) |>
+    ggplot(aes(x = gov_effectiveness, y = fdi_pct_gdp, group = draw)) +
+    geom_line(colour = col_3, alpha = 0.3) +
+    theme_classic() +
+    labs(
+      x = "Government effectiveness (standardised)",
+      y = "FDI inflows (% of GDP)",
+      title = "Lines our priors consider possible"
+    )
+}
+
+# Step 7: median and 90 percent interval, one row per column of draws.
+summarise_90 <- function(draws) {
+  draws <- as.matrix(draws)
+  tibble(
+    lower = apply(draws, 2, quantile, probs = 0.05),
+    median = apply(draws, 2, median),
+    upper = apply(draws, 2, quantile, probs = 0.95)
+  )
+}
+
+# Step 7: expected values (narrow band) and predicted values (wide band).
+plot_expected_predicted <- function(fit, data) {
+  grid <- tibble(gov_effectiveness = seq(-3, 3, by = 0.1))
+  expected <- summarise_90(posterior_epred(fit, newdata = grid))
+  predicted <- summarise_90(posterior_predict(fit, newdata = grid))
+  bands <- grid |>
+    mutate(
+      ep_lower = expected$lower,
+      ep_median = expected$median,
+      ep_upper = expected$upper,
+      pr_lower = predicted$lower,
+      pr_upper = predicted$upper
+    )
+  ggplot(bands, aes(x = gov_effectiveness)) +
+    geom_ribbon(aes(ymin = pr_lower, ymax = pr_upper), fill = col_1, alpha = 0.2) +
+    geom_ribbon(aes(ymin = ep_lower, ymax = ep_upper), fill = col_2, alpha = 0.5) +
+    geom_line(aes(y = ep_median), colour = col_2, linewidth = 1) +
+    geom_point(
+      data = data,
+      aes(y = fdi_pct_gdp),
+      colour = col_1,
+      alpha = 0.5,
+      size = 1.2
+    ) +
+    theme_classic() +
+    labs(
+      x = "Government effectiveness (standardised)",
+      y = "FDI inflows (% of GDP)",
+      title = "Expected values and predicted values, 90 percent"
+    )
+}
+
+# Final task: posterior mean fitted values and residuals added to the data.
+add_residuals <- function(fit, data) {
+  data |>
+    mutate(
+      fitted = fitted(fit)[, "Estimate"],
+      residual = residuals(fit)[, "Estimate"]
+    )
+}
+
+# A1: the data with the posterior mean line.
+plot_gm_line <- function(fit, data) {
+  coefs <- fixef(fit)[, "Estimate"]
+  ggplot(data, aes(x = gov_effectiveness, y = fdi_pct_gdp)) +
+    geom_point(colour = col_1, alpha = 0.6, size = 1.6) +
+    geom_abline(
+      intercept = coefs[1],
+      slope = coefs[2],
+      colour = col_2,
+      linewidth = 1.2
+    ) +
+    theme_classic() +
+    labs(
+      x = "Government effectiveness (standardised)",
+      y = "FDI inflows (% of GDP)",
+      title = "A1: Does a straight line fit?"
+    )
+}
+
+# A3: residuals against the predictor.
+plot_resid_x <- function(fit, data) {
+  add_residuals(fit, data) |>
+    ggplot(aes(x = gov_effectiveness, y = residual)) +
+    geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
+    geom_point(colour = col_1, alpha = 0.6, size = 1.6) +
+    theme_classic() +
+    labs(
+      x = "Government effectiveness (standardised)",
+      y = "Residual",
+      title = "A3: Is the variance the same everywhere?"
+    )
+}
+
+# A5: residuals by world region.
+plot_resid_group <- function(fit, data) {
+  add_residuals(fit, data) |>
+    ggplot(aes(x = residual, y = region)) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
+    geom_boxplot(fill = col_1, alpha = 0.3, outlier.colour = col_1) +
+    theme_classic() +
+    labs(x = "Residual", y = NULL, title = "A5: Do neighbours share residuals?")
+}
+
+# A6: quantile-quantile plot of the residuals.
+plot_resid_qq <- function(fit, data) {
+  add_residuals(fit, data) |>
+    ggplot(aes(sample = residual)) +
+    stat_qq(colour = col_1, alpha = 0.6) +
+    stat_qq_line(colour = col_2, linewidth = 1) +
+    theme_classic() +
+    labs(
+      x = "Quantiles of a normal distribution",
+      y = "Quantiles of the residuals",
+      title = "A6: Are the residuals normal?"
+    )
+}
+```
+
+# The setting {#sec-setting}
+
+Governments compete for foreign direct investment (FDI), and many international organisations advise them that good governance attracts it.
+In this homework you ask whether that is what the data show.
+
+The file `data/fdi_governance.csv` holds 180 countries, described in @tbl-variables.
+
+| Variable | Description |
+|---|---|
+| `country_id` | Country identifier, C001 to C180 |
+| `region` | World region (World Bank codes, such as EAP for East Asia and Pacific) |
+| `gov_effectiveness` | Government effectiveness, standardised to mean 0 and standard deviation 1, higher is better |
+| `fdi_pct_gdp` | Net FDI inflows as a percentage of GDP, the outcome |
+
+: The variables in `fdi_governance.csv`. {#tbl-variables}
+
+::: {.callout-important}
+**This homework is your first full run of the eight steps, and it is the shape of the exam.**
+Each section is one step of the workflow.
+Before every piece of code, write down what you expect, then run it and explain what you see.
+The data are synthetic, so they describe no real country.
+:::
+
+The week 8 slides are all you need.
+Use AI tools to check your understanding, not to write your answers.
+
+# Step 1: Estimand {#sec-step1}
+
+*Step 1 produces the quantity you want to learn about, stated before any model is fitted.*
+
+1. State the **substantive research question** in one sentence, in plain language.
+
+2. State the **precise version** of the question: what exactly do you want to learn, in units of the two variables?
+   Which symbol in the model will stand for it?
+
+3. Is your estimand a causal effect or an association?
+   Explain why in two or three sentences, and say what kind of data or design would be needed for the other reading.
+
+# Step 2: Data summary {#sec-step2}
+
+*Step 2 describes the data: measurement, coverage and obvious issues.*
+
+1. **Predict first.**
+   Before you look at the data: do you expect the association between governance and FDI to be positive, negative or absent?
+   Why?
+
+2. Load the data with `read_csv(here("data", "fdi_governance.csv"))` and store it as `fdi`.
+   Use `glimpse()` to check the variable types and the number of rows.
+
+```{r}
+#| label: load-data
+
+```
+
+3. Compute the mean, standard deviation, minimum and maximum of `gov_effectiveness` and `fdi_pct_gdp`.
+   What does a value of 0 on `gov_effectiveness` mean, and what does a value of 1 mean?
+
+```{r}
+#| label: descriptives
+
+```
+
+4. Plot a histogram of `fdi_pct_gdp` and a scatter plot of `fdi_pct_gdp` against `gov_effectiveness`.
+   Give each plot a title and axis labels.
+
+```{r}
+#| label: fig-histogram
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.2
+
+```
+
+```{r}
+#| label: fig-scatter
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.6
+
+```
+
+5. **Explain.**
+   Describe the scatter plot in three sentences: the direction, the shape, and how widely the points vary around the trend.
+   Was your prediction right?
+
+# Step 3: Formal model {#sec-step3}
+
+*Step 3 writes down the model: the outcome distribution, the linear predictor, the posterior and the priors.*
+
+1. Write down the **outcome distribution** and the **linear predictor** as two labelled display equations.
+   Then say in words which variable is the **outcome** (dependent) variable and which is the **predictor** (independent) variable, and what each of $\alpha$, $\beta$ and $\sigma$ means for FDI and governance.
+
+2. Write down the **posterior in proportional form**, with your parameters and data columns filled in.
+   How many priors does it tell you to choose, and why exactly that many?
+
+3. **Choose your priors** and write the **complete model**, the card from the week 8 slides: outcome distribution, linear predictor and one prior per parameter, in a single `aligned` display equation with a label.
+
+4. **Defend each prior** on the scale of FDI, in one or two sentences each.
+   Hint: since `gov_effectiveness` has mean 0, what does $\alpha$ describe?
+   And how large a difference in FDI between two countries one standard deviation apart in governance would you find surprising?
+
+# Step 4: Prior predictive check {#sec-step4}
+
+*Step 4 simulates from the priors and checks that they imply plausible data.*
+
+1. **Predict first.**
+   Before you draw them: what will the lines implied by your priors look like?
+   Roughly where will most of them sit, and how steep will the steepest be?
+
+2. What range of FDI, in percent of GDP, do you consider plausible for a country?
+   Justify the range in one or two sentences.
+
+3. Call `plot_prior_lines()` with the means and standard deviations of your priors on $\alpha$ and $\beta$, for example `plot_prior_lines(alpha_mean = 0, alpha_sd = 1, beta_mean = 0, beta_sd = 1)` with your own numbers.
+
+```{r}
+#| label: fig-prior-lines
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.2
+
+```
+
+4. **Explain.**
+   Compare the lines with your plausible range.
+   Are your priors too narrow, too wide, or about right?
+   If you change them, update your card in @sec-step3 and say here what you changed and why.
+
+# Step 5: Fit {#sec-step5}
+
+*Step 5 estimates the model with `brms`.*
+
+1. Fit your model with `brm()` and store it as `fit`.
+   Use the formula `fdi_pct_gdp ~ 0 + Intercept + gov_effectiveness` as on the week 8 slides, `family = gaussian()`, an explicit `prior =` that matches your card exactly, `chains = 4`, `iter = 2000`, `seed = 2026` and `file = here("hw-08-fit")`.
+
+::: {.callout-note}
+**The first fit takes a minute or two.**
+`brms` translates your model into Stan and compiles it into a program for your computer before it samples.
+The `file` argument saves the result, so later renders load it instantly.
+If the compilation fails with an error, email me the full error message.
+:::
+
+```{r}
+#| label: fit-model
+#| output: false
+
+```
+
+2. In your own words: what does `fit` contain, and why is that more than one regression line?
+
+# Step 6: Diagnostics and posterior predictive check {#sec-step6}
+
+## Step 6a: MCMC diagnostics {#sec-step6a}
+
+*Step 6a asks whether the sampling worked: R-hat, effective sample size, divergences and trace plots.*
+
+1. Print `summary(fit)` and draw the trace plots with `mcmc_plot(fit, type = "trace")`.
+
+```{r}
+#| label: model-summary
+
+```
+
+```{r}
+#| label: fig-trace
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.2
+
+```
+
+2. Go through the rules from week 7: R-hat, bulk and tail effective sample size, divergent transitions and the trace plots.
+   For each, give the value you see and what it tells you.
+   Then write one sentence that claims exactly what these diagnostics support, and no more.
+
+## Step 6b: Posterior predictive check {#sec-step6b}
+
+*Step 6b asks whether the fitted model reproduces key features of the data.*
+
+1. **Predict first.**
+   Your model generates data from a normal distribution.
+   Looking back at your histogram in @sec-step2, where do you expect generated data and observed data to disagree, if anywhere?
+
+2. Run `pp_check(fit, ndraws = 50)`.
+
+```{r}
+#| label: fig-ppc
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.2
+
+```
+
+3. **Explain.**
+   What do the dark line and the pale lines show?
+   Where do they agree and where do they disagree, and what would a disagreement mean for your model?
+
+# Step 7: Interpretation {#sec-step7}
+
+*Step 7 answers the estimand on the outcome scale, with uncertainty, in three ways.*
+
+1. **Expected values.**
+   Create `new_countries <- tibble(gov_effectiveness = c(-1, 1))`, one country one standard deviation below and one above average governance.
+   Compute `posterior_epred(fit, newdata = new_countries)` and summarise it with `summarise_90()`.
+   Report both expected values with their 90 percent intervals in a sentence.
+
+```{r}
+#| label: expected-values
+
+```
+
+2. **Predicted values.**
+   Do the same with `posterior_predict()` instead, then draw `plot_expected_predicted(fit, fdi)`.
+
+```{r}
+#| label: predicted-values
+
+```
+
+```{r}
+#| label: fig-expected-predicted
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.6
+
+```
+
+3. **Explain.**
+   Why are the predicted intervals so much wider than the expected ones?
+   Use the terms **estimation (systematic) uncertainty** and **fundamental (stochastic) uncertainty** in your answer.
+
+4. **Marginal effect.**
+   Summarise the posterior of $\beta$ with `summarise_90(as_draws_df(fit)$b_gov_effectiveness)`, and compute the share of the posterior above zero.
+   Then report it in one sentence of the form: "A one unit increase in ... is on average associated with a ... point increase in ..., with 90 percent probability that the value lies in [..., ...]."
+
+```{r}
+#| label: marginal-effect
+
+```
+
+5. Write a short paragraph for a policy adviser who has never seen a posterior distribution: what does your analysis say about governance and FDI, and how sure can they be?
+
+# Step 8: Limitations {#sec-step8}
+
+*Step 8 states what the analysis can and cannot support.*
+
+1. Name three limitations of this analysis.
+   For each, say why it limits the conclusion you wrote in @sec-step7.
+
+# Final task: defend the Gauss-Markov assumptions {#sec-gauss-markov}
+
+For each of the six assumptions from the week 8 slides, answer four things, in this order:
+
+- **What it says**, in your own words, with the formal statement.
+- **Why it matters** for your answer: would a violation bias the line itself, or make your uncertainty wrong?
+- **Predict, then check:** write down what you expect, then run the check and describe what you see.
+- **Verdict:** say whether the assumption holds for your model, then defend it, or concede it and say what that means for your conclusion.
+
+## A1: Linearity {#sec-a1}
+
+1. Answer the four points.
+   The check is `plot_gm_line(fit, fdi)`.
+
+```{r}
+#| label: fig-a1
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.2
+
+```
+
+## A2: Exogeneity {#sec-a2}
+
+1. Answer the four points.
+   There is no plot for A2, so explain why the data cannot check it.
+   Instead, argue: name one concrete variable that could hide in the error term and also move government effectiveness, and tell one story in which FDI shapes governance rather than the other way round.
+
+## A3: Homoscedasticity {#sec-a3}
+
+1. Answer the four points.
+   The check is `plot_resid_x(fit, fdi)`.
+
+```{r}
+#| label: fig-a3
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.2
+
+```
+
+## A4: No perfect collinearity {#sec-a4}
+
+1. Answer the four points.
+   The check is the range of `gov_effectiveness` from @sec-step2.
+
+## A5: Independence {#sec-a5}
+
+1. Answer the four points.
+   The check is `plot_resid_group(fit, fdi)`.
+   Why is the region the natural grouping to look at?
+
+```{r}
+#| label: fig-a5
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.2
+
+```
+
+## A6: Normality {#sec-a6}
+
+1. Answer the four points.
+   The check is `plot_resid_qq(fit, fdi)`.
+   Which earlier step already told you something about this assumption?
+
+```{r}
+#| label: fig-a6
+#| fig-cap: "Replace with a caption a reader understands without the text."
+#| fig-height: 3.2
+
+```
+
+## Your verdicts {#sec-verdicts}
+
+1. Summarise your six verdicts in a table with the columns Assumption, Verdict, and What it means for my conclusion.
+
+2. Which assumption most threatens a causal reading of $\beta$, and why?
+
+# Reflection {#sec-reflection .unnumbered}
+
+Which of the eight steps was the hardest to do on your own, and why?
+
+# Session info and execution time {#sec-session .unnumbered}
+
+```{r}
+#| label: session-info
+
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+
+end_time <- Sys.time()
+cat(
+  "Total execution time:",
+  round(difftime(end_time, start_time, units = "mins"), 1),
+  "minutes\n"
+)
+```

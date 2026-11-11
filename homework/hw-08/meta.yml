@@ -1,0 +1,11 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Released on the week 08 session date, due with the usual +7 day offset from course.yml.
+slug: hw-08
+week: "08"
+title: "Homework 08: Bivariate Bayesian linear regression"
+released: 2026-11-11
+due: 2026-11-18
+# The first homework that runs all eight workflow steps, plus a Gauss-Markov defence.
+steps: [1, 2, 3, 4, 5, 6, 7, 8]
+data:
+  - fdi_governance.csv
