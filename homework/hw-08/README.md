@@ -2,6 +2,15 @@
 
 <!-- This README ships to students in the distribution repo. Keep the policy banner verbatim. -->
 
+## Before you start
+
+The current `rstan` on CRAN cannot compile models, so update it once before you use `brms`.
+Run this line in the R Console, then restart R:
+
+```r
+install.packages("rstan", repos = c("https://stan-dev.r-universe.dev", "https://cloud.r-project.org"))
+```
+
 ## The task
 
 Open `hw-08.qmd` and work through it, as a follow-up to week 8.

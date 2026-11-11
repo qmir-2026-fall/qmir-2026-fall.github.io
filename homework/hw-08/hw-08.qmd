@@ -21,6 +21,25 @@ execute:
      the Gauss-Markov assumptions. The helpers in the setup chunk draw the harder plots, so
      students write short code and spend their effort on predicting and explaining. -->
 
+::: {.callout-important}
+**Before you use `brms`, update `rstan` once.**
+The current `rstan` on CRAN cannot compile models, so your first fit would fail.
+Run the code below once in the Console, then restart R (Session, Restart R) before you run or render anything in this file.
+:::
+
+```{r}
+#| label: install-rstan
+#| eval: false
+
+install.packages(
+  "rstan",
+  repos = c(
+    "https://stan-dev.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
+```
+
 ```{r}
 #| label: setup
 
@@ -312,7 +331,8 @@ Use AI tools to check your understanding, not to write your answers.
 **The first fit takes a minute or two.**
 `brms` translates your model into Stan and compiles it into a program for your computer before it samples.
 The `file` argument saves the result, so later renders load it instantly.
-If the compilation fails with an error, email me the full error message.
+If the compilation fails, first check that you ran the `rstan` update at the top of this file and restarted R.
+If it still fails, email me the full error message.
 :::
 
 ```{r}

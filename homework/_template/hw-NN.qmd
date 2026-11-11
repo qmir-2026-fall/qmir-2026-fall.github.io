@@ -44,6 +44,25 @@ set.seed(2026)
 
 # Task {#sec-task}
 
+::: {.callout-important}
+**Before you use `brms`, update `rstan` once.**
+The current `rstan` on CRAN cannot compile models, so your first fit would fail.
+Run the code below once in the Console, then restart R (Session, Restart R) before you run or render anything in this file.
+:::
+
+```{r}
+#| label: install-rstan
+#| eval: false
+
+install.packages(
+  "rstan",
+  repos = c(
+    "https://stan-dev.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
+```
+
 <Restate the question. Point students at the relevant steps of the 8-step workflow.>
 
 # Your analysis {#sec-analysis}
