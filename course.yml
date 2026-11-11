@@ -31,7 +31,7 @@ course:
   ects: 6
   ects_hours: 30 # hours of student workload one ECTS credit represents
   # The catalogue's own nominal budget for a 6 ECTS course. Our real contact time is
-  # lower (13 x 90 min = 19.5 h), so the syllabus prints both and explains the gap.
+  # lower (12 x 90 min = 18 h), so the syllabus prints both and explains the gap.
   nominal_contact_hours: 30
   nominal_self_study_hours: 150
 
@@ -47,8 +47,10 @@ github:
 
 # One session per week (.claude/course-design.md: no more Mon/Thu doubling).
 sessions:
-  # 13 TAUGHT sessions across 14 calendar dates, 9 Sep to 9 Dec 2026.
-  count: 13
+  # 12 TAUGHT sessions across 14 calendar dates, 9 Sep to 9 Dec 2026.
+  # 4 Nov was cancelled at short notice, and the multilevel session was dropped so the
+  # term still ends on 9 Dec (decided 2026-11-11).
+  count: 12
   weekday: Wednesday
   # Length of one session, in minutes. Feeds the contact-time half of workload().
   minutes: 90
@@ -60,18 +62,19 @@ sessions:
   # "no session" row, so a gap in the dates is explained rather than mysterious.
   skip_dates:
     - 2026-10-28 # instructor at a congress
+    - 2026-11-04 # instructor ill
   time: "13:45-15:15"
   room: "A5, 6 -- C 108"
   office_hours: "By appointment. Please email me to arrange a meeting (in person or online). I aim to reply within 24 hours."
 
 homework:
   # ONE homework per session, in every session except the first and the last. Session 1 is
-  # orientation and session 13 is synthesis plus the exam briefing, so neither sets work.
-  # That makes the window weeks 2 to 12, and the count is last_week - first_week + 1 = 11.
+  # orientation and session 12 is synthesis plus the exam briefing, so neither sets work.
+  # That makes the window weeks 2 to 11, and the count is last_week - first_week + 1 = 10.
   # Keep the three in step: syllabus.qmd and schedule.qmd read all of them.
   first_week: 2
-  last_week: 12
-  count: 11
+  last_week: 11
+  count: 10
   # Default offset from the session for a homework's due date, in days.
   due_offset_days: 7
 
@@ -105,7 +108,7 @@ blocks:
     to: 7
   - name: "Applied modelling"
     from: 8
-    to: 13
+    to: 12
 
 # Planned topic per week. The deck's OWN YAML title wins once website/slides/weekNN.qmd
 # exists -- that is the E040 contract in .claude/slides.md. This list is the forward plan
@@ -117,7 +120,7 @@ blocks:
 #   content:  one or two sentences on what the session actually covers
 #
 # Goals are carried over from the 2026 spring decks (qmir-2026/.../slides/weekNN.qmd)
-# and re-cut to the session structure of this term. Sessions 8 and 13 carry classical
+# and re-cut to the session structure of this term. Sessions 8 and 12 carry classical
 # statistics deliberately, as CONTRAST rather than substitution (.claude/course-design.md).
 weeks:
   - week: 1
@@ -270,17 +273,6 @@ weeks:
       - "Say how the probit link differs from the logit, and when the choice matters."
       - "Assess model quality with posterior predictive checks, a confusion matrix, ROC and AUC, and compare models with LOO."
   - week: 12
-    topic: "Introduction to multilevel models"
-    steps: [3, 5, 7]
-    content: |
-      Data with structure: candidates in parties, regions in countries, years in states.
-      A primer and your departure point for later work, and the one session that is not on the
-      take-home exam.
-    goals:
-      - "Identify hierarchical data and explain why treating grouped observations as independent understates uncertainty."
-      - "Describe the three-point spectrum of complete pooling, no pooling and partial pooling, and say when each is right."
-      - "Read the `(1 | group)` formula in `brms` and interpret the key output quantities."
-  - week: 13
     topic: "Beyond the course: applying what you have learned"
     steps: [1, 2, 3, 4, 5, 6, 7, 8]
     content: |

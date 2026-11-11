@@ -204,7 +204,6 @@ Test that before the deadline, not after.
 :::
 
 Every tool and workflow the exam needs is taught during the course.
-Session 12, the multilevel primer, is the one exception: it is not examined.
 
 ### Registration and withdrawal {#sec-registration}
 
@@ -399,7 +398,7 @@ The **take-home exam is exactly this route**, run end to end on a dataset you me
 That is expected, and it is the honest starting point.
 Estimand, prior predictive check, R-hat: learning what these are, why each step exists, and what goes wrong when you skip one, is what the term is for.
 You see the whole route in session 1, before you can walk any of it, so that every later session has somewhere to attach itself.
-By session 13 you will have run all eight steps yourself, more than once.
+By session `r cfg$sessions$count` you will have run all eight steps yourself, more than once.
 
 The [Glossary](glossary.qmd) holds the short version of every term, and each session's slides hold the long version.
 

@@ -37,7 +37,7 @@ Spring's first homework, `hw-w3`, was the reproducible-workflow assignment, whic
 | `hw-09` | `w09/` | Starter, `income_education.csv`. |
 | `hw-10` | `w10/` | Starter, `eu_growth.csv`. The `w10-thu` copy was identical and was skipped. |
 | `hw-11` | `w11/` | README, `BrexitVote.csv`, the Hobolt paper, a week-local `references.bib`. |
-| `hw-12` | `w12/` | Starter (the course-reflection questionnaire). |
+| ~~`hw-12`~~ | `w12/` | Dropped 2026-11-11 with the multilevel session (the term has 12 sessions, so no homework after week 11). |
 
 Sample solutions went to the **private `solutions/` submodule** as `solutions/hw-NN/solution.qmd`,
 renamed from six different spring names. Spring had solutions for six of the ten weeks:
@@ -54,10 +54,10 @@ This repository is public and its history is permanent.
 - **No starter for `hw-05`.** That is by design in the spring source: the README tells students
   to build `hw05.qmd` from scratch. Decide whether to keep that.
 - **No starter for `hw-11`.** The README *is* the assignment there.
-- **No README for `hw-03`, `hw-06`, `hw-07`, `hw-08`, `hw-09`, `hw-10`, `hw-12`.** A placeholder
+- **No README for `hw-03`, `hw-06`, `hw-07`, `hw-08`, `hw-09`, `hw-10`.** A placeholder
   carrying the verbatim feedback banner is in place, and the brief still has to be written out of
   the starter.
-- **No sample solution for `hw-02`, `hw-03`, `hw-06`, `hw-07`, `hw-12`.**
+- **No sample solution for `hw-02`, `hw-03`, `hw-06`, `hw-07`.**
 - `hw-07` is due 2026-10-28, which is the cancelled session date. The offset is the usual seven
   days, so move it if that reads badly on the schedule.
 - The four READMEs that came from spring (`hw-02`, `hw-04`, `hw-05`, `hw-11`) carry their own

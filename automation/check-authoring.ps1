@@ -535,8 +535,9 @@ if ($Week) {
   $targets = Get-ChildItem $RepoRoot -Recurse -Include *.qmd, *.md -File
 }
 
-# Never lint build output, caches, the private submodule, vendored files, or staged
-# material ported from the 2026 spring course.
+# Never lint build output, caches, the private submodule, vendored files, the git-ignored
+# feedback scratch dir (student submissions, not ours to style), or staged material ported
+# from the 2026 spring course.
 #
 # The two staging paths are deliberate holes, not oversights (.claude/workflow.md). A ported
 # deck sits at website/slides/_weekNN.qmd and a ported homework at homework/_import/hw-NN/
@@ -553,6 +554,7 @@ $targets = $targets | Where-Object {
   ($p -notmatch '_cache/') -and
   ($p -notmatch '_files/') -and
   ($p -notmatch '/solutions/') -and
+  ($p -notmatch '/automation/ai-feedback/_work/') -and
   ($p -notmatch '/homework/_import/') -and
   ($p -notmatch '/website/slides/_week\d+\.qmd$')
 }

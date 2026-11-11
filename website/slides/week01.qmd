@@ -786,7 +786,7 @@ There is no second channel, no handouts and no shared drive.
 
 ## Homework {#sec-homework .smaller}
 
-- Eleven assignments, one in every session except this one and the last.
+- Ten assignments, one in every session except this one and the last.
 - Each opens when its session ends and is due seven days later.
 - The schedule links a template repo.
   Create yours in the **`qmir-2026-fall`** organisation, named exactly `hw-NN-<username>`.

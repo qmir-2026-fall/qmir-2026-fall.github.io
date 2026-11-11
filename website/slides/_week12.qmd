@@ -1,5 +1,5 @@
 ---
-title: "Week 12: Introduction to multilevel models"
+title: "Week 12: Beyond the course: applying what you have learned"
 ---
 
 <!-- PORTED FROM THE 2026 SPRING COURSE, NOT YET CONVERTED.
@@ -25,802 +25,1092 @@ title: "Week 12: Introduction to multilevel models"
 start_time <- Sys.time()
 
 library(tidyverse) # wrangling and visualization
-library(brms) # Bayesian multilevel models via Stan
-library(bayesplot) # MCMC diagnostics
-library(patchwork) # combine ggplot panels
-library(modelsummary) # regression tables
-library(ggpubr) # ggpubr theme
+library(ggpubr) # nice theme
 
 col_1 <- "steelblue"
 col_2 <- "#E07B39"
 col_3 <- "#7B3F9E"
 col_4 <- "goldenrod3"
-chain_cols <- c(col_1, col_2, col_3, col_4)
-
-# ─── Synthetic cross-national survey ───────────────────────────────────────
-# 20 countries, n = 837. Outcome: EU support (0–10). Predictor: income (std).
-# Unequal group sizes (15–75) ensure shrinkage is visible for small groups.
-# True DGP: α_g ~ N(5, 1.5), β_income = 0.3, σ = 1.0
-set.seed(2026)
-n_countries <- 20
-group_sizes <- c(
-  15,
-  18,
-  20,
-  22,
-  25,
-  28,
-  30,
-  32,
-  35,
-  38,
-  40,
-  45,
-  50,
-  52,
-  55,
-  60,
-  62,
-  65,
-  70,
-  75
-)
-n <- sum(group_sizes)
-country_id <- rep(seq_len(n_countries), times = group_sizes)
-country_lab <- paste0("C", str_pad(seq_len(n_countries), 2, pad = "0"))
-alpha_true <- rnorm(n_countries, mean = 5, sd = 1.5)
-income <- rnorm(n)
-eu_support <- alpha_true[country_id] + 0.3 * income + rnorm(n, 0, 1.0)
-eu_support <- pmin(pmax(eu_support, 0), 10)
-df <- tibble(eu_support, income, country_id, country = country_lab[country_id])
-rm(alpha_true)
-
-# ─── Pre-fit models ────────────────────────────────────────────────────────
-
-# Complete pooling: ignore country structure
-fit_pooled <- brm(
-  eu_support ~ income,
-  data = df,
-  family = gaussian(),
-  prior = c(
-    prior(normal(5, 2), class = "Intercept"),
-    prior(normal(0, 1), class = "b"),
-    prior(exponential(1), class = "sigma")
-  ),
-  chains = 4,
-  iter = 2000,
-  warmup = 1000,
-  seed = 2026
-)
-
-# Partial pooling: varying intercepts by country
-fit_partial <- brm(
-  eu_support ~ income + (1 | country),
-  data = df,
-  family = gaussian(),
-  prior = c(
-    prior(normal(5, 2), class = "Intercept"),
-    prior(normal(0, 1), class = "b"),
-    prior(exponential(1), class = "sigma"),
-    prior(exponential(1), class = "sd")
-  ),
-  chains = 4,
-  iter = 2000,
-  warmup = 1000,
-  seed = 2026
-)
-
-# No pooling: lm with country dummies (fast, illustrative)
-fit_no_pool <- lm(eu_support ~ income + factor(country), data = df)
 ```
 
 ## QMIR 2026 {#sec-title}
 
 ::: notes
-- Opening.
-- Arc: conceptual primer on hierarchical data and partial pooling (~60 min), then brms peek and literature vocabulary connection (~30 min).
-- Core message: this is a departure point, not a destination. Not on the exam.
-- The shrinkage plot is the click moment of the session — pace toward it.
+- Welcome students back for the wrap-up session.
+- Today is synthesis and outlook, not new methods. Say it clearly and early.
+- Tone: generous, low pressure. They have done the work.
 :::
 
-### Week 12: Multilevel Models & Partial Pooling
+### Week 13: Beyond the Course
 
 ![](./images/uma_palace.png){width="100%"} {{< meta author >}} <a href="https://github.com/dertristan" target="_blank" style="text-decoration: none; margin-left: 10px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"> <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/> </svg> </a> <a href="mailto:tristan.muno@uni-mannheim.de" style="text-decoration: none; margin-left: 5px;"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/> </svg> </a> <br> {{< meta date >}}
 
 ---
 
-## Week 12 Learning Goals {#sec-goals .smaller}
+## Today's Agenda {#sec-agenda .smaller}
 
 ::: notes
-- Read aloud. Three goals map onto the conceptual arc.
-- Goal 1: hierarchical data and the independence assumption.
-- Goal 2: the three-point spectrum — the core content.
-- Goal 3: brms syntax and output reading.
-- State the no-exam status explicitly and early.
+- Preview the four blocks plus the closing slot.
+- Equal weight on each block. Even pacing.
+- Q&A and exam logistics close the session.
 :::
 
-::: {.callout-important style="font-size: 0.80em"}
-**This session is not on the take-home exam.**
-It is a primer — your departure point for using multilevel models in future work.
+Four blocks of roughly equal weight, plus a buffer for questions and exam logistics:
+
+. . .
+
+::: {style="font-size: 0.88em"}
+| Block | Topic |
+|---|---|
+| 1 | Recap of the course |
+| 2 | Reading classical (frequentist) regression tables |
+| 3 | Tooling that makes the code-and-repo grade easy |
+| 4 | AI usage policy for the take-home exam |
+| Close | Exam logistics, thank-you, questions |
 :::
 
 . . .
 
-By the end of today, you should be able to:
-
-1. **Identify hierarchical (nested) data** in IR and EU research and explain why treating grouped observations as independent understates uncertainty
-2. **Describe the three-point spectrum** — complete pooling, no pooling, partial pooling — and articulate when each is the right choice
-3. **Read the `(1 | group)` formula** in `brms` and interpret the key output quantities ($\hat{\tau}$, $\hat{\sigma}$, group-level intercepts)
+::: {.callout-note style="font-size: 0.82em"}
+**No new statistical content today.**
+The job of this session is to consolidate what you already have and hand you a clean runway into the exam.
+:::
 
 ---
 
 ## What This Session Is (and Is Not) {#sec-framing .smaller}
 
 ::: notes
-- Say this explicitly and early. Students coming off Week 11 need to know the register has shifted.
-- "We are not running the 8-step workflow today. No prior-predictive check, no PPC, no LOO comparison."
-- "Think of today as a conceptual map. You are at the edge of what we have covered. The territory ahead is larger."
+- Set expectations. Some students will arrive expecting another methods slide deck.
+- Say it: today is synthesis, outlook, tooling, and exam logistics.
+- Nothing new on the exam. Everything on the exam was already covered.
 :::
 
-**This session deliberately breaks the Week 8–11 pattern:**
+::: {style="font-size: 0.86em"}
+**This session is:**
+
+- A recap that names what you learned and why we taught it this way
+- A literacy slide on reading frequentist regression tables
+- A tooling pitch that lowers exam anxiety
+- A clear policy on AI use during the exam
+:::
 
 . . .
 
-::: {style="font-size: 0.85em"}
-| What we do today | What we skip today |
-|---|---|
-| Hierarchical data intuition | Full 8-step workflow |
-| The three-point spectrum | Prior predictive check |
-| The shrinkage plot | Posterior predictive check |
-| `brms` syntax peek | LOO model comparison |
-| FE vocabulary connection | Varying slopes |
+::: {style="font-size: 0.86em"}
+**This session is not:**
+
+- A new method or model
+- Additional material that you need to study for the exam
+- A test of your endurance
+:::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.80em"}
+You have done the work across twelve weeks.
+Today removes friction so you can write a strong take-home exam.
+:::
+
+# Block 1: Recap {#sec-block1}
+
+## The Arc of the Course {#sec-arc .smaller}
+
+::: notes
+- Walk through the three blocks of the course in plain language.
+- Emphasize the cumulative nature: each block built on the previous one.
+- Make sure students can articulate this arc to a peer who did not take the course.
+:::
+
+The course had three blocks. Each one built on the previous one:
+
+. . .
+
+::: {style="font-size: 0.84em"}
+| Block | Weeks | What you learned |
+|---|---|---|
+| **I. Scientific programming** | 2 to 5 | R, the tidyverse, `ggplot2`, Quarto, Git. Reproducible workflows. |
+| **II. The logic of Bayesian inference** | 6 to 7 | Probability, Bayes' theorem, MCMC, posterior predictive checks. |
+| **III. Applied data analysis** | 8 to 12 | Regression, multivariate, interactions, binary outcomes, multilevel models. |
 :::
 
 . . .
 
 ::: {.callout-note style="font-size: 0.80em"}
-Multilevel models are **not on the take-home exam**.
-This is your departure point, not your destination — the tools and concepts introduced today are ones you will build on in a follow-up methods seminar, thesis work, or applied research.
-:::
-
-# Part 1: Hierarchical Data {#sec-part1}
-
-## Hierarchical Data Is the Rule, Not the Exception {#sec-nested-examples .smaller}
-
-*1.1 What Is Hierarchical Data*
-
-::: notes
-- "Before we can talk about models, we need to see the data structure. Almost every dataset you will touch in IR or EU politics has nested structure."
-- Go through each row with a concrete example. ESS: 30+ countries, respondents per country are not exchangeable with each other nor with respondents from other countries.
-- Emphasize: this is not a niche statistical problem. It is the default shape of comparative politics data.
-:::
-
-Almost every dataset in IR and EU politics has individuals nested within groups:
-
-. . .
-
-::: {style="font-size: 0.80em"}
-| Structure | Individual unit | Group | Example dataset |
-|---|---|---|---|
-| Cross-national surveys | Respondents | Countries | European Social Survey (ESS) |
-| Panel data | Country-years | Countries | V-Dem, World Development Indicators |
-| Parliamentary data | Votes / speeches | Parties | ParlGov, Comparative Manifesto Project |
-| Conflict data | Dyads | Alliances / regions | UCDP, COW |
-| Electoral data | Voters | Districts | CSES |
-:::
-
-. . .
-
-::: {style="font-size: 0.80em"}
-**The pattern is always the same**: lower-level units (respondents, country-years, votes) are nested inside higher-level containers (countries, parties, regions).
-Observations within the same container tend to be **more similar to each other** than to observations in a different container.
+You can now sit down with a dataset, formulate a research question, fit a Bayesian model, check it, and report it.
+That is a real skill.
+You did not have it twelve weeks ago.
 :::
 
 ---
 
-## What "Nested" Looks Like {#sec-nesting-diagram .smaller}
+## The Constant Red Line {#sec-constant-line .smaller}
 
 ::: notes
-- Show the figure. "This is our running example for today: 20 synthetic countries, 837 survey respondents. The outcome is EU support on a 0–10 scale."
-- "Notice two things. First, the orange diamonds show that countries genuinely differ in their average EU support. Second, the strips have very different widths — some countries have 15 respondents, others 75."
-- "These two features — between-group variation and unequal sample sizes — are exactly what make the pooling question interesting."
+- This is the through-line of the entire course. Say it once, point at it, let it sit.
+- Same updating logic across every model. Only the likelihood family changes.
+- Encouragement message: keep thinking in distributions, not in points.
 :::
 
-```{r}
-#| label: fig-nesting
-#| fig-cap: "EU support by country (synthetic cross-national survey, n = 837, 20 countries). Orange diamond = country mean. Dashed line = global mean. Group sizes range from 15 to 75."
-#| fig-height: 4.5
-#| dpi: 500
-df |>
-  mutate(country = fct_reorder(country, eu_support, mean)) |>
-  ggplot(aes(x = country, y = eu_support)) +
-  geom_jitter(width = 0.18, alpha = 0.22, size = 0.8, colour = col_1) +
-  stat_summary(
-    fun = mean,
-    geom = "point",
-    shape = 18,
-    size = 3.2,
-    colour = col_2
-  ) +
-  geom_hline(
-    yintercept = mean(df$eu_support),
-    linetype = "dashed",
-    colour = "gray50"
-  ) +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7.5)) +
-  labs(
-    title = "EU Support by Country: Hierarchical Structure",
-    subtitle = "Orange diamond = country mean. Countries differ; within-country observations cluster.",
-    x = NULL,
-    y = "EU Support (0–10)"
-  )
-```
+Across every model you fit, one relationship was constant:
 
----
-
-## The Independence Assumption Breaks {#sec-independence-breaks .smaller}
-
-*1.2 Why It Matters*
-
-::: notes
-- Callback to Week 8. "We listed four Gauss-Markov assumptions. A4 was independence: the error for observation i tells us nothing about the error for observation j."
-- "With nested data, A4 breaks mechanically. Two respondents from Germany share a common country context — their errors are correlated."
-- "The consequence: if we ignore this and treat all 837 observations as independent, credible intervals will be too narrow. We understate uncertainty."
-- "Intuition: 75 German respondents who share a country context carry less new information than 75 independent draws would. Treating them as independent pretends we have more information than we do."
-- No formal derivation. The intuition is enough.
-:::
-
-**Week 8 — Gauss-Markov Assumption 4 (Independence):**
+. . .
 
 $$
-\text{Cov}(\varepsilon_i, \varepsilon_j) = 0 \quad \text{for all } i \neq j
-$$ {#eq-a4}
+\text{posterior} \propto \text{likelihood} \times \text{prior}
+$$ {#eq-bayes-line}
 
 . . .
 
-With nested data, A4 breaks **mechanically**:
-
-::: {style="font-size: 0.82em"}
-- Two ESS respondents from the same country share a common context — their errors are correlated
-- 75 same-country respondents carry **less** new information than 75 independent draws
+::: {style="font-size: 0.86em"}
+This is not a coincidence of notation.
+It is the operational core of Bayesian inference.
+You start with a prior belief about parameters.
+You observe data.
+You update your belief in proportion to how well each parameter value explains what you saw.
 :::
 
 . . .
 
-**If we ignore the nesting:**
-
-::: {style="font-size: 0.82em"}
-- Credible intervals (and standard errors) are too narrow — we understate uncertainty
-- Estimates of cross-level associations (e.g., does country-level income predict EU support?) can be severely biased
-:::
-
-. . .
-
-::: {.callout-note style="font-size: 0.78em"}
-This is not a Bayesian vs. frequentist problem.
-OLS on pooled cross-national data and a Bayesian Gaussian model both face the same issue — the likelihood incorrectly treats within-group observations as independent.
-:::
-
-# Part 2: The Three-Point Spectrum {#sec-part2}
-
-## Three Strategies for Grouped Data {#sec-spectrum-overview .smaller}
-
-*2.1 The Three-Point Spectrum*
-
-::: notes
-- "When you have grouped data, you have three choices for how to handle the grouping. Think of them as three points on a dial."
-- "Each is valid. Each has principled uses. We are not declaring a winner today."
-- Introduce the names now; each gets its own slide.
-:::
-
-When your data have nested structure, you face a fundamental choice about **how much information to share across groups**:
-
-. . .
-
-::: {style="font-size: 0.82em"}
-| Strategy | Information sharing | Group intercepts | Name in applied papers |
-|---|---|---|---|
-| **Complete pooling** | Maximum — share everything | One for all | Pooled OLS / baseline model |
-| **No pooling** | Zero — each group independent | Fully separate | Fixed effects (FE) |
-| **Partial pooling** | Partial — share, but not completely | Drawn from a common distribution | Random effects / multilevel model |
-:::
-
-. . .
-
-::: {style="font-size: 0.80em"}
-**The key question**: how similar are the groups to each other?
-Complete pooling assumes identical groups; no pooling assumes fully independent groups; partial pooling lets the data decide.
+::: {.callout-tip style="font-size: 0.82em"}
+**Keep thinking in distributions.**
+A parameter is not a single number to be guessed at.
+It is a distribution of plausible values, narrowed by data.
+That habit transfers to every quantitative paper you will read.
 :::
 
 ---
 
-## Strategy 1: Complete Pooling {#sec-complete-pooling .smaller}
+## What Changed Across the Models {#sec-likelihood-table .smaller}
 
 ::: notes
-- "One intercept for all groups. The model does not know that countries exist."
-- "Not always wrong. If groups are genuinely exchangeable — e.g., randomised treatment blocks — complete pooling is efficient and appropriate."
-- "But if groups differ in their baseline outcomes, complete pooling absorbs all group-level variation into the residual."
+- The workflow stays constant. The likelihood is what swaps in and out.
+- Walk through the rows: Gaussian for continuous outcomes, Bernoulli for binary, hierarchical prior for grouped data.
+- Same brm() call. Same prior arguments. Same MCMC diagnostics. Same PPC. Same LOO.
 :::
 
-**Model:** one intercept $\alpha$ for all groups — the grouping variable is ignored entirely.
-
-$$
-y_{ig} \sim \text{Normal}(\alpha + \beta x_{ig},\; \sigma)
-$$ {#eq-complete-pool}
+The same workflow applied to every model you fit.
+Only the likelihood family changed:
 
 . . .
 
 ::: {style="font-size: 0.82em"}
-- **Pros**: simple, maximum statistical power, no group-level parameters to estimate
-- **Cons**: assumes all group intercepts are identical; if groups differ, estimates are biased and uncertainty is understated
-- **When appropriate**: groups are genuinely exchangeable, or group structure is irrelevant to the research question
-:::
-
-. . .
-
-In `brms` — the model you already know from Week 8:
-
-```r
-brm(eu_support ~ income, data = df, family = gaussian(), ...)
-```
-
----
-
-## Strategy 2: No Pooling {#sec-no-pooling .smaller}
-
-::: notes
-- "Separate intercept for each group. Equivalent to adding country dummies to the regression."
-- "This is what applied papers call 'country fixed effects'. Each country gets its own constant, estimated from its own data alone."
-- "The problem: small groups get wide, unreliable estimates. A country with 15 respondents will have a very uncertain intercept."
-- "And there is a subtler problem: the estimates do not talk to each other. Learning that Germany has high EU support tells the model nothing about Poland."
-:::
-
-**Model:** separate intercept $\alpha_g$ per group, each estimated independently.
-
-$$
-y_{ig} \sim \text{Normal}(\alpha_g + \beta x_{ig},\; \sigma)
-$$ {#eq-no-pool}
-
-. . .
-
-::: {style="font-size: 0.82em"}
-- **Pros**: group intercepts absorb any group-level confounders; FE-style identification argument for time-invariant unobservables
-- **Cons**: no information sharing — **small groups get wide, unreliable estimates**; cannot include country-level predictors (collinear with group dummies)
-- **When appropriate**: FE identification is required (e.g., panel DiD); you genuinely do not want to borrow strength across groups
-:::
-
-. . .
-
-Equivalent to adding `factor(country)` as a predictor:
-
-```r
-lm(eu_support ~ income + factor(country), data = df)
-```
-
----
-
-## Strategy 3: Partial Pooling {#sec-partial-pooling .smaller}
-
-::: notes
-- "The Bayesian-native middle option. Group intercepts are not identical (not complete pooling) and not independent (not no pooling). They are treated as draws from a common distribution whose parameters we also estimate."
-- "The key quantity is τ — the SD of the country-intercept distribution. Small τ means countries are similar, estimates shrink toward the global mean. Large τ means countries are very different, estimates stay close to the group-specific data."
-- "Crucially, τ is not chosen by the researcher. It is estimated from the data, with its own prior."
-:::
-
-**Model:** group intercepts $\alpha_g$ are drawn from a common distribution with estimated parameters.
-
-$$
-\begin{aligned}
-y_{ig} &\sim \text{Normal}(\alpha_g + \beta x_{ig},\; \sigma) \\[4pt]
-\alpha_g &\sim \text{Normal}(\mu_\alpha,\; \tau) \\[4pt]
-\mu_\alpha,\; \tau &\sim \text{weakly informative priors}
-\end{aligned}
-$$ {#eq-partial-pool}
-
-. . .
-
-The hyperparameter $\tau$ is the key:
-
-::: {style="font-size: 0.82em"}
-| Value of $\tau$ | Interpretation | Limiting behaviour |
+| Week | Likelihood | What changed |
 |---|---|---|
-| $\tau \to 0$ | Groups are essentially identical | Complete pooling |
-| $\tau \to \infty$ | Groups are fully independent | No pooling |
-| $\tau$ estimated from data | **Partial pooling — data decide** | — |
+| 8 to 10 | Gaussian | Linear predictor, multiple X, interaction terms |
+| 11 | Bernoulli | Link function for the probability scale. $\sigma$ drops out. |
+| 12 | Gaussian or Bernoulli with a hierarchical prior | Group-level structure. Partial pooling. |
 :::
 
 . . .
 
-::: {.callout-note style="font-size: 0.78em"}
-$\tau$ is not a tuning parameter — it is a model parameter with its own prior, estimated jointly with all other parameters.
-This is the hierarchical prior structure Block II has been building toward: priors can have priors.
+::: {style="font-size: 0.84em"}
+The `brm()` call, the prior arguments, the convergence diagnostics, the posterior predictive check, and the leave-one-out comparison were the same across the three rows.
+Only the `family =` argument and the formula syntax changed.
 :::
 
 ---
 
-## The Shrinkage Plot {#sec-shrinkage .smaller}
+## Why Bayesian First {#sec-why-bayes .smaller}
 
 ::: notes
-- "This is the click moment. Take a moment to read the three panels."
-- "Left: complete pooling — every country gets the same estimate (the global mean). No country-specific information."
-- "Middle: no pooling — each country gets its own estimate. Notice the wide intervals for small countries (small points). The estimates are noisy."
-- "Right: partial pooling — estimates are pulled toward the global mean, more strongly for small countries. Large countries stay close to their own data; small countries are pulled more."
-- "That pulling toward the mean is called shrinkage. It is not a bug — it is what happens when you say 'these countries share a common distribution' and pool information across them."
-- "Notice the partial pooling intervals are narrower than no pooling, especially for small groups."
+- Pull these seven reasons from the course philosophy. Read them slowly.
+- Not a polemic against frequentist statistics. A statement of why this framework is the right starting point.
+- Closing line: you are equipped to handle uncertainty. Land that line.
 :::
-
-```{r}
-#| label: fig-shrinkage
-#| fig-cap: "The shrinkage plot: three strategies applied to the same data. Point size proportional to country sample size (15–75). Partial pooling pulls small-country estimates toward the global mean (dashed line) more strongly than large-country estimates."
-#| fig-height: 5.8
-#| dpi: 500
-global_mean <- mean(df$eu_support)
-
-no_pool_df <- df |>
-  group_by(country) |>
-  summarise(
-    n = n(),
-    est = mean(eu_support),
-    se = sd(eu_support) / sqrt(n()),
-    .groups = "drop"
-  )
-
-partial_df <- ranef(fit_partial)$country[,, "Intercept"] |>
-  as_tibble(rownames = "country") |>
-  mutate(
-    est = Estimate + fixef(fit_partial)["Intercept", "Estimate"],
-    lower = Q2.5 + fixef(fit_partial)["Intercept", "Estimate"],
-    upper = Q97.5 + fixef(fit_partial)["Intercept", "Estimate"]
-  )
-
-country_order <- no_pool_df |> arrange(est) |> pull(country)
-
-shrinkage_df <- bind_rows(
-  no_pool_df |>
-    transmute(
-      country,
-      n,
-      est = global_mean,
-      lower = NA_real_,
-      upper = NA_real_,
-      model = "Complete Pooling"
-    ),
-  no_pool_df |>
-    transmute(
-      country,
-      n,
-      est,
-      lower = est - 1.96 * se,
-      upper = est + 1.96 * se,
-      model = "No Pooling"
-    ),
-  partial_df |>
-    left_join(no_pool_df |> select(country, n), by = "country") |>
-    transmute(country, n, est, lower, upper, model = "Partial Pooling")
-) |>
-  mutate(
-    country = factor(country, levels = country_order),
-    model = factor(
-      model,
-      levels = c("Complete Pooling", "No Pooling", "Partial Pooling")
-    )
-  )
-
-ggplot(shrinkage_df, aes(x = est, y = country)) +
-  geom_vline(xintercept = global_mean, linetype = "dashed", colour = "gray55") +
-  geom_errorbarh(
-    aes(xmin = lower, xmax = upper),
-    height = 0.3,
-    alpha = 0.5,
-    colour = "gray40"
-  ) +
-  geom_point(aes(size = n, colour = model), alpha = 0.85) +
-  scale_colour_manual(
-    values = c(
-      "Complete Pooling" = col_3,
-      "No Pooling" = col_2,
-      "Partial Pooling" = col_1
-    ),
-    guide = "none"
-  ) +
-  scale_size_continuous(range = c(1.2, 4.5), guide = "none") +
-  facet_wrap(~model, ncol = 3) +
-  theme_bw() +
-  labs(
-    title = "The Shrinkage Plot: Three Strategies, Same Data",
-    subtitle = "Dashed line = global mean. Point size ∝ country n. Small-n countries shrink most.",
-    x = "Country-Level EU Support Estimate",
-    y = NULL
-  )
-```
-
----
-
-## Three Tools, Three Jobs — No Winner {#sec-three-tools .smaller}
-
-::: notes
-- "Resist the temptation to say partial pooling is always better. It is not."
-- FE line: "If you are doing a DiD design with panel data and need the FE identification argument to absorb time-invariant unobserved confounding, no pooling is the right choice."
-- Partial pooling line: "If you want country-specific estimates AND a country-level predictor in the same model, partial pooling is the only option — FE absorbs the country-level predictor into the dummies."
-- Complete pooling: "If countries are genuinely exchangeable — e.g., a randomised experiment — complete pooling is efficient and correct."
-:::
-
-The three-point spectrum is a **spectrum**, not a ranking:
-
-. . .
-
-::: {style="font-size: 0.80em"}
-| Strategy | Use when | Avoid when |
-|---|---|---|
-| **Complete pooling** | Groups are exchangeable; group-specific estimates not of interest | Group structure is theoretically important |
-| **No pooling (FE)** | FE identification needed for unobserved confounders; DiD designs | Groups are small; need to estimate group-level predictors |
-| **Partial pooling** | Small or unequal group sizes; group-specific estimates wanted alongside cross-level predictors | FE identification is required for causal inference |
-:::
-
-. . .
-
-::: {.callout-note style="font-size: 0.78em"}
-What applied papers call **"country fixed effects"** is the no-pooling endpoint of this spectrum.
-Partial pooling sits in the middle.
-Knowing the spectrum lets you read any paper and identify where its modelling choice sits.
-:::
-
-# Part 3: brms Syntax {#sec-part3}
-
-## One Line Changes {#sec-brms-formula .smaller}
-
-*3.1 Fitting a Multilevel Model with brms*
-
-::: notes
-- "You already know how to write the first line. The third line is the new one — and it adds exactly one term."
-- "(1 | country): the 1 is the random intercept; the | country means 'varying by country'. brms adds the hierarchical prior on α_g and estimates τ automatically."
-- Point to the new prior: class = "sd". This is the prior on τ, the SD of the random intercepts.
-:::
-
-The only change from Week 8 is `(1 | country)` in the formula:
-
-```r
-# Complete pooling — Week 8 style
-brm(eu_support ~ income,
-    data = df, family = gaussian(), ...)
-
-# No pooling — country dummies
-lm(eu_support ~ income + factor(country), data = df)
-
-# Partial pooling — one new term
-brm(eu_support ~ income + (1 | country),
-    data = df, family = gaussian(), ...)
-```
-
-. . .
-
-The `(1 | country)` term tells `brms`:
 
 ::: {style="font-size: 0.82em"}
-- Fit a **separate intercept** for each country
-- Treat those intercepts as **drawn from a common Normal distribution** $\text{Normal}(\mu_\alpha, \tau)$
-- Estimate $\tau$ from the data, with its own prior (`class = "sd"`)
+We taught Bayesian methods first, deliberately, for seven reasons:
+
+1. **Intuitive updating logic.** Posterior is proportional to likelihood times prior. That is how scientists actually reason when new evidence arrives.
+2. **Full uncertainty quantification.** Results are distributions, not point estimates. Credible intervals have a direct probability interpretation.
+3. **Unified workflow.** The same `brms` pattern applies from a Gaussian linear model to a multilevel Bernoulli model.
+4. **Epistemic humility.** You update beliefs rather than reject or fail to reject. No binary true-or-false dichotomy.
+5. **Transparent assumptions.** Priors force you to state your prior beliefs. Researcher degrees of freedom shrink.
+6. **Regularization through weakly informative priors.** Implausible parameter values are constrained. Overfitting drops.
+7. **Natural fit for hierarchical models.** Partial pooling falls out of the prior structure for free.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.80em"}
+**You are well equipped to handle uncertainty.**
+Whatever you do next, you have the conceptual machinery to reason about evidence carefully.
 :::
 
 ---
 
-## Priors for the Multilevel Model {#sec-priors-mlm .smaller}
+## The 8-Step Workflow Is the Durable Takeaway {#sec-workflow-recap .smaller}
 
 ::: notes
-- "One new prior: class = 'sd' covers τ, the SD of the random intercepts."
-- "exponential(1) is a standard weakly informative prior for scale parameters: most mass near zero but allowing larger values. It says 'country intercepts probably do not vary wildly, but I am not ruling it out.'"
-- "The fixed-effect priors are unchanged from Week 8."
+- This is the operational skill that survives any package or framework change.
+- The workflow does not depend on brms. It does not depend on R. It generalises.
+- The appendix note: when you write a paper, the substantive story leads. The full workflow goes in a methods appendix. Readers want narrative first.
 :::
 
+The eight-step workflow applies to every model you will ever fit:
+
+. . .
+
+::: {style="font-size: 0.6em"}
+| Step | What you do | Why |
+|----|------------|--------------|
+| 1. DAG + Estimand | Draw the causal graph. State the quantity of interest. | Clarifies what to estimate and what to control for |
+| 2. Data Summary | Visualise and describe your variables | Check for patterns, outliers, and model plausibility |
+| 3. Formal Model | Write out $L$ and all priors before coding | Forces precision. Makes assumptions explicit. |
+| 4. Prior Predictive | Simulate $Y$ from priors. Check plausibility. | Catches implausible priors before MCMC |
+| 5. Fit with `brms` | Run `brm()` with explicit priors | Obtains posterior draws |
+| 6a. MCMC Diagnostics | Check $\hat{R}$, ESS, trace plots | Confirms convergence before interpreting |
+| 6b. PPC | Run `pp_check()` | Checks model adequacy |
+| 7. Interpretation | Posterior summaries, predicted probabilities, LOO | Answers the research question |
+| 8. Limitations | State what could still bias results | Scientific honesty |
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.76em"}
+**In a real write-up, the substantive story lives in the main text.**
+The full workflow detail belongs in an appendix.
+Readers want the narrative first. They want to know what you found and why it matters.
+The methods appendix is for the reader who wants to reproduce or critique your analysis.
+:::
+
+# Block 2: Reading Classical Tables {#sec-block2}
+
 ```{r}
-#| label: code-fit-partial
-#| eval: false
-fit_partial <- brm(
-  eu_support ~ income + (1 | country),
-  data = df,
-  family = gaussian(),
-  prior = c(
-    prior(normal(5, 2), class = "Intercept"), # global mean EU support
-    prior(normal(0, 1), class = "b"), # income slope
-    prior(exponential(1), class = "sigma"), # within-country noise σ
-    prior(exponential(1), class = "sd") # between-country SD τ
-  ),
-  chains = 4,
-  iter = 2000,
-  warmup = 1000,
-  seed = 2026
+#| label: setup-block2
+#| include: false
+#| eval: true
+library(knitr) # tables
+library(kableExtra) # nicer table styling
+
+bayes_tbl <- tibble(
+  Predictor = c("Intercept", "Income (std.)", "Education (std.)", "$\\sigma$"),
+  `Posterior median` = c(5.21, 0.34, 0.27, 1.02),
+  `95% CrI` = c("[4.78, 5.65]", "[0.18, 0.50]", "[0.10, 0.44]", "[0.96, 1.09]")
+)
+
+freq_tbl <- tibble(
+  Predictor = c("Intercept", "Income (std.)", "Education (std.)"),
+  Estimate = c("5.20***", "0.34***", "0.27**"),
+  `(SE)` = c("(0.22)", "(0.08)", "(0.09)"),
+  `t-value` = c(23.64, 4.25, 3.00),
+  `p-value` = c("<0.001", "<0.001", "0.003")
 )
 ```
 
+## The Same Problem in Both Frameworks {#sec-core-message .smaller}
+
+::: notes
+- Frame the block. Bayesian and frequentist statistics try to solve the same problem.
+- Estimating the line through a cloud of points is easy.
+- Estimating the uncertainty around that line is the hard part. That is where the two frameworks differ.
+- MCMC is one of the most sophisticated approaches to the uncertainty problem.
+:::
+
+Both frameworks try to do the same thing: separate **noise** from **signal**.
+
 . . .
 
-::: {style="font-size: 0.82em"}
-| Prior | Parameter | Meaning |
-|---|---|---|
-| `normal(5, 2)` on `Intercept` | $\mu_\alpha$ | Global mean EU support, centred on the scale midpoint |
-| `normal(0, 1)` on `b` | $\beta$ | Income slope — weakly regularising |
-| `exponential(1)` on `sigma` | $\sigma$ | Within-country individual noise |
-| `exponential(1)` on `sd` | $\tau$ | Between-country variation in baseline support |
+::: {style="font-size: 0.86em"}
+- Getting a point estimate (the line through the cloud of points) is easy.
+- Getting the **uncertainty** around that estimate right is the hard part.
+- MCMC, which you used all semester, is among the most sophisticated approaches to that problem.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.82em"}
+The choice of framework is mostly a choice of how to represent and report uncertainty.
+The substantive story (sign, magnitude, direction) usually survives the translation.
+The fine print does not.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.84em"}
+**The frameworks differ fundamentally in one thing: which conditionality they compute.**
+
+$$
+\underbrace{P(\theta \mid \text{data})}_{\text{Bayesian}}
+\quad \text{vs.} \quad
+\underbrace{P(\text{data} \mid \theta)}_{\text{Frequentist}}
+$$ {#eq-conditionality}
 :::
 
 ---
 
-## Reading the Output {#sec-brms-output .smaller}
+## Side by Side: Same Data, Two Frameworks {#sec-side-by-side .smaller}
+
+::: notes
+- Walk through both tables column by column.
+- The point estimates are essentially identical. The uncertainty representations differ.
+- Reveal the credible interval column first, then the SE-and-stars column.
+- The contrast is the lesson. Bayesian: a posterior distribution summarised by quantiles. Frequentist: a sampling-distribution SE plus a test statistic.
+:::
+
+A bivariate model of survey support, fit two ways:
 
 :::: {.columns}
 
-::: {.column width="55%"}
-::: {style="font-size: 0.6em"}
-::: notes
-- "Two new sections in the output compared to Week 8: Group-Level Effects and Family Specific Parameters."
-- "sd(Intercept) = τ̂. If this is large relative to sigma, countries differ substantially in their baseline EU support."
-- "The fixed effects (Intercept and income) are the population-level — i.e., average — effects."
-- "Individual country intercepts are not shown in the summary. Use ranef() to extract them."
-:::
+::: {.column width="50%"}
+
+**Bayesian (this course)**
+
 ```{r}
-#| label: tbl-partial-summary
-#| echo: true
-summary(fit_partial)
+#| label: tbl-bayes-demo
+#| echo: false
+bayes_tbl |>
+  kable(align = "lrl", escape = FALSE) |>
+  kable_styling(font_size = 16, full_width = TRUE)
 ```
-:::
+
+::: {.fragment style="font-size: 0.72em"}
+Posterior median plus 95% credible interval.
+Probability statement about the parameter.
 :::
 
-::: {.column width="45%"}
-
-**Key quantities to locate:**
-
-::: {style="font-size: 0.82em"}
-- **`sd(Intercept)`** = $\hat{\tau}$: estimated SD of country intercepts — how much countries vary in their EU support baseline
-- **`sigma`** = $\hat{\sigma}$: within-country residual noise
-- **Fixed `income`** = $\hat{\beta}$: population-average income effect, given the data and prior
 :::
+
+::: {.column width="50%"}
+
+**Frequentist (typical poli-sci table)**
 
 ```{r}
-#| echo: true
-# Population-level estimates
-fixef(fit_partial) |> round(3)
-# Variance components: τ and σ
-VarCorr(fit_partial)
-# Country-specific intercepts
-ranef(fit_partial)$country[,, "Intercept"]
+#| label: tbl-freq-demo
+#| echo: false
+freq_tbl |>
+  kable(align = "lrrrr", escape = FALSE) |>
+  kable_styling(font_size = 16, full_width = TRUE) |>
+  footnote(general = "*** p<0.001, ** p<0.01, * p<0.05", general_title = "")
+```
+
+::: {.fragment style="font-size: 0.72em"}
+Point estimate, standard error of the sampling distribution, test statistic, and significance stars.
+A statement about the procedure, not the parameter.
+:::
+
+:::
+
+::::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.78em"}
+**Notice:** the point estimates are essentially the same in both tables.
+The substantive story (income matters, education matters, both in the expected direction) is identical.
+The frameworks differ in how they communicate what we do **not** know.
+:::
+
+---
+
+## Coefficient Plots: Same Intuitions {#sec-coef-plots .smaller}
+
+::: notes
+- Tables are one display format. Coefficient plots (and marginal-effects plots) are the other common one in modern papers.
+- The reading habits are the same as for tables.
+- Walk through the heuristics: zero crossing, direction, magnitude, interval width.
+- Same Bayesian-vs-frequentist caveat as for tables. The picture looks the same. The interpretation is not.
+- Marginal-effects plots are read the same way once the y-axis is the marginal effect rather than the coefficient.
+:::
+
+Modern papers do not always present a table.
+Many use a **coefficient plot** or a **marginal-effects plot** instead.
+The reading habits transfer.
+
+. . .
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+::: {style="font-size: 0.78em"}
+- **Does the interval cross zero?** The visual analogue of "excludes zero" in a table.
+- **Direction.** Which side of zero the point sits on tells you the sign.
+- **Magnitude.** Distance of the point from zero is the effect size.
+- **Precision.** Interval width tells you how much the data have pinned the parameter down.
+:::
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| label: fig-coef-demo
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| dpi: 500
+#| fig-cap: "Posterior medians with 95% credible intervals."
+coef_demo <- bayes_tbl |>
+  filter(Predictor %in% c("Income (std.)", "Education (std.)")) |>
+  mutate(
+    estimate = `Posterior median`,
+    lower = c(0.18, 0.10),
+    upper = c(0.50, 0.44)
+  )
+
+ggplot(coef_demo, aes(x = estimate, y = Predictor)) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_pointrange(
+    aes(xmin = lower, xmax = upper),
+    colour = col_1,
+    linewidth = 0.8,
+    size = 0.7
+  ) +
+  labs(
+    title = "Coefficient plot of the bivariate survey-support model",
+    x = "Coefficient (standardized predictors)",
+    y = NULL
+  ) +
+  theme_pubr()
 ```
 
 :::
 
 ::::
 
-# Part 4: Connecting to the Literature {#sec-part4}
-
-## "Fixed Effects" in IR/EU Papers {#sec-fe-callout .smaller}
-
-*4.1 Vocabulary Bridge*
-
-::: notes
-- "You will encounter this vocabulary constantly. 'We include country fixed effects.' 'We use two-way fixed effects.' 'We cluster standard errors by country.'"
-- "Now you have the conceptual map. Country FE = no-pooling endpoint. RE / random intercepts = partial pooling."
-- "Both have principled uses. The choice is not about which is more rigorous — it is about what the research question requires."
-- "Two-way FE: country FE + year FE simultaneously. This absorbs country-invariant and year-invariant confounders. It is the DiD workhorse in applied IR."
-- Important caveat: the "random effects" vocabulary is inconsistent. In some literatures it means partial pooling; in others it means any random component. Check the equation.
-:::
-
-You will encounter this vocabulary in every applied IR/EU paper:
-
 . . .
 
-::: {style="font-size: 0.82em"}
-| What papers write | What it means | Position on the spectrum |
-|---|---|---|
-| "Pooled OLS" / baseline model | One intercept for all groups | **Complete pooling** |
-| "Country fixed effects" | Separate intercept per country (dummy variables) | **No pooling** |
-| "Two-way fixed effects" | Country FE + year FE simultaneously | **No pooling** (two dimensions) |
-| "Country random effects" / "random intercepts" | Hierarchical prior on country intercepts | **Partial pooling** |
-:::
-
-. . .
-
-::: {style="font-size: 0.82em"}
-*"What people in the literature call 'fixed effects' is the no-pooling endpoint of this spectrum.
-Partial pooling sits in the middle.
-Each has principled uses.
-We are showing you the spectrum so you can read any paper and know where its choice sits."*
-:::
-
-. . .
-
-::: {.callout-important style="font-size: 0.76em"}
-**The vocabulary is inconsistent across disciplines.**
-"Random effects" means partial pooling in econometrics but can mean something different in biostatistics.
-When in doubt: find the model equation, not just the label.
-:::
-
-# Summary {#sec-summary}
-
-## Learning Goals: Check {#sec-goals-check .smaller}
-
-::: notes
-- Read through quickly. Connect each goal back to where it was covered.
-- Repeat the no-exam status clearly — some students will have missed the earlier mention.
-- Bridge to Week 13 (synthesis week — no new methods content).
-:::
-
-::: {.callout-important style="font-size: 0.80em"}
-**Reminder: This material is not on the take-home exam.**
-Exam scope = Weeks 8–11. Today's session is your departure point for future work.
-:::
-
-. . .
-
-::: {style="font-size: 0.82em"}
-By the end of today, you should be able to:
-
-1. ✓ **Identify hierarchical data** in IR/EU research and explain why the independence assumption (Gauss-Markov A4) breaks — and what happens to uncertainty estimates when it is ignored (Part 1)
-
-2. ✓ **Describe the three-point spectrum** — complete pooling, no pooling, partial pooling — and connect the vocabulary to applied papers ("country fixed effects" = no-pooling endpoint; "random intercepts" = partial pooling) (Part 2, Part 4)
-
-3. ✓ **Read the `(1 | country)` formula** in `brms` and interpret `sd(Intercept)` as $\hat{\tau}$, the estimated between-country variation in baseline outcomes (Part 3)
+::: {.callout-note style="font-size: 0.80em"}
+Same picture, different interpretation.
+A credible interval on a coefficient plot is a probability statement about the parameter.
+A frequentist confidence interval on the same-looking plot is not.
 :::
 
 ---
 
-## Week 12 Homework: Course Reflection {#sec-homework .smaller}
+## What Translates {#sec-translates .smaller}
 
 ::: notes
-- "This homework is different from every previous week. No Bayesian workflow, no code."
-- "I read every response. This is the most useful feedback I can get about the course."
-- "30-minute cap — please respect it. I am not asking for a polished essay."
-- "No AI. The point is your own thinking, not a generated summary."
-- Distribute GitHub Classroom links for Mon and Thu groups separately.
+- These are the intuitions that work in both frameworks. Use them freely.
+- Sign and rough magnitude of the coefficient. Always safe.
+- Interval width: a wide interval means the data are not pinning the parameter down.
+- Model fit and diagnostics: the spirit transfers even when the specific tools differ.
 :::
 
-This week's homework is a **course reflection** — not a Bayesian analysis.
+Your Bayesian intuition reads cleanly across to a frequentist table for:
 
 . . .
 
-::: {style="font-size: 0.82em"}
-**Format:**
-
-- Passes on **any genuine attempt** — no wrong answers
-- **30-minute cap** — please respect it; do not over-engineer
-- **No AI use** — your own words only
-- Submitted via GitHub Classroom (links posted separately for Mon / Thu)
+::: {style="font-size: 0.86em"}
+- **Sign of the coefficient.** Positive means a positive association, negative means a negative association. Same in both frameworks.
+- **Rough magnitude of the point estimate.** The Bayesian posterior median and the frequentist point estimate are usually very close.
+- **Broadly there vs. tightly null.** A confidence interval that excludes zero by a comfortable margin and a credible interval that excludes zero by a comfortable margin tell roughly the same story.
+- **Model fit and diagnostics in spirit.** $R^2$, residual plots, goodness-of-fit checks. The specific tools differ but the question they answer is similar.
 :::
 
 . . .
 
-::: {style="font-size: 0.82em"}
-**Prompts (short, open answers — answer as many as you like):**
+::: {.callout-note style="font-size: 0.80em"}
+For getting the substantive gist of a published paper, your Bayesian reading habits will serve you well.
+:::
 
-1. What clicked for you in this course, and when?
-2. What did not click — and what would have helped?
-3. Which week was hardest, and why?
-4. What would you keep, and what would you change about the course design?
-5. Are you likely to use any of this beyond the course? In what context?
-6. Anything else you want me to know?
+---
+
+## What Does Not Translate {#sec-does-not-translate .smaller}
+
+::: notes
+- These are the four common misreadings that even trained researchers make.
+- The 95% confidence interval is not a probability statement about the parameter. Repeat that.
+- The standard error is not a posterior SD. Different object, different interpretation.
+- The p-value is not "the probability the null is true".
+- Significance stars compress everything into a binary signal and throw away information.
+:::
+
+Do **not** import the following Bayesian intuitions into a frequentist table:
+
+. . .
+
+::: {style="font-size: 0.82em"}
+- A **95% confidence interval** is *not* "95% probability the parameter lies in this range". It is a long-run frequency property of the procedure: across many repeated samples, 95% of such intervals would contain the true value.
+- A **standard error** is *not* a posterior standard deviation. It is the standard deviation of the sampling distribution of the estimator.
+- A **p-value** is *not* "the probability that the null hypothesis is true".  It is the probability, *if the null were true*, of observing a test statistic at least as extreme as the one computed from your data
+- **Significance stars** compress all of this into a binary signal. The information loss is real.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.78em"}
+A confidence interval is a statement about the *procedure*, not the *parameter*.
+A credible interval is a statement about the *parameter*, given the data and prior.
+Different objects. Do not swap them.
+:::
+
+---
+
+## Practical Reading Habits {#sec-practical-reading .smaller}
+
+::: notes
+- Be honest. Most readers, including trained researchers, read frequentist tables Bayesianly.
+- That is mostly fine for the gist of a paper.
+- Be precise when it matters: replication, policy claims, your own thesis.
+- This block is about literacy in the broader literature, not advocacy. Stay non-crusading.
+:::
+
+::: {style="font-size: 0.86em"}
+- Most readers, including trained researchers, casually read frequentist results Bayesianly.
+- For getting the gist of a paper, that habit is mostly harmless.
+- For **replication claims, policy recommendations, or your own thesis**, be precise about which framework's interval you are reporting and what it actually says.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.82em"}
+The course is Bayesian.
+This block is **not** advocacy for Bayes over frequentism.
+It is literacy: you can read any quantitative paper, and you know which intuitions transfer cleanly and which ones do not.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+The right tool depends on the research question, the data, the audience, and the convention in your subfield.
+You now have the conceptual machinery to choose, not just to follow defaults.
+:::
+
+---
+
+## Table Packages in R {#sec-table-packages .smaller}
+
+::: notes
+- One slide on tooling for regression tables. Quick tour.
+- modelsummary is the modern workhorse. stargazer is the old standby for LaTeX. gt is the showpiece option.
+- My recommendation for this course: broom.mixed::tidy() piped into kable(). Clean, minimal, works for brms.
+:::
+
+When you need to put a regression table in a paper, you have options:
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **`modelsummary`**: modern, multi-model, supports `brms` directly, sensible defaults.
+- **`stargazer`**: long-standing standard for LaTeX output in econ and poli-sci.
+- **`gt`**: full table-grammar package, beautiful output, more setup.
+:::
+
+. . .
+
+**My recommendation for the take-home exam:**
+
+```r
+library(broom.mixed) # tidy() method for brms
+
+broom.mixed::tidy(brms_fit, conf.int = TRUE) |>
+  knitr::kable(digits = 2)
+```
+
+. . .
+
+::: {.callout-tip style="font-size: 0.80em"}
+Clean, minimal, reproducible.
+Pulls posterior summaries straight out of a `brms` fit and renders them in a single line.
+:::
+
+# Block 3: Tooling {#sec-block3}
+
+## The Pitch {#sec-tooling-pitch .smaller}
+
+::: notes
+- Say this explicitly and openly. Three tools, and the repo grade is a 1.0 by default.
+- The substantive analysis is the hard part. Do not also burn time engineering folder structure.
+- Frame as anxiety-reducing, not as a flex.
+:::
+
+::: {.callout-important style="font-size: 0.92em"}
+**If you use these three things together,**
+**the code-and-repository portion of your exam grade is at 1.0 level by default,**
+**without engineering effort on your part.**
+:::
+
+. . .
+
+::: {style="font-size: 0.88em"}
+The three things:
+
+1. **`qqs()`** for project scaffolding
+2. **Git** habits already covered in Block I
+3. **Air**, the R formatter built into Positron
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.82em"}
+The substantive analysis is the hard part of the take-home exam.
+Do not also burn time engineering your folder structure.
+That is what these tools are for.
+:::
+
+---
+
+## QuickQuartoSetup (`qqs`) {#sec-qqs .smaller}
+
+::: notes
+- I will run a live demo in the session. These slides are the written reference.
+- The package is stable. Default `qqs()` call works out of the box.
+- Useful overrides (author, title, statutory declaration, title page) are documented in the README.
+- The point is the logic: one command, sane defaults, clean separation of code and writing in one repo.
+- Source: github.com/dertristan/qqs. Pull the README at exam time.
+:::
+
+A small R package, `qqs`, that bootstraps a Quarto project with one command.
+
+. . .
+
+```r
+qqs()
+```
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **One command** to create a fully populated project skeleton
+- **Sane defaults**: YAML, bibliography, code template, folder structure all preset
+- **One repo, two clear roles**: code lives in `code/`, writing lives at the root
+- **No ambiguity**: every file has an obvious place
+:::
+
+. . .
+
+::: {style="font-size: 0.82em"}
+**Source:** [`github.com/dertristan/qqs`](https://github.com/dertristan/qqs)
+
+I will run a quick **live demo** in the session.
+These slides are your written reference for after class.
 :::
 
 . . .
 
 ::: {.callout-note style="font-size: 0.78em"}
-I read every response. This feedback shapes the next iteration of the course.
+The README documents optional further setup for anyone who wants to explore.
+Not exam-relevant. The default `qqs()` call is enough to get started.
 :::
 
 ---
 
-## References {#sec-references}
+## The Project Structure {#sec-qqs-structure .smaller}
 
-::: {style="font-size: 0.80em"}
-**Primary reference for partial pooling:**
+::: notes
+- Walk through the tree. Code in code/. Writing at the root. Data flows raw to processed to final.
+- The README documents optional power-user features for interested students.
+- This is what graders want to see when they open your repo.
+:::
 
-McElreath, R. (2020). *Statistical Rethinking: A Bayesian Course with Examples in R and Stan* (2nd ed.). CRC Press. **Chapter 13**.
+```
+project/
+  _quarto.yml
+  code/
+    00_code_template.qmd
+  data/
+    01_raw/              # never edit
+    02_processed/        # intermediate stuff 
+    03_final/            # results
+  manuscript.qmd
+  presentation.qmd
+  references.bib
+  .gitignore
+```
 
-**Secondary reference:**
+. . .
 
-Gelman, A., & Hill, J. (2006). *Data Analysis Using Regression and Multilevel/Hierarchical Models*. Cambridge University Press.
+::: {style="font-size: 0.84em"}
+- **Code lives in `code/`**, writing lives at the root.
+- **Data flows** raw to processed to final. The raw folder is never edited.
+- **The README documents** optional further setup for advanced students who want to explore. Not required for the exam.
+:::
 
-**For the formal treatment of PSIS-LOO** (referenced in Part 2 of Week 11):
+---
 
-Vehtari, A., Gelman, A., & Gabry, J. (2017). Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC. *Statistics and Computing*, 27(5), 1413–1432.
+## Git Habits {#sec-git-habits .smaller}
+
+::: notes
+- Brief recap. Most of this was drilled in Block I.
+- Meaningful commit messages: future you and the grader will thank you.
+- Push regularly. Local-only work is not safe.
+- Never commit credentials. Never commit large data dumps.
+- Reinforce: the grader sees your git history, not just the final state.
+- Reality check: real data is rarely analysis-ready. Expect to spend time on wrangling.
+:::
+
+You already know these. Quick reinforcement:
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **Meaningful commit messages.** "Add intercept prior justification" beats "update".
+- **Push regularly.** A laptop in a backpack is not a backup strategy.
+- **Never commit credentials.** API keys, passwords, anything sensitive stays out of the repo.
+- **Never commit large data dumps.** Use `.gitignore`. Keep the raw data referenced, not bundled.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.80em"}
+**The grader sees the git history, not just the final repo state.**
+A clean, well-paced trail of commits tells me how you worked and what you understood at each step.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.78em"}
+**Reality check.**
+Do not expect perfectly tidy, analysis-ready data.
+Real data needs wrangling, cleaning, and documentation.
+That work is part of the exam and shows up in your `code/` folder.
+:::
+
+---
+
+## The Air Formatter {#sec-air .smaller}
+
+::: notes
+- Air is an R code formatter. Clean, idiomatic style.
+- It is built into Positron. No separate install. Same Format Document action you already use for other languages.
+- Run it before every commit. Readable code, zero effort, consistent style.
+:::
+
+**Air** is an R code formatter that produces clean, idiomatic R style.
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **Built into Positron.** No separate install. No setup.
+- **Invocation:** the standard `Format Document` action in Positron.
+- **What it does:** consistent spacing, line breaks, indentation. Idiomatic R style.
+- **Cost to you:** one shortcut before each commit.
+:::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.82em"}
+Run Air on every file before you commit.
+Your code becomes readable to the grader (and to future-you) with zero conscious effort.
+That is a free win on the code-and-repo dimension of your grade.
+:::
+
+---
+
+## The Combined Pitch {#sec-combined-pitch .smaller}
+
+::: notes
+- Tie it together. Three habits that compound.
+- `qqs()` gives you the structure. Git gives you the trail. Air gives you the style.
+- The repo dimension of the exam is then a freebie.
+:::
+
+These three habits compound:
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **``qqs()``** gives you the **structure**. Files in the right places. Nothing to invent.
+- **Git** gives you the **trail**. Commits show how the analysis evolved.
+- **Air** gives you the **style**. Code reads cleanly without conscious effort.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.86em"}
+The repo and code dimensions of your exam grade become a **freebie**.
+Your conscious effort goes where it should: the substantive analysis and the written interpretation.
+:::
+
+# Block 4: AI Usage Policy {#sec-block4}
+
+## The Headline {#sec-ai-headline .smaller}
+
+::: notes
+- Decisive, non-defensive tone. Not "AI is dangerous" and not "AI is magic".
+- AI is encouraged for understanding, code, formatting, writing.
+- The student takes final responsibility for the submission.
+- The only requirement: honesty and transparency.
+- AI as tutor framing lowers the threshold for asking basic questions.
+:::
+
+::: {.callout-tip style="font-size: 0.92em"}
+**AI is encouraged.**
+Use it to enhance understanding, improve code, polish formatting, and refine writing.
+You take final responsibility for what you submit.
+The only thing I require is **honesty and transparency**.
+:::
+
+. . .
+
+::: {style="font-size: 0.86em"}
+You will use AI tools during the exam.
+That is a realistic prediction, not a guess.
+The question is not "whether" but "how to make AI use visible and trustworthy".
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+**Think of it as a personal tutor.**
+Always available. No question is too basic.
+Lean on it when you are stuck.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+The next slide is the one rule that lets both sides trust the result.
+:::
+
+---
+
+## The Operational Rule {#sec-ai-rule .smaller}
+
+::: notes
+- This is the core of the block. Slow down here.
+- Two steps. Your draft first. AI improvement second. Two separate commits.
+- The commit message on the second commit names the AI involvement explicitly.
+- Examples: "AI spell check", "AI wording improvement", "AI code formatting".
+- The git commit message is the audit trail. There is no other AI audit trail in this course.
+:::
+
+The **git commit message is the audit trail**. The required workflow:
+
+. . .
+
+::: {style="font-size: 0.88em"}
+1. **Write your own draft** (paragraph, code, analysis). Commit it. Commit message describes **your** work.
+2. If you then use AI to improve it (spell check, wording, code style, structure), **commit the improved version separately**. Commit message names the AI involvement explicitly.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+**Example commit messages for the AI step:**
+
+```
+AI spell check
+AI wording improvement
+AI code formatting
+AI suggested restructuring of Section 3
+```
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.80em"}
+Two commits. One yours. One AI-assisted, labelled as such.
+That is the whole policy.
+:::
+
+---
+
+## Why This Rule {#sec-ai-why .smaller}
+
+::: notes
+- The reasoning matters. Students who understand why will follow the rule even in edge cases.
+- It separates your work from AI-assisted work in the git history.
+- The grader can see the trajectory and judge accordingly.
+- Without the convention, AI use is invisible.
+- Scientific standards rest on voluntary integrity. This is its operational form for AI.
+:::
+
+::: {style="font-size: 0.86em"}
+- It **separates your work from AI-assisted work** in the git history. Two distinct commits, two distinct authors of the improvement.
+- The grader can **see the trajectory** and judge accordingly. The before-and-after is visible.
+- Without this convention, **AI use is invisible**. The grader has to guess. The student has to self-report after the fact. Neither is robust.
+- Scientific standards rest on **voluntary integrity**. This is the operational form that integrity takes for AI in this course.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.80em"}
+The rule is generous on what AI can be used for.
+It is strict on one thing only: be honest about when you used it.
+:::
+
+---
+
+## Acceptable Use {#sec-ai-ok .smaller}
+
+::: notes
+- Concrete examples. These are not edge cases. They are the normal modes of AI use in this course.
+- Asking AI to explain a concept when stuck.
+- Pasting a draft into AI for proofreading.
+- Asking AI to clean up your code.
+- Asking AI to help debug an error message.
+- Calibrate trust by domain: stronger on formal logic and code, weaker on narrow IR substance.
+:::
+
+::: {style="font-size: 0.88em"}
+**All of these are acceptable, encouraged, and easy to attribute:**
+
+- Asking AI to **explain a concept** when you are stuck.
+- Pasting your **draft into AI for proofreading**.
+- Asking AI to **clean up code you wrote**.
+- Asking AI for **help debugging an error message**.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+**Calibrate trust by domain.**
+AI is more reliable on formal logic, programming, and general well-covered topics.
+On narrow substantive IR questions it is less reliable.
+Treat narrow factual claims with scepticism and check the source.
+:::
+
+. . .
+
+::: {.callout-note style="font-size: 0.82em"}
+In each case: do the work yourself first, commit it, then commit the AI-assisted improvement with a transparent commit message.
+:::
+
+---
+
+## Unacceptable Use {#sec-ai-not-ok .smaller}
+
+::: notes
+- Two clear violations. Both are about hiding AI involvement.
+- Generating an analysis from scratch via AI and submitting it as your own.
+- Editing AI output before committing so that the AI step is hidden.
+- The pattern is the same: the git history misrepresents who did the work.
+:::
+
+::: {style="font-size: 0.86em"}
+**These are not acceptable, and the git history will reveal them:**
+
+- **Generating an analysis from scratch via AI** and submitting it as your own work, with no acknowledgement.
+- **Hiding AI involvement** by editing AI output before committing, without naming the AI step in a commit message.
+:::
+
+. . .
+
+::: {.callout-important style="font-size: 0.80em"}
+The common thread: the git history misrepresents who did the work.
+That is the line.
+Cross it and the work is no longer yours.
+:::
+
+---
+
+## Using AI Well {#sec-ai-effective .smaller}
+
+::: notes
+- Policy is settled. This slide is about doing it well.
+- Two habits drive most of the difference between useful and useless output.
+- Context management: state what you want and what you do not want.
+- Window hygiene: short, focused chats. Start fresh when the task changes.
+- These habits apply to coding assistants, writing assistants, and explanation prompts equally.
+:::
+
+Policy aside, two habits drive most of the difference between useful and useless AI output.
+
+. . .
+
+::: {style="font-size: 0.86em"}
+- **Context management is the core skill.** State what you want and what you do **not** want. The vaguer the prompt, the more the model fills the gaps by imputing things you never specified. That is where hallucination comes from.
+- **A fuller context window degrades performance.** Be deliberate about what each prompt actually needs. Avoid bloated, long-running chats where noise accumulates across many turns. Start a fresh chat when the task changes.
+:::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.80em"}
+Clear ask. Clear non-ask. Fresh chat per task.
+Three habits, one outcome.
+:::
+
+---
+
+## Grading Scheme {#sec-grading-scheme .smaller}
+
+::: notes
+- Be open: the detailed grading scheme is distributed with the exam, not yet.
+- Four announced dimensions. State them clearly.
+- Two of the four (formalities and code-and-repo) are largely covered by `qqs()` and Air.
+- That is the connection back to Block 3.
+:::
+
+The **detailed grading scheme will be distributed together with the exam itself.**
+
+. . .
+
+The **four announced dimensions** are:
+
+::: {style="font-size: 0.82em"}
+1. **Argumentation.** What you are doing and why. Assessed from the written PDF.
+2. **Interpretation.** Are results interpreted correctly, with limitations and blind spots acknowledged. Assessed from the written PDF.
+3. **Formalities.** Does the PDF look like a typical research article. **`qqs()` is half the deal here.**
+4. **Code and repo.** Can a human trace what you did, where, and why. Informative commit messages. AI usage transparently noted in commit history. **`qqs()` and the Air formatter are half the deal here.**
+:::
+
+. . .
+
+::: {.callout-tip style="font-size: 0.80em"}
+Two of the four dimensions are mostly solved by good tooling and good habits.
+That is on purpose.
+Your conscious effort belongs in dimensions 1 and 2: argumentation and interpretation.
+:::
+
+# Closing {#sec-closing}
+
+## Exam Logistics {#sec-exam-logistics .smaller}
+
+::: notes
+- Exam window dates: insert the placeholder. Do not invent dates.
+- Distribution via GitHub Classroom, like every weekly homework.
+- The repo at the deadline is what gets graded. There is no separate submission upload.
+- Deliverables: reproducible repo, rendered PDF (data/methods/analysis sections, about 10 pages of main text), statutory declaration.
+- No chat histories. That is intentional. The commit-message convention replaces them.
+:::
+
+. . .
+
+::: {style="font-size: 0.84em"}
+**Distribution and submission:**
+
+- Distributed via **GitHub Classroom**, the same way as the weekly homework.
+- The **version of the repo at the deadline is what gets graded.** There is no separate upload.
+:::
+
+. . .
+
+::: {style="font-size: 0.82em"}
+**What to submit (inside the repo):**
+
+- A **reproducible repository** that renders end to end.
+- A **rendered PDF** structured like the data, methods, and analysis sections of a research article. Roughly **10 pages of main text**.
+- A **signed statutory declaration** of authorship.
+
+**No chat histories.** The git commit-message convention is the AI audit trail.
+:::
+
+---
+
+## Thank You {#sec-thanks .smaller}
+
+::: notes
+- One warm sentence. Mean it.
+- Make sure students know I am available for questions during the exam window.
+- Open the floor for questions after this slide.
+:::
+
+::: {style="font-size: 0.92em"}
+Thank you for showing up, for asking good questions, for the late-night Git struggles, and for taking the leap into Bayesian inference.
+:::
+
+. . .
+
+::: {style="font-size: 0.86em"}
+Good luck on the exam.
+You are ready.
+:::
+
+---
+
+## {#sec-final}
+
+::: notes
+- Final slide. Pause. Smile. End the course on a warm note.
+- "Keep your priors wide" doubles as a methods joke and a life motto.
+:::
+
+::: {style="text-align: center; font-size: 2.4em; margin-top: 2em;"}
+**Keep your priors wide!**
 :::
 
 ```{r}

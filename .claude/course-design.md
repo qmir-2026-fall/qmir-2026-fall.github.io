@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-09-30
+last_modified: 2026-11-11
 scope: lessons from qmir-2026, scaffolding from the exam, the 8-step workflow, methods voice, non-goals
 ---
 
@@ -69,7 +69,7 @@ than substituting one framework for the other. Tools serve the research question
 voice balanced and non-dogmatic. Priors are philosophical commitments, not computational
 conveniences, and should be defended on principled grounds.
 
-Sessions 8 and 13 carry classical statistics deliberately, as contrast rather than substitution
+Sessions 8 and 12 carry classical statistics deliberately, as contrast rather than substitution
 (see the `weeks:` comments in `course.yml`).
 
 ## What this repo deliberately does not do
