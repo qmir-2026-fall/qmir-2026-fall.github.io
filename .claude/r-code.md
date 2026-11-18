@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-10-07
+last_modified: 2026-11-18
 scope: R code in every .qmd and script: paths, tidyverse, setup chunk, figures, tables, brms
 ---
 
@@ -60,8 +60,10 @@ solutions still call `theme_pubr()` from `ggpubr`. Switch them to `theme_classic
 week is converted.
 
 **Tables.** A static overview goes in a raw Markdown table. A computed table goes through
-`knitr::kable()`. Model output goes through `modelsummary`. Reach for `gt` only when the
-formatting genuinely needs it.
+`knitr::kable()`. A regression table is built the way week 9 teaches it: `broom.mixed::tidy()`
+per model, `bind_rows()`, `pivot_wider()`, then `knitr::kable()`. `broom` itself does not tidy a
+`brmsfit`. Keep `modelsummary` for output that genuinely needs more. Reach for `gt` only when
+the formatting genuinely needs it.
 
 **Other R rules.**
 

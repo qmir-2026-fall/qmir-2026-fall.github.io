@@ -1548,3 +1548,74 @@
   def: |
     A [Hamiltonian Monte Carlo](#gl-hamiltonian-monte-carlo) trajectory on which the simulated physics broke down, usually where the posterior curves too sharply.
     Even a few signal a problem with the model or its parameterisation, not one that more iterations fix.
+
+# --- Week 9: Multiple linear regression --------------------------------------
+
+- term: "Simpson's paradox"
+  week: 9
+  tags: [regression, interpretation]
+  def: |
+    An association in pooled data that weakens, vanishes or reverses within every group of the data.
+    It arises when a third variable is related to both variables of interest, and it is a reason to justify which variables a model controls for.
+  see: [gl-confounder, gl-control-variable]
+
+- term: "Control variable"
+  week: 9
+  tags: [regression, model]
+  def: |
+    A predictor added to a model so that the coefficient of interest is learned only from variation the control does not share, comparing like with like.
+    Every control is a claim about how the world works, justified with a [DAG](#gl-directed-acyclic-graph-dag), because the wrong control can create bias rather than remove it.
+  see: [gl-partial-association, gl-confounder, gl-collider]
+
+- term: "Partial association"
+  week: 9
+  tags: [regression, interpretation]
+  def: |
+    The coefficient of one predictor in a model with several predictors: the difference in the expected outcome between two units that differ by one in that predictor and are equal in all others.
+  see: [gl-control-variable]
+
+- term: "Dummy variable"
+  week: 9
+  tags: [regression, data]
+  def: |
+    A predictor that is 1 for one category and 0 for the reference category, so its coefficient shifts the intercept of that category.
+    A variable with K categories needs K minus 1 dummies.
+
+- term: "Directed acyclic graph (DAG)"
+  week: 9
+  tags: [model]
+  def: |
+    A diagram of what we theorise about how variables relate: nodes are variables, and arrows say which variable influences which, with no path leading back to its start.
+    It says whether and in which direction variables are related, not how, and it decides which variables a model should control for.
+  see: [gl-confounder, gl-mediator, gl-collider]
+
+- term: "Confounder"
+  week: 9
+  tags: [model, regression]
+  def: |
+    A common cause of a predictor and the outcome, the middle of a fork in a [DAG](#gl-directed-acyclic-graph-dag).
+    Leaving it out credits its influence to the predictor, so it belongs among the controls.
+
+- term: "Mediator"
+  week: 9
+  tags: [model, regression]
+  def: |
+    A variable through which a predictor influences the outcome, the middle of a pipe in a [DAG](#gl-directed-acyclic-graph-dag).
+    Controlling for it removes part of the very association we want to learn.
+
+- term: "Collider"
+  week: 9
+  tags: [model, regression]
+  def: |
+    A variable influenced by two others, where two arrows collide in a [DAG](#gl-directed-acyclic-graph-dag).
+    Controlling for it, or selecting the data on it, creates an association between its causes that is not there.
+
+- term: "Leave-one-out cross-validation (LOO)"
+  week: 9
+  tags: [model, diagnostics]
+  def: |
+    A way to compare models by how well they predict data they have not seen: leave out each observation in turn, and ask how plausible the model fitted to the rest finds it.
+    The sum over all observations is the expected log predictive density (ELPD), higher is better, and `loo()` approximates it from a single fit.
+  docs:
+    url: "https://mc-stan.org/loo/"
+    label: "loo package documentation"

@@ -16,14 +16,16 @@ dates, thresholds, the week plan) live in `course.yml` and nowhere else.
 - **This repo is PUBLIC** (FOSS course materials): `qmir-2026-fall/qmir-2026-fall.github.io`.
 - **`solutions/`** is a **private submodule** holding every sample solution and the whole exam.
 
-## Status (as of 2026-11-11)
+## Status (as of 2026-11-18)
 
-- Weeks 1 to 7 are live (`website/slides/week01.qmd` to `week07.qmd`).
+- Weeks 1 to 9 are live (`website/slides/week01.qmd` to `week09.qmd`). Week 9 is strictly
+  additive (Simpson's paradox, Venn diagrams, DAGs, LOO, regression tables), and interactions
+  start in week 10.
 - Homework 02 to 07 are released (`homework/`, org repos `hw-02` to `hw-07`). Their sample
   solutions are in `solutions/`. The hw-02 to hw-06 solution PDFs are published.
 - The multilevel session was dropped on 2026-11-11 after 4 Nov was cancelled. Synthesis is now
   week 12, and homework runs from week 2 to week 11 (10 in all).
-- Weeks 8 to 12 and the later homeworks are **staged**: spring material ported verbatim to
+- Weeks 10 to 12 and homework 09 onwards are **staged**: spring material ported verbatim to
   `website/slides/_weekNN.qmd` and `homework/_import/hw-NN/`, not yet converted to the style
   guide. Their bridges to a "week 12 multilevel" session and the `_import` dates are stale and
   get fixed on conversion. How a staged week goes live is in `workflow.md`.
@@ -99,7 +101,7 @@ the style files.
 | `.claude/workflow.md` | adding or converting a week, releasing homework or solutions, publishing, touching the repo layout, `course.yml`, the submodule or the leak guards (topology, term pipeline, feedback banner, naming, staging, automation contracts) | 2026-10-15 |
 | `.claude/course-design.md` | planning what a session or homework teaches, the 8-step workflow, the exam, or methods voice (lessons from qmir-2026, scaffolding backward from the exam, deliberate non-goals) | 2026-11-11 |
 | `.claude/writing.md` | authoring or editing any `.qmd`, a student-facing `README.md`, a glossary entry, or any math (prose rules, one sentence per line, cross-references, callouts, notation, writing down a model) | 2026-11-11 |
-| `.claude/r-code.md` | writing or editing R code in any `.qmd` or script (paths, tidyverse, setup chunk, figures, tables, `brms`) | 2026-10-07 |
+| `.claude/r-code.md` | writing or editing R code in any `.qmd` or script (paths, tidyverse, setup chunk, figures, tables, `brms`) | 2026-11-18 |
 | `.claude/slides.md` | anything under `website/slides/`, or acting on a `check-authoring.ps1` finding (canvas, size ladder, columns, deck grammar and YAML, the two check stages) | 2026-10-13 |
 | `.claude/github.md` | the org, template repos, the student link, org permissions, rosters, attendance or progress tracking | 2026-09-30 |
 | `.claude/week06-notes.md` | editing the week 6 deck or the globe dashboard under `website/apps/` (decisions, dashboard structure, open items) | 2026-10-14 |

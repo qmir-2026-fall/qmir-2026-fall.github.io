@@ -240,16 +240,21 @@ weeks:
       - "Understand `brms` as sampling from the posterior: an estimator that returns a distribution rather than one number."
       - "Interpret `brms` output and extract quantities of interest, such as predictions and marginal effects."
   - week: 9
-    topic: "Multivariate linear regression"
-    steps: [1, 7]
+    topic: "Multiple linear regression"
+    steps: [1, 2, 3, 7]
     content: |
-      More than one predictor, and the questions that come with it.
+      More than one predictor, and the questions that come with it. A puzzle opens the session:
+      in our data people with more schooling earn less, until gender enters the model. Venn
+      diagrams show what controlling for a variable does, and DAGs show which controls a theory
+      calls for, and why a control can do harm. We then run the workflow on two models, compare
+      them with leave-one-out cross-validation, and report both in one regression table.
       A set of controls is a claim about how the world works, not a way of being safe.
     goals:
-      - "Explain omitted variable bias, and use a DAG to classify a control variable as a confounder, a mediator or a collider."
-      - "Extend the Bayesian regression model to several predictors and interpret each coefficient as a partial effect."
-      - "Handle categorical predictors using dummy variables."
-      - "Compare competing models with Bayesian leave-one-out cross-validation (LOO-IC)."
+      - "Explain Simpson's paradox: why an association in pooled data can reverse within groups."
+      - "Say what controlling for a variable does, and interpret each coefficient as a partial association, including a dummy variable."
+      - "Use a DAG to justify control variables, and recognise when a mediator or a collider makes a control harmful."
+      - "Compare competing models by their predictive performance with leave-one-out cross-validation (LOO)."
+      - "Report several models in one regression table built with `broom.mixed` and `kable()`."
   - week: 10
     topic: "Interaction terms in linear regression"
     steps: [7]

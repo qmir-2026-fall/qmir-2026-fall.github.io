@@ -1,0 +1,1759 @@
+---
+title: "Week 9: Multiple linear regression"
+---
+
+<!-- Shared format options live in _metadata.yml, so this deck's YAML carries only the title.
+
+     Arc: a puzzle first (Simpson's paradox: education and income fall together, until gender
+     enters), then two tools for it. Venn diagrams show WHAT controlling does (which shared
+     variation a coefficient uses), DAGs say WHICH controls a theory calls for, and why a
+     control can hurt (mediator, collider). Then the eight steps on two models, the naive one
+     and the one controlling for gender, with model comparison by LOO inserted before step 7.
+     Step 7 opens with a regression table built mechanically with broom.mixed and kable, then
+     the three quantities of interest from week 8. Strictly additive: interactions are week 10.
+
+     The session opens with about 15 minutes of Gauss-Markov recap from the week 8 deck
+     (#sec-assumptions there), which week 8 did not reach. It is NOT part of this deck.
+
+     Data: synthetic, n = 200, written by the data-income chunk to
+     data/week09-income.csv if missing. Known truth: 1.6 thousand EUR per year of schooling
+     within each gender, a gender gap of -18, and women have about four more years of
+     schooling. Pooled, the education slope is negative. hw-09 uses a different synthetic
+     dataset with the same structure.
+
+     Stan backend: cmdstanr, as in week 8. Both fits are cached in data/week09-fit-*.rds with
+     their LOO criterion attached.
+
+     Time budget (75 min after the 15 min recap, no buffer): opening 3, puzzle 7, Venn 7,
+     DAGs 9, steps 1 and 2 6, step 3 9, step 4 1 (narrated), step 5 and 6b 3, step 6a 3,
+     model comparison 8, reporting tables 9, step 7 quantities 5, step 8 2, wrap-up 3.
+     The mermaid slide sits in the appendix, for the homework.
+     If behind: say the predicted value in one sentence, and skip the "what every table
+     needs" slide (the tip is in the notes of the two-model table). -->
+
+```{r}
+#| label: setup
+#| include: false
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(brms) # Bayesian regression via Stan
+library(broom.mixed) # tidy model output
+library(ggforce) # circles for Venn diagrams
+library(patchwork) # multi-panel figures
+
+# _quarto.yml is a project-root marker, so anchor here() at the repo root.
+here::i_am("website/slides/week09.qmd")
+
+# rstan does not build against the installed StanHeaders, cmdstanr does.
+options(brms.backend = "cmdstanr")
+
+# Shared palette. Reused verbatim across slides, homework and solutions so a
+# chain colour means the same thing in every artefact of the course.
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+
+# Print missing values as empty cells.
+options(knitr.kable.NA = "")
+gender_cols <- c(Man = col_1, Woman = col_2)
+
+# DAG helper: nodes(name, x, y, label), edges(from, to).
+# Arrows are shortened at both ends so they stop at the node labels.
+draw_dag <- function(nodes, edges, title = NULL, shrink = 0.28) {
+  segs <- edges |>
+    left_join(nodes, by = c("from" = "name")) |>
+    left_join(nodes, by = c("to" = "name"), suffix = c("", "end")) |>
+    mutate(
+      len = sqrt((xend - x)^2 + (yend - y)^2),
+      dx = (xend - x) / len,
+      dy = (yend - y) / len,
+      x = x + shrink * dx,
+      y = y + shrink * dy,
+      xend = xend - shrink * dx,
+      yend = yend - shrink * dy
+    )
+  ggplot() +
+    geom_segment(
+      data = segs,
+      aes(x = x, y = y, xend = xend, yend = yend),
+      arrow = arrow(length = unit(0.22, "cm"), type = "closed"),
+      linewidth = 0.9,
+      colour = "grey25"
+    ) +
+    geom_label(
+      data = nodes,
+      aes(x = x, y = y, label = label),
+      size = 4,
+      fill = "white",
+      fontface = "bold",
+      label.padding = unit(0.4, "lines")
+    ) +
+    coord_cartesian(clip = "off") +
+    scale_x_continuous(expand = expansion(add = 0.4)) +
+    scale_y_continuous(expand = expansion(add = 0.3)) +
+    theme_void() +
+    labs(title = title)
+}
+
+# Venn helper: circles(x0, y0, r, name, fill), regions(x, y, label).
+draw_venn <- function(circles, regions = NULL, title = NULL) {
+  p <- ggplot() +
+    geom_circle(
+      data = circles,
+      aes(x0 = x0, y0 = y0, r = r, fill = name),
+      alpha = 0.3,
+      colour = "grey30"
+    ) +
+    geom_text(
+      data = circles,
+      aes(x = lx, y = ly, label = name),
+      fontface = "bold",
+      size = 5
+    ) +
+    scale_fill_manual(values = deframe(select(circles, name, fill))) +
+    coord_fixed() +
+    theme_void() +
+    theme(legend.position = "none") +
+    labs(title = title)
+  if (!is.null(regions)) {
+    p <- p +
+      geom_text(
+        data = regions,
+        aes(x = x, y = y, label = label),
+        fontface = "bold",
+        size = 6
+      )
+  }
+  p
+}
+```
+
+```{r}
+#| label: data-income
+#| include: false
+
+# Synthetic data with a known truth. Written once and committed, so the deck
+# renders identically everywhere.
+income_csv <- here("website", "slides", "data", "week09-income.csv")
+if (!file.exists(income_csv)) {
+  set.seed(2026)
+  n_people <- 200
+  tibble(
+    person = sprintf("P%03d", 1:n_people),
+    woman = rbinom(n_people, 1, 0.5),
+    education = round(rnorm(n_people, 12 + 4 * woman, 1.5), 1),
+    income = round(
+      18 + 1.6 * education - 18 * woman + rnorm(n_people, 0, 4),
+      1
+    )
+  ) |>
+    mutate(gender = if_else(woman == 1, "Woman", "Man"), .after = person) |>
+    write_csv(income_csv)
+}
+
+income <- read_csv(income_csv, show_col_types = FALSE)
+n_people <- nrow(income)
+
+# Least-squares slopes, used only to describe the puzzle and in the appendix.
+slope_pooled <- coef(lm(income ~ education, data = income))[["education"]]
+slope_within <- coef(lm(income ~ education + woman, data = income))[[
+  "education"
+]]
+gap_within <- coef(lm(income ~ education + woman, data = income))[["woman"]]
+by_gender <- income |>
+  group_by(gender) |>
+  summarise(edu = mean(education), inc = mean(income))
+edu_gap <- diff(by_gender$edu)
+aux_slope <- cov(income$education, income$woman) / var(income$education)
+```
+
+## Week 9 goals {#sec-week09-goals .smaller}
+
+::: notes
+Before this slide: about 15 minutes on the Gauss-Markov assumptions, from the week 8 deck.
+Then read the goals aloud and come back to them at the end.
+Goals 3 and 4 matter most for the exam.
+:::
+
+By the end of today, you will be able to:
+
+1. Explain **Simpson's paradox**: why an association in pooled data can point the opposite way from the association within groups.
+2. Say what **controlling for a variable** does, with Venn diagrams of shared variation, and read each coefficient as a **partial association**, including a **dummy variable**.
+3. Use a **DAG** to justify control variables, and recognise controls that do harm.
+4. Compare models by how well they predict new data, using **leave-one-out cross-validation (LOO)**.
+5. Report several models in one **regression table**, built with `broom.mixed` and `kable()`.
+
+## Today {#sec-today .smaller}
+
+::: notes
+One minute.
+Stress the last line: everything today is additive, and next week asks whether effects differ between groups.
+:::
+
+1. **A puzzle:** does education pay?
+2. **What controlling means**, in circles
+3. **Which controls**, in arrows
+4. **The eight steps, two models**, with a new stop: comparing models
+5. **Reporting:** a regression table and three quantities of interest
+
+. . .
+
+::: {.callout-note}
+**One effect per predictor, the same for everyone.**
+Today every predictor shifts the outcome by the same amount for everyone.
+Whether an effect differs between groups is next week's question: interactions.
+:::
+
+## Where today fits {#sec-where-today-fits .smaller}
+
+Last week: one predictor, all eight steps.
+Today: **several predictors**, so steps 1, 3 and 7 get harder, and a comparison of models enters before step 7.
+
+{{< include _workflow-8step.qmd >}}
+
+::: notes
+Point at steps 1, 3 and 7.
+Step 1 now has to say what we hold constant, step 3 gets one prior per predictor, step 7 reports several models at once.
+:::
+
+# A puzzle {#sec-puzzle}
+
+## Does education pay? {#sec-does-education-pay .smaller}
+
+::: notes
+Ask first, before the reveal: one more year of schooling, higher or lower income?
+Take a show of hands.
+Almost everyone will say higher.
+Then reveal the figure and let it sink in.
+:::
+
+We have survey data on `r n_people` working adults: years of schooling and annual income, in thousand EUR.
+
+> **Q:** Predict the sign: does a person with more schooling earn more or less, on average?
+
+. . .
+
+```{r}
+#| label: fig-pooled
+#| fig-cap: "Annual income against years of schooling for all 200 people, with the least-squares
+#|   line drawn for the eye. In the pooled data, people with more schooling earn less."
+#| fig-height: 3.4
+#| dpi: 500
+
+ggplot(income, aes(x = education, y = income)) +
+  geom_point(colour = "grey40", alpha = 0.6, size = 1.8) +
+  geom_smooth(method = "lm", se = FALSE, colour = col_3, linewidth = 1.2) +
+  theme_classic() +
+  labs(
+    x = "Years of schooling",
+    y = "Annual income (thousand EUR)",
+    title = "More schooling, less income?"
+  )
+```
+
+## Should you drop out? {#sec-drop-out .smaller}
+
+::: notes
+Ask: should you advise a friend to leave school, based on this line?
+Collect answers, then reveal the colours.
+The lines within each group rise, the pooled line falls.
+Do not explain yet, ask the room why first.
+:::
+
+In the pooled data, every extra year of schooling goes with **`r round(abs(slope_pooled), 1)` thousand EUR less** income.
+
+> **Q:** Would you advise a friend to leave school early?
+
+. . .
+
+```{r}
+#| label: fig-by-gender
+#| fig-cap: "The same 200 people, coloured by gender, with one least-squares line per group.
+#|   Within each gender, more schooling goes with more income. The pooled line of
+#|   the previous figure runs the other way."
+#| fig-height: 3.4
+#| dpi: 500
+
+ggplot(income, aes(x = education, y = income, colour = gender)) +
+  geom_point(alpha = 0.6, size = 1.8) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 1.2) +
+  scale_colour_manual(values = gender_cols) +
+  theme_classic() +
+  labs(
+    x = "Years of schooling",
+    y = "Annual income (thousand EUR)",
+    colour = NULL,
+    title = "Within each group, schooling pays"
+  )
+```
+
+## Simpson's paradox {#sec-simpson .smaller}
+
+::: notes
+Let the room explain it before revealing the two bullets.
+The data are synthetic and exaggerated on purpose, so the mechanism is easy to see.
+The pattern itself is real and common: Berkeley admissions is the classic case.
+Close with the two questions, they structure the next two sections.
+:::
+
+An association in the pooled data can **reverse** inside every group.
+This is **Simpson's paradox** [@simpson1951interpretation; @pearl2016causal].
+
+. . .
+
+Why here?
+
+- In these data, **women have `r round(edu_gap, 1)` more years of schooling** than men on average.
+- And **women earn less** than men with the same schooling, a gap of `r round(abs(gap_within))` thousand EUR.
+
+So gender is related to **both** schooling and income, and the pooled line mixes the two.
+
+. . .
+
+Two questions follow:
+
+1. **Venn diagrams:** what does it mean to "hold gender constant"?
+2. **DAGs:** how do we know *which* variables to hold constant?
+
+# What controlling means {#sec-venn}
+
+## Shared variation {#sec-venn-two .smaller}
+
+::: notes
+Each circle is the variation of one variable: how much it differs between people.
+The overlap is variation the two share: where people differ in schooling, they also differ in income.
+A regression slope is learned from exactly that overlap.
+This picture goes back to Kennedy, who called it the Ballentine.
+:::
+
+:::: {.columns}
+
+::: {.column width="45%"}
+```{r}
+#| label: fig-venn-two
+#| fig-cap: "Each circle stands for the variation of one variable across people. The overlap is
+#|   the variation income and schooling share, and it is what the bivariate slope learns from."
+#| fig-height: 3.6
+#| fig-width: 4.4
+#| dpi: 500
+
+tibble(
+  name = c("Income", "Schooling"),
+  x0 = c(0, 1.3),
+  y0 = c(0, 0),
+  r = 1,
+  lx = c(-0.4, 1.7),
+  ly = c(0, 0),
+  fill = c(col_1, col_2)
+) |>
+  draw_venn(
+    regions = tibble(x = 0.65, y = 0, label = "A"),
+    title = "Two variables"
+  )
+```
+:::
+
+::: {.column width="55%"}
+- Each **circle** is the variation of one variable: how much people differ on it.
+- The **overlap A** is variation the two share.
+- The bivariate model learns its slope from **A**, and only from **A** [@kennedy1981ballentine].
+
+> **Q:** Gender is related to both, so where would its circle go?
+:::
+
+::::
+
+## Adding a control {#sec-venn-three .smaller}
+
+::: notes
+Walk the regions slowly.
+A: schooling and income vary together, and gender is not involved.
+B: all three vary together, so we cannot tell whether schooling or gender moves income.
+The naive model uses A and B, and credits all of it to schooling.
+The controlled model uses only A for the schooling slope.
+That is all "holding gender constant" means: compare people within one colour of the earlier figure.
+:::
+
+:::: {.columns}
+
+::: {.column width="45%"}
+```{r}
+#| label: fig-venn-three
+#| fig-cap: "Gender added as a third circle. Region B is variation all three share. The naive
+#|   model credits A and B to schooling, the controlled model learns the schooling slope from A
+#|   only."
+#| fig-height: 3.8
+#| fig-width: 4.4
+#| dpi: 500
+
+venn_three <- tibble(
+  name = c("Income", "Schooling", "Gender"),
+  x0 = c(0, 1.3, 0.65),
+  y0 = c(0, 0, -1.1),
+  r = 1,
+  lx = c(-0.45, 1.75, 0.65),
+  ly = c(0.3, 0.3, -1.6),
+  fill = c(col_1, col_2, col_3)
+)
+draw_venn(
+  venn_three,
+  regions = tibble(
+    x = c(0.65, 0.65, 0.1, 1.2),
+    y = c(0.45, -0.3, -0.8, -0.8),
+    label = c("A", "B", "C", "D")
+  ),
+  title = "Three variables"
+)
+```
+:::
+
+::: {.column width="55%"}
+::: {.small}
+| Region | Shared by | Used for the schooling slope by |
+|---|---|---|
+| A | income, schooling | both models |
+| B | all three | the naive model only |
+| C | income, gender | neither |
+| D | schooling, gender | neither |
+
+: The regions of @fig-venn-three and which model uses each to learn the schooling slope. {#tbl-venn-regions}
+:::
+
+**Controlling for gender** means learning the schooling slope from variation that gender does not share.
+In @fig-by-gender: comparing people **within one colour**.
+:::
+
+::::
+
+## When controls overlap {#sec-venn-collinear .smaller}
+
+::: notes
+Ask before revealing the figure.
+Answer: A shrinks to almost nothing, so there is little information left about the schooling slope.
+This is A4 from the recap, which was trivial with one predictor.
+Perfect overlap means no information at all, near-perfect overlap means a very wide posterior.
+In our data schooling and gender correlate strongly, so expect a wider posterior for the slope once gender is in.
+Then the callout: the Venn diagram shows which variation is used, never signs or causes.
+:::
+
+> **Q:** What if the schooling and gender circles overlapped almost completely?
+
+. . .
+
+:::: {.columns}
+
+::: {.column width="45%"}
+```{r}
+#| label: fig-venn-collinear
+#| fig-cap: "Schooling and gender almost coincide. Little variation in schooling is left that
+#|   gender does not share, so region A, the information about the schooling slope, is tiny."
+#| fig-height: 3.4
+#| fig-width: 4.4
+#| dpi: 500
+
+tibble(
+  name = c("Income", "Schooling", "Gender"),
+  x0 = c(0, 1.3, 1.35),
+  y0 = c(0, 0, -0.1),
+  r = 1,
+  lx = c(-0.45, 1.3, 1.6),
+  ly = c(0.3, 1.15, -1.3),
+  fill = c(col_1, col_2, col_3)
+) |>
+  draw_venn(
+    regions = tibble(x = 0.53, y = 0.55, label = "A"),
+    title = "Nearly collinear"
+  )
+```
+:::
+
+::: {.column width="55%"}
+- Region A is tiny, so the data say **little** about the schooling slope, and its posterior is **wide**.
+- In full overlap, A vanishes: the slope cannot be learned at all.
+- This is **A4, no perfect collinearity**, from the recap, which only bites once there are several predictors.
+:::
+
+::::
+
+. . .
+
+::: {.callout-note}
+**The circles show which variation a coefficient uses, nothing more.**
+They cannot show signs, so they cannot show the reversal itself.
+Which circles belong in the model at all is a question for theory: DAGs.
+:::
+
+# Which controls {#sec-dags}
+
+## A DAG organises the theory {#sec-dag-ours .smaller}
+
+::: notes
+A DAG is drawn before step 3, and it is not yet a model.
+It says which variables are related and in which direction, never how: no shape, no size, no sign.
+Step 3 then formalises it: the arrows into income become terms in the linear predictor.
+Walk the three arrows of our DAG and ask for the story behind each.
+:::
+
+:::: {.columns}
+
+::: {.column width="50%"}
+- A **directed acyclic graph (DAG)** writes down what we *theorise* before we write the model [@mcelreath2020rethinking-ch6].
+- **Nodes** are variables, **arrows** say which variable influences which.
+- A DAG says **whether** and in **which direction**, not **how**: no shape, no size, no sign.
+- **Acyclic:** no path leads back to where it started.
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-dag-ours
+#| fig-cap: "Our theory as a DAG: gender influences schooling and income, and schooling
+#|   influences income."
+#| fig-height: 2.2
+#| fig-width: 4.4
+#| dpi: 500
+
+draw_dag(
+  nodes = tibble(
+    name = c("G", "E", "I"),
+    x = c(1, 0, 2),
+    y = c(1, 0, 0),
+    label = c("Gender", "Schooling", "Income")
+  ),
+  edges = tibble(from = c("G", "G", "E"), to = c("E", "I", "I")),
+  title = "Our theory"
+)
+```
+:::
+
+::::
+
+. . .
+
+::: {.callout-tip}
+**Draw the DAG first, then formalise.**
+Every arrow into the outcome becomes a term at step 3, and the model decides how large.
+:::
+
+## Three ways variables connect {#sec-dag-types .smaller}
+
+::: notes
+Fork: a common cause, like gender in our story.
+Leaving it out mixes its influence into the slope, which is the puzzle.
+Pipe: the path runs through M, so controlling for M removes part of the very association we want.
+Collider: two arrows collide in C.
+X and Y are unrelated, but controlling for C makes them look related.
+Then the question: ask for one example of each from the room before the next slide.
+:::
+
+```{r}
+#| label: fig-dag-types
+#| fig-cap: "The three basic structures. In a fork, Z is a common cause of X and Y. In a pipe,
+#|   X influences Y through M. In a collider, X and Y both influence C."
+#| fig-height: 2.4
+#| fig-width: 10
+#| dpi: 500
+
+dag_fork <- draw_dag(
+  tibble(
+    name = c("Z", "X", "Y"),
+    x = c(1, 0, 2),
+    y = c(1, 0, 0),
+    label = c("Z", "X", "Y")
+  ),
+  tibble(from = c("Z", "Z"), to = c("X", "Y")),
+  title = "Fork: Z is a confounder"
+)
+dag_pipe <- draw_dag(
+  tibble(
+    name = c("X", "M", "Y"),
+    x = c(0, 1, 2),
+    y = 0,
+    label = c("X", "M", "Y")
+  ),
+  tibble(from = c("X", "M"), to = c("M", "Y")),
+  title = "Pipe: M is a mediator"
+)
+dag_collider <- draw_dag(
+  tibble(
+    name = c("X", "Y", "C"),
+    x = c(0, 2, 1),
+    y = c(1, 1, 0),
+    label = c("X", "Y", "C")
+  ),
+  tibble(from = c("X", "Y"), to = c("C", "C")),
+  title = "Collider: C is caused by both"
+)
+dag_fork | dag_pipe | dag_collider
+```
+
+::: {.small}
+| Structure | Control for the middle variable? | Why |
+|---|---|---|
+| Fork (confounder) | **Yes** | Otherwise its influence is credited to X |
+| Pipe (mediator) | **Usually not** | It removes part of the association we want |
+| Collider | **Never** | It creates an association that is not there |
+
+: Whether to control for the middle variable of each structure in @fig-dag-types. {#tbl-dag-rules}
+:::
+
+> **Q:** Which structure is gender in our story, and which is the job someone holds (occupation)?
+
+## Collider bias: a control that lies {#sec-collider .smaller}
+
+```{r}
+#| label: collider-sim
+#| include: false
+
+set.seed(2026)
+applicants <- tibble(
+  grades = rnorm(500),
+  connections = rnorm(500)
+) |>
+  mutate(admitted = grades + connections > 1.5)
+cor_all <- cor(applicants$grades, applicants$connections)
+cor_admitted <- with(
+  filter(applicants, admitted),
+  cor(grades, connections)
+)
+```
+
+::: notes
+Gender is a fork, so we control for it.
+Occupation is a pipe: schooling gets you a job that pays, so controlling for it removes part of the return to schooling.
+Now the collider, as a story.
+An elite programme admits people with good grades or good connections.
+Grades and connections are unrelated in the population.
+Among those admitted, they are negatively related: whoever got in with weak grades must have had strong connections.
+Controlling for admission, or studying only the admitted, does exactly this.
+:::
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-collider
+#| fig-cap: "Five hundred simulated applicants. Grades and connections are unrelated overall
+#|   (grey line), but negatively related among the admitted (orange)."
+#| fig-height: 2.8
+#| fig-width: 5.2
+#| dpi: 500
+
+ggplot(applicants, aes(x = grades, y = connections)) +
+  geom_point(aes(colour = admitted), alpha = 0.6, size = 1.4) +
+  geom_smooth(method = "lm", se = FALSE, colour = "grey30") +
+  geom_smooth(
+    data = filter(applicants, admitted),
+    method = "lm",
+    se = FALSE,
+    colour = col_2
+  ) +
+  scale_colour_manual(
+    values = c(`FALSE` = "grey70", `TRUE` = col_2),
+    labels = c("Rejected", "Admitted")
+  ) +
+  theme_classic() +
+  labs(
+    x = "Grades",
+    y = "Connections",
+    colour = NULL,
+    title = "Selected on both"
+  )
+```
+:::
+
+::: {.column width="45%"}
+An elite programme admits on good **grades** or good **connections**, unrelated in the population.
+
+- All applicants: correlation **`r sprintf("%.2f", cor_all)`**.
+- Admitted only: correlation **`r sprintf("%.2f", cor_admitted)`**.
+
+Admission is a **collider**:
+
+grades $\rightarrow$ admitted $\leftarrow$ connections
+
+Controlling for it creates the association.
+:::
+
+::::
+
+. . .
+
+::: {.callout-important}
+**Every control variable is a claim, and it needs a justification.**
+More controls are not safer: a mediator removes part of the association you want, a collider invents one.
+:::
+
+# The eight steps, two models {#sec-eight-steps}
+
+## Step 1: Estimand {#sec-step1 .smaller}
+
+::: notes
+The key word is "same gender".
+The estimand changes when the set of controls changes, so the controls belong to step 1, not to step 5.
+Then the warning, once and firmly.
+:::
+
+The research question:
+
+> Is schooling associated with income, among people of the same gender?
+
+. . .
+
+What precisely do we want to learn?
+
+> How much higher, on average, is the income of a person with one more year of schooling, **compared with a person of the same gender**?
+
+. . .
+
+That is a **partial association**: a slope that holds gender constant.
+The controls are part of the estimand, so they are chosen here, at step 1, with the DAG.
+
+. . .
+
+::: {.callout-warning}
+**A partial association is still not a causal effect.**
+It is a causal effect only if the DAG is right and complete, and the data cannot check that.
+Ability, family background or field of study could all still be missing.
+:::
+
+## Step 2: Data summary {#sec-step2 .smaller}
+
+::: notes
+Our first computed table today: group, summarise, kable.
+Ask: which row explains the puzzle?
+Women have more schooling and lower income, both.
+:::
+
+```{r}
+#| label: tbl-by-gender
+#| tbl-cap: "Number of people, mean years of schooling and mean annual income by gender. Women
+#|   have more schooling on average, and a lower average income."
+#| code-fold: false
+
+income |>
+  group_by(gender) |>
+  summarise(
+    n = n(),
+    schooling = mean(education),
+    income = mean(income)
+  ) |>
+  knitr::kable(
+    digits = 1,
+    col.names = c("Gender", "People", "Schooling (years)", "Income (thousand EUR)")
+  )
+```
+
+## Step 2: One variable at a time {#sec-step2-univariate .smaller}
+
+::: notes
+Ask before pointing at anything: what does gender do to each distribution?
+Women sit to the right on schooling and to the left on income.
+Pooled, the two groups blur into one wide hump.
+That is the puzzle again, one variable at a time.
+:::
+
+```{r}
+#| label: fig-univariate
+#| fig-cap: "Years of schooling and annual income, one histogram per gender. Women have more
+#|   schooling and a lower income, so each variable consists of two shifted groups."
+#| fig-height: 3.2
+#| fig-width: 10
+#| dpi: 500
+
+income |>
+  select(gender, education, income) |>
+  pivot_longer(
+    c(education, income),
+    names_to = "variable",
+    values_to = "value"
+  ) |>
+  mutate(
+    variable = case_match(
+      variable,
+      "education" ~ "Years of schooling",
+      "income" ~ "Annual income (thousand EUR)"
+    ),
+    variable = fct_relevel(variable, "Years of schooling")
+  ) |>
+  ggplot(aes(x = value, fill = gender)) +
+  geom_histogram(
+    bins = 20,
+    position = "identity",
+    alpha = 0.5,
+    colour = "white"
+  ) +
+  facet_wrap(~variable, scales = "free") +
+  scale_fill_manual(values = gender_cols) +
+  theme_classic() +
+  labs(
+    x = NULL,
+    y = "People",
+    fill = NULL,
+    title = "Schooling and income, by gender"
+  )
+```
+
+> **Q:** What does gender do to each distribution?
+
+. . .
+
+Together with @fig-by-gender: schooling and income rise together **within** each gender, and gender is related to **both**.
+
+## Step 3: Formal model {#sec-step3 .smaller}
+
+::: notes
+The same template as week 8: outcome distribution, then linear predictor.
+New: one term per predictor in the linear predictor.
+x for every predictor: x1 is schooling, x2 is gender, and the second subscript numbers the predictor.
+Centring: x1 is schooling minus 12, so the intercept is the expected income of a man with 12 years, a person in our data, which we can defend a prior for.
+The naive model is the same model without the gender term.
+:::
+
+**1. Outcome distribution.**
+Income is drawn from a normal distribution with mean $\mu_i$ and standard deviation $\sigma$:
+
+$$
+y_i \sim \mathcal{N}(\mu_i, \sigma)
+$$ {#eq-likelihood}
+
+**2. Linear predictor.**
+The mean is a straight line in schooling, shifted by gender:
+
+$$
+\mu_i = \alpha + \beta_1 x_{i1} + \beta_2 x_{i2}
+$$ {#eq-linear-predictor}
+
+::: {.small}
+- $y_i$ is the income of person $i$, in thousand EUR.
+- $x_{i1}$ is their years of schooling **minus 12**, so 0 means 12 years and 4 means 16 years.
+- $x_{i2}$ is 1 for a woman and 0 for a man.
+- The **naive model** is the same, without $\beta_2 x_{i2}$.
+:::
+
+Read $\sim$ as **is drawn from** (random) and $=$ as **is defined as** (fixed).
+
+. . .
+
+$\beta_1$ is a **partial association**: the difference in expected income between two people of the **same gender** whose schooling differs by one year.
+
+## Step 3: Why subtract 12? {#sec-centring .smaller}
+
+::: notes
+Ask first: what would alpha mean if x1 were plain years of schooling?
+Answer: the expected income of a man with no schooling at all, far outside our data, so nobody could defend a prior for it.
+Centring fixes that and changes nothing else: the slope is the same.
+In R this is one mutate, at step 5.
+:::
+
+The intercept $\alpha$ is the expected income when **every predictor is 0**.
+
+:::: {.columns}
+
+::: {.column width="40%"}
+::: {.small}
+| Years of schooling | $x_{i1}$ |
+|---:|---:|
+| 8 | $-4$ |
+| 12 | 0 |
+| 16 | 4 |
+| 20 | 8 |
+
+: Years of schooling and the centred predictor $x_{i1}$, which subtracts 12. {#tbl-centring}
+:::
+:::
+
+::: {.column width="60%"}
+- With plain years, $x_{i1} = 0$ would be a person with **no schooling at all**, far outside our data.
+- Centred at 12, $x_{i1} = 0$ is a person with **12 years**, so $\alpha$ is the expected income of a man with 12 years of schooling.
+:::
+
+::::
+
+. . .
+
+::: {.callout-note}
+**Centring moves only the intercept.**
+The slope $\beta_1$ stays the same, and now $\alpha$ is a value we can defend a prior for.
+:::
+
+## Step 3: A dummy variable {#sec-dummy .smaller}
+
+::: notes
+A dummy is a 0 or 1 variable, and its coefficient is a shift of the intercept.
+Men are the reference group: for them the term is zero.
+With more than two categories, one dummy per category except the reference, and brms builds them from a factor.
+The callout matters for next week: the lines are parallel because we assumed it.
+:::
+
+:::: {.columns}
+
+::: {.column width="50%"}
+$x_{i2}$ is a **dummy variable**: 1 for women, 0 for men, the **reference group**.
+
+- Men: $\mu_i = \alpha + \beta_1 x_{i1}$
+- Women: $\mu_i = (\alpha + \beta_2) + \beta_1 x_{i1}$
+
+$\beta_2$ **shifts the line**: the expected income gap between a woman and a man with the same schooling.
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-dummy
+#| fig-cap: "What the linear predictor of the controlled model implies, with illustrative values.
+#|   The dummy shifts the line for women by beta 2. Both lines share the slope beta 1."
+#| fig-height: 2.6
+#| fig-width: 4.8
+#| dpi: 500
+
+expand_grid(education = c(8, 20), gender = c("Man", "Woman")) |>
+  mutate(
+    mu = 38 + 1.6 * (education - 12) - 18 * (gender == "Woman")
+  ) |>
+  ggplot(aes(x = education, y = mu, colour = gender)) +
+  geom_line(linewidth = 1.2) +
+  annotate(
+    "segment",
+    x = 16,
+    xend = 16,
+    y = 38 + 1.6 * 4,
+    yend = 38 + 1.6 * 4 - 18,
+    arrow = arrow(ends = "both", length = unit(0.15, "cm")),
+    colour = "grey30"
+  ) +
+  annotate("text", x = 16.9, y = 35.4, label = "beta[2]", parse = TRUE, size = 5) +
+  scale_colour_manual(values = gender_cols) +
+  theme_classic() +
+  labs(
+    x = "Years of schooling",
+    y = "Expected income",
+    colour = NULL,
+    title = "One slope, two intercepts"
+  )
+```
+:::
+
+::::
+
+. . .
+
+::: {.callout-important}
+**The lines are parallel because the model says so.**
+Whether schooling pays off differently for women and men is next week: interactions.
+:::
+
+## Step 3: The posterior {#sec-step3-posterior .smaller}
+
+::: notes
+Read the left side first: these are all the unknowns.
+Count them out loud: four parameters, so four priors.
+The naive model has three.
+:::
+
+**3. Posterior, proportional form.**
+
+$$
+P(\alpha, \beta_1, \beta_2, \sigma \mid \mathbf{y}, \mathbf{X}) \propto \mathcal{L}(\alpha, \beta_1, \beta_2, \sigma \mid \mathbf{y}, \mathbf{X}) \times P(\alpha) \, P(\beta_1) \, P(\beta_2) \, P(\sigma)
+$$ {#eq-posterior}
+
+- $\mathbf{y}$ is the income column, and $\mathbf{X}$ holds the two predictor columns, $\mathbf{x}_1$ (schooling) and $\mathbf{x}_2$ (gender), `r n_people` rows each.
+- The likelihood $\mathcal{L}$ comes from @eq-likelihood and @eq-linear-predictor, applied to every person.
+
+. . .
+
+The left side lists every unknown: **four parameters, so four priors** to choose.
+The naive model has three.
+
+## Step 3: The complete model {#sec-model-card .smaller}
+
+::: notes
+The card is the course format for step 3, as in week 8.
+Read it top to bottom: the outcome, its mean, then one prior per unknown.
+Open one details block live, the rest are for reading at home.
+:::
+
+$$
+\begin{aligned}
+y_i &\sim \mathcal{N}(\mu_i, \sigma) && \text{outcome distribution} \\
+\mu_i &= \alpha + \beta_1 x_{i1} + \beta_2 x_{i2} && \text{linear predictor} \\
+\alpha &\sim \mathcal{N}(35, 10) && \text{prior} \\
+\beta_1 &\sim \mathcal{N}(0, 3) && \text{prior} \\
+\beta_2 &\sim \mathcal{N}(0, 10) && \text{prior} \\
+\sigma &\sim \text{Exponential}(0.1) && \text{prior}
+\end{aligned}
+$$ {#eq-model}
+
+Every prior is argued on the scale of the outcome, thousand EUR per year:
+
+::: {.small}
+<details>
+<summary>The intercept, $\alpha \sim \mathcal{N}(35, 10)$</summary>
+
+::: {.callout-note}
+**The expected income of a man with 12 years of schooling.**
+Typical full-time incomes lie in the tens of thousands, so the prior is centred on 35.
+With 95 percent probability it lies between 15 and 55.
+:::
+
+</details>
+
+<details>
+<summary>The schooling slope, $\beta_1 \sim \mathcal{N}(0, 3)$</summary>
+
+::: {.callout-note}
+**Centred on no association, because the sign is what we want to learn.**
+An extra year of schooling could plausibly shift income by a few thousand EUR.
+95 percent of the prior lies between $-6$ and $+6$.
+:::
+
+</details>
+
+<details>
+<summary>The gender dummy, $\beta_2 \sim \mathcal{N}(0, 10)$</summary>
+
+::: {.callout-note}
+**Centred on no gap, open in both directions.**
+A gap of 20 thousand EUR at the same schooling would be very large.
+95 percent of the prior lies between $-20$ and $+20$.
+:::
+
+</details>
+
+<details>
+<summary>The residual standard deviation, $\sigma \sim \text{Exponential}(0.1)$</summary>
+
+::: {.callout-note}
+**Positive, and typically around 10.**
+An exponential with rate 0.1 has a mean of 10 thousand EUR, so people typically lie that far from their expected income, and smaller values are more plausible than larger ones.
+:::
+
+</details>
+:::
+
+The naive model uses the same priors for $\alpha$, $\beta_1$ and $\sigma$.
+
+## Step 4: Prior predictive check {#sec-step4 .smaller}
+
+::: notes
+Narrate if behind.
+Lines are average worlds, one per prior draw.
+Some slopes are steep and some intercepts low, a few lines dip below zero, which is mild.
+The priors allow both signs of the slope and a wide range of gaps, which is what we want.
+:::
+
+```{r}
+#| label: fig-prior-lines
+#| fig-cap: "Fifty lines per gender drawn from the priors of the controlled model. The priors
+#|   allow rising and falling lines and gaps in both directions, all within a broadly plausible
+#|   range of incomes."
+#| fig-height: 3.4
+#| dpi: 500
+
+set.seed(2026)
+tibble(
+  draw = 1:50,
+  alpha = rnorm(50, 35, 10),
+  beta_1 = rnorm(50, 0, 3),
+  beta_2 = rnorm(50, 0, 10)
+) |>
+  expand_grid(education = c(8, 20), gender = c("Man", "Woman")) |>
+  mutate(
+    mu = alpha + beta_1 * (education - 12) + beta_2 * (gender == "Woman")
+  ) |>
+  ggplot(aes(x = education, y = mu, group = draw)) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_line(colour = col_3, alpha = 0.3) +
+  facet_wrap(~gender) +
+  theme_classic() +
+  labs(
+    x = "Years of schooling",
+    y = "Expected income (thousand EUR)",
+    title = "Average worlds our priors consider possible"
+  )
+```
+
+## Step 5: Fit both models {#sec-step5 .smaller}
+
+::: notes
+The two calls differ by one term in the formula and one prior.
+The first line centres schooling: the edu12 column is x1 from the card.
+0 + Intercept keeps the intercept at x1 = 0 and x2 = 0, so the prior on alpha means what the card says.
+The LOO criterion is stored with each fit, for the comparison in a moment.
+:::
+
+::: {.small}
+```{r}
+#| label: fit-naive
+#| output: false
+#| code-fold: false
+
+income <- income |> mutate(edu12 = education - 12) # centre at 12 years
+
+shared_priors <- c(
+  prior(normal(35, 10), class = "b", coef = "Intercept"),
+  prior(normal(0, 3), class = "b", coef = "edu12"),
+  prior(exponential(0.1), class = "sigma")
+)
+
+fit_naive <- brm(
+  income ~ 0 + Intercept + edu12,
+  data = income,
+  prior = shared_priors,
+  seed = 2026,
+  refresh = 0,
+  file = here("website", "slides", "data", "week09-fit-naive"),
+  file_refit = "on_change"
+)
+```
+
+```{r}
+#| label: fit-gender
+#| output: false
+#| code-fold: false
+
+fit_gender <- brm(
+  income ~ 0 + Intercept + edu12 + woman,
+  data = income,
+  prior = c(shared_priors, prior(normal(0, 10), class = "b", coef = "woman")),
+  seed = 2026,
+  refresh = 0,
+  file = here("website", "slides", "data", "week09-fit-gender"),
+  file_refit = "on_change"
+)
+
+fit_naive <- add_criterion(fit_naive, "loo")
+fit_gender <- add_criterion(fit_gender, "loo")
+```
+:::
+
+## Step 6a: MCMC diagnostics {#sec-step6a .smaller}
+
+```{r}
+#| label: diagnostics-numbers
+#| include: false
+
+diag_one <- function(fit) {
+  posterior::summarise_draws(fit, "rhat", "ess_bulk", "ess_tail") |>
+    filter(str_starts(variable, "b_") | variable == "sigma")
+}
+draw_checks <- bind_rows(diag_one(fit_naive), diag_one(fit_gender))
+max_rhat <- max(draw_checks$rhat)
+min_ess <- min(draw_checks$ess_bulk, draw_checks$ess_tail)
+n_divergent <- sum(
+  nuts_params(fit_naive) |> filter(Parameter == "divergent__") |> pull(Value),
+  nuts_params(fit_gender) |> filter(Parameter == "divergent__") |> pull(Value)
+)
+```
+
+::: notes
+Week 7's rules, applied to the controlled model.
+Trace plots: the four chains overlap and wander around the same region.
+In the summary output, read only the last three columns for now: Rhat, Bulk_ESS, Tail_ESS.
+The left columns are the estimates, we come back to them at step 7.
+:::
+
+:::: {.columns}
+
+::: {.column width="40%"}
+```{r}
+#| label: fig-trace
+#| fig-cap: "Trace plots for the model controlling for gender, four chains per parameter. The
+#|   chains overlap and wander around the same region."
+#| fig-height: 3.6
+#| fig-width: 4.4
+#| dpi: 500
+
+mcmc_plot(fit_gender, type = "trace", facet_args = list(ncol = 2)) +
+  scale_colour_manual(values = chain_cols) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+:::
+
+::: {.column width="60%"}
+::: {.small}
+```{r}
+#| label: summary-diagnostics
+#| code-fold: false
+
+summary(fit_gender)
+```
+:::
+:::
+
+::::
+
+Across both models: largest R-hat `r sprintf("%.3f", max_rhat)`, smallest ESS `r round(min_ess)`, `r n_divergent` divergent transitions, so **no evidence of non-convergence**.
+
+## Step 6b: Posterior predictive check {#sec-step6b .smaller}
+
+::: notes
+Ask the question before pointing at anything.
+Answer: both look fine, and they look almost the same.
+A density check only looks at the distribution of income as a whole, and both models get that roughly right.
+They differ in which people they predict well, so we need a sharper tool: next section.
+:::
+
+```{r}
+#| label: fig-ppc
+#| fig-cap: "Posterior predictive checks. The dark line is the observed distribution of income,
+#|   the pale lines are datasets generated by each fitted model. Both models reproduce the overall
+#|   shape of income about equally well, so this check cannot tell them apart."
+#| fig-height: 2.8
+#| fig-width: 10
+#| dpi: 500
+
+set.seed(2026)
+ppc_naive <- pp_check(fit_naive, ndraws = 50) +
+  theme_classic() +
+  labs(x = "Income (thousand EUR)", title = "Naive model")
+ppc_gender <- pp_check(fit_gender, ndraws = 50) +
+  theme_classic() +
+  labs(x = "Income (thousand EUR)", title = "Controlling for gender")
+ppc_naive + ppc_gender + plot_layout(guides = "collect")
+```
+
+> **Q:** Which model generates data that look more like ours?
+
+# Comparing models {#sec-compare}
+
+```{r}
+#| label: loo-numbers
+#| include: false
+
+loo_table <- as_tibble(loo_compare(fit_gender, fit_naive))
+elpd_diff <- abs(loo_table$elpd_diff[2])
+se_diff <- loo_table$se_diff[2]
+max_pareto_k <- max(
+  fit_naive$criteria$loo$diagnostics$pareto_k,
+  fit_gender$criteria$loo$diagnostics$pareto_k
+)
+```
+
+## Which model fits better? {#sec-which-fits .smaller}
+
+::: notes
+Ask first, take two or three answers.
+Someone will say: the one closer to the data.
+Answer: every added predictor brings a model closer to the data it was fitted on, even pure noise.
+We want to know how well it predicts people it has not seen.
+LOO does that by leaving each person out in turn.
+Refitting 200 times would be slow, PSIS approximates it from the one fit we already have.
+:::
+
+> **Q:** We have two fitted models, so how would you decide which fits the data better?
+
+. . .
+
+- Every extra predictor brings a model **closer to the data it was fitted on**, even a predictor that is pure noise.
+- What we want: how well does the model predict **people it has not seen**?
+
+## Leave-one-out cross-validation {#sec-loo .smaller}
+
+::: notes
+Three steps, then the formula is only step 3 written down.
+Higher ELPD means the model found the left-out people more plausible.
+:::
+
+**Leave-one-out cross-validation (LOO)** asks exactly that:
+
+1. Leave out person $i$, and fit the model to everyone else.
+2. Ask how plausible the model finds person $i$'s actual income.
+3. Repeat for every person and add up:
+
+$$
+\text{elpd}_{\text{loo}} = \sum_{i=1}^{n} \log p(y_i \mid \mathbf{y}_{-i})
+$$ {#eq-elpd}
+
+The **expected log predictive density (ELPD)**: higher is better.
+`loo()` approximates all $n$ refits from the one fit we already have [@vehtari2017practical].
+
+## Comparing our two models {#sec-loo-compare .smaller}
+
+::: notes
+Read the table: the best model is the first row, with a difference of zero.
+The second row says how much worse the other model predicts, and how uncertain that difference is.
+Rule of thumb: a difference below about 4 is small, beyond that compare it with its standard error.
+Here it is many standard errors, so the controlled model predicts clearly better.
+Pareto k values below 0.7 mean the approximation can be trusted.
+:::
+
+```{r}
+#| label: tbl-loo
+#| tbl-cap: "LOO comparison of the two models. The better model comes first, with a difference of
+#|   zero. The second row gives how much lower its ELPD is, and the standard error of that
+#|   difference."
+
+loo_compare(fit_gender, fit_naive) |>
+  as_tibble() |>
+  mutate(
+    model = case_match(
+      model,
+      "fit_gender" ~ "Controlling for gender",
+      "fit_naive" ~ "Naive"
+    )
+  ) |>
+  select(model, elpd_diff, se_diff) |>
+  knitr::kable(
+    digits = 1,
+    col.names = c("Model", "ELPD difference", "Standard error")
+  )
+```
+
+. . .
+
+- The naive model predicts worse by **`r round(elpd_diff, 1)`**, with a standard error of `r round(se_diff, 1)`.
+- A difference below about **4** is small, and beyond that we compare it with its standard error: here it is **`r round(elpd_diff / se_diff)` standard errors**.
+- Largest Pareto $k$: `r sprintf("%.2f", max_pareto_k)`, below 0.7, so the approximation can be trusted.
+
+## What LOO cannot tell you {#sec-loo-limits .smaller}
+
+::: notes
+This is the most important slide of the section.
+Ask: in the collider example, would adding admission as a predictor improve prediction of connections?
+Yes, it would, and it would also produce a spurious association.
+So LOO is a check of prediction, and the DAG is the argument for the estimand.
+:::
+
+> **Q:** In the admissions example, would a model predicting connections from grades **and admission** predict better than one from grades alone?
+
+. . .
+
+Yes: admission carries information about connections.
+And it would show a negative association between grades and connections that is not there.
+
+. . .
+
+::: {.callout-important}
+**LOO ranks how well models predict, not whether their controls are right.**
+A collider or a mediator can improve the ELPD and still bias the coefficient you care about.
+The DAG chooses the model for the estimand, and LOO checks how well it predicts.
+:::
+
+# Step 7: Reporting {#sec-step7}
+
+## Step 7: The raw output {#sec-raw-output .smaller}
+
+::: notes
+Back to the summary output from step 6a, now the left half.
+The Regression Coefficients block is what we report: one row per coefficient.
+Estimate is the posterior mean, Est.Error the posterior standard deviation, and the two CI columns a 95 percent credible interval.
+Ask a student to find the schooling slope and its interval.
+:::
+
+Every report starts from the raw output, so get used to reading it.
+
+::: {.small}
+```{r}
+#| label: summary-raw
+#| code-fold: false
+
+summary(fit_gender)
+```
+:::
+
+> **Q:** Where is the schooling slope, and what is its 95 percent credible interval?
+
+## From output to data frame {#sec-tidy .smaller}
+
+::: notes
+tidy turns the fit into a data frame, one row per parameter, which dplyr can work with.
+estimate is the posterior mean, std.error the posterior standard deviation, conf.low and conf.high the interval.
+conf.level = 0.9 gives the 90 percent interval we report throughout.
+effect, component and group only matter for multilevel models.
+The residual standard deviation is called sd__Observation here.
+:::
+
+`tidy()` from `broom.mixed` turns the summary into a **data frame**, one row per parameter.
+Install it once with `install.packages("broom.mixed")`.
+
+::: {.small}
+```{r}
+#| label: tidy-raw
+#| code-fold: false
+
+tidy(fit_gender, conf.level = 0.9)
+```
+:::
+
+- `estimate` is the posterior mean, and `conf.low` and `conf.high` the 90 percent credible interval.
+- `effect`, `component` and `group` only matter for multilevel models, so we drop them next.
+
+## Keep what a reader needs {#sec-wrangle .smaller}
+
+::: notes
+Three dplyr verbs, nothing new since week 4.
+select keeps four columns, mutate gives the terms readable names and writes the interval as one piece of text, select keeps the three columns we print.
+:::
+
+Plain `dplyr` from week 4: keep the columns, rename the terms, write the interval as text.
+
+::: {.small}
+```{r}
+#| label: tidy-wrangle
+#| code-fold: false
+
+tab_gender <- tidy(fit_gender, conf.level = 0.9) |>
+  select(term, estimate, conf.low, conf.high) |>
+  mutate(
+    term = case_match(
+      term,
+      "(Intercept)" ~ "Intercept (12 years)",
+      "edu12" ~ "Schooling (per year)",
+      "woman" ~ "Woman",
+      "sd__Observation" ~ "Residual SD"
+    ),
+    interval = sprintf("[%.2f, %.2f]", conf.low, conf.high)
+  ) |>
+  select(term, estimate, interval)
+
+tab_gender
+```
+:::
+
+## Print it with `kable()` {#sec-kable .smaller}
+
+::: notes
+kable turns the data frame into a table, with rounded numbers and readable column names.
+The caption is written in the chunk options, as for every table in this course.
+Ask a student to read the schooling row as one sentence.
+:::
+
+```{r}
+#| label: tbl-gender
+#| tbl-cap: "The model controlling for gender: posterior means and 90 percent credible intervals,
+#|   income in thousand EUR per year, 200 people. The intercept is a man with 12 years of schooling."
+#| code-fold: false
+
+tab_gender |>
+  knitr::kable(
+    digits = 2,
+    col.names = c("", "Posterior mean", "90% credible interval")
+  )
+```
+
+> **Q:** Read the schooling row aloud, as one sentence.
+
+## Two models, one table {#sec-two-models-table .smaller}
+
+::: notes
+The same pipeline once more, for the naive model, then full_join puts the two side by side by term, keeping rows that only one model has.
+The naive model has no gender row, so its cells stay empty: the setup chunk sets options(knitr.kable.NA = "").
+Point at the schooling row: the sign flips, and the controlled interval is wider, region A of the Venn diagram.
+If behind, skip the next slide and say its tip here: build the table from the fit, never by copying numbers.
+:::
+
+The same steps for the naive model, then `full_join()` puts the two side by side.
+
+::: {.small}
+```{r}
+#| label: tidy-naive
+#| code-fold: false
+
+tab_naive <- tidy(fit_naive, conf.level = 0.9) |>
+  select(term, estimate, conf.low, conf.high) |>
+  mutate(
+    term = case_match(
+      term,
+      "(Intercept)" ~ "Intercept (12 years)",
+      "edu12" ~ "Schooling (per year)",
+      "sd__Observation" ~ "Residual SD"
+    ),
+    interval = sprintf("[%.2f, %.2f]", conf.low, conf.high)
+  ) |>
+  select(term, estimate, interval)
+```
+
+```{r}
+#| label: tbl-regression
+#| tbl-cap: "Posterior means and 90 percent credible intervals from both models, income in
+#|   thousand EUR per year, 200 people. The intercept is a man with 12 years in the controlled
+#|   model, anyone with 12 years in the naive model, which omits gender."
+#| code-fold: false
+
+full_join(tab_naive, tab_gender, by = "term", suffix = c("_naive", "_gender")) |>
+  knitr::kable(
+    digits = 2,
+    col.names = c("", "Naive: mean", "Naive: 90% CrI", "Gender: mean", "Gender: 90% CrI")
+  )
+```
+:::
+
+## What every table needs {#sec-table-needs .smaller}
+
+::: notes
+Short slide, read the four items and point at @tbl-regression for each.
+:::
+
+Look back at @tbl-regression:
+
+- a **caption** that names the outcome and its unit,
+- the **summary and the interval type** (posterior mean, 90 percent credible interval),
+- the **number of observations**,
+- **one column block per model**, with readable names for every term.
+
+::: {.callout-tip}
+**Build the table from the fit, never by copying numbers.**
+When the model changes, the table changes with it.
+:::
+
+## Expected and predicted income {#sec-expected .smaller}
+
+```{r}
+#| label: quantities
+#| include: false
+
+q3 <- function(v) round(quantile(v, c(0.05, 0.5, 0.95)), 1)
+
+new_people <- tibble(edu12 = 2, woman = c(0, 1))
+epred <- posterior_epred(fit_gender, newdata = new_people)
+set.seed(2026)
+pred <- posterior_predict(fit_gender, newdata = new_people)
+ep_man <- q3(epred[, 1])
+ep_woman <- q3(epred[, 2])
+pr_woman <- q3(pred[, 2])
+
+grid <- expand_grid(edu12 = seq(-4, 8, by = 0.5), woman = c(0, 1))
+grid_epred <- posterior_epred(fit_gender, newdata = grid)
+set.seed(2026)
+grid_pred <- posterior_predict(fit_gender, newdata = grid)
+bands <- grid |>
+  mutate(
+    education = edu12 + 12,
+    gender = if_else(woman == 1, "Woman", "Man"),
+    mid = apply(grid_epred, 2, median),
+    ep_lo = apply(grid_epred, 2, quantile, probs = 0.05),
+    ep_hi = apply(grid_epred, 2, quantile, probs = 0.95),
+    pr_lo = apply(grid_pred, 2, quantile, probs = 0.05),
+    pr_hi = apply(grid_pred, 2, quantile, probs = 0.95)
+  )
+```
+
+::: notes
+Same two quantities as week 8, now one line per gender.
+Narrow band: the average, estimation uncertainty only.
+Wide band: one new person, adding sigma.
+If behind, read only the predicted interval for the woman.
+:::
+
+:::: {.columns}
+
+::: {.column width="60%"}
+```{r}
+#| label: fig-expected
+#| fig-cap: "Expected income (line and narrow band) and predicted income (wide band), both 90
+#|   percent intervals, from the model controlling for gender. The wide band adds the residual
+#|   standard deviation, so it shows where single people fall."
+#| fig-height: 4
+#| fig-width: 6
+#| dpi: 500
+
+ggplot(bands, aes(x = education, fill = gender, colour = gender)) +
+  geom_ribbon(aes(ymin = pr_lo, ymax = pr_hi), alpha = 0.12, colour = NA) +
+  geom_ribbon(aes(ymin = ep_lo, ymax = ep_hi), alpha = 0.4, colour = NA) +
+  geom_line(aes(y = mid), linewidth = 1) +
+  geom_point(
+    data = income,
+    aes(x = education, y = income, colour = gender),
+    inherit.aes = FALSE,
+    alpha = 0.4,
+    size = 1
+  ) +
+  scale_colour_manual(values = gender_cols) +
+  scale_fill_manual(values = gender_cols) +
+  theme_classic() +
+  labs(
+    x = "Years of schooling",
+    y = "Annual income (thousand EUR)",
+    colour = NULL,
+    fill = NULL,
+    title = "The average and the single person"
+  )
+```
+:::
+
+::: {.column width="40%"}
+**Expected values**, 14 years of schooling:
+
+- a man: **`r ep_man[2]`**, 90 percent credible interval `r ep_man[1]` to `r ep_man[3]`
+- a woman: **`r ep_woman[2]`**, from `r ep_woman[1]` to `r ep_woman[3]`
+
+**Predicted value**: one new woman with 14 years earns between **`r pr_woman[1]` and `r pr_woman[3]`** thousand EUR (90 percent).
+:::
+
+::::
+
+## The marginal effect, before and after {#sec-marginal .smaller}
+
+```{r}
+#| label: marginal-numbers
+#| include: false
+
+beta_naive <- as_draws_df(fit_naive)$b_edu12
+beta_gender <- as_draws_df(fit_gender)$b_edu12
+bq_naive <- round(quantile(beta_naive, c(0.05, 0.5, 0.95)), 2)
+bq_gender <- round(quantile(beta_gender, c(0.05, 0.5, 0.95)), 2)
+above_zero <- round(100 * mean(beta_gender > 0))
+```
+
+::: notes
+This is the puzzle again, now as two posteriors.
+Same data, same priors, one term more, and the posterior moves to the other side of zero.
+The controlled posterior is wider: the Venn region A is smaller than A plus B.
+Ask which one answers our estimand.
+The controlled one, because the estimand said same gender.
+:::
+
+:::: {.columns}
+
+::: {.column width="55%"}
+```{r}
+#| label: fig-marginal
+#| fig-cap: "Posteriors of the schooling slope in both models. Without gender, the slope is
+#|   negative. Holding gender constant, it is positive and slightly wider. This is Simpson's
+#|   paradox, seen in the posterior."
+#| fig-height: 3.6
+#| fig-width: 5.5
+#| dpi: 500
+
+bind_rows(
+  tibble(model = "Naive", beta = beta_naive),
+  tibble(model = "Controlling for gender", beta = beta_gender)
+) |>
+  ggplot(aes(x = beta, fill = model)) +
+  geom_density(alpha = 0.5, colour = NA) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
+  scale_fill_manual(
+    values = c(Naive = "grey50", `Controlling for gender` = col_3)
+  ) +
+  theme_classic() +
+  labs(
+    x = "Thousand EUR per year of schooling",
+    y = "Density",
+    fill = NULL,
+    title = "One term changes the answer"
+  )
+```
+:::
+
+::: {.column width="45%"}
+**Naive:** `r bq_naive[2]` per year, 90 percent interval [`r bq_naive[1]`, `r bq_naive[3]`].
+
+**Controlling for gender:** comparing two people of the same gender, one more year of schooling is associated with **`r bq_gender[2]` thousand EUR** more income, 90 percent interval [`r bq_gender[1]`, `r bq_gender[3]`].
+
+**`r above_zero` percent** of that posterior lies above zero.
+:::
+
+::::
+
+## Step 8: Limitations {#sec-step8 .smaller}
+
+::: notes
+Ask the room for one limitation before revealing.
+The last bullet leads straight into next week.
+:::
+
+- **Synthetic data:** built to show the paradox clearly, so the sizes are exaggerated.
+- **The DAG may be incomplete:** ability, family background or field of study could still confound schooling and income.
+- **Gender as a binary dummy:** a simplification of the measurement.
+- **Additive by assumption:** one schooling slope for everyone, so the model cannot yet say whether it differs by gender.
+
+. . .
+
+::: {.callout-note}
+**A control fixes one bias, the one the DAG names.**
+Naming what the model still cannot rule out is part of the answer.
+:::
+
+# Wrap-up {#sec-wrap-up}
+
+## Learning goals: achieved? {#sec-goals-achieved .smaller}
+
+::: notes
+Walk down the table and ask for a show of hands on each goal.
+Flag goals 3 and 4 for the exam: every control is justified with a DAG, and models are compared with LOO.
+:::
+
+::: {.xsmall}
+| # | Learning goal | Key answer | Where |
+|:-:|:-----|:---------|:---:|
+| 1 | Simpson's paradox | Gender relates to schooling and income, so the pooled slope mixes two stories and reverses | [The puzzle](#sec-puzzle) |
+| 2 | What controlling does | The slope learns only from variation the control does not share, a partial association. A dummy shifts the intercept | [Venn](#sec-venn), [Dummy](#sec-dummy) |
+| 3 | Justify controls with a DAG | Control for confounders, not mediators, never colliders | [DAGs](#sec-dags) |
+| 4 | Compare models with LOO | Higher ELPD predicts new data better, and LOO does not judge the controls | [Comparing models](#sec-compare) |
+| 5 | A regression table | Tidy, stack, spread, `kable()` | [Reporting](#sec-step7) |
+
+: The week 9 learning goals, each with its key answer and the part of the session that covers it. {#tbl-goals-achieved}
+:::
+
+## Homework and outlook {#sec-homework .smaller}
+
+- `hw-09`: the whole workflow with a control variable, on a new dataset, due 25 November.
+  Linked from the Schedule.
+- A sample solution is published after the due date.
+
+::: {.callout-important}
+**Individual feedback is only available through the opt-in path.**
+To opt in, add an open-source `license.md` to your submission repo **and** mark your finished homework with a commit whose message is `final submission`.
+:::
+
+. . .
+
+**Next week:** does schooling pay off **equally** for women and men?
+That question needs the lines of @fig-dummy to stop being parallel: **interactions**.
+
+## References {#sec-references .smaller}
+
+::: {#refs}
+:::
+
+# Appendix {#sec-appendix}
+
+## Appendix: how large the reversal is {#sec-ovb .smaller}
+
+::: notes
+Not exam material.
+The pooled slope is the within-gender slope plus a bias term, and the bias term is the gender gap times how strongly gender tracks schooling.
+:::
+
+::: {.small}
+If income truly depends on schooling $x_1$ and gender $x_2$, a model with schooling alone finds, in large samples,
+
+$$
+\beta^{\text{pooled}} = \beta_1 + \beta_2 \cdot \frac{\operatorname{Cov}(\mathbf{x}_1, \mathbf{x}_2)}{\operatorname{Var}(\mathbf{x}_1)}
+$$ {#eq-ovb}
+
+The second term is the **omitted variable bias**: the gender gap $\beta_2$, times how much the share of women rises per year of schooling.
+
+For our data, with least-squares values: $`r round(slope_within, 2)` + (`r round(gap_within, 2)`) \times `r round(aux_slope, 3)` = `r round(slope_within + gap_within * aux_slope, 2)`$, which is the pooled slope of `r round(slope_pooled, 2)` in @fig-pooled.
+
+The bias is large because both factors are: a big gap, and a strong link between gender and schooling.
+A control matters only where **both** of its arrows in the DAG are strong.
+:::
+
+## Drawing a DAG in Quarto {#sec-dag-mermaid .smaller}
+
+::: notes
+Appendix slide, for the homework: point students here when they draw their DAG.
+Mermaid ships with Quarto, so no package is needed.
+:::
+
+For your homework, Quarto draws DAGs from a `{mermaid}` block, with no R package needed:
+
+````markdown
+```{mermaid}
+flowchart LR
+  G[Gender] --> E[Schooling]
+  G --> I[Income]
+  E --> I
+```
+````
+
+- `flowchart LR` draws left to right, `TD` top down.
+- Each `-->` is one arrow of your theory.
+- Reference: [Quarto diagrams](https://quarto.org/docs/authoring/diagrams.html).
+
