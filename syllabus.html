@@ -903,15 +903,16 @@ Note
 <section id="sec-session-09" class="level3">
 <h3 class="anchored" data-anchor-id="sec-session-09">Session 9: Multivariate linear regression</h3>
 <div class="session-meta">
-<p>18 November 2026 · Applied modelling · workflow steps 1, 7</p>
+<p>18 November 2026 · Applied modelling · workflow steps 1, 2, 3, 7</p>
 </div>
-<p>More than one predictor, and the questions that come with it. A set of controls is a claim about how the world works, not a way of being safe.</p>
+<p>More than one predictor, and the questions that come with it. A puzzle opens the session: in our data people with more schooling earn less, until gender enters the model. Venn diagrams show what controlling for a variable does, and DAGs show which controls a theory calls for, and why a control can do harm. We then run the workflow on two models, compare them with leave-one-out cross-validation, and report both in one regression table. A set of controls is a claim about how the world works, not a way of being safe.</p>
 <p><strong>Afterwards you will be able to:</strong></p>
 <ul>
-<li>Explain omitted variable bias, and use a DAG to classify a control variable as a confounder, a mediator or a collider.</li>
-<li>Extend the Bayesian regression model to several predictors and interpret each coefficient as a partial effect.</li>
-<li>Handle categorical predictors using dummy variables.</li>
-<li>Compare competing models with Bayesian leave-one-out cross-validation (LOO-IC).</li>
+<li>Explain Simpson’s paradox: why an association in pooled data can reverse within groups.</li>
+<li>Say what controlling for a variable does, and interpret each coefficient as a partial association, including a dummy variable.</li>
+<li>Use a DAG to justify control variables, and recognise when a mediator or a collider makes a control harmful.</li>
+<li>Compare competing models by their predictive performance with leave-one-out cross-validation (LOO).</li>
+<li>Report several models in one regression table built with <code>broom.mixed</code> and <code>kable()</code>.</li>
 </ul>
 </section>
 <section id="sec-session-10" class="level3">

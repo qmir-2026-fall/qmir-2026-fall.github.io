@@ -555,6 +555,11 @@ The documentation of a dataset, listing every variable with what it measures, it
 R changing values from one <a href="#gl-data-type">type</a> to another automatically, most often when a vector mixes types, without anyone asking for it. <code>c(1, 2, "three")</code> becomes all text and <code>c(1, TRUE, FALSE)</code> becomes the numbers 1, 1 and 0, whereas <a href="#gl-type-conversion">type conversion</a> is the same change made on purpose.
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-collider">Collider</span></dt>
+<dd>
+A variable influenced by two others, where two arrows collide in a <a href="#gl-directed-acyclic-graph-dag">DAG</a>. Controlling for it, or selecting the data on it, creates an association between its causes that is not there.
+<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">model</span> <span class="glossary-tag">regression</span>
+</dd>
 <dt><span id="gl-colour-palette">Colour palette</span></dt>
 <dd>
 The set of colours a figure uses for a variable, matched to its kind: qualitative for categories without an order, sequential for values from low to high, diverging for values above and below a meaningful midpoint. Avoid letting red against green carry a distinction, and prefer palettes such as viridis that stay distinct for colourblind readers and in greyscale.
@@ -603,11 +608,22 @@ Documentation: <a href="https://search.r-project.org/R/refmans/base/html/Compari
 The probability of one thing given that another holds, written <span class="math inline">\(P(A \mid B)\)</span> and read “A given B”. Every way of telling <a href="#gl-signal-and-noise">signal from noise</a> is a statement of this kind, and the schools of inference differ in what they put on each side of the bar.
 <span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">probability</span>
 </dd>
+<dt><span id="gl-confounder">Confounder</span></dt>
+<dd>
+A common cause of a predictor and the outcome, the middle of a fork in a <a href="#gl-directed-acyclic-graph-dag">DAG</a>. Leaving it out credits its influence to the predictor, so it belongs among the controls.
+<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">model</span> <span class="glossary-tag">regression</span>
+</dd>
 <dt><span id="gl-console">Console</span></dt>
 <dd>
 The interactive R session in Positron, where code runs line by line and prints its result straight away. Use it to try things out and for one-off commands such as <code>install.packages()</code>, and keep everything that belongs to the analysis in the document.
 See also: <a href="#gl-fresh-r-session">Fresh R session</a>.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">workflow</span>
+</dd>
+<dt><span id="gl-control-variable">Control variable</span></dt>
+<dd>
+A predictor added to a model so that the coefficient of interest is learned only from variation the control does not share, comparing like with like. Every control is a claim about how the world works, justified with a <a href="#gl-directed-acyclic-graph-dag">DAG</a>, because the wrong control can create bias rather than remove it.
+See also: <a href="#gl-partial-association">Partial association</a>, <a href="#gl-confounder">Confounder</a>, <a href="#gl-collider">Collider</a>.
+<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">model</span>
 </dd>
 <dt><span id="gl-convergence">Convergence</span></dt>
 <dd>
@@ -702,6 +718,12 @@ A comparison of two versions of a file, showing what was removed, what was added
 Documentation: <a href="https://git-scm.com/docs/git-diff">Git: git diff</a>
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span>
 </dd>
+<dt><span id="gl-directed-acyclic-graph-dag">Directed acyclic graph (DAG)</span></dt>
+<dd>
+A diagram of what we theorise about how variables relate: nodes are variables, and arrows say which variable influences which, with no path leading back to its start. It says whether and in which direction variables are related, not how, and it decides which variables a model should control for.
+See also: <a href="#gl-confounder">Confounder</a>, <a href="#gl-mediator">Mediator</a>, <a href="#gl-collider">Collider</a>.
+<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">model</span>
+</dd>
 <dt><span id="gl-divergent-transition">Divergent transition</span></dt>
 <dd>
 A <a href="#gl-hamiltonian-monte-carlo">Hamiltonian Monte Carlo</a> trajectory on which the simulated physics broke down, usually where the posterior curves too sharply. Even a few signal a problem with the model or its parameterisation, not one that more iterations fix.
@@ -712,6 +734,11 @@ A <a href="#gl-hamiltonian-monte-carlo">Hamiltonian Monte Carlo</a> trajectory o
 R’s two numeric types: <code>double</code> for decimal numbers, the default, and <code>integer</code> for whole numbers, written with an <code>L</code> as in <code>42L</code>. The difference rarely matters here, but whether a value is numeric at all does, and <code>is.numeric()</code> answers that.
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/numeric.html">R documentation: numeric vectors</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-dummy-variable">Dummy variable</span></dt>
+<dd>
+A predictor that is 1 for one category and 0 for the reference category, so its coefficient shifts the intercept of that category. A variable with K categories needs K minus 1 dummies.
+<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">data</span>
 </dd>
 </dl>
 </section>
@@ -930,6 +957,12 @@ One component of a <code>ggplot2</code> figure, such as a <a href="#gl-geom">geo
 See also: <a href="#gl-grammar-of-graphics">Grammar of graphics</a>.
 <span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-leave-one-out-cross-validation-loo">Leave-one-out cross-validation (LOO)</span></dt>
+<dd>
+A way to compare models by how well they predict data they have not seen: leave out each observation in turn, and ask how plausible the model fitted to the rest finds it. The sum over all observations is the expected log predictive density (ELPD), higher is better, and <code>loo()</code> approximates it from a single fit.
+Documentation: <a href="https://mc-stan.org/loo/">loo package documentation</a>
+<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">model</span> <span class="glossary-tag">diagnostics</span>
+</dd>
 <dt><span id="gl-legend-and-direct-labels">Legend and direct labels</span></dt>
 <dd>
 A legend is the key that decodes an <a href="#gl-aesthetic-mapping">aesthetic mapping</a>, such as which colour stands for which continent. Direct labels write the name next to the data instead, which spares the reader from looking back and forth.
@@ -1017,6 +1050,11 @@ The mean <span class="math inline">\(\mu\)</span> is the centre of a distributio
 <dd>
 The middle value of a set of numbers once they are sorted, so half the values lie below it and half above. Unlike the <a href="#gl-mean-and-standard-deviation">mean</a>, it barely moves when a few values are extreme, which makes it the better summary of skewed data such as income.
 <span class="glossary-tag glossary-block">Week 4</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">probability</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-mediator">Mediator</span></dt>
+<dd>
+A variable through which a predictor influences the outcome, the middle of a pipe in a <a href="#gl-directed-acyclic-graph-dag">DAG</a>. Controlling for it removes part of the very association we want to learn.
+<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">model</span> <span class="glossary-tag">regression</span>
 </dd>
 <dt><span id="gl-metropolis-algorithm">Metropolis algorithm</span></dt>
 <dd>
@@ -1154,6 +1192,12 @@ See also: <a href="#gl-observation">Observation</a>, <a href="#gl-tidy-data">Tid
 <dd>
 An unknown quantity in a model that we want to learn about from data, such as the proportion of the Earth covered by water. In Bayesian inference it is uncertain to us, so it gets a <a href="#gl-probability-distribution">probability distribution</a>, while the observed data are fixed.
 <span class="glossary-tag glossary-block">Week 6</span> <span class="glossary-tag glossary-block">The logic of Bayesian inference</span> <span class="glossary-tag">model</span> <span class="glossary-tag">probability</span>
+</dd>
+<dt><span id="gl-partial-association">Partial association</span></dt>
+<dd>
+The coefficient of one predictor in a model with several predictors: the difference in the expected outcome between two units that differ by one in that predictor and are equal in all others.
+See also: <a href="#gl-control-variable">Control variable</a>.
+<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">interpretation</span>
 </dd>
 <dt><span id="gl-pipeline">Pipeline</span></dt>
 <dd>
@@ -1321,6 +1365,12 @@ The standard way to store geographic shapes as a column of a table, one row per 
 See also: <a href="#gl-choropleth">Choropleth</a>.
 Documentation: <a href="https://r-spatial.github.io/sf/">sf: simple features for R</a>
 <span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-simpson-s-paradox">Simpson’s paradox</span></dt>
+<dd>
+An association in pooled data that weakens, vanishes or reverses within every group of the data. It arises when a third variable is related to both variables of interest, and it is a reason to justify which variables a model controls for.
+See also: <a href="#gl-confounder">Confounder</a>, <a href="#gl-control-variable">Control variable</a>.
+<span class="glossary-tag glossary-block">Week 9</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">interpretation</span>
 </dd>
 <dt><span id="gl-simulation">Simulation</span></dt>
 <dd>
