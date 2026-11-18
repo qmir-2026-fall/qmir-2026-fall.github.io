@@ -240,7 +240,7 @@ weeks:
       - "Understand `brms` as sampling from the posterior: an estimator that returns a distribution rather than one number."
       - "Interpret `brms` output and extract quantities of interest, such as predictions and marginal effects."
   - week: 9
-    topic: "Multiple linear regression"
+    topic: "Multivariate linear regression"
     steps: [1, 2, 3, 7]
     content: |
       More than one predictor, and the questions that come with it. A puzzle opens the session:

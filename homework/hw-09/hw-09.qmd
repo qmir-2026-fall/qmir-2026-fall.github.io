@@ -1,0 +1,207 @@
+---
+title: "Homework 09: Multivariate Bayesian linear regression"
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+<!-- STUDENT-FACING STARTER. No solution content here. Files named solution.* are stripped on
+     release, but this file ships as-is, so keep it clean.
+
+     Deliberately minimal: the setting, the task, and one section per workflow step with the
+     week 9 specific asks. No helper functions. Students write their own chunks. -->
+
+::: {.callout-important}
+**Before you use `brms`, update `rstan` once.**
+The current `rstan` on CRAN cannot compile models, so your first fit would fail.
+Run the code below once in the Console, then restart R (Session, Restart R) before you run or render anything in this file.
+:::
+
+```{r}
+#| label: install-rstan
+#| eval: false
+
+install.packages(
+  "rstan",
+  repos = c(
+    "https://stan-dev.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
+install.packages("broom.mixed")
+```
+
+```{r}
+#| label: setup
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(brms) # Bayesian regression via Stan
+library(broom.mixed) # tidy model output
+
+# Shared course palette, the same as on the slides.
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+
+set.seed(2026)
+```
+
+# The setting {#sec-setting}
+
+In autumn 1973, the graduate division of the University of California, Berkeley admitted about 44 percent of the men who applied, but only about 35 percent of the women.
+The gap looked like evidence that admission committees discriminated against women.
+When Bickel, Hammel and O'Connell (1975, *Science*) broke the numbers down by department, the gap disappeared: in most departments women were admitted at least as often as men.
+The pooled gap arose because women applied more often to departments that rejected most of their applicants, whichever gender they had.
+This is the most famous real case of **Simpson's paradox**.
+
+In this homework you analyse a synthetic dataset built on that case.
+Instead of a yes or no decision, every applicant receives a **review score** from the admission committee.
+The file `data/admissions.csv` holds 600 applicants to 40 graduate programmes, described in @tbl-variables.
+
+| Variable | Description |
+|---|---|
+| `applicant_id` | Applicant identifier, A001 to A600 |
+| `programme` | Graduate programme applied to, P01 to P40 |
+| `selectivity` | Share of the programme's applicants rejected over the past five years, in percent |
+| `woman` | 1 if the applicant is a woman, 0 if a man |
+| `score` | Review score from the admission committee, 0 to 100, the outcome |
+
+: The variables in `admissions.csv`. {#tbl-variables}
+
+The question: **do admission committees give women and men with comparable applications different scores?**
+
+# Your task {#sec-task}
+
+Run all eight steps of the workflow, and compare two models: a **naive model** with gender as the only predictor, and a **controlled model** that adds programme selectivity.
+The week 9 slides are all you need.
+
+::: {.callout-important}
+**This is the shape of the exam.**
+Every figure and every table needs a label and a caption a reader understands without the text.
+The data are synthetic, so they describe no real university.
+Use AI tools to check your understanding, not to write your answers.
+:::
+
+```{r}
+#| label: load-data
+
+admissions <- read_csv(here("data", "admissions.csv"))
+```
+
+# Step 1: Estimand {#sec-step1}
+
+*Step 1 produces the quantity you want to learn about, stated before any model is fitted.*
+
+1. State the research question precisely: which quantity do you want to learn, in which units?
+
+2. Draw a DAG for gender, selectivity and score, and explain each arrow in one sentence.
+
+3. Is selectivity a confounder, a mediator or a collider here?
+   Given the question about admission committees, should you control for it?
+   Justify your answer with the DAG.
+
+4. Is your estimand a causal effect or an association?
+
+# Step 2: Data summary {#sec-step2}
+
+*Step 2 describes the data: measurement, coverage and obvious issues.*
+
+1. Summarise the number of applicants, mean selectivity and mean score by gender in a table.
+
+2. Plot the distributions of selectivity and score by gender.
+
+3. Plot score against selectivity, coloured by gender.
+
+4. What do these three views suggest about the question?
+
+# Step 3: Formal model {#sec-step3}
+
+*Step 3 writes down the model: the outcome distribution, the linear predictor, the posterior and the priors.*
+
+1. Write down the outcome distribution and the linear predictor of the controlled model, with $x_{i1}$ for gender and $x_{i2}$ for selectivity.
+   How does the naive model differ?
+
+2. Centre selectivity at a value of your choice, and say what the intercept then means.
+
+3. Write down the posterior in proportional form for both models.
+   How many priors does each need?
+
+4. Write the complete model and defend each prior on the scale of the score.
+
+# Step 4: Prior predictive check {#sec-step4}
+
+*Step 4 simulates from the priors and checks that they imply plausible data.*
+
+1. Simulate from your priors and show what scores they imply.
+   Are the priors plausible on a 0 to 100 scale?
+
+# Step 5: Fit {#sec-step5}
+
+*Step 5 estimates the model with `brms`.*
+
+1. Fit both models with `brm()`, with an explicit `prior =` matching your complete model, `seed = 2026` and a `file =` argument so later renders load the fits.
+
+# Step 6: Diagnostics and posterior predictive check {#sec-step6}
+
+*Step 6 asks whether the sampling worked, and whether the fitted models reproduce key features of the data.*
+
+1. Check R-hat, effective sample size, divergent transitions and trace plots for both models.
+
+2. Run a posterior predictive check for both models, and say what it shows.
+
+# Comparing the models {#sec-compare}
+
+1. Compare the two models with LOO, report the ELPD difference and its standard error, and say which model predicts new applicants better.
+
+2. What can this comparison not tell you about whether controlling for selectivity is right?
+
+# Step 7: Interpretation {#sec-step7}
+
+*Step 7 answers the estimand on the outcome scale, with uncertainty.*
+
+1. Report both models in one regression table built with `tidy()` and `kable()`, with posterior means and 90 percent credible intervals.
+
+2. Report expected scores for a woman and a man applying to a programme of the same selectivity, and a predicted score for one new applicant.
+
+3. Report the gender coefficient of both models with its 90 percent credible interval, and explain why the two differ.
+
+4. Answer the question from @sec-setting in a short paragraph for the dean of the graduate division.
+
+# Step 8: Limitations {#sec-step8}
+
+*Step 8 states what the analysis can and cannot support.*
+
+1. Name three limitations of this analysis, and say for each why it limits your conclusion.
+
+# Session info and execution time {#sec-session .unnumbered}
+
+```{r}
+#| label: session-info
+
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+
+end_time <- Sys.time()
+cat(
+  "Total execution time:",
+  round(difftime(end_time, start_time, units = "mins"), 1),
+  "minutes\n"
+)
+```

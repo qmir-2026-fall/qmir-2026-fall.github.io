@@ -1,5 +1,5 @@
 ---
-title: "Week 9: Multiple linear regression"
+title: "Week 9: Multivariate linear regression"
 ---
 
 <!-- Shared format options live in _metadata.yml, so this deck's YAML carries only the title.
@@ -18,8 +18,8 @@ title: "Week 9: Multiple linear regression"
      Data: synthetic, n = 200, written by the data-income chunk to
      data/week09-income.csv if missing. Known truth: 1.6 thousand EUR per year of schooling
      within each gender, a gender gap of -18, and women have about four more years of
-     schooling. Pooled, the education slope is negative. hw-09 uses a different synthetic
-     dataset with the same structure.
+     schooling. Pooled, the education slope is negative. hw-09 uses the same paradox in a
+     Berkeley-style admissions setting (gender, programme selectivity, review score).
 
      Stan backend: cmdstanr, as in week 8. Both fits are cached in data/week09-fit-*.rds with
      their LOO criterion attached.
@@ -1692,7 +1692,7 @@ Flag goals 3 and 4 for the exam: every control is justified with a DAG, and mode
 
 ## Homework and outlook {#sec-homework .smaller}
 
-- `hw-09`: the whole workflow with a control variable, on a new dataset, due 25 November.
+- `hw-09`: the whole workflow with a control variable, on university admissions data, due 25 November.
   Linked from the Schedule.
 - A sample solution is published after the due date.
 
