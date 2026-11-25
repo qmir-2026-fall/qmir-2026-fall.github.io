@@ -1,5 +1,5 @@
 ---
-last_modified: 2026-09-30
+last_modified: 2026-11-19
 scope: distribution through GitHub template repos, org permissions, rosters, progress tracking
 ---
 
@@ -69,6 +69,12 @@ ID-to-username map was hand-maintained. Fix both.
   week). `-Fast` uses `pushedAt > createdAt + 2 min` instead, which is free but misses a student
   who pushes within two minutes of generating their repo. That was observed in testing, so it is
   opt-in only. `on_time` compares the last push against `due:`.
+- **Applied homeworks (hw-08 onwards) have no strict deadline** (announced 2026-11-18, as last
+  term). One counts as submitted only once a commit message explicitly marks it finished (the
+  READMEs ask for `final submission`, but any clear wording counts). Until then the org README
+  shows it as ⏳ (open, not missed, not counted). Every open one must be marked finished before
+  the take-home exam starts. `tracking.ps1`'s commit-count test does not apply to these, so read
+  their commit messages.
 - **Attendance** cannot come from GitHub, so keep exactly **one** small hand-kept file,
   `tracking/attendance.csv`, in **long** format (`github_username, week, present`), one row per
   student per session attended. Real data goes in `attendance.local.csv`. This is the *only*
