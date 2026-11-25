@@ -1,0 +1,11 @@
+# Homework metadata, read by automation (release, tracking, feedback).
+# Released on the week 10 session date, due with the usual +7 day offset from course.yml.
+slug: hw-10
+week: "10"
+title: "Homework 10: Interaction models"
+released: 2026-11-25
+due: 2026-12-02
+# All eight workflow steps, once, for one interaction model, plus a LOO comparison exercise.
+steps: [1, 2, 3, 4, 5, 6, 7, 8]
+data:
+  - eu_growth.csv

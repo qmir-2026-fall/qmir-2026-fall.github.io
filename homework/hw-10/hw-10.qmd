@@ -1,0 +1,152 @@
+---
+title: "Homework 10: Interaction models"
+author: "Your name"
+date: last-modified
+date-format: MMMM D, YYYY
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+<!-- STUDENT-FACING STARTER. No solution content here. Files named solution.* are stripped on
+     release, but this file ships as-is, so keep it clean.
+
+     Deliberately more minimal than hw-09: the setting, the task, and only a heading per
+     workflow step. Students decide what each step needs, from the week 10 slides and their
+     earlier homework. The LOO exercise at the end gives fixed numbers from a model without the
+     interaction, fitted by the instructor on the same data. -->
+
+```{r}
+#| label: setup
+
+start_time <- Sys.time()
+
+library(tidyverse) # wrangling and visualization
+library(here) # project-root-relative paths
+library(brms) # Bayesian regression via Stan
+library(broom.mixed) # tidy model output
+
+# Shared course palette, the same as on the slides.
+col_1 <- "steelblue"
+col_2 <- "#E07B39"
+col_3 <- "#7B3F9E"
+col_4 <- "goldenrod3"
+chain_cols <- c(col_1, col_2, col_3, col_4)
+
+set.seed(2026)
+```
+
+# The setting {#sec-setting}
+
+The European Union spends about a third of its budget on cohesion policy: structural funds that flow to poorer regions to help them catch up.
+Whether the money works is contested.
+One long-standing argument holds that funds only turn into growth where regional institutions are strong enough to absorb them, and are wasted, captured or misallocated where governance is weak.
+
+The file `data/eu_growth.csv` holds synthetic data on 200 EU regions, described in @tbl-variables.
+
+| Variable | Description |
+|---|---|
+| `region_id` | Region identifier, R001 to R200 |
+| `funds` | EU structural funds received, in percent of regional GDP |
+| `governance` | Quality of regional governance, an index standardised to mean 0 and standard deviation 1 |
+| `growth` | Annual growth of regional GDP, in percent, the outcome |
+
+: The variables in `eu_growth.csv`. {#tbl-variables}
+
+The question: **does the association between EU funds and regional growth depend on the quality of regional governance?**
+
+```{r}
+#| label: load-data
+
+eu_growth <- read_csv(here("data", "eu_growth.csv"))
+```
+
+# Your task {#sec-task}
+
+Run all eight steps of the workflow **once**, for one model of growth with an **interaction** between funds and governance.
+Then answer the questions in @sec-loo.
+
+From this week on, the steps below carry only a heading.
+Decide yourself what each step needs: the week 10 slides and your earlier homework show you how.
+In step 7, include a **marginal-effects plot** that shows how the association between funds and growth changes with governance.
+
+::: {.callout-important}
+**This is the shape of the exam.**
+Every figure and every table needs a label and a caption a reader understands without the text.
+The data are synthetic, so they describe no real region.
+Use AI tools to check your understanding, not to write your answers.
+:::
+
+# Step 1: Estimand {#sec-step1}
+
+# Step 2: Data summary {#sec-step2}
+
+# Step 3: Formal model {#sec-step3}
+
+# Step 4: Prior predictive check {#sec-step4}
+
+# Step 5: Fit {#sec-step5}
+
+# Step 6: Diagnostics and posterior predictive check {#sec-step6}
+
+# Step 7: Interpretation {#sec-step7}
+
+# Step 8: Limitations {#sec-step8}
+
+# Comparing with a model without the interaction {#sec-loo}
+
+A colleague fitted a second model to the same data: the same predictors, but **without** the interaction term.
+@tbl-loo-colleague shows that model on its own, and @tbl-loo-compare their comparison of both models with `loo_compare()`.
+
+| Model | ELPD (LOO) | Standard error |
+|---|---:|---:|
+| Without interaction | $-404.0$ | 22.0 |
+
+: The colleague's model without the interaction: expected log predictive density from leave-one-out cross-validation, and its standard error. {#tbl-loo-colleague}
+
+| Model | ELPD difference | Standard error of the difference |
+|---|---:|---:|
+| With interaction | 0.0 | 0.0 |
+| Without interaction | $-62.9$ | 21.7 |
+
+: The colleague's `loo_compare()` output for the models with and without the interaction. {#tbl-loo-compare}
+
+1. Run `loo()` on your own interaction model.
+   What ELPD does @tbl-loo-compare imply for the colleague's interaction model, and how close is yours to it?
+
+2. Which model predicts new regions better, and is the difference large compared with its standard error?
+
+3. Convert both ELPDs in @tbl-loo-colleague and question 1 to LOOIC.
+   Which model is better on that scale, and why does the direction flip?
+
+4. Does `loo()` warn you about any region?
+   What does that warning mean, and what would you check?
+
+5. The colleague concludes: "LOO proves that governance moderates the association between funds and growth."
+   Do you agree?
+   What can a LOO comparison tell you, and what can it not?
+
+# Session info and execution time {#sec-session .unnumbered}
+
+```{r}
+#| label: session-info
+
+sessionInfo()
+```
+
+```{r}
+#| label: exec-time
+
+end_time <- Sys.time()
+cat(
+  "Total execution time:",
+  round(difftime(end_time, start_time, units = "mins"), 1),
+  "minutes\n"
+)
+```
