@@ -1619,3 +1619,51 @@
   docs:
     url: "https://mc-stan.org/loo/"
     label: "loo package documentation"
+
+# --- Week 10: Interaction terms ----------------------------------------------
+
+- term: "Interaction term"
+  week: 10
+  tags: [regression, model]
+  def: |
+    The product of two predictors added to a linear predictor, so that the slope of one predictor depends on the value of the other.
+    With $\mu_i = \alpha + \beta_1 x_i + \beta_2 z_i + \beta_3 x_i z_i$, the slope of $x$ is $\beta_1 + \beta_3 z_i$, and $\beta_1$ alone is the slope only where $z = 0$.
+  see: [gl-moderator, gl-conditional-marginal-effect]
+
+- term: "Moderator"
+  week: 10
+  tags: [regression, interpretation]
+  def: |
+    The variable on which the association between a predictor and the outcome depends, entering the model through an [interaction term](#gl-interaction-term).
+    It can be binary, giving one slope per group, or continuous, giving a slope that changes smoothly.
+
+- term: "Conditional marginal effect"
+  week: 10
+  tags: [interpretation, regression]
+  def: |
+    The change in the expected outcome for a one-unit change in a predictor, at a given value of its [moderator](#gl-moderator).
+    Its posterior comes from computing $\beta_1 + \beta_3 z$ for every posterior draw, and a marginal-effects plot shows it against the moderator.
+
+- term: "Reference category"
+  week: 10
+  tags: [regression, data]
+  def: |
+    The category of a categorical predictor that gets no [dummy variable](#gl-dummy-variable), so every dummy's coefficient is a difference from it.
+    R uses the first factor level by default, and the choice is the analyst's.
+
+- term: "Common support"
+  week: 10
+  tags: [regression, interpretation]
+  def: |
+    Having observed data on a predictor at the values of the moderator we make statements about.
+    Where support is missing, a conditional marginal effect rests on the model, not on data.
+
+- term: "LOOIC"
+  week: 10
+  tags: [model, diagnostics]
+  def: |
+    The leave-one-out information criterion, minus two times the ELPD from [leave-one-out cross-validation](#gl-leave-one-out-cross-validation-loo), so lower is better.
+    It carries a standard error, and differences between models are judged with `loo_compare()`.
+  docs:
+    url: "https://mc-stan.org/loo/"
+    label: "loo package documentation"

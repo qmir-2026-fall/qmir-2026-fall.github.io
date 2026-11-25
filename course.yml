@@ -259,13 +259,18 @@ weeks:
     topic: "Interaction terms in linear regression"
     steps: [7]
     content: |
-      Effects that are not the same everywhere. Specification is the easy part, and interpretation
-      is where interactions are usually got wrong, so most of the session goes there.
+      Effects that are not the same everywhere. Does the association between women in
+      parliament and health spending depend on regime type? A product term lets the slope of one
+      predictor change with another, the moderator, first a parliamentary dummy and then a
+      continuous index of legislative power. We see how R turns a category into dummy variables,
+      run the workflow, report four models side by side with LOO, and show the conditional slope
+      in a marginal-effects plot rather than asking a reader to combine coefficients.
     goals:
-      - "Specify a multiplicative interaction model and interpret the conditional marginal effect of a predictor as a function of its moderator."
-      - "Extract posterior marginal effects separately for each level of the moderator."
-      - "Compare an interaction model against the additive model with LOO-IC."
-      - "Show a conditional effect in a figure rather than asking a reader to combine coefficients."
+      - "Explain what an interaction term does: the slope of one predictor depends on another, the moderator."
+      - "Say how R turns a categorical variable into dummy variables around a reference category."
+      - "Write down and fit an interaction model, and read the slope of a predictor at each value of its moderator."
+      - "Compare several models in one regression table and with loo_compare()."
+      - "Show a conditional effect in a figure: expected and predicted values, and a marginal-effects plot."
   - week: 11
     topic: "Modelling binary outcomes: logit and probit"
     steps: [3, 7]
