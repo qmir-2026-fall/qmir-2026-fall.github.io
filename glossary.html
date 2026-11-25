@@ -597,11 +597,21 @@ Documentation: <a href="https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Co
 The short text attached to a commit, written for a future reader, most importantly future you. “Add figure and cross-reference to introduction” helps, “Update” does not, and it is also where AI assistance gets declared.
 <span class="glossary-tag glossary-block">Week 2</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">git</span> <span class="glossary-tag">workflow</span>
 </dd>
+<dt><span id="gl-common-support">Common support</span></dt>
+<dd>
+Having observed data on a predictor at the values of the moderator we make statements about. Where support is missing, a conditional marginal effect rests on the model, not on data.
+<span class="glossary-tag glossary-block">Week 10</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">interpretation</span>
+</dd>
 <dt><span id="gl-comparison-and-logical-operators">Comparison and logical operators</span></dt>
 <dd>
 Operators that return <code>TRUE</code> or <code>FALSE</code>: <code>&lt;</code>, <code>&gt;</code>, <code>==</code>, <code>!=</code>, <code>%in%</code>, combined with <code>&amp;</code> (and), <code>|</code> (or) and <code>!</code> (not). Note that <code>=</code> assigns and <code>==</code> compares.
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/Comparison.html">R documentation: relational operators</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span>
+</dd>
+<dt><span id="gl-conditional-marginal-effect">Conditional marginal effect</span></dt>
+<dd>
+The change in the expected outcome for a one-unit change in a predictor, at a given value of its <a href="#gl-moderator">moderator</a>. Its posterior comes from computing <span class="math inline">\(\beta_1 + \beta_3 z\)</span> for every posterior draw, and a marginal-effects plot shows it against the moderator.
+<span class="glossary-tag glossary-block">Week 10</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">interpretation</span> <span class="glossary-tag">regression</span>
 </dd>
 <dt><span id="gl-conditional-probability">Conditional probability</span></dt>
 <dd>
@@ -908,6 +918,12 @@ R code inside a sentence, written as a backtick, the letter <code>r</code>, a sp
 Documentation: <a href="https://quarto.org/docs/computations/inline-code.html">Quarto: inline code</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">quarto</span> <span class="glossary-tag">r</span>
 </dd>
+<dt><span id="gl-interaction-term">Interaction term</span></dt>
+<dd>
+The product of two predictors added to a linear predictor, so that the slope of one predictor depends on the value of the other. With <span class="math inline">\(\mu_i = \alpha + \beta_1 x_i + \beta_2 z_i + \beta_3 x_i z_i\)</span>, the slope of <span class="math inline">\(x\)</span> is <span class="math inline">\(\beta_1 + \beta_3 z_i\)</span>, and <span class="math inline">\(\beta_1\)</span> alone is the slope only where <span class="math inline">\(z = 0\)</span>.
+See also: <a href="#gl-moderator">Moderator</a>, <a href="#gl-conditional-marginal-effect">Conditional marginal effect</a>.
+<span class="glossary-tag glossary-block">Week 10</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">model</span>
+</dd>
 </dl>
 </section>
 <section id="sec-glossary-j" class="level2">
@@ -1008,6 +1024,12 @@ R’s type for true or false, <code>TRUE</code> and <code>FALSE</code>, which ev
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/logical.html">R documentation: logical vectors</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
 </dd>
+<dt><span id="gl-looic">LOOIC</span></dt>
+<dd>
+The leave-one-out information criterion, minus two times the ELPD from <a href="#gl-leave-one-out-cross-validation-loo">leave-one-out cross-validation</a>, so lower is better. It carries a standard error, and differences between models are judged with <code>loo_compare()</code>.
+Documentation: <a href="https://mc-stan.org/loo/">loo package documentation</a>
+<span class="glossary-tag glossary-block">Week 10</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">model</span> <span class="glossary-tag">diagnostics</span>
+</dd>
 </dl>
 </section>
 <section id="sec-glossary-m" class="level2">
@@ -1066,6 +1088,11 @@ The first MCMC algorithm: propose a random step, and accept it according to the 
 Most summary functions, such as <code>mean()</code> or <code>sum()</code>, return <a href="#gl-na"><code>NA</code></a> if any value is missing, because the true answer is then unknown. Their argument <code>na.rm = TRUE</code> removes the missing values first, which is a decision about your data worth stating in the text.
 Documentation: <a href="https://search.r-project.org/R/refmans/base/html/mean.html">R documentation: mean</a>
 <span class="glossary-tag glossary-block">Week 3</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">r</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-moderator">Moderator</span></dt>
+<dd>
+The variable on which the association between a predictor and the outcome depends, entering the model through an <a href="#gl-interaction-term">interaction term</a>. It can be binary, giving one slope per group, or continuous, giving a slope that changes smoothly.
+<span class="glossary-tag glossary-block">Week 10</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">interpretation</span>
 </dd>
 <dt><span id="gl-monte-carlo">Monte Carlo</span></dt>
 <dd>
@@ -1280,6 +1307,11 @@ A diagnostic that compares the variation between <a href="#gl-chain">chains</a> 
 <dd>
 Showing the same variable through two visual properties at once, such as colour and point shape, so that colour is never the only cue. It keeps a figure readable for colourblind readers and in a black and white print.
 <span class="glossary-tag glossary-block">Week 5</span> <span class="glossary-tag glossary-block">Scientific programming fundamentals</span> <span class="glossary-tag">data</span>
+</dd>
+<dt><span id="gl-reference-category">Reference category</span></dt>
+<dd>
+The category of a categorical predictor that gets no <a href="#gl-dummy-variable">dummy variable</a>, so every dummy’s coefficient is a difference from it. R uses the first factor level by default, and the choice is the analyst’s.
+<span class="glossary-tag glossary-block">Week 10</span> <span class="glossary-tag glossary-block">Applied modelling</span> <span class="glossary-tag">regression</span> <span class="glossary-tag">data</span>
 </dd>
 <dt><span id="gl-remote">Remote</span></dt>
 <dd>
